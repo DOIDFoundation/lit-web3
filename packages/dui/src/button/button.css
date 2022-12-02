@@ -1,0 +1,66 @@
+:host {
+  &[disabled],
+  &:disabled,
+  &.disabled,
+  &.pending {
+    @apply pointer-events-none cursor-not-allowed;
+  }
+}
+
+.dui-button {
+  @apply gap-1 text-white px-3 text-base rounded-md;
+  background: var(--btnBg);
+  padding: 0.5rem 0.875rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  &:not([disabled]) {
+    &:hover {
+      background: var(--btnBgHover);
+      border-color: var(--btnBgHover);
+    }
+    &:active {
+      background: var(--btnBgActive);
+      border-color: var(--btnBgActive);
+    }
+  }
+  &[disabled],
+  &:disabled,
+  &[pending],
+  &.pending {
+    @apply cursor-not-allowed pointer-events-none;
+    background: #aaa;
+  }
+  &.outlined {
+    background-color: transparent;
+    color: var(--btnBg);
+    border: 1px solid;
+    &:not([disabled]) {
+      &:hover {
+        background: #fff;
+        color: var(--btnBg);
+        border: 1px solid;
+      }
+      &:active {
+        background: #f6f6f6;
+        color: var(--btnBg);
+        border: 1px solid;
+      }
+    }
+  }
+  &[text] {
+    color: var(--btnBg);
+    @apply bg-transparent border-transparent;
+    &:hover,
+    &:active {
+      color: var(--btnBg);
+      @apply bg-transparent;
+    }
+  }
+  &[icon] {
+    border-radius: 50%;
+    height: 2.75rem;
+  }
+  &[sm] {
+    @apply text-sm;
+    padding: 0.35rem 0.625rem;
+  }
+}

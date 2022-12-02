@@ -1,2 +1,5 @@
-# lit-web3
-Web3 components based on Lit
+# @lit-web3
+
+## VSCode Settings
+
+Plugins: `lit-html`, `Prettier`

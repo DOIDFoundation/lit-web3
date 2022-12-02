@@ -1,0 +1,33 @@
+.dui-link {
+  @apply no-underline;
+  color: var(--a_color);
+  &:hover {
+    @apply underline;
+    color: var(--a_color);
+    text-decoration: underline;
+  }
+  &.uri {
+    &:hover {
+      color: currentColor;
+      text-decoration: underline;
+    }
+  }
+  &.router-active {
+  }
+  &[nav] {
+    @apply inline-flex border-y-2 border-transparent leading-4;
+    padding: 3px 0;
+    color: inherit;
+
+    &:hover,
+    &[active] {
+      color: var(--a_color);
+    }
+    &:hover {
+      @apply no-underline;
+    }
+    &[active] {
+      @apply border-b-current;
+    }
+  }
+}

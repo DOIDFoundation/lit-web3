@@ -1,0 +1,8 @@
+.Passes {
+  height: 300px;
+  @apply h-full bg-white;
+}
+
+.pass-list {
+  @apply grid grid-cols-1 lg_grid-cols-2 gap-4;
+}

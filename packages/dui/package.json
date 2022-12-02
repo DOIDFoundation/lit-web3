@@ -1,0 +1,16 @@
+{
+  "name": "@lit-web3/dui",
+  "version": "0.9.2",
+  "scripts": {
+    "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@lit-web3/core": "workspace:*",
+    "@lit-web3/ethers": "workspace:*"
+  },
+  "peerDependencies": {
+    "tsup": "^6"
+  },
+  "license": "MIT"
+}

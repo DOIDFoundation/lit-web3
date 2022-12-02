@@ -1,0 +1,33 @@
+:root {
+  --txt2: #c8c8c8;
+  --txt3: #f9d3a3;
+  --bg2: #fffbf6;
+  --bg3: #373737;
+
+  --btnBg: #ff920f;
+  --btnBgHover: #ffb65f;
+  --btnBgActive: #e08417;
+
+  --radius: 1rem;
+  --btn_radius: 0.25rem;
+
+  --a_color: #ff920f;
+  --a_hover_color: rgba(59, 130, 246, 0.88);
+  /* Overridable */
+  --textBase: var(--text-base, 14px);
+  --fontFamily: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
+  --textColor: var(--text-color, rgb(55, 55, 55));
+  --doidLogoW: var(--doid-logo-w, 120px);
+  --doidLogoH: var(--doid-logo-h, 36px);
+  --headerH: var(--header-height, 60px);
+  --footerH: var(--footer-height, 60px);
+  --appMainH: calc(100vh - var(--headerH) - var(--footerH) - var(--networkWarnH, 0px));
+  --appMainBg: var(--app-main-bg, #fff);
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --logo_width: 60px;
+    --logo_height: 21px;
+  }
+}

@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .dui-app-main {
+    @apply float-left w-full;
+    min-height: var(--appMainH);
+    background: var(--appMainBg);
+  }
+  .dui-container {
+    @apply clear-both lg_max-w-5xl min-h-full mx-auto px-3 lg_px-4;
+  }
+  .doid-logo {
+    @apply inline-block;
+    width: var(--doidLogoW);
+    height: var(--doidLogoH);
+    background: url(../i/doid-logo.svg) no-repeat center;
+    background-size: contain;
+  }
+  .mdi-discord {
+    @apply bg-none;
+    &::before {
+      content: '';
+      @apply block;
+      width: 1em;
+      height: 1em;
+      background: transparent url(../i/discord.svg) no-repeat center;
+      background-size: 90% auto;
+    }
+  }
+  .mdi-loading {
+    @apply inline-flex animate-spin;
+  }
+}

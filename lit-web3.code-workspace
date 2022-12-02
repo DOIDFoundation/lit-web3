@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "extensions.enabled": ["lit-html", "Prettier"],
+    "editor.tabSize": 2
+  }
+}

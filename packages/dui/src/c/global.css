@@ -1,0 +1,21 @@
+@import './variables.css';
+/* @import './icon.css'; */
+
+html,
+body {
+  height: 100%;
+}
+html {
+  overflow-y: scroll;
+  color: var(--textColor);
+}
+body {
+  font-size: var(--textBase);
+}
+body,
+input,
+textarea,
+select,
+button {
+  font-family: var(--fontFamily);
+}

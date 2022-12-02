@@ -1,0 +1,16 @@
+{
+  "name": "@lit-web3/lock-pass",
+  "version": "0.11.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host --mode development",
+    "build": "vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "@lit-web3/dui": "workspace:*",
+    "@lit-web3/core": "workspace:*",
+    "@lit-web3/ethers": "workspace:*"
+  },
+  "license": "MIT"
+}

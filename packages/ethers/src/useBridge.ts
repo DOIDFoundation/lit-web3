@@ -1,0 +1,230 @@
+import { State, property } from '@lit-app/state'
+import Network from './networks'
+import ContractsList from './constants/contracts'
+import { Bridge } from './bridge'
+import emitter from '@lit-web3/core/src/emitter'
+import { gasLimit, nowTs } from './utils'
+import { normalizeTxErr } from './parseErr'
+import { Contract } from '@ethersproject/contracts'
+import { BigNumber } from '@ethersproject/bignumber'
+import { formatUnits } from '@ethersproject/units'
+export { StateController } from '@lit-app/state'
+
+// Singleton Data
+let bridgeInstance: any
+let blockNumber = 0
+
+// Proxify
+// declare some state
+class BridgeStore extends State {
+  @property({ value: 0 }) blockNumber!: number
+  @property({ value: bridgeInstance, type: Object }) bridge!: Bridge
+  get stateTitle(): string {
+    return this.bridge.state || ''
+  }
+  get wallet(): any {
+    return this.bridge.wallet
+  }
+  get account(): any {
+    return this.bridge.store.wallet?.account || this.wallet?.account || ''
+  }
+  get envKey(): string {
+    return [this.bridge.network.chainId, this.bridge.account].join('-')
+  }
+  get noAccount() {
+    return (this.wallet?.inited === true || this.bridge.alreadyTried) && !this.account
+  }
+  get noNetwork() {
+    return this.bridge.network.disabled
+  }
+  get notReady() {
+    return this.noAccount || this.noNetwork
+  }
+  get key() {
+    return this.account + this.bridge.network.chainId
+  }
+}
+export const bridgeStore = new BridgeStore()
+
+class BlockPolling {
+  public timer: any
+  public interval: number
+  public blockTs: number
+  public blockDebounce: { timer: any; interval: number }
+  constructor() {
+    this.interval = 15 * 1000
+    this.blockTs = 0
+    this.blockDebounce = { timer: null, interval: 50 }
+    // Events
+    emitter.on('tx-success', () => this.broadcast())
+    emitter.on('network-change', () => {
+      this.reset()
+      this.listenProvider()
+    })
+    this.listenProvider()
+    // Polling
+    this.polling()
+  }
+  get block() {
+    return blockNumber
+  }
+  set block(v: number) {
+    blockNumber = v
+    bridgeStore.blockNumber = v
+  }
+  polling() {
+    clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      // Simulate block increment by per 12s
+      this.block += Math.floor((nowTs() - this.blockTs) / 12000)
+      this.broadcast()
+    }, this.interval)
+  }
+  reset() {
+    clearTimeout(this.blockDebounce.timer)
+    clearTimeout(this.timer)
+    this.block = 0
+    this.blockTs = 0
+    Object.assign(this.blockDebounce, { timer: null, interval: 50 })
+  }
+  async listenProvider() {
+    bridgeInstance.provider.on('block', this.onBlock.bind(this))
+  }
+  onBlock(block: number) {
+    if (block <= this.block) return
+    const { timer, interval } = this.blockDebounce
+    if ((this.blockTs = nowTs()) - this.blockTs < interval) clearTimeout(timer)
+    // Ignore first init
+    if (this.block) Object.assign(this.blockDebounce, { timer: setTimeout(() => this.broadcast(block), interval) })
+    this.block = block
+  }
+  broadcast(block = this.block) {
+    // if (!block) block = (await bridgeInstance.provider.getBlockNumber()) || this.block
+    emitter.emit('block-polling', block + '')
+    this.polling()
+  }
+}
+
+const initBridge = () => {
+  if (bridgeInstance) return
+  bridgeStore.bridge = bridgeInstance = new Bridge()
+  new BlockPolling()
+}
+
+const getBridge = () => {
+  return {
+    bridgeStore,
+    blockNumber: bridgeStore.blockNumber,
+    stateTitle: bridgeStore.stateTitle,
+    envKey: bridgeStore.envKey,
+    bridge: bridgeStore.bridge,
+    bridgeInstance
+  }
+}
+
+export default (autoConnect = false) => {
+  initBridge()
+  bridgeStore.bridge.tryConnect(autoConnect)
+  return getBridge()
+}
+
+export const useBridgeAsync = async (autoConnect = false) => {
+  initBridge()
+  await bridgeStore.bridge.tryConnect(autoConnect)
+  return getBridge()
+}
+
+export const getABI = async (name: string) => {
+  return (await import(`./abi/${name}.json`)).default
+}
+
+export const getAccount = async (force = false) => {
+  await useBridgeAsync()
+  if (force) {
+    const res = (await bridgeStore.bridge.provider.send('eth_requestAccounts')) ?? []
+    return res[0] ?? ''
+  }
+  return bridgeStore.bridge.account
+}
+
+export const getNetwork = async () => {
+  await useBridgeAsync()
+  return bridgeStore.bridge.network.current
+}
+
+export const getBlockNumber = async () => {
+  const { blockNumber } = await useBridgeAsync()
+  return bridgeStore.blockNumber ?? blockNumber
+}
+export const getNonce = async (address?: string) => {
+  if (!address) address = await getAccount()
+  return await bridgeInstance.provider.getTransactionCount(address)
+}
+
+// offest: past seconds, default: 0 (current block)
+// blockNumber, default: current block
+export const getBlockTimestamp = async ({ offset = 0, blockNumber = 0 } = {}) => {
+  if (!blockNumber) blockNumber = await getBlockNumber()
+  const { timestamp } = await bridgeInstance.provider.getBlock(blockNumber - offset / 3)
+  return timestamp
+}
+
+export const getNativeBalance = async (address: string) =>
+  formatUnits(await bridgeStore.bridge.provider.getBalance(address))
+
+export const estimateGasLimit = async (
+  contract: Contract,
+  method: string,
+  parameters = <any>[],
+  limitPercent?: number
+) => {
+  let estimatedGas = BigNumber.from(1000000)
+  try {
+    estimatedGas = BigNumber.from(await contract.estimateGas[method](...parameters))
+  } catch (err) {
+    await normalizeTxErr(err, [method, parameters])
+    throw err
+  }
+  const limit = gasLimit(estimatedGas)
+  return limitPercent ? [limit, gasLimit(estimatedGas, limitPercent)] : limit
+}
+
+export const assignOverrides = async (overrides: any, ...args: any[]) => {
+  let [contract, method, parameters, { gasLimitPer, nonce } = <any>{}] = args
+  if (nonce || bridgeInstance.provider.nonce) overrides.nonce = nonce || bridgeInstance.provider.nonce
+  let gasLimit
+  try {
+    if (gasLimitPer) {
+      gasLimit = (<any[]>await estimateGasLimit(contract, method, parameters, gasLimitPer))[1]
+    } else {
+      gasLimit = await estimateGasLimit(contract, method, parameters)
+    }
+  } catch (err) {
+    throw await normalizeTxErr(err)
+  }
+  Object.assign(overrides, { gasLimit })
+}
+
+export const getContracts = (name: string, forceMainnet = false): string => {
+  const chainId = forceMainnet ? Network.mainnetChainId : Network.chainId
+  return ContractsList[name][chainId]
+}
+
+export const getContract = async (
+  name: Address,
+  { forceMainnet = false, address = getContracts(name, forceMainnet), account = '', requireAccount = false } = <
+    getContractOpts
+  >{}
+) => {
+  const bridge = (await useBridgeAsync()).bridge
+  const provider = bridge.provider
+  const abi = await getABI(name)
+  if (!abi) throw new Error(`abi not found: ${name}`)
+  if (!address && !abi) throw new Error(`Contract ${address} not found`)
+  if (!account) account = bridge.account
+  if (!account && requireAccount) account = await getAccount()
+  return new Contract(address, abi, account ? provider.getSigner(account) : provider.provider)
+}
+
+export const getTokenContract = async (token: Tokenish, options = <getContractOpts>{}) =>
+  await getContract(token.address || token.contract || token, { abiName: 'Erc721', ...options })

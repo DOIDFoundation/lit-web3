@@ -1,0 +1,30 @@
+export const getChainId = (ethereum: any) => ethereum.request({ method: 'eth_chainId' })
+export const getAccounts = (ethereum: any) => ethereum.request({ method: 'eth_accounts' })
+
+let resolved = false
+const detectEthereum = (): Promise<any> => {
+  return new Promise((resolve) => {
+    if (resolved) resolve(window.ethereum)
+    const resolver = () => {
+      resolved = true
+      resolve(window.ethereum)
+      window.removeEventListener('ethereum#initialized', detectChainId)
+    }
+    let retryTimes = 0
+    const detectChainId = async () => {
+      // console.log('detect ether chainId', chainId, 'retry times:', retryTimes)
+      const chainId = await getChainId(window.ethereum)
+      if (chainId) resolver()
+      else if (retryTimes++ < 30) setTimeout(detectChainId, 10)
+      else resolver()
+    }
+    if (window.ethereum) {
+      detectChainId()
+    } else {
+      window.addEventListener('ethereum#initialized', detectChainId, { once: true })
+      setTimeout(resolver, 3000)
+    }
+  })
+}
+
+export default detectEthereum

@@ -1,0 +1,42 @@
+:root {
+  --posterSize: 90px;
+}
+.pass {
+  @apply relative;
+  min-height: 8.5rem;
+  @apply flex gap-4 p-4 border border-gray-300;
+  /* & .pass-cate {
+    @apply w-4 h-9 right-2 top-0 absolute flex justify-center text-xs;
+    background: url(@/assets/images/mark.svg) no-repeat;
+    bakckground-size: cover;
+    padding: 1px 0 0;
+    color: #000;
+  } */
+  & .poster {
+    @apply mb-4;
+    width: var(--posterSize);
+    height: var(--posterSize);
+    &:not(.minted) {
+      @apply bg-gray-100;
+    }
+  }
+  & .name {
+    &.locked {
+      @apply text-base;
+    }
+    & > b {
+    }
+  }
+
+  & .status {
+    &.locked {
+      @apply text-green-600;
+    }
+    &.unlock {
+      @apply text-gray-500;
+    }
+    &.minted {
+      @apply text-blue-400;
+    }
+  }
+}

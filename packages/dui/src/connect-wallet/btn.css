@@ -1,0 +1,6 @@
+:host {
+}
+
+::part(dui-button) {
+  background: #373737 !important;
+}

@@ -1,0 +1,21 @@
+.tx-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+.tx-state-icon {
+  &.success {
+    color: green;
+  }
+  &.failed {
+    color: red;
+  }
+  &.warn {
+    color: orange;
+  }
+}
+.tx-state-msg {
+  word-break: break-word;
+  white-space: normal;
+}

@@ -1,0 +1,10 @@
+:host {
+  & .help-links {
+    & a {
+      @apply opacity-75;
+      &:hover {
+        @apply opacity-100;
+      }
+    }
+  }
+}
