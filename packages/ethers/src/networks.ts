@@ -1,10 +1,11 @@
-import { AllNetworks, unknownNetwork } from './constants/networks'
+import { AllNetworks, unknownNetwork, EtherNetworks } from './constants/networks'
 
 const isProd = import.meta.env.MODE === 'production'
+const mainnetOffline = !!import.meta.env.VITE_APP_DISABLEMAINNET
 export const Networks: Networks = AllNetworks
 
-export const [mainnetChainId, testnetChainId] = ['0x1', '0xaa36a7']
-export const defaultChainId = isProd ? mainnetChainId : testnetChainId
+export const [mainnetChainId, testnetChainId] = EtherNetworks
+export const defaultChainId = isProd && !mainnetOffline ? mainnetChainId : testnetChainId
 
 // This may return wrong network value if no req provided
 // If you want to get current network, please use `userBridge/getNetwork` instead
@@ -41,6 +42,9 @@ export class Network {
   get current() {
     return this.Networks[this.chainId] ?? unknownNetwork
   }
+  get default() {
+    return this.Networks[defaultChainId]
+  }
   get unSupported() {
     return this.current.name === 'unknown'
   }
@@ -48,7 +52,7 @@ export class Network {
     return this.current.chainId === defaultChainId
   }
   get mainnetOffline() {
-    return this.isMainnet && this.opts.disableMainnet
+    return this.isMainnet && mainnetOffline
   }
   get disabled() {
     return this.unSupported || this.mainnetOffline

@@ -1,11 +1,13 @@
-import { customElement, TailwindElement, html, property } from './shared/TailwindElement'
+import { customElement, TailwindElement, html, when, state } from './shared/TailwindElement'
 import { animate } from '@lit-labs/motion'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+// Components
+import './link'
 
 @customElement('network-warning')
 export class NetworkWarning extends TailwindElement('') {
   bindStore: any = new StateController(this, bridgeStore)
-  @property({ type: Boolean }) disableMainnet = false
+  @state() pending = false
 
   get bridge() {
     return bridgeStore.bridge
@@ -23,6 +25,12 @@ export class NetworkWarning extends TailwindElement('') {
     return this.network.disabled || !this.network.isMainnet
   }
 
+  async switch() {
+    this.pending = true
+    await this.bridge.switchNetwork(this.network.default.chainId)
+    this.pending = false
+  }
+
   override render() {
     if (!this.shown) return
     return html`<span
@@ -33,6 +41,13 @@ export class NetworkWarning extends TailwindElement('') {
       ${animate({ guard: () => this.shown, properties: ['opacity', 'height', 'visibility'] })}
     >
       <span>${this.txt}</span>
+      ${when(
+        !this.network.isDefaultNet,
+        () =>
+          html`<dui-link ?disabled=${this.pending} text class="ml-1" @click=${this.switch}
+            >Switch to ${this.network.default.title}</dui-link
+          >`
+      )}
     </span>`
   }
 }

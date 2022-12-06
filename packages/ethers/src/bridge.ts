@@ -5,6 +5,7 @@ import Provider from './provider'
 import { getNetwork } from './networks'
 import detectEthereum, { getAccounts } from './detectEthereum'
 import { WalletState, forceRequestUpdate } from './wallet'
+import { EtherNetworks } from './constants/networks'
 
 type WalletApp = {
   name: string
@@ -60,19 +61,21 @@ export class Bridge {
     const target = getNetwork(chainId)
     const { ethereum } = window
     if (ethereum) {
+      const isEtherNetwork = EtherNetworks.includes(chainId)
+      const method = isEtherNetwork ? 'wallet_switchEthereumChain' : 'wallet_addEthereumChain'
+      const param = { chainId: target.chainId }
+      if (!isEtherNetwork)
+        Object.assign(param, {
+          chainName: target.name,
+          nativeCurrency: target.native ?? { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+          rpcUrls: [target.provider],
+          blockExplorerUrls: [target.scan],
+          iconUrls: ['']
+        })
       try {
         await ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: target.chainId,
-              chainName: target.name,
-              nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
-              rpcUrls: [target.provider],
-              blockExplorerUrls: [target.scan],
-              iconUrls: ['']
-            }
-          ]
+          method,
+          params: [param]
         })
       } catch (err) {
         console.error(err)

@@ -6,6 +6,12 @@
     color: var(--a_color);
     text-decoration: underline;
   }
+  &:not([disabled]) {
+    @apply cursor-pointer;
+  }
+  &[disabled] {
+    @apply pointer-events-none;
+  }
   &.uri {
     &:hover {
       color: currentColor;
@@ -28,6 +34,13 @@
     }
     &[active] {
       @apply border-b-current;
+    }
+  }
+  &[text] {
+    @apply text-current underline;
+
+    &:hover {
+      @apply underline;
     }
   }
 }
