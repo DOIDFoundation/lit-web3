@@ -56,7 +56,12 @@ export class DuiInputText extends TailwindElement(style) {
   }
 
   render() {
-    return html`<div class="dui-input-text ${this.class}" ?required=${this.required} ?rightSlotted=${this.rightSlotted}>
+    return html`<div
+      class="dui-input-text ${this.class}"
+      ?required=${this.required}
+      ?rightSlotted=${this.rightSlotted}
+      part="dui-input-text"
+    >
       <label><slot name="label" @slotchange=${this.onSlotChange}></slot></label>
       <input
         .type="${this.type}"

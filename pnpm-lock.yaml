@@ -75,6 +75,26 @@ importers:
       vite-plugin-pwa: 0.12.8_vite@3.2.4
       vite-plugin-static-copy: 0.12.0_vite@3.2.4
 
+  apps/art-scan:
+    specifiers:
+      '@lit-web3/core': workspace:*
+      '@lit-web3/dui': workspace:*
+      '@lit-web3/ethers': workspace:*
+    dependencies:
+      '@lit-web3/core': link:../../packages/core
+      '@lit-web3/dui': link:../../packages/dui
+      '@lit-web3/ethers': link:../../packages/ethers
+
+  apps/lock-name:
+    specifiers:
+      '@lit-web3/core': workspace:*
+      '@lit-web3/dui': workspace:*
+      '@lit-web3/ethers': workspace:*
+    dependencies:
+      '@lit-web3/core': link:../../packages/core
+      '@lit-web3/dui': link:../../packages/dui
+      '@lit-web3/ethers': link:../../packages/ethers
+
   apps/lock-pass:
     specifiers:
       '@lit-web3/core': workspace:*

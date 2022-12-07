@@ -1,0 +1,12 @@
+:host {
+  &::part(dui-input-text) {
+    @apply !w-full;
+  }
+}
+@media (max-width: 1024px) {
+  .scan-search {
+    & .dui-input-text {
+      width: 70%;
+    }
+  }
+}

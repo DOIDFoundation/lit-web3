@@ -1,0 +1,17 @@
+{
+  "name": "@lit-web3/art-scan",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host --mode development",
+    "build": "vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@lit-web3/dui": "workspace:*",
+    "@lit-web3/core": "workspace:*",
+    "@lit-web3/ethers": "workspace:*"
+  },
+  "license": "MIT"
+}

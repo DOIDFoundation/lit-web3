@@ -1,0 +1,8 @@
+{
+  "name": "DOID ART SCAN",
+  "short_name": "DOID ART SCAN",
+  "icons": [],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
