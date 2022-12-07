@@ -6,8 +6,8 @@ export const AllNetworks = {
     name: 'mainnet',
     // provider: 'https://rpc.ankr.com/eth',
     // providerWs: 'wss://rpc.ankr.com/ws'
-    provider: 'https://mainnet.infura.io/v3/7ed5c86df8ad43849b8aaec56af71a2a',
-    providerWs: 'wss://mainnet.infura.io/ws/v3/7ed5c86df8ad43849b8aaec56af71a2a',
+    provider: 'https://mainnet.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',
+    providerWs: 'wss://mainnet.infura.io/ws/v3/50e9845f779f4770a64fa6f47e238d10',
     scan: 'https://etherscan.io',
     icon: ''
   },
@@ -17,14 +17,13 @@ export const AllNetworks = {
     name: 'testnet',
     // provider: 'https://rpc.sepolia.dev',
     // providerWs: 'wss://rpc.sepolia.dev/ws',
-    // provider: 'https://sepolia.infura.io/v3/7ed5c86df8ad43849b8aaec56af71a2a',
-    // providerWs: 'wss://sepolia.infura.io/ws/v3/7ed5c86df8ad43849b8aaec56af71a2a',
     provider: 'https://sepolia.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',
     providerWs: 'wss://sepolia.infura.io/ws/v3/50e9845f779f4770a64fa6f47e238d10',
     scan: 'https://sepolia.etherscan.io',
     icon: ''
   }
 }
+export const EtherNetworks = ['0x1', '0xaa36a7']
 
 export const unknownNetwork = {
   title: 'Unsupported Network',

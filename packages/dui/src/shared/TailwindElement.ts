@@ -9,6 +9,7 @@ export declare class TAILWINDELEMENT extends LitElement {
   on: any
   $: Function
   $$: Function
+  $c: Function
 }
 
 export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<TAILWINDELEMENT> =>
@@ -21,6 +22,20 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
     static styles = (Array.isArray(styles) ? styles.flat() : [TailwindBase, styles]).map((r) =>
       r instanceof CSSResult ? r : unsafeCSS(r)
     )
+    // classMap from arrayify
+    $c(req: [] | Record<string, unknown>) {
+      if (Array.isArray(req)) {
+        const res = {}
+        req.forEach((ret: string[] | string | Record<string, unknown>) => {
+          if (typeof ret === 'string') ret = ret.split(' ').filter((ret) => !!ret)
+          if (Array.isArray(ret)) ret = Object.fromEntries(ret.map((r) => [r, true]))
+          Object.assign(res, ret)
+        })
+        return res
+      } else {
+        return req
+      }
+    }
     // Query
     $(selector: string) {
       return this.shadowRoot?.querySelector(selector)

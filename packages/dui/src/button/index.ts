@@ -20,9 +20,7 @@ export class DuiButton extends TailwindElement(style) {
   constructor() {
     super()
     this.addEventListener('click', (e: Event) => {
-      if (this.blocked) {
-        e.stopImmediatePropagation()
-      }
+      if (this.blocked) e.stopImmediatePropagation()
     })
   }
   get isAnchor() {

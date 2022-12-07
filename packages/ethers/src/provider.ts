@@ -13,7 +13,7 @@ class Provider {
       if (window.ethereum?.chainId) chainId = window.ethereum.chainId
       else if (this.storage) chainId = this.storage
     }
-    this.network = new Network(chainId, { disableMainnet: false })
+    this.network = new Network(chainId)
     this.provider = this.update(chainId)
   }
   update(chainId?: ChainId) {
