@@ -29,7 +29,7 @@
       background: #00d395;
     }
     & .mdi {
-      @apply text-base;
+      @apply text-base leading-none;
     }
   }
   &.err {
