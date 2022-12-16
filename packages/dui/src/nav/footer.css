@@ -1,4 +1,4 @@
-.nav-footer {
+.dui-footer {
   @apply float-left w-full;
   color: var(--txt2);
   background: var(--bg3);

@@ -5,7 +5,7 @@ import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/T
 import '@lit-web3/dui/src/network-warning'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/nav/nav'
-import '@/components/nav-footer'
+import '@lit-web3/dui/src/nav/footer'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
@@ -21,7 +21,7 @@ export class AppMain extends TailwindElement('') {
       <main class="dui-app-main">
         <slot></slot>
       </main>
-      <nav-footer></nav-footer>
+      <dui-footer></dui-footer>
     `
   }
 }
