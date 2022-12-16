@@ -1,4 +1,4 @@
-.nav-header {
+.dui-header {
   @apply float-left w-full;
   height: var(--headerH);
   background: var(--bg2);
