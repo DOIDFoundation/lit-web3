@@ -4,9 +4,9 @@ export const routes = [
   {
     name: 'lock',
     path: '/',
-    render: () => html`<div>Home</div>`,
+    render: () => html`<view-home></view-home>`,
     enter: async () => {
-      // await import('@/views/home')
+      await import('@/views/home')
       return true
     }
   },
