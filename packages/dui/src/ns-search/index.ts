@@ -1,6 +1,6 @@
 import { TailwindElement, html, when, customElement } from '../shared/TailwindElement'
 import { property, state } from 'lit/decorators.js'
-// import emitter from '@lit-web3/core/src/emitter'
+import { searchStore, StateController } from './state'
 
 // Components
 import '../input/text'
@@ -8,10 +8,9 @@ import '../input/text'
 // Style
 import style from './index.css'
 
-import emitter from '@lit-web3/core/src/emitter'
-
 @customElement('dui-ns-search')
 export class duiNsSearch extends TailwindElement(style) {
+  bindStore: any = new StateController(this, searchStore)
   @property() placeholder = 'Placeholder'
   @property() text = ''
   @state() keyword = ''
@@ -30,10 +29,6 @@ export class duiNsSearch extends TailwindElement(style) {
   connectedCallback() {
     super.connectedCallback()
     if (this.text) this.keyword = this.text
-    emitter.on('go2search', (e: any) => {
-      console.info('on go2search:', e.detail)
-      history.pushState({}, e.detail)
-    })
   }
 
   validate() {
@@ -53,7 +48,7 @@ export class duiNsSearch extends TailwindElement(style) {
   }
   doSearch() {
     if (!this.validate()) return
-    console.info('doSearch')
+    // console.info(this.keyword)
   }
   render() {
     return html`<div class="scan-search">
@@ -67,7 +62,11 @@ export class duiNsSearch extends TailwindElement(style) {
         <span slot="label"><slot name="label"></slot></span>
 
         <span slot="right">
-          <slot name="right"></slot>
+          <slot name="right">
+            <p class="flex gap-2">
+              <i class="mdi mdi-arrow-right-circle-outline text-blue-500 text-lg" @click=${this.doSearch}></i>
+            </p>
+          </slot>
         </span>
         <span slot="msg">
           ${when(

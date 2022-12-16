@@ -9,7 +9,11 @@ import style from './index.css'
 export class ViewHome extends TailwindElement(style) {
   render() {
     return html`<div class="home">
-      <div class="dui-container"><dui-ns-search></dui-ns-search></div>
+      <div class="dui-container">
+        <dui-ns-search placeholder="DOID of artist or artwork">
+          <span slot="label">DOID of artist or artwork</span>
+        </dui-ns-search>
+      </div>
     </div>`
   }
 }
