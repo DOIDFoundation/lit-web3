@@ -1,8 +1,0 @@
-.nav-header {
-  @apply float-left w-full;
-  height: var(--headerH);
-  background: var(--bg2);
-  &::part(connect-wallet-btn) {
-    @apply text-xs;
-  }
-}

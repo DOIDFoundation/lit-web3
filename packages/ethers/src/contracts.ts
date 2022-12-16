@@ -40,18 +40,10 @@ export const assignOverrides = async (overrides: any, ...args: any[]) => {
   Object.assign(overrides, { gasLimit })
 }
 
-const getContracts = (name: string, forceMainnet = false): string => {
-  const chainId = forceMainnet ? Network.mainnetChainId : Network.chainId
-  return ContractsList[name][chainId]
-}
-export default getContracts
-
 export const getAccount = async (): Promise<string> => {
   const provider = (await useBridgeAsync()).bridge.provider
   const res = (await provider.send('eth_requestAccounts')) ?? []
   return res[0] ?? ''
 }
-
-const ContractsList: ContractConf = <any>import.meta.env.VITE_APP_CONTRACTS
 
 export const getABI = async (name: string) => await import(`./abi/${name}.json`)

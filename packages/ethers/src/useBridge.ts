@@ -1,6 +1,6 @@
 import { State, property } from '@lit-app/state'
 import Network from './networks'
-import ContractsList from './constants/contracts'
+import Contracts from './constants/contracts'
 import { Bridge } from './bridge'
 import emitter from '@lit-web3/core/src/emitter'
 import { gasLimit, nowTs } from './utils'
@@ -207,7 +207,7 @@ export const assignOverrides = async (overrides: any, ...args: any[]) => {
 
 export const getContracts = (name: string, forceMainnet = false): string => {
   const chainId = forceMainnet ? Network.mainnetChainId : Network.chainId
-  return ContractsList[name][chainId]
+  return Contracts[name][chainId]
 }
 
 export const getContract = async (

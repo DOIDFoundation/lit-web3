@@ -4,14 +4,19 @@ import { routes } from '@/router'
 
 // Components
 import '@lit-web3/dui/src/network-warning'
-import '@/components/nav-header'
+import '@lit-web3/dui/src/nav/header'
+import '@lit-web3/dui/src/nav/nav'
 // Style
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
   render() {
     return html`<network-warning></network-warning>
-      <nav-header></nav-header>
+      <dui-header>
+        <dui-nav slot="left">
+          <dui-link href="/" nav>Lock Name</dui-link>
+        </dui-nav>
+      </dui-header>
       <main class="dui-app-main">
         <slot></slot>
       </main>`

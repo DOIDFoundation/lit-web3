@@ -7,6 +7,10 @@ export const AllContracts: Record<string, Record<string, string>> = {
   Locker: {
     '0x1': '0x8b2aff81fec4e7787aeeb257b5d99626651ee43f',
     '0xaa36a7': '0x208ec0ef36e94f582841296dca6f6b61d5823fbe'
+  },
+  Resolver: {
+    '0x1': '0x8b2aff81fec4e7787aeeb257b5d99626651ee43f',
+    '0xaa36a7': '0x208ec0ef36e94f582841296dca6f6b61d5823fbe'
   }
 }
 
