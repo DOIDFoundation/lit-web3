@@ -2,6 +2,7 @@ import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/T
 
 // Components
 import '@lit-web3/dui/src/ns-search'
+
 // Style
 import style from './index.css'
 
