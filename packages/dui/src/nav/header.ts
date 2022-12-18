@@ -8,7 +8,6 @@ import '../link'
 import style from './header.css'
 
 @customElement('dui-header')
-// @ts-ignore
 export class DuiHeader extends TailwindElement(style) {
   onSlotChange(e: any) {
     const $slot = e.target
@@ -28,7 +27,7 @@ export class DuiHeader extends TailwindElement(style) {
     return html`
       <header class="dui-header">
         <div class="dui-container grid grid-cols-3 justify-between items-center">
-          <div class="flex items-center">
+          <div class="flex items-center gap-3 lg_gap-4">
             <slot name="logo"><a class="doid-logo" href="https://doid.tech"></a><slot name="sublogo"></slot></slot>
             <slot name="left"></slot>
           </div>

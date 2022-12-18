@@ -18,7 +18,6 @@ import './state'
 import style from './dialog.css'
 
 @customElement('connect-wallet-dialog')
-// @ts-ignore
 export class ConnectWalletDialog extends TailwindElement(style) {
   bindStore: any = new StateController(this, bridgeStore)
   @property({ type: Boolean }) model: any

@@ -1,5 +1,6 @@
 /* Override @lit-web3/dui/src/c/variables.css */
 :root {
+  --header-height: 90px;
 }
 
 @media (max-width: 1024px) {

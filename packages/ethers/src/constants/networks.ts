@@ -34,7 +34,7 @@ export const AllNetworks = {
     icon: ''
   }
 }
-export const EtherNetworks = ['0x1', '0xaa36a7']
+export const EtherNetworks = ['0x1', '0xaa36a7', '0x5']
 
 export const unknownNetwork = {
   title: 'Unsupported Network',

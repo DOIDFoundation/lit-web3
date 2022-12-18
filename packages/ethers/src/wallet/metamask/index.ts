@@ -68,6 +68,8 @@ class MetaMask implements Wallet {
     this.unlisten()
     this.onboarding.stopOnboarding()
     if ([WalletState.CONNECTING, WalletState.INSTALLING].includes(this.state)) this.updateState()
+    this.updateAccounts([])
+    localStorage.removeItem('metamask.injected')
   }
   get installText() {
     return `${screen.isMobi ? 'Open in' : 'Install'} MetaMask`
@@ -92,6 +94,7 @@ class MetaMask implements Wallet {
     }
     this.disconnect()
     if (!ethereum) return
+    localStorage.setItem('metamask.injected', '1')
     this.updateProvider(await getChainId(ethereum))
     this.state = WalletState.CONNECTING
     try {

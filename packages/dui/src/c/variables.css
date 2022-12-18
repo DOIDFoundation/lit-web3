@@ -27,7 +27,7 @@
 
 @media (max-width: 1024px) {
   :root {
-    --logo_width: 60px;
-    --logo_height: 21px;
+    --doidLogoW: var(--doid-logo-w, 60px);
+    --doidLogoH: var(--doid-logo-h, 21px);
   }
 }

@@ -6,7 +6,6 @@ import '../link'
 import style from './footer.css'
 
 @customElement('dui-footer')
-// @ts-ignore
 export class DuiFooter extends TailwindElement(style) {
   render() {
     return html`

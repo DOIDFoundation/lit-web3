@@ -123,7 +123,7 @@ export class Bridge {
     if (this.wallet?.inited) return
     let { ethereum } = window
     if (auto || ethereum) ethereum = await detectEthereum()
-    if (ethereum?.isMetaMask) {
+    if (ethereum?.isMetaMask && localStorage.getItem('metamask.injected')) {
       const accounts = (await getAccounts(ethereum)) || []
       if (accounts[0]) await this.select(0)
     }
@@ -131,6 +131,9 @@ export class Bridge {
   }
   async connect() {
     return this.wallet?.connect()
+  }
+  async disconnect() {
+    return this.wallet?.disconnect()
   }
   async install() {
     return this.wallet?.install()

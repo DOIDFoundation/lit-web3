@@ -1,6 +1,6 @@
 :host {
 }
 
-::part(dui-button) {
+.connect-wallet-btn > ::part(dui-button) {
   background: #373737 !important;
 }
