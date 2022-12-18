@@ -6,6 +6,8 @@ import { routes } from '@/router'
 import '@lit-web3/dui/src/network-warning'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/nav/nav'
+import '@lit-web3/dui/src/nav/footer'
+import '@lit-web3/dui/src/connect-wallet/btn'
 // Style
 
 @customElement('app-main')
@@ -14,12 +16,14 @@ export class AppMain extends TailwindElement('') {
     return html`<network-warning></network-warning>
       <dui-header>
         <dui-nav slot="left">
-          <dui-link href="/" nav>Lock Name</dui-link>
+          <dui-link href="/" nav>NS</dui-link>
         </dui-nav>
+        <connect-wallet-btn slot="wallet" dropable></connect-wallet-btn>
       </dui-header>
       <main class="dui-app-main">
         <slot></slot>
-      </main>`
+      </main>
+      <dui-footer></dui-footer>`
   }
 }
 

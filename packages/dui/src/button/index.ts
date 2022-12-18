@@ -26,6 +26,13 @@ export class DuiButton extends TailwindElement(style) {
   get isAnchor() {
     return typeof this.href !== 'undefined'
   }
+  get rel() {
+    if (!this.isAnchor) return ''
+    return /^http/.test(this.href!) ? 'noopener' : ''
+  }
+  get target() {
+    return this.rel ? '_blank' : ''
+  }
 
   get blocked() {
     return this.disabled || this.pending
@@ -43,6 +50,8 @@ export class DuiButton extends TailwindElement(style) {
         () => html`<a
           part="dui-button"
           href=${ifDefined(this.href)}
+          target=${ifDefined(this.target)}
+          rel="${ifDefined(this.rel)}"
           class="dui-button ${this.class}"
           ?icon=${this.icon}
           ?disabled=${this.blocked}

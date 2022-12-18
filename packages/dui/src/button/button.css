@@ -57,10 +57,17 @@
   }
   &[icon] {
     border-radius: 50%;
-    height: 2.75rem;
+    @apply inline-flex justify-center items-center text-current bg-transparent w-8 h-8;
+    &:hover,
+    &:active {
+      @apply text-white;
+    }
   }
   &[sm] {
     @apply text-sm;
     padding: 0.35rem 0.625rem;
+    &[icon] {
+      @apply w-8 h-8;
+    }
   }
 }
