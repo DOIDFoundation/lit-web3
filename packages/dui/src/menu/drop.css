@@ -1,0 +1,5 @@
+.doid-drop {
+  @apply z-20 absolute top-full right-0 w-52 bg-white drop-shadow-lg rounded-lg;
+  min-height: 9rem;
+  border: 1px solid #ccc;
+}
