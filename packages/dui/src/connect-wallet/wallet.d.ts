@@ -8,3 +8,6 @@ declare type Wallet = {
   disconnect: () => any
   install: () => any
 }
+declare module '@metamask/jazzicon' {
+  export default function (diameter: number, seed: number): HTMLElement
+}
