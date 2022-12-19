@@ -70,7 +70,7 @@ export class ViewLock extends TailwindElement(style) {
     if (all) this.nameValid = false
   }
 
-  async onInputName(e: any) {
+  async onInputName(e: CustomEvent) {
     if (bridgeStore.notReady) {
       this.err = { ...this.err, name: `Please connect your wallet first` }
       return
@@ -104,7 +104,7 @@ export class ViewLock extends TailwindElement(style) {
     }
   }
 
-  async onInputCode(e: any) {
+  async onInputCode(e: CustomEvent) {
     this.code = e.detail
     this.err = { ...this.err, code: '', tx: '' }
     const len = this.code.length
@@ -184,62 +184,64 @@ export class ViewLock extends TailwindElement(style) {
           <span slot="h1">Mint your lock pass and lock your desired DOID name now for free</span>
         </doid-symbol>
         <!-- Inputs -->
-        <!-- Code -->
-        <div class="my-0 mx-auto text-center">
-          ${when(
-            this.passInfo,
-            () =>
-              html`<p class="px-3 mt-8 mb-4 w-full lg_w-96 text-left mx-auto">
-                Lock Pass ID: <b class="text-base">#${this.passInfo.id}</b>
-              </p>`,
-            () => html`<dui-input-text
-              @input=${this.onInputCode}
-              value=${this.code}
-              placeholder="Enter your invitation code"
-              required
+        <div class="lg_w-96 mx-auto">
+          <!-- Code -->
+          <div class="my-0 text-center">
+            ${when(
+              this.passInfo,
+              () =>
+                html`<p class="px-3 mt-8 mb-4 w-full lg_w-96 text-left mx-auto">
+                  Lock Pass ID: <b class="text-base">#${this.passInfo.id}</b>
+                </p>`,
+              () => html`<dui-input-text
+                @input=${this.onInputCode}
+                value=${this.code}
+                placeholder="Enter your invitation code"
+                required
+                ?disabled=${this.pending.tx}
+              >
+                <span slot="label">Invitation Code</span>
+                <span slot="tip">
+                  <dui-link href="/help">get invitation</dui-link>
+                </span>
+                <span slot="msg">
+                  ${when(this.err.code, () => html`<span class="text-red-500">${this.err.code}</span>`)}
+                </span>
+              </dui-input-text>`
+            )}
+          </div>
+          <!-- Name -->
+          <div class="my-0 mx-auto text-center">
+            <dui-input-text
+              ${ref(this.inputNameRef)}
+              @input=${this.onInputName}
+              value=${this.name}
+              placeholder="e.g. vitalik"
+              ?required=${this.passInfo}
               ?disabled=${this.pending.tx}
             >
-              <span slot="label">Invitation Code</span>
-              <span slot="tip">
-                <dui-link href="/help">get invitation</dui-link>
+              <span slot="label">Name you wish to lock</span>
+              <span slot="right">
+                <p class="flex gap-2">
+                  ${when(this.pending.name, () => html`<i class="mdi mdi-loading"></i>`)}
+                  ${when(this.nameValid, () => html`<i class="mdi mdi-check text-green-500"></i>`)}
+                  <b>.doid</b>
+                </p>
               </span>
               <span slot="msg">
-                ${when(this.err.code, () => html`<span class="text-red-500">${this.err.code}</span>`)}
+                ${when(
+                  this.err.name,
+                  () => html`<span class="text-red-500">${this.err.name}</span>`,
+                  () =>
+                    html`${when(
+                      this.tip.name,
+                      () => html`<span class="text-orange-500">${this.tip.name}</span>`,
+                      () => html``
+                    )}`
+                )}
               </span>
-            </dui-input-text>`
-          )}
-        </div>
-        <!-- Name -->
-        <div class="my-0 mx-auto text-center">
-          <dui-input-text
-            ${ref(this.inputNameRef)}
-            @input=${this.onInputName}
-            value=${this.name}
-            placeholder="e.g. vitalik"
-            ?required=${this.passInfo}
-            ?disabled=${this.pending.tx}
-          >
-            <span slot="label">Name you wish to lock</span>
-            <span slot="right">
-              <p class="flex gap-2">
-                ${when(this.pending.name, () => html`<i class="mdi mdi-loading"></i>`)}
-                ${when(this.nameValid, () => html`<i class="mdi mdi-check text-green-500"></i>`)}
-                <b>.doid</b>
-              </p>
-            </span>
-            <span slot="msg">
-              ${when(
-                this.err.name,
-                () => html`<span class="text-red-500">${this.err.name}</span>`,
-                () =>
-                  html`${when(
-                    this.tip.name,
-                    () => html`<span class="text-orange-500">${this.tip.name}</span>`,
-                    () => html``
-                  )}`
-              )}
-            </span>
-          </dui-input-text>
+            </dui-input-text>
+          </div>
         </div>
 
         ${when(

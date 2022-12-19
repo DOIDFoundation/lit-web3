@@ -1,5 +1,5 @@
 .dui-input-text {
-  @apply inline-flex w-full lg_w-96 relative py-5;
+  @apply flex w-full mx-auto relative py-5;
   & input[type] {
     font-family: var(--fontFamily);
     @apply relative inline-flex w-full p-6 px-3 rounded-md text-base bg-white;

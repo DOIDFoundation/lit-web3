@@ -1,6 +1,6 @@
 import { TailwindElement, html, when, customElement } from '../shared/TailwindElement'
 import { property, state } from 'lit/decorators.js'
-import { searchStore, StateController } from './state'
+import { searchStore, StateController } from './store'
 import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
 import emitter from '@lit-web3/core/src/emitter'
 // Components
@@ -20,7 +20,7 @@ export class duiNsSearch extends TailwindElement(style) {
   @state() err: Record<string, string> = { tx: '', keyword: '' }
   @state() pending: Record<string, boolean> = { tx: false, keyword: false }
 
-  async onInputCode(e: any) {
+  async onInputCode(e: CustomEvent) {
     this.keyword = e.detail
     this.err = { ...this.err, tx: '', keyword: '' }
     const len = this.keyword.length
@@ -52,11 +52,13 @@ export class duiNsSearch extends TailwindElement(style) {
   doSearch() {
     if (!bridgeStore.bridge.account) return emitter.emit('connect-wallet')
     if (!this.validate()) return
+    this.emit('search', this.keyword)
     // console.info(this.keyword)
   }
   render() {
-    return html`<div class="scan-search">
+    return html`
       <dui-input-text
+        class="scan-search"
         @input=${this.onInputCode}
         @submit=${this.doSearch}
         value=${this.keyword}
@@ -82,6 +84,6 @@ export class duiNsSearch extends TailwindElement(style) {
           )}
         </span>
       </dui-input-text>
-    </div>`
+    `
   }
 }

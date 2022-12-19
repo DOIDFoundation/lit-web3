@@ -1,5 +1,2 @@
 :host {
-  &::part(dui-input-text) {
-    @apply !w-full;
-  }
 }

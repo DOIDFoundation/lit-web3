@@ -68,18 +68,20 @@ export class ConnectWalletBtn extends TailwindElement(style) {
       <!-- Menu -->
       ${when(
         this.menu,
-        () => html`<dui-drop show=${this.menu} @change=${(e: any) => (this.menu = e.detail)}>
-          <div class="flex w-full justify-between items-center py-2 pl-4 pr-2">
-            <div class="flex items-center space-x-1">
+        () => html`<dui-drop show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
+          <div class="flex w-full justify-between items-center py-3 pl-4 pr-2">
+            <div class="flex items-center space-x-2">
               <dui-avatar></dui-avatar>
               <span>${this.addr}</span>
-              <dui-copy .value=${this.fullAddress} sm icon>
-                <span slot="copied">
-                  <i class="mdi mdi-check-circle-outline text-green-500"></i>
-                </span>
-                <span slot="copy"><i class="mdi mdi-content-copy"></i></span>
-              </dui-copy>
-              <dui-button sm icon href=${this.scan}><i class="mdi mdi-open-in-new"></i></dui-button>
+              <span>
+                <dui-copy .value=${this.fullAddress} sm icon>
+                  <span slot="copied" class="text-green-500">
+                    <i class="mdi mdi-check-circle-outline "></i>
+                  </span>
+                  <span slot="copy"><i class="mdi mdi-content-copy"></i></span>
+                </dui-copy>
+                <dui-button sm icon href=${this.scan}><i class="mdi mdi-open-in-new"></i></dui-button
+              ></span>
             </div>
             <div>
               <dui-button sm icon @click=${() => bridgeStore.bridge.disconnect()}

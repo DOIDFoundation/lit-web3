@@ -25,14 +25,15 @@
     padding: 3px 0;
     color: inherit;
 
-    &:hover,
-    &[active] {
+    &:hover {
       color: var(--a_color);
     }
     &:hover {
       @apply no-underline;
     }
-    &[active] {
+    &[active],
+    &[exact-active] {
+      color: var(--a_color);
       @apply border-b-current;
     }
   }

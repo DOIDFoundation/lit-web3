@@ -2,6 +2,7 @@ import emitter from '@lit-web3/core/src/emitter'
 import { TailwindElement, html, customElement, classMap, property, state, ifDefined } from '../shared/TailwindElement'
 
 const getPathName = (path?: string) => new URL(path ?? location.href).pathname
+const getPath = (pathname?: string) => (pathname ?? getPathName()).replace(/^(\/\w+)\/?.*?$/, '$1')
 
 import style from './link.css'
 @customElement('dui-link')
@@ -9,44 +10,54 @@ export class DuiLink extends TailwindElement(style) {
   @property({ type: String }) target = ''
   @property({ type: String }) class = ''
   @property({ type: String }) href = ''
+  @property({ type: String }) alias = ''
   @property({ type: Boolean }) disabled = false
   @property({ type: Boolean }) nav = false // as navigator
   @property({ type: Boolean }) text = false // as text with underline
 
   @state() pathname = getPathName()
 
-  constructor() {
-    super()
-    this.addEventListener('click', (e: Event) => {
-      if (this.blocked) e.stopImmediatePropagation()
-    })
-  }
   get blocked() {
     return this.disabled
   }
-
-  get active() {
-    return this.pathname.replace(/\/$/, '') === this.href.replace(/\/$/, '')
+  get path() {
+    return getPath(this.pathname)
   }
-  get isExact() {
-    return this.pathname === this.href
-    // add class
+  get outsite() {
+    return !/^\//.test(this.href)
+  }
+  get exact() {
+    if (this.outsite) return false
+    return this.pathname === getPathName(`${location.origin}${this.href}`)
+  }
+  get active() {
+    if (this.outsite) return false
+    return getPath(this.href) === this.path || getPath(this.alias) === this.path
   }
   get rel() {
-    return this.target ? 'noopener' : ''
+    return this.outsite ? 'noopener' : ''
+  }
+  get _target() {
+    return this.outsite ? '_blank' : ''
+  }
+  block = (e: Event) => {
+    if (this.blocked) e.stopImmediatePropagation()
   }
 
-  updatePathName() {
+  updatePathName = () => {
     this.pathname = getPathName()
   }
-  connectedCallback(): void {
+
+  connectedCallback() {
+    emitter.on('router-change', this.updatePathName)
+    this.addEventListener('click', this.block)
     super.connectedCallback()
-    emitter.on('router-change', () => this.updatePathName())
   }
-  disconnectedCallback(): void {
+  disconnectedCallback() {
+    emitter.off('router-change', this.updatePathName)
+    this.removeEventListener('click', this.block)
     super.disconnectedCallback()
   }
-  firstUpdated() {}
 
   render() {
     return html`<a
@@ -54,7 +65,8 @@ export class DuiLink extends TailwindElement(style) {
       ?nav=${this.nav}
       ?text=${this.text}
       ?active=${this.active}
-      target=${this.target}
+      ?exact-active=${this.exact}
+      target="${ifDefined(this._target)}"
       rel="${ifDefined(this.rel)}"
       href="${this.href}"
       class="dui-link ${classMap(this.$c([{ 'router-active': this.active }, this.class]))}"

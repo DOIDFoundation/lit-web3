@@ -60,7 +60,7 @@
     @apply inline-flex justify-center items-center text-current bg-transparent w-8 h-8;
     &:hover,
     &:active {
-      @apply text-white;
+      @apply !text-white;
     }
   }
   &[sm] {
