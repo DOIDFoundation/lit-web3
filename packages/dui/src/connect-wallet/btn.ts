@@ -1,6 +1,6 @@
 import { customElement, TailwindElement, html, state, when, property, classMap } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-// import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@lit-web3/core/src/emitter'
 // Components
 import './dialog'
 import '../avatar'
@@ -26,16 +26,24 @@ export class ConnectWalletBtn extends TailwindElement(style) {
     return `${bridgeStore.bridge.network.current.scan}/address/${bridgeStore.bridge.account}`
   }
 
-  show() {
+  show = () => {
     if (this.dropable && this.addr) {
       this.menu = !this.menu
     } else {
-      console.log('jji')
       this.dialog = true
     }
   }
   close() {
     this.dialog = false
+  }
+
+  connectedCallback(): void {
+    emitter.on('connect-wallet', this.show)
+    super.connectedCallback()
+  }
+  disconnectedCallback(): void {
+    emitter.off('connect-wallet', this.show)
+    super.disconnectedCallback()
   }
 
   override render() {
