@@ -110,4 +110,4 @@ class MetaMask implements Wallet {
   }
 }
 
-export { MetaMask as default }
+export default MetaMask

@@ -15,7 +15,7 @@ export class searchInput extends TailwindElement(style) {
   @state() err: Record<string, string> = { tx: '', keyword: '' }
   @state() pending: Record<string, boolean> = { tx: false, keyword: false }
 
-  async onInputCode(e: any) {
+  async onInputCode(e: CustomEvent) {
     this.keyword = e.detail
     this.err = { ...this.err, tx: '', keyword: '' }
     const len = this.keyword.length

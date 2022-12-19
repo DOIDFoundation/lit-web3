@@ -6,6 +6,7 @@ import { getNetwork } from './networks'
 import detectEthereum, { getAccounts } from './detectEthereum'
 import { WalletState, forceRequestUpdate } from './wallet'
 import { EtherNetworks } from './constants/networks'
+import MetaMask from './wallet/metamask'
 
 type WalletApp = {
   name: string
@@ -25,7 +26,7 @@ export const Wallets: WalletList = [
     icon,
     app: undefined,
     import: async () => {
-      const MetaMask = (await import(`./wallet/metamask`)).default
+      // const MetaMask = (await import(`./wallet/metamask`)).default
       return new MetaMask(Provider)
     }
   }
@@ -108,7 +109,7 @@ export class Bridge {
     return this.Provider.network
   }
   get account(): string {
-    return this.wallet?.account ?? ''
+    return this.wallet?.account ?? this.connectedAccounts[0] ?? ''
   }
   get shortAccount() {
     return shortAddress(this.account)
@@ -119,14 +120,19 @@ export class Bridge {
   get isConnected() {
     return this.state === WalletState.CONNECTED
   }
+  connecting = false
+  connectedAccounts = []
   async tryConnect(auto = false) {
+    if (this.connecting) return
+    this.connecting = true
     if (this.wallet?.inited) return
     let { ethereum } = window
     if (auto || ethereum) ethereum = await detectEthereum()
     if (ethereum?.isMetaMask && localStorage.getItem('metamask.injected')) {
-      const accounts = (await getAccounts(ethereum)) || []
-      if (accounts[0]) await this.select(0)
+      this.connectedAccounts = (await getAccounts(ethereum)) || []
+      if (this.connectedAccounts[0]) await this.select(0)
     }
+    this.connecting = false
     this.alreadyTried = true
   }
   async connect() {
