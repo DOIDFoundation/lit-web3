@@ -55,7 +55,10 @@ export class SharePass extends TailwindElement(style) {
               >
 ${this.shareText}</textarea
               >
-              <dui-copy value="${this.shareText}"></dui-copy>
+              <dui-copy value="${this.shareText}" sm class="outlined">
+                <span slot="copied">Copy<i class="ml-1 mdi mdi-check text-green-600"></i></span
+                ><span slot="copy">Copy<i class="ml-1 mdi mdi-content-copy"></i></span
+              ></dui-copy>
             `
           : +this.limit > 0
           ? html`<dui-button sm @click="${this.genInviteCode}">Share</dui-button>`

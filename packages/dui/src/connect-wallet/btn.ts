@@ -5,6 +5,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import './dialog'
 import '../avatar'
 import '../menu/drop'
+import '../copy'
 
 import style from './btn.css'
 @customElement('connect-wallet-btn')
@@ -15,6 +16,9 @@ export class ConnectWalletBtn extends TailwindElement(style) {
   @state() dialog = false
   @state() menu = false
 
+  get fullAddress() {
+    return bridgeStore.bridge.account
+  }
   get addr() {
     return bridgeStore.bridge.shortAccount
   }
@@ -61,6 +65,12 @@ export class ConnectWalletBtn extends TailwindElement(style) {
             <div class="flex items-center space-x-1">
               <dui-avatar></dui-avatar>
               <span>${this.addr}</span>
+              <dui-copy .value=${this.fullAddress} sm icon>
+                <span slot="copied">
+                  <i class="mdi mdi-check-circle-outline text-green-500"></i>
+                </span>
+                <span slot="copy"><i class="mdi mdi-content-copy"></i></span>
+              </dui-copy>
               <dui-button sm icon href=${this.scan}><i class="mdi mdi-open-in-new"></i></dui-button>
             </div>
             <div>
