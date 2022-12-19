@@ -1,4 +1,4 @@
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { TailwindElement, html } from '../shared/TailwindElement'
 
 import style from './text.css'
@@ -16,7 +16,9 @@ export class DuiInputText extends TailwindElement(style) {
   @property({ type: Boolean }) upper = false
   @property({ type: Boolean }) err = false
   @property({ type: Number }) debounce = 300
-  @property({ type: Boolean }) rightSlotted = false
+
+  @state() rightSlotted = false
+  @state() leftSlotted = false
 
   onSlotChange(e: any) {
     const $slot = e.target
@@ -33,6 +35,9 @@ export class DuiInputText extends TailwindElement(style) {
   onSlotRight(e: any) {
     this.rightSlotted = !!e.target
   }
+  onSlotLeft(e: any) {
+    this.leftSlotted = !!e.target
+  }
 
   firstUpdated() {
     if (this.autoforce) {
@@ -46,13 +51,16 @@ export class DuiInputText extends TailwindElement(style) {
     e.target.select()
   }
 
-  onInput(e: any) {
+  onInput(e: Event) {
     e.stopImmediatePropagation()
-    let val = e.target.value
+    let val = (e.target as HTMLInputElement).value
     if (this.lower) val = val.toLowerCase()
     if (this.upper) val = val.toUpperCase()
     this.value = this.$('input').value = val
     this.emit('input', val)
+  }
+  onKeyup(e: KeyboardEvent) {
+    if (e.key === 'Enter') this.emit('submit', this.value)
   }
 
   render() {
@@ -60,9 +68,11 @@ export class DuiInputText extends TailwindElement(style) {
       class="dui-input-text ${this.class}"
       ?required=${this.required}
       ?rightSlotted=${this.rightSlotted}
+      ?leftSlotted=${this.leftSlotted}
       part="dui-input-text"
     >
       <label><slot name="label" @slotchange=${this.onSlotChange}></slot></label>
+      <span class="dui-input-left"><slot name="left" @slotchange=${this.onSlotLeft}></slot></span>
       <input
         .type="${this.type}"
         .disabled="${this.disabled}"
@@ -71,6 +81,7 @@ export class DuiInputText extends TailwindElement(style) {
         title="${this.title}"
         @focus="${this.onFocus}"
         @input="${this.onInput}"
+        @keyup="${this.onKeyup}"
       />
       <div class="dui-input-right"><slot name="right" @slotchange=${this.onSlotRight}></slot></div>
       <div class="dui-input-msg"><slot name="msg" @slotchange=${this.onSlotChange}></slot></div>
