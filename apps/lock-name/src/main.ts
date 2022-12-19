@@ -15,8 +15,11 @@ export class AppMain extends TailwindElement('') {
   render() {
     return html`<network-warning></network-warning>
       <dui-header>
-        <dui-nav slot="left">
-          <dui-link href="/" nav>NS</dui-link>
+        <dui-nav slot="center">
+          <dui-link href="/" nav alias="/search">Search</dui-link>
+          <dui-link href="/name" nav>Name</dui-link>
+          <dui-link href="/address" nav>Address</dui-link>
+          <dui-link href="https://lockpass.doid.tech/passes" nav>My Lock Pass</dui-link>
         </dui-nav>
         <connect-wallet-btn slot="wallet" dropable></connect-wallet-btn>
       </dui-header>
