@@ -1,7 +1,8 @@
 import { TailwindElement, html, when, customElement } from '../shared/TailwindElement'
 import { property, state } from 'lit/decorators.js'
 import { searchStore, StateController } from './state'
-
+import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
+import emitter from '@lit-web3/core/src/emitter'
 // Components
 import '../input/text'
 import '../button'
@@ -12,6 +13,7 @@ import style from './index.css'
 @customElement('dui-ns-search')
 export class duiNsSearch extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = 'Placeholder'
   @property() text = ''
   @state() keyword = ''
@@ -28,8 +30,8 @@ export class duiNsSearch extends TailwindElement(style) {
   }
 
   connectedCallback() {
-    super.connectedCallback()
     if (this.text) this.keyword = this.text
+    super.connectedCallback()
   }
 
   validate() {
@@ -48,6 +50,7 @@ export class duiNsSearch extends TailwindElement(style) {
     return false
   }
   doSearch() {
+    if (!bridgeStore.bridge.account) return emitter.emit('connect-wallet')
     if (!this.validate()) return
     // console.info(this.keyword)
   }
