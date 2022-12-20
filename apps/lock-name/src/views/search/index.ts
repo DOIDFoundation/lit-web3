@@ -12,6 +12,7 @@ import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
+import '@/components/favorites/btn'
 
 import style from './search.css'
 @customElement('view-search')
@@ -58,12 +59,12 @@ export class ViewSearch extends TailwindElement(style) {
           (name) =>
             html`<div
               @click=${() => goto(`/name/${name}`)}
-              class="flex justify-between gap-4 border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
+              class="flex justify-between items-center gap-4 border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
             >
               <b>${name}</b>
-              <div class="flex gap-4">
+              <div class="flex gap-4 items-center">
                 <span class="text-green-500">Available</span>
-                <i class="mdi mdi-heart-outline"></i>
+                <doid-favorites-btn .name=${name}></doid-favorites-btn>
               </div>
             </div>`
         )}
