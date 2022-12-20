@@ -5,8 +5,7 @@ import '../block-number'
 import '../network-warning'
 import '../link'
 
-import style from './header.css'
-
+import style from './header.css?inline'
 @customElement('dui-header')
 export class DuiHeader extends TailwindElement(style) {
   onSlotChange(e: any) {

@@ -1,6 +1,6 @@
 import { LitElement, unsafeCSS, CSSResult } from 'lit'
 
-import TailwindBase from './tailwind.global.css'
+import TailwindBase from './tailwind.global.css?inline'
 
 export declare class TAILWINDELEMENT extends LitElement {
   static styles: any

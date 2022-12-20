@@ -10,7 +10,7 @@ import {
 import '@lit-web3/dui/src/button'
 import { favor, getFavorites, exists } from './store'
 
-import style from './btn.css'
+import style from './btn.css?inline'
 
 @customElement('doid-favorites-btn')
 export class DoidFavoritesBtn extends TailwindElement(style) {

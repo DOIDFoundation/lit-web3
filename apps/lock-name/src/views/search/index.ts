@@ -15,7 +15,7 @@ import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 import '@/components/favorites/btn'
 
-import style from './search.css'
+import style from './search.css?inline'
 @customElement('view-search')
 export class ViewSearch extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)

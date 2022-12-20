@@ -8,8 +8,7 @@ import '../input/text'
 import '../button'
 
 // Style
-import style from './index.css'
-
+import style from './index.css?inline'
 @customElement('dui-ns-search')
 export class duiNsSearch extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)

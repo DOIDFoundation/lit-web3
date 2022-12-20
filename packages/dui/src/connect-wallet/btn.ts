@@ -7,7 +7,7 @@ import '../avatar'
 import '../menu/drop'
 import '../copy'
 
-import style from './btn.css'
+import style from './btn.css?inline'
 @customElement('connect-wallet-btn')
 export class ConnectWalletBtn extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

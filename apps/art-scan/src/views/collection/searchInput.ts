@@ -6,7 +6,7 @@ import emitter from '@lit-web3/core/src/emitter'
 import '@lit-web3/dui/src/input/text'
 
 // Style
-import style from './search.css'
+import style from './search.css?inline'
 
 @customElement('search-input')
 export class searchInput extends TailwindElement(style) {

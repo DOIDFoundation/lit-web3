@@ -7,7 +7,7 @@ import { getContracts } from '@lit-web3/ethers/src/useBridge'
 // Components
 import '@lit-web3/dui/src/link'
 
-import style from './item.css'
+import style from './item.css?inline'
 @customElement('pass-item')
 export class PassItem extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

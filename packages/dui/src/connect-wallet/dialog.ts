@@ -15,7 +15,7 @@ import emitter from '@lit-web3/core/src/emitter'
 import '../dialog'
 import './state'
 
-import style from './dialog.css'
+import style from './dialog.css?inline'
 
 @customElement('connect-wallet-dialog')
 export class ConnectWalletDialog extends TailwindElement(style) {

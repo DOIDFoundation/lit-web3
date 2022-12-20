@@ -2,7 +2,7 @@ import { customElement, TailwindElement, html, state, when, property } from '../
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import jazzicon from '@metamask/jazzicon'
 
-import style from './avatar.css'
+import style from './avatar.css?inline'
 @customElement('dui-avatar')
 export class DuiAvatar extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

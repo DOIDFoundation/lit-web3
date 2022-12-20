@@ -11,7 +11,7 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '@/components/favorites/list'
 
-import style from './favorites.css'
+import style from './favorites.css?inline'
 @customElement('view-favorites')
 export class ViewFavorites extends TailwindElement(style) {
   render() {

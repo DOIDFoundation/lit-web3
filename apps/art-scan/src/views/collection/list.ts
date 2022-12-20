@@ -9,7 +9,7 @@ import './item'
 import './searchInput'
 
 // Style
-import style from './style.css'
+import style from './style.css?inline'
 
 @customElement('view-collections')
 export class ViewCollections extends TailwindElement(style) {

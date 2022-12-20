@@ -4,7 +4,7 @@ import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/T
 import '@lit-web3/dui/src/ns-search'
 
 // Style
-import style from './index.css'
+import style from './index.css?inline'
 
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {

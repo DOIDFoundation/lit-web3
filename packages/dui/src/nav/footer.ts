@@ -3,8 +3,7 @@ import { TailwindElement, html, customElement } from '../shared/TailwindElement'
 import '../block-number'
 import '../link'
 
-import style from './footer.css'
-
+import style from './footer.css?inline'
 @customElement('dui-footer')
 export class DuiFooter extends TailwindElement(style) {
   render() {

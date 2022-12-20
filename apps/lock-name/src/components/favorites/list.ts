@@ -14,7 +14,7 @@ import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 import '@/components/favorites/btn'
 
-import style from './list.css'
+import style from './list.css?inline'
 @customElement('doid-favorites')
 export class ViewFavorites extends TailwindElement(style) {
   @state() favorites: any[] = getFavorites()

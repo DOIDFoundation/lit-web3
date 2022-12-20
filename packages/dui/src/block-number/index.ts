@@ -3,7 +3,7 @@ import { customElement, TailwindElement, html, classMap, state } from '../shared
 import { bridgeStore, StateController, getBlockNumber } from '@lit-web3/ethers/src/useBridge'
 import { sleep } from '@lit-web3/ethers/src/utils'
 
-import style from './blockNumber.css'
+import style from './blockNumber.css?inline'
 
 @customElement('block-number')
 export class BlockNumber extends TailwindElement(style) {

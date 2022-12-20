@@ -7,7 +7,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
 import '@lit-web3/dui/src/copy'
 
-import style from './share.css'
+import style from './share.css?inline'
 @customElement('pass-share')
 export class SharePass extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

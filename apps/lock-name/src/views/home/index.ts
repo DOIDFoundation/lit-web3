@@ -4,7 +4,7 @@ import emitter from '@lit-web3/core/src/emitter'
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 
-import style from './home.css'
+import style from './home.css?inline'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
   goto = (e: CustomEvent) => {
@@ -15,7 +15,7 @@ export class ViewHome extends TailwindElement(style) {
       <div class="dui-container">
         <doid-symbol>
           <span slot="h1">Your Decentralized OpenID</span>
-          <p slot="msg">Safer, faster and easier entrance to chains, contacts and dApps</p>
+          <p slot="msg" class="my-2">Safer, faster and easier entrance to chains, contacts and dApps</p>
         </doid-symbol>
         <div class="max-w-xl mx-auto">
           <dui-ns-search @search=${this.goto} placeholder="Search name or addresses">

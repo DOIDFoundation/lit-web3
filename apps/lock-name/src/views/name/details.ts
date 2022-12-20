@@ -2,7 +2,7 @@ import { TailwindElement, html, customElement, property, state, when } from '@li
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 
-import style from './details.css'
+import style from './details.css?inline'
 @customElement('view-name-details')
 export class ViewNameDetails extends TailwindElement(style) {
   @property() name = ''

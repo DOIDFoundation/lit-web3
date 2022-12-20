@@ -5,9 +5,7 @@
     "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {
-    "tr46": "^3.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "peerDependencies": {
     "lit": "^2",

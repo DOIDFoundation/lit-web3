@@ -1,7 +1,6 @@
 import { TailwindElement, html, customElement } from '../shared/TailwindElement'
 
-import style from './nav.css'
-
+import style from './nav.css?inline'
 @customElement('dui-nav')
 export class DuiNav extends TailwindElement(style) {
   render() {

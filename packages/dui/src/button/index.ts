@@ -3,7 +3,7 @@ import { TailwindElement, html } from '../shared/TailwindElement'
 import { when } from 'lit/directives/when.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
 
-import style from './button.css'
+import style from './button.css?inline'
 
 @customElement('dui-button')
 export class DuiButton extends TailwindElement(style) {

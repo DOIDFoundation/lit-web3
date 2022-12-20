@@ -2,8 +2,8 @@ import { customElement, TailwindElement, html, when, state, property } from '@li
 // Components
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/dialog'
-import style from './index.css'
 
+import style from './index.css?inline'
 @customElement('dui-components')
 export class DuiComponents extends TailwindElement(style) {
   @property({ type: String }) class = ''
