@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.1.0",
-    "@types/tr46": "^3.0.0",
     "@vitejs/plugin-legacy": "^2.3.1",
     "autoprefixer": "^10.4.13",
     "dotenv": "^16.0.3",
