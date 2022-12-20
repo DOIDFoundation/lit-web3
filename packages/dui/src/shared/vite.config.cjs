@@ -41,6 +41,7 @@ const viteConfig = (options = {}) => {
       resolve: {
         alias: {
           '@': resolve(process.cwd(), './src'),
+          // bugfix: crypto-addr-codec@0.1.7
           'crypto-addr-codec': 'crypto-addr-codec/dist/index.js'
         }
       },
