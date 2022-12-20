@@ -1,6 +1,6 @@
 const { resolve } = require('path')
 const glob = require('glob')
-const { defineConfig, splitVendorChunkPlugin } = require('vite')
+const { defineConfig, splitVendorChunkPlugin, normalizePath } = require('vite')
 const { VitePWA } = require('vite-plugin-pwa')
 const { createHtmlPlugin } = require('vite-plugin-html')
 const { viteStaticCopy } = require('vite-plugin-static-copy')
@@ -9,6 +9,7 @@ const { config } = require('dotenv')
 // Polyfills
 const { default: legacy } = require('@vitejs/plugin-legacy')
 const { default: mkcert } = require('vite-plugin-mkcert')
+
 // Env
 config()
 
@@ -18,7 +19,8 @@ const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font
 
 const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
-  'import.meta.env.VITE_APP_MDI': JSON.stringify(mdi)
+  'import.meta.env.VITE_APP_MDI': JSON.stringify(mdi),
+  globl: 'globalThis'
 }
 
 const viteConfig = (options = {}) => {
@@ -38,11 +40,11 @@ const viteConfig = (options = {}) => {
       },
       resolve: {
         alias: {
-          '@': resolve(process.cwd(), './src')
+          '@': resolve(process.cwd(), './src'),
+          'crypto-addr-codec': 'crypto-addr-codec/dist/index.js'
         }
       },
       build: {
-        assetsDir: '_assets',
         rollupOptions: {
           // external: /^lit/
           // input: {
@@ -96,21 +98,22 @@ const viteConfig = (options = {}) => {
           ? []
           : [
               viteStaticCopy({
-                // targets: [
-                //   {
-                //     src: 'dist/index.html',
-                //     dest: './',
-                //     rename: '404.html'
-                //   },
-                //   {
-                //     src: 'dist/index.html',
-                //     dest: './passes/'
-                //   }
-                // ]
-                targets: glob
-                  .sync('./src/views/*/**/')
-                  .map((r) => r.replace(/^\.\/src\/views/, '.'))
-                  .map((dest) => ({ src: 'dist/index.html', dest }))
+                targets: [
+                  {
+                    src: 'dist/index.html',
+                    dest: './',
+                    rename: '404.html'
+                  },
+                  // Maybe .nojekyll already disalbed cache
+                  // ...glob
+                  //   .sync('./src/views/*/**/')
+                  //   .map((r) => r.replace(/^\.\/src\/views/, '.'))
+                  //   .map((dest) => ({ src: 'dist/index.html', dest })),
+                  {
+                    src: normalizePath(resolve(__dirname, './.nojekyll')),
+                    dest: './'
+                  }
+                ]
               })
             ]),
         VitePWA({
