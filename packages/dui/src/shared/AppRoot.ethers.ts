@@ -38,7 +38,7 @@ export default function ({ routes = <RouteConfig[]>[] } = {}) {
   // App Root
   @customElement('app-root')
   class AppRoot extends TailwindElement('') {
-    bindStore: any = new StateController(this, bridgeStore)
+    bindBridge: any = new StateController(this, bridgeStore)
     private _router: Router = new Router(this, routes, {
       fallback: {
         render: fallbackRender,

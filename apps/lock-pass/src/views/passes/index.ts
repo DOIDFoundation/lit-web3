@@ -14,7 +14,7 @@ import './item'
 import style from './list.css'
 @customElement('view-passes')
 export class ViewPasses extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property() name = ''
   @state() passes: any[] = []
   @state() pending = false

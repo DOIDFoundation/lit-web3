@@ -8,7 +8,7 @@ import style from './tx-view.css'
 
 @customElement('tx-view')
 export class TxView extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) tx: any
 
   get bridge() {

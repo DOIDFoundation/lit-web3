@@ -10,7 +10,7 @@ import '@lit-web3/dui/src/link'
 import style from './item.css'
 @customElement('pass-item')
 export class PassItem extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) item: any = {}
   @state() tx: any = null
   @state() success = false

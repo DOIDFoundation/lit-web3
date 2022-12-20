@@ -8,7 +8,7 @@ import style from './tx-state.css'
 
 @customElement('tx-state')
 export class TxState extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) tx: any
   @property({ type: Boolean }) txType = false
   @property({ type: Boolean }) onlyAwaitHash = false

@@ -13,7 +13,7 @@ import style from './style.css'
 
 @customElement('view-collections')
 export class ViewCollections extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @state() keyword = ''
   @state() pending = false
   @state() ts = 0

@@ -10,7 +10,7 @@ import '@lit-web3/dui/src/copy'
 import style from './share.css'
 @customElement('pass-share')
 export class SharePass extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property() name = ''
   @state() limit = '0'
   @state() inviteCode = ''

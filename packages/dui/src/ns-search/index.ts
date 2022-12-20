@@ -15,7 +15,7 @@ export class duiNsSearch extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)
   bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = 'Placeholder'
-  @property() text = ''
+  @property() text: string | undefined
   @state() keyword = ''
   @state() err: Record<string, string> = { tx: '', keyword: '' }
   @state() pending: Record<string, boolean> = { tx: false, keyword: false }
@@ -30,7 +30,7 @@ export class duiNsSearch extends TailwindElement(style) {
   }
 
   connectedCallback() {
-    if (this.text) this.keyword = this.text
+    if (typeof this.text !== 'undefined') this.keyword = this.text
     super.connectedCallback()
   }
 

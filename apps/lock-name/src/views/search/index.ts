@@ -7,7 +7,7 @@ import {
   when,
   repeat
 } from '@lit-web3/dui/src/shared/TailwindElement'
-import emitter from '@lit-web3/core/src/emitter'
+import { goto } from '@lit-web3/dui/src/shared/router'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
 // Components
 import '@lit-web3/dui/src/ns-search'
@@ -19,20 +19,21 @@ export class ViewSearch extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)
   @property() keyword = ''
   @state() names: unknown[] = []
+  @state() ts = 0
 
+  get len() {
+    return this.names.length
+  }
   get empty() {
-    return !this.names.length
+    return !!this.ts && !this.len
   }
 
   search = async (e?: CustomEvent) => {
     const keyword = e?.detail ?? this.keyword
     const res = await searchStore.search(keyword)
     this.names = [keyword]
-    console.log(res)
+    this.ts++
     // this.goto(`/search/${keyword}`)
-  }
-  goto(path: string) {
-    emitter.emit('router-goto', path)
   }
 
   connectedCallback() {
@@ -47,25 +48,24 @@ export class ViewSearch extends TailwindElement(style) {
           <span slot="label"></span>
           <span slot="msgd"></span>
         </dui-ns-search>
-        ${when(
-          searchStore.pending,
-          () => html`<i class="mdi mdi-loading"></i> Searching...`,
-          () =>
-            html`${when(
-              this.empty,
-              () => html`No Data`,
-              () =>
-                html`${repeat(
-                  this.names,
-                  (name) =>
-                    html`<div
-                      @click=${() => this.goto(`/name/${name}`)}
-                      class="border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
-                    >
-                      ${name}
-                    </div>`
-                )}`
-            )}`
+        <!-- Pending -->
+        ${when(searchStore.pending, () => html`<i class="mdi mdi-loading"></i> Searching...`)}
+        <!-- Empty -->
+        ${when(this.empty, () => html`No Data`)}
+        <!-- List -->
+        ${repeat(
+          this.names,
+          (name) =>
+            html`<div
+              @click=${() => goto(`/name/${name}`)}
+              class="flex justify-between gap-4 border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
+            >
+              <b>${name}</b>
+              <div class="flex gap-4">
+                <span class="text-green-500">Available</span>
+                <i class="mdi mdi-heart-outline"></i>
+              </div>
+            </div>`
         )}
       </div>
     </div>`

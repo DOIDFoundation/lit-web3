@@ -18,7 +18,7 @@ import '@lit-web3/dui/src/doid-symbol'
 import style from './lock.css'
 @customElement('view-lock')
 export class ViewLock extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @state() code = ''
   @state() name = ''
   @state() passInfo: any = null

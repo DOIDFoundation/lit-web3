@@ -5,7 +5,7 @@ import jazzicon from '@metamask/jazzicon'
 import style from './avatar.css'
 @customElement('dui-avatar')
 export class DuiAvatar extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Number }) size = 16
 
   @state() uri = ''

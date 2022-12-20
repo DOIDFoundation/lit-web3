@@ -10,7 +10,7 @@ import '../copy'
 import style from './btn.css'
 @customElement('connect-wallet-btn')
 export class ConnectWalletBtn extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean }) dropable = false
 
   @state() dialog = false

@@ -7,7 +7,7 @@ import style from './state.css'
 
 @customElement('connect-wallet-state')
 export class ConnectWalletState extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property() opts: any = {}
 
   get bridge() {

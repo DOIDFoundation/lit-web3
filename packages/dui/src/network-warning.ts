@@ -6,7 +6,7 @@ import './link'
 
 @customElement('network-warning')
 export class NetworkWarning extends TailwindElement('') {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @state() pending = false
 
   get bridge() {

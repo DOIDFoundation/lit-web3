@@ -4,7 +4,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import style from './drop.css'
 @customElement('dui-drop')
 export class DuiDrop extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean, reflect: true }) show = false
 
   hide() {

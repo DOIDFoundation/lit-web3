@@ -7,7 +7,7 @@ import style from './blockNumber.css'
 
 @customElement('block-number')
 export class BlockNumber extends TailwindElement(style) {
-  bindStore: any = new StateController(this, bridgeStore)
+  bindBridge: any = new StateController(this, bridgeStore)
   @state() pending = false
 
   get provider() {

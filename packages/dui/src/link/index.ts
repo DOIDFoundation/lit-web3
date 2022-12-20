@@ -11,6 +11,7 @@ export class DuiLink extends TailwindElement(style) {
   @property({ type: String }) class = ''
   @property({ type: String }) href = ''
   @property({ type: String }) alias = ''
+  @property({ type: Boolean }) exact = false
   @property({ type: Boolean }) disabled = false
   @property({ type: Boolean }) nav = false // as navigator
   @property({ type: Boolean }) text = false // as text with underline
@@ -26,9 +27,9 @@ export class DuiLink extends TailwindElement(style) {
   get outsite() {
     return !/^\//.test(this.href)
   }
-  get exact() {
+  get exacted() {
     if (this.outsite) return false
-    return this.pathname === getPathName(`${location.origin}${this.href}`)
+    return this.pathname === getPathName(`${location.origin}${this.href}`) || this.pathname === this.alias
   }
   get active() {
     if (this.outsite) return false
@@ -64,8 +65,8 @@ export class DuiLink extends TailwindElement(style) {
       part="dui-link"
       ?nav=${this.nav}
       ?text=${this.text}
-      ?active=${this.active}
-      ?exact-active=${this.exact}
+      ?active=${!this.exact && this.active}
+      ?exact-active=${this.exacted}
       target="${ifDefined(this._target)}"
       rel="${ifDefined(this.rel)}"
       href="${this.href}"
