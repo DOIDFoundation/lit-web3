@@ -26,10 +26,9 @@ importers:
       postcss-preset-env: ^7.8.3
       rollup: ^2.79.1
       rollup-plugin-minify-html-literals: ^1.2.6
-      sass: ^1.57.0
+      sass: ^1.57.1
       tailwindcss: ^3.2.4
       terser: ^5.16.1
-      tr46: ^3.0.0
       tsup: ^6.5.0
       typescript: ^4.9.4
       urlpattern-polyfill: ^6.0.2
@@ -49,7 +48,6 @@ importers:
       '@lit-labs/router': 0.1.1
       '@webcomponents/webcomponentsjs': 2.7.0
       lit: 2.5.0
-      tr46: 3.0.0
       urlpattern-polyfill: 6.0.2
     devDependencies:
       '@rollup/plugin-terser': 0.1.0_rollup@2.79.1
@@ -64,12 +62,12 @@ importers:
       postcss-preset-env: 7.8.3_postcss@8.4.20
       rollup: 2.79.1
       rollup-plugin-minify-html-literals: 1.2.6_rollup@2.79.1
-      sass: 1.57.0
+      sass: 1.57.1
       tailwindcss: 3.2.4_postcss@8.4.20
       terser: 5.16.1
       tsup: 6.5.0_rjjztofv3neoollaos63msgx3q
       typescript: 4.9.4
-      vite: 3.2.5_sass@1.57.0+terser@5.16.1
+      vite: 3.2.5_sass@1.57.1+terser@5.16.1
       vite-plugin-html: 3.2.0_vite@3.2.5
       vite-plugin-mkcert: 1.10.1_vite@3.2.5
       vite-plugin-pwa: 0.12.8_vite@3.2.5
@@ -106,7 +104,10 @@ importers:
       '@lit-web3/ethers': link:../../packages/ethers
 
   packages/core:
-    specifiers: {}
+    specifiers:
+      tr46: ^3.0.0
+    dependencies:
+      tr46: 3.0.0
 
   packages/dui:
     specifiers:
@@ -2129,7 +2130,7 @@ packages:
       regenerator-runtime: 0.13.11
       systemjs: 6.13.0
       terser: 5.16.1
-      vite: 3.2.5_sass@1.57.0+terser@5.16.1
+      vite: 3.2.5_sass@1.57.1+terser@5.16.1
     dev: true
 
   /@webcomponents/webcomponentsjs/2.7.0:
@@ -3213,7 +3214,7 @@ packages:
       array-union: 2.1.0
       dir-glob: 3.0.1
       fast-glob: 3.2.12
-      ignore: 5.2.1
+      ignore: 5.2.4
       merge2: 1.4.1
       slash: 3.0.0
     dev: true
@@ -3324,8 +3325,8 @@ packages:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
     dev: true
 
-  /ignore/5.2.1:
-    resolution: {integrity: sha512-d2qQLzTJ9WxQftPAuEQpSPmKqzxePjzVbpAVv62AQ64NTL+wR4JkrVqR/LqFsFEUsHDAiId52mJteHDFuDkElA==}
+  /ignore/5.2.4:
+    resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
     engines: {node: '>= 4'}
     dev: true
 
@@ -4461,8 +4462,8 @@ packages:
       is-regex: 1.1.4
     dev: true
 
-  /sass/1.57.0:
-    resolution: {integrity: sha512-IZNEJDTK1cF5B1cGA593TPAV/1S0ysUDxq9XHjX/+SMy0QfUny+nfUsq5ZP7wWSl4eEf7wDJcEZ8ABYFmh3m/w==}
+  /sass/1.57.1:
+    resolution: {integrity: sha512-O2+LwLS79op7GI0xZ8fqzF7X2m/m8WFfI02dHOdsK5R2ECeS5F62zrwg/relM1rjSLy7Vd/DiMNIvPrQGsA0jw==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     dependencies:
@@ -4897,7 +4898,7 @@ packages:
       html-minifier-terser: 6.1.0
       node-html-parser: 5.4.2
       pathe: 0.2.0
-      vite: 3.2.5_sass@1.57.0+terser@5.16.1
+      vite: 3.2.5_sass@1.57.1+terser@5.16.1
     dev: true
 
   /vite-plugin-mkcert/1.10.1_vite@3.2.5:
@@ -4910,7 +4911,7 @@ packages:
       axios: 0.21.4_debug@4.3.4
       debug: 4.3.4
       picocolors: 1.0.0
-      vite: 3.2.5_sass@1.57.0+terser@5.16.1
+      vite: 3.2.5_sass@1.57.1+terser@5.16.1
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -4925,7 +4926,7 @@ packages:
       fast-glob: 3.2.12
       pretty-bytes: 6.0.0
       rollup: 2.79.1
-      vite: 3.2.5_sass@1.57.0+terser@5.16.1
+      vite: 3.2.5_sass@1.57.1+terser@5.16.1
       workbox-build: 6.5.4
       workbox-window: 6.5.4
     transitivePeerDependencies:
@@ -4943,10 +4944,10 @@ packages:
       fast-glob: 3.2.12
       fs-extra: 10.1.0
       picocolors: 1.0.0
-      vite: 3.2.5_sass@1.57.0+terser@5.16.1
+      vite: 3.2.5_sass@1.57.1+terser@5.16.1
     dev: true
 
-  /vite/3.2.5_sass@1.57.0+terser@5.16.1:
+  /vite/3.2.5_sass@1.57.1+terser@5.16.1:
     resolution: {integrity: sha512-4mVEpXpSOgrssFZAOmGIr85wPHKvaDAcXqxVxVRZhljkJOMZi1ibLibzjLHzJvcok8BMguLc7g1W6W/GqZbLdQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -4975,7 +4976,7 @@ packages:
       postcss: 8.4.20
       resolve: 1.22.1
       rollup: 2.79.1
-      sass: 1.57.0
+      sass: 1.57.1
       terser: 5.16.1
     optionalDependencies:
       fsevents: 2.3.2

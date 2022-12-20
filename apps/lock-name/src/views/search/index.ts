@@ -9,6 +9,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
+import { chk } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
@@ -31,6 +32,7 @@ export class ViewSearch extends TailwindElement(style) {
 
   search = async (e?: CustomEvent) => {
     const keyword = e?.detail ?? this.keyword
+    console.log(chk())
     const res = await searchStore.search(keyword)
     this.names = [keyword]
     this.ts++

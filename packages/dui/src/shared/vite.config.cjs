@@ -14,7 +14,7 @@ config()
 
 const { env } = process
 const appTitle = env.VITE_APP_TITLE || env.VITE_APP_NAME || env.npm_package_name
-const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.0.96/css/materialdesignicons.min.css"/>`
+const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.1.96/css/materialdesignicons.min.css"/>`
 
 const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
