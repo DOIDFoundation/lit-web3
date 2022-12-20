@@ -13,8 +13,9 @@
     @apply pointer-events-none;
   }
   &.uri {
+    @apply text-current;
     &:hover {
-      color: currentColor;
+      @apply text-current;
       text-decoration: underline;
     }
   }

@@ -34,8 +34,10 @@ export class BlockNumber extends TailwindElement(style) {
     getBlockNumber()
     if (bridgeStore.blockNumber <= 0) return html``
     return html`
-      <span class="blockNumber inline-flex items-center ${classMap({ pending: this.pending, err: this.err })}">
-        <span class="blockStat inline-flex relative justify-center items-center">
+      <span
+        class="blockNumber inline-flex items-center align-middle ${classMap({ pending: this.pending, err: this.err })}"
+      >
+        <span class="blockStat flex relative justify-center items-center">
           <i class="dot block"></i>
           <i class="mdi mdi-loading absolute pending"></i>
         </span>

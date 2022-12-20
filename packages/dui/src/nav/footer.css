@@ -5,4 +5,7 @@
   & .dui-container {
     min-height: var(--footerH);
   }
+  & .dui-link {
+    @apply !text-current;
+  }
 }

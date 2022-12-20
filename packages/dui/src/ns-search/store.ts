@@ -20,7 +20,7 @@ class SearchStore extends State {
     this.pending = true
     this.promise = new Promise(async (resolve) => {
       const bridge = await useBridgeAsync()
-      await sleep(1000)
+      await sleep(300)
       resolve({})
       this.pending = false
     })
