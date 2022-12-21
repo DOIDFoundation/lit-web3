@@ -1,4 +1,12 @@
-import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  property,
+  state,
+  when,
+  classMap
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 
@@ -9,6 +17,7 @@ export class ViewNameRegister extends TailwindElement(style) {
 
   @state() pending = false
   @state() ts = 0
+  @state() step = 1
 
   get empty() {
     return false
@@ -27,7 +36,7 @@ export class ViewNameRegister extends TailwindElement(style) {
     return html`<div class="px-3">
       <h3 class="text-base">Registering a name requires you to complete 3 steps</h3>
       <ol>
-        <li>
+        <li class="${classMap({ active: this.step === 1 })}">
           <b>Request to register</b>
           <p>
             Your wallet will open and you will be asked to confirm the first of two transactions required for
@@ -50,7 +59,9 @@ export class ViewNameRegister extends TailwindElement(style) {
           </p>
         </li>
       </ol>
-      <dui-button>Request to Register</dui-button>
+      <p class="text-center">
+        <dui-button>Request to Register</dui-button>
+      </p>
     </div>`
   }
 }
