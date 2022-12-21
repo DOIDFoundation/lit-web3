@@ -30,8 +30,10 @@ export class DoidFavoritesBtn extends TailwindElement(style) {
 
   render() {
     if (!this.name) return ''
-    return html`<dui-button icon sm @click=${this.favor}
-      ><i class="mdi ${classMap(this.$c([this.favored ? 'mdi-heart' : 'mdi-heart-outline']))}"></i
+    return html`<dui-button icon sm part="dui-button" @click=${this.favor}
+      ><i
+        class="mdi ${classMap(this.$c([this.favored ? 'mdi-heart' : 'mdi-heart-outline', { favored: this.favored }]))}"
+      ></i
     ></dui-button>`
   }
 }

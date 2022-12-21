@@ -87,7 +87,7 @@ export class ViewLock extends TailwindElement(style) {
     // Just a tip
     this.tip = { ...this.tip, name: len > this.nameMinLen ? `Minimum ${this.nameMinLen} characters required` : '' }
     const chkUTS = uts(this.name)
-    if (chkUTS.error || /\./.test(chkUTS.domain)) {
+    if (chkUTS.error) {
       this.err = { ...this.err, name: 'Malformed doid name' }
       return
     }

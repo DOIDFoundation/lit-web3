@@ -1,31 +1,33 @@
 import { State, property } from '@lit-app/state'
-import { sleep } from '@lit-web3/ethers/src/utils'
-import { useBridgeAsync } from '@lit-web3/ethers/src/useBridge'
 export { StateController } from '@lit-app/state'
+import { check, nameInfo } from '@lit-web3/ethers/src/nsResolver'
+import { goto } from '../shared/router'
 
 class SearchStore extends State {
-  @property({ value: '' }) enterKey!: string
   @property({ value: false }) pending!: boolean
-  @property({ value: null }) promise!: any
+  @property({ value: [] }) names!: NameInfo[]
+  @property({ value: 0 }) ts!: number
 
-  get address(): string {
-    return `${this.enterKey}`
+  get len() {
+    return this.names.length
+  }
+  get empty() {
+    return !!this.ts && !this.pending && !this.len
   }
 
-  get doidAddr(): string {
-    return ''
-  }
-  async search(keyword: string) {
-    if (this.pending) return this.promise
+  search = async (keyword: string) => {
     this.pending = true
-    this.promise = new Promise(async (resolve) => {
-      const bridge = await useBridgeAsync()
-      await sleep(300)
-      resolve({})
-      this.pending = false
-    })
-
-    return await this.promise
+    this.names = []
+    const { address, name, error } = check(keyword)
+    if (address) return goto(`/address/${address}`)
+    if (!error) {
+      const res = await nameInfo(name)
+      if (res.available) {
+        this.names = [res]
+      }
+    }
+    this.ts++
+    this.pending = false
   }
 }
 

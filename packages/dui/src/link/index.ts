@@ -9,10 +9,11 @@ import style from './link.css?inline'
 export class DuiLink extends TailwindElement(style) {
   @property({ type: String }) target = ''
   @property({ type: String }) class = ''
-  @property({ type: String }) href = ''
+  @property() href: string | undefined
   @property({ type: String }) alias = ''
   @property({ type: Boolean }) exact = false
   @property({ type: Boolean }) disabled = false
+  @property() click: any
   @property({ type: Boolean }) nav = false // as navigator
   @property({ type: Boolean }) text = false // as text with underline
 
@@ -24,11 +25,14 @@ export class DuiLink extends TailwindElement(style) {
   get path() {
     return getPath(this.pathname)
   }
+  get noHref() {
+    return typeof this.href === 'undefined'
+  }
   get outsite() {
-    return !/^\//.test(this.href)
+    return !this.noHref && !/^\//.test(this.href + '')
   }
   get exacted() {
-    if (this.outsite) return false
+    if (this.outsite || this.noHref) return false
     return this.pathname === getPathName(`${location.origin}${this.href}`) || this.pathname === this.alias
   }
   get active() {
@@ -42,7 +46,10 @@ export class DuiLink extends TailwindElement(style) {
     return this.outsite ? '_blank' : ''
   }
   block = (e: Event) => {
-    if (this.blocked) e.stopImmediatePropagation()
+    if (this.blocked) {
+      e.stopImmediatePropagation()
+      e.preventDefault()
+    }
   }
 
   updatePathName = () => {
@@ -51,12 +58,10 @@ export class DuiLink extends TailwindElement(style) {
 
   connectedCallback() {
     emitter.on('router-change', this.updatePathName)
-    this.addEventListener('click', this.block)
     super.connectedCallback()
   }
   disconnectedCallback() {
     emitter.off('router-change', this.updatePathName)
-    this.removeEventListener('click', this.block)
     super.disconnectedCallback()
   }
 
@@ -69,8 +74,9 @@ export class DuiLink extends TailwindElement(style) {
       ?exact-active=${this.exacted}
       target="${ifDefined(this._target)}"
       rel="${ifDefined(this.rel)}"
-      href="${this.href}"
+      href="${ifDefined(this.href)}"
       class="dui-link ${classMap(this.$c([{ 'router-active': this.active }, this.class]))}"
+      @click=${this.block}
       ?disabled=${this.disabled}
       ><slot></slot
     ></a>`
