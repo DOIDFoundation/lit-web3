@@ -14,7 +14,7 @@ import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/nav'
 
-import style from './address.css'
+import style from './address.css?inline'
 @customElement('view-address')
 export class ViewAddress extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

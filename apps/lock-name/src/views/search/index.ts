@@ -9,11 +9,13 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
+import { chk } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
+import '@/components/favorites/btn'
 
-import style from './search.css'
+import style from './search.css?inline'
 @customElement('view-search')
 export class ViewSearch extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)
@@ -30,6 +32,7 @@ export class ViewSearch extends TailwindElement(style) {
 
   search = async (e?: CustomEvent) => {
     const keyword = e?.detail ?? this.keyword
+    console.log(chk())
     const res = await searchStore.search(keyword)
     this.names = [keyword]
     this.ts++
@@ -58,12 +61,12 @@ export class ViewSearch extends TailwindElement(style) {
           (name) =>
             html`<div
               @click=${() => goto(`/name/${name}`)}
-              class="flex justify-between gap-4 border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
+              class="flex justify-between items-center gap-4 border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
             >
               <b>${name}</b>
-              <div class="flex gap-4">
+              <div class="flex gap-4 items-center">
                 <span class="text-green-500">Available</span>
-                <i class="mdi mdi-heart-outline"></i>
+                <doid-favorites-btn .name=${name}></doid-favorites-btn>
               </div>
             </div>`
         )}

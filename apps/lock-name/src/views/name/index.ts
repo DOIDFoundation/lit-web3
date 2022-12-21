@@ -15,7 +15,7 @@ import '@lit-web3/dui/src/nav/nav'
 import './register'
 import './details'
 
-import style from './name.css'
+import style from './name.css?inline'
 @customElement('view-name')
 export class ViewName extends TailwindElement(style) {
   @property() name = ''

@@ -4,8 +4,7 @@ import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components
 import '../link'
 
-import style from './tx-view.css'
-
+import style from './tx-view.css?inline'
 @customElement('tx-view')
 export class TxView extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

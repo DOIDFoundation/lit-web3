@@ -4,7 +4,7 @@ import { repeat } from 'lit/directives/repeat.js'
 // Components
 import '@lit-web3/dui/src/doid-symbol'
 
-import style from './help.css'
+import style from './help.css?inline'
 
 @customElement('view-help')
 export class ViewHelp extends TailwindElement(style) {

@@ -30,6 +30,20 @@ export class NetworkWarning extends TailwindElement('') {
     await this.bridge.switchNetwork(this.network.default.chainId)
     this.pending = false
   }
+  toggle(del = false) {
+    const { style } = document.documentElement
+    const attr = '--networkWarnH'
+    del || !this.shown ? style.removeProperty(attr) : style.setProperty(attr, '24px')
+  }
+
+  connectedCallback() {
+    this.toggle()
+    super.connectedCallback()
+  }
+  disconnectedCallback(): void {
+    this.toggle(true)
+    super.disconnectedCallback()
+  }
 
   override render() {
     if (!this.shown) return

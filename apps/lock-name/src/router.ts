@@ -39,6 +39,24 @@ export const routes = [
       await import('@/views/address')
       return true
     }
+  },
+  {
+    name: 'favorites',
+    path: '/favorites',
+    render: () => html`<view-favorites></view-favorites>`,
+    enter: async () => {
+      await import('@/views/favorites')
+      return true
+    }
+  },
+  {
+    name: 'faq',
+    path: '/faq',
+    render: () => html`<view-faq></view-faq>`,
+    enter: async () => {
+      await import('@/views/faq')
+      return true
+    }
   }
 ]
 

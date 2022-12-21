@@ -3,7 +3,7 @@ import { customElement } from 'lit/decorators.js'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { LENs, lockPass, checkNameExists, getInviteCode, getPassCateLen, getPassInfo } from '@/lib/locker'
 import emitter from '@lit-web3/core/src/emitter'
-import uts46 from 'tr46'
+import uts from '@lit-web3/ethers/src/nsResolver/uts'
 import { ref, createRef } from 'lit/directives/ref.js'
 import { unicodelength } from '@lit-web3/ethers/src/stringlength'
 // Components
@@ -15,7 +15,7 @@ import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/doid-symbol'
 
-import style from './lock.css'
+import style from './lock.css?inline'
 @customElement('view-lock')
 export class ViewLock extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
@@ -86,7 +86,7 @@ export class ViewLock extends TailwindElement(style) {
     }
     // Just a tip
     this.tip = { ...this.tip, name: len > this.nameMinLen ? `Minimum ${this.nameMinLen} characters required` : '' }
-    const chkUTS: any = uts46.toUnicode(this.name, { useSTD3ASCIIRules: true })
+    const chkUTS = uts(this.name)
     if (chkUTS.error || /\./.test(chkUTS.domain)) {
       this.err = { ...this.err, name: 'Malformed doid name' }
       return

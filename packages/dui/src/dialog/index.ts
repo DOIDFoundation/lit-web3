@@ -2,7 +2,7 @@ import { customElement, TailwindElement, html, state } from '../shared/TailwindE
 import { sleep } from '@lit-web3/ethers/src/utils'
 import { animate } from '@lit-labs/motion'
 
-import style from './dialog.css'
+import style from './dialog.css?inline'
 
 @customElement('dui-dialog')
 export class DuiDialog extends TailwindElement(style) {

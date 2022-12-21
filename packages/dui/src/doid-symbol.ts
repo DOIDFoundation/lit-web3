@@ -9,7 +9,7 @@ export class SharePass extends TailwindElement('') {
         ><img class="w-full h-full object-contain select-none pointer-events-none" src="${icon}"
       /></strong>
       <div class="my-8 text-center">
-        <strong><slot name="h1"></slot></strong>
+        <strong class="block"><slot name="h1"></slot></strong>
         <slot name="msg"></slot>
       </div>`
   }

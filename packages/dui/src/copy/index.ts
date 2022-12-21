@@ -2,7 +2,7 @@ import { TailwindElement, html, customElement, property, state, classMap } from 
 
 import clipboard from './clipboard'
 
-import style from './index.css'
+import style from './index.css?inline'
 
 @customElement('dui-copy')
 export class DuiCopy extends TailwindElement(style) {

@@ -11,7 +11,7 @@ import './item'
 
 // import { Contract } from '@lit-web3/ethers/src/multiCall/ethers-multicall'
 
-import style from './list.css'
+import style from './list.css?inline'
 @customElement('view-passes')
 export class ViewPasses extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

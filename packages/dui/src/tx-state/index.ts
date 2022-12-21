@@ -4,8 +4,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 // Components
 import './tx-view'
 
-import style from './tx-state.css'
-
+import style from './tx-state.css?inline'
 @customElement('tx-state')
 export class TxState extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

@@ -6,8 +6,13 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "@ensdomains/address-encoder": "^0.2.20",
     "@lit-web3/core": "workspace:*",
-    "@lit-web3/ethers": "workspace:*"
+    "buffer": "^6.0.3",
+    "tr46": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/tr46": "^3.0.0"
   },
   "peerDependencies": {
     "@ethersproject/address": "^5",

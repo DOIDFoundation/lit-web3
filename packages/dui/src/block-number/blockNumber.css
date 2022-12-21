@@ -1,4 +1,5 @@
 .blockNumber {
+  margin-bottom: 1px;
   & .pending {
     opacity: 0;
     visibility: hidden;

@@ -3,7 +3,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { WalletState } from '@lit-web3/ethers/src/wallet'
 import '../button'
 
-import style from './state.css'
+import style from './state.css?inline'
 
 @customElement('connect-wallet-state')
 export class ConnectWalletState extends TailwindElement(style) {

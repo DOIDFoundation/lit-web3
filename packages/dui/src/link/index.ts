@@ -4,7 +4,7 @@ import { TailwindElement, html, customElement, classMap, property, state, ifDefi
 const getPathName = (path?: string) => new URL(path ?? location.href).pathname
 const getPath = (pathname?: string) => (pathname ?? getPathName()).replace(/^(\/\w+)\/?.*?$/, '$1')
 
-import style from './link.css'
+import style from './link.css?inline'
 @customElement('dui-link')
 export class DuiLink extends TailwindElement(style) {
   @property({ type: String }) target = ''

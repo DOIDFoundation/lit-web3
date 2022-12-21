@@ -3,7 +3,7 @@ import { TailwindElement, html, customElement, styleMap, when } from '@lit-web3/
 import { property, state } from 'lit/decorators.js'
 
 // Components
-import style from './item.css'
+import style from './item.css?inline'
 
 @customElement('coll-item')
 export class CollItem extends TailwindElement(style) {

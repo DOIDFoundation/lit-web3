@@ -1,3 +1,8 @@
+import uts46 from 'tr46'
+
+export const chkName = (name = '') => {
+  return uts46.toUnicode(name, { useSTD3ASCIIRules: true })
+}
 import { getContracts } from '../useBridge'
 // Naming Service (NS) Methods https://docs.ethers.io/v5/api/providers/provider/#Provider--ens-methods
 export const getResolver = async (name: string): Promise<string> => {

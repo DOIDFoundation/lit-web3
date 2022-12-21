@@ -4,7 +4,7 @@ import { TailwindElement, html, customElement, property, state, when } from '@li
 // Components
 import '@lit-web3/dui/src/edit-address-inline'
 
-import style from './details.css'
+import style from './details.css?inline'
 @customElement('view-name-details')
 export class ViewNameDetails extends TailwindElement(style) {
   @property() name = ''

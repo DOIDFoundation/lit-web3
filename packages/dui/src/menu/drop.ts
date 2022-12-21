@@ -1,7 +1,7 @@
 import { customElement, TailwindElement, html, property } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
-import style from './drop.css'
+import style from './drop.css?inline'
 @customElement('dui-drop')
 export class DuiDrop extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

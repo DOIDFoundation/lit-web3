@@ -1,7 +1,7 @@
 import { customElement, property, state } from 'lit/decorators.js'
 import { TailwindElement, html } from '../shared/TailwindElement'
 
-import style from './text.css'
+import style from './text.css?inline'
 
 @customElement('dui-input-text')
 export class DuiInputText extends TailwindElement(style) {
