@@ -9,6 +9,12 @@
   &[disabled] {
     @apply opacity-60;
   }
+  &.sm {
+    & input[type] {
+      @apply text-sm py-4;
+      height: 1.5rem;
+    }
+  }
   & .dui-input-msg,
   & .dui-input-tip,
   & label {

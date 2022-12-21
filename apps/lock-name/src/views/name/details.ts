@@ -37,8 +37,8 @@ export class ViewNameDetails extends TailwindElement(style) {
           <div class="item_key">ADDRESS</div>
           <div class="flex flex-col">
             <edit-addr-inline></edit-addr-inline>
-            <edit-addr-inline net="BSC"></edit-addr-inline>
-            <edit-addr-inline net="OKC"></edit-addr-inline>
+            <edit-addr-inline type="BSC"></edit-addr-inline>
+            <edit-addr-inline type="OKC"></edit-addr-inline>
           </div>
         </div>
       </div>

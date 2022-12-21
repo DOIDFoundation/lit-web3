@@ -77,11 +77,11 @@ export class EditInline extends TailwindElement(style) {
   render() {
     return html`<div class="flex justify-start items-center mb-3">
       <div class="addr_name text-gray-400">${this.type}</div>
-      <div class="grow" style="width: 400px">
+      <div class="grow addr_edit">
         ${when(
           this.mode === 'edit',
           () =>
-            html` <dui-input-text value=${this.addr} @input=${this.onInputAddr} ?disabled=${this.pending.tx}
+            html` <dui-input-text value=${this.addr} class="sm" @input=${this.onInputAddr} ?disabled=${this.pending.tx}
               ><span slot="msg"
                 >${when(
                   this.err.addr,
