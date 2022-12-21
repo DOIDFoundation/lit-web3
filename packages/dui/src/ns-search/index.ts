@@ -3,6 +3,7 @@ import { property, state } from 'lit/decorators.js'
 import { searchStore, StateController } from './store'
 import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
 import emitter from '@lit-web3/core/src/emitter'
+import { check, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
 import '../input/text'
 import '../button'
@@ -13,19 +14,34 @@ import style from './index.css?inline'
 export class duiNsSearch extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)
   bindBridge: any = new StateController(this, bridgeStore)
-  @property() placeholder = 'Placeholder'
+  @property() placeholder = ''
+  @property() min = 2
   @property() text: string | undefined
   @state() keyword = ''
-  @state() err: Record<string, string> = { tx: '', keyword: '' }
+  @state() err = ''
   @state() pending: Record<string, boolean> = { tx: false, keyword: false }
+  @state() checkedKeyword: Record<string, unknown> = {}
 
-  async onInputCode(e: CustomEvent) {
-    this.keyword = e.detail
-    this.err = { ...this.err, tx: '', keyword: '' }
-    const len = this.keyword.length
-    // if (len && len < LENs[0]) {
-    //   this.err = { ...this.err, keyword: 'Invalid or expired invitation code' }
-    // }
+  onInput = (e: CustomEvent) => {
+    let val = e.detail
+    let err = ''
+    if (val.length < this.min) {
+      err = `Name is too short. Names must be at least ${this.min} characters long`
+    } else {
+      this.checkedKeyword = check(val)
+      if (this.checkedKeyword.error) err = 'Invalid Names or Addresses'
+    }
+    this.err = err
+    if (!this.err) {
+    }
+    this.keyword = val
+  }
+
+  doSearch() {
+    if (!bridgeStore.bridge.account) return emitter.emit('connect-wallet')
+    if (this.err) return
+    if (this.checkedKeyword.name) this.keyword = wrapTLD(this.keyword)
+    this.emit('search', this.keyword)
   }
 
   connectedCallback() {
@@ -33,32 +49,11 @@ export class duiNsSearch extends TailwindElement(style) {
     super.connectedCallback()
   }
 
-  validate() {
-    if (this.keyword.length < 2) {
-      this.err = { ...this.err, keyword: 'Name is too short. Names must be at least 2 characters long' }
-    } else {
-      this.err = { ...this.err, keyword: '' }
-    }
-    return !this.inputErr
-  }
-  get inputErr() {
-    for (let k in this.err) {
-      if (k === 'tx') continue
-      if (this.err[k]) return true
-    }
-    return false
-  }
-  doSearch() {
-    if (!bridgeStore.bridge.account) return emitter.emit('connect-wallet')
-    if (!this.validate()) return
-    this.emit('search', this.keyword)
-    // console.info(this.keyword)
-  }
   render() {
     return html`
       <dui-input-text
         class="scan-search"
-        @input=${this.onInputCode}
+        @input=${this.onInput}
         @submit=${this.doSearch}
         value=${this.keyword}
         placeholder=${this.placeholder}
@@ -72,8 +67,8 @@ export class duiNsSearch extends TailwindElement(style) {
         </span>
         <span slot="msg">
           ${when(
-            this.err.keyword,
-            () => html`<span class="text-red-500">${this.err.keyword}</span>`,
+            this.err,
+            () => html`<span class="text-red-500">${this.err}</span>`,
             () =>
               html`<slot name="msgd"
                 ><span class="text-gray-400"

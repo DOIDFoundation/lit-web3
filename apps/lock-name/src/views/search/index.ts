@@ -4,12 +4,12 @@ import {
   customElement,
   property,
   state,
+  classMap,
   when,
   repeat
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
-import { check, nameInfo } from '@lit-web3/ethers/src/nsResolver'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
@@ -61,7 +61,9 @@ export class ViewSearch extends TailwindElement(style) {
             >
               <b>${item.name}</b>
               <div class="flex gap-4 items-center">
-                <span class="text-green-500">Available</span>
+                <span class="${classMap(this.$c([item.available ? 'text-green-500' : 'text-red-500']))}"
+                  >${item.available ? 'Available' : 'Unavailable'}</span
+                >
                 <doid-favorites-btn .name=${item.name}></doid-favorites-btn>
               </div>
             </div>`

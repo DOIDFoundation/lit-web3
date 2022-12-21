@@ -7,7 +7,8 @@ import {
   when,
   repeat
 } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto, replace } from '@lit-web3/dui/src/shared/router'
+import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/uts'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
@@ -36,8 +37,12 @@ export class ViewName extends TailwindElement(style) {
   }
 
   get = async () => {
+    const wrapped = wrapTLD(this.name)
     if (this.name && !this.action) {
-      goto(`/name/${this.name}/register`)
+      replace(`/name/${this.name}/register`)
+    }
+    if (wrapped !== this.name) {
+      replace(`/name/${wrapped}/${this.action}`)
     }
     this.ts++
   }

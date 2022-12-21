@@ -1,23 +1,19 @@
 export { check } from './checker'
-import { getContract, getContracts, useBridgeAsync, assignOverrides } from '../useBridge'
-// import { formatBytes32String } from '@ethersproject/strings'
-
-const getBridge = async () => (await useBridgeAsync()).bridge
-const getAccount = async (account?: string) => account || (await getBridge()).account
-
-export const getResolverContract = async (account?: string) =>
-  getContract('Resolver', { account: await getAccount(account) })
+import { wrapTLD } from './uts'
+import { getResolverAddress, getAccount, getResolverContract } from './controller'
 
 // Queries
-
 export const nameInfo = async (name: string, account?: string) => {
+  name = wrapTLD(name)
   if (!account) account = await getAccount(account)
   const contract = await getResolverContract(account)
   const res: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
   try {
     const { owner, status } = await contract.statusOfName(name)
-    Object.assign(res, { owner, available: status === 'available', status, itsme: owner === account })
+    const itsme = owner === account
+    Object.assign(res, { owner, available: itsme || status === 'available', status, itsme })
   } catch (e) {
+    console.log(e)
     Object.assign(res, { available: true })
   }
   return res
@@ -45,9 +41,7 @@ export const resolveName = async (name: string): Promise<Address> => {
 export const name = (): string => {
   return ''
 }
-export const address = (): string => {
-  return getContracts('Resolver')
-}
+export const address = getResolverAddress
 export const getAddress = async (cointType = 60): Promise<Address | string> => {
   return ''
 }

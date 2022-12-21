@@ -12,7 +12,7 @@ class SearchStore extends State {
     return this.names.length
   }
   get empty() {
-    return !!this.ts && !this.pending && !this.len
+    return !this.pending && !this.len
   }
 
   search = async (keyword: string) => {
@@ -22,9 +22,7 @@ class SearchStore extends State {
     if (address) return goto(`/address/${address}`)
     if (!error) {
       const res = await nameInfo(name)
-      if (res.available) {
-        this.names = [res]
-      }
+      this.names = [res]
     }
     this.ts++
     this.pending = false
