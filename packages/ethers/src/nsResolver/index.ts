@@ -1,9 +1,36 @@
-import uts46 from 'tr46'
+export { check } from './checker'
+import { getContract, getContracts, useBridgeAsync, assignOverrides } from '../useBridge'
+// import { formatBytes32String } from '@ethersproject/strings'
 
-export const chkName = (name = '') => {
-  return uts46.toUnicode(name, { useSTD3ASCIIRules: true })
+const getBridge = async () => (await useBridgeAsync()).bridge
+const getAccount = async (account?: string) => account || (await getBridge()).account
+
+export const getResolverContract = async (account?: string) =>
+  getContract('Resolver', { account: await getAccount(account) })
+
+// Queries
+
+export const nameInfo = async (name: string, account?: string) => {
+  if (!account) account = await getAccount(account)
+  const contract = await getResolverContract(account)
+  const res: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
+  try {
+    const { owner, status } = await contract.statusOfName(name)
+    Object.assign(res, { owner, available: status === 'available', status, itsme: owner === account })
+  } catch (e) {
+    Object.assign(res, { available: true })
+  }
+  return res
 }
-import { getContracts } from '../useBridge'
+export const ownerNames = async (address: string, account?: string) => {
+  const contract = await getResolverContract(account)
+  return await contract.namesOfOwner(address)
+}
+export const ownerTokens = async (address: string, account?: string) => {
+  const contract = await getResolverContract(account)
+  return await contract.tokensOfOwner(address)
+}
+
 // Naming Service (NS) Methods https://docs.ethers.io/v5/api/providers/provider/#Provider--ens-methods
 export const getResolver = async (name: string): Promise<string> => {
   return ''

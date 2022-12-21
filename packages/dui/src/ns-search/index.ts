@@ -34,8 +34,8 @@ export class duiNsSearch extends TailwindElement(style) {
   }
 
   validate() {
-    if (this.keyword.length < 3) {
-      this.err = { ...this.err, keyword: 'Name is too short. Names must be at least 3 characters long' }
+    if (this.keyword.length < 2) {
+      this.err = { ...this.err, keyword: 'Name is too short. Names must be at least 2 characters long' }
     } else {
       this.err = { ...this.err, keyword: '' }
     }
