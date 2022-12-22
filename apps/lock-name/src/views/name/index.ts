@@ -52,7 +52,7 @@ export class ViewName extends TailwindElement(style) {
       try {
         this.nameInfo = <NameInfo>await nameInfo(this.name)
         if (!this.isConnected) return
-        this.action = this.nameInfo.available ? 'register' : 'details'
+        if (!this.action) this.action = this.nameInfo.available ? 'register' : 'details'
       } catch (err) {
         this.nameInfo = null
       }

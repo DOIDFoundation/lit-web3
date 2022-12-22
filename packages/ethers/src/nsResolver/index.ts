@@ -1,5 +1,5 @@
 export { check } from './checker'
-import { wrapTLD } from './uts'
+import { bareTLD, wrapTLD } from './uts'
 export { wrapTLD }
 import { getResolverAddress, getAccount, getResolverContract } from './controller'
 
@@ -11,7 +11,7 @@ export const nameInfo = async <T extends string | string[]>(req: T, account?: st
     const contract = await getResolverContract(account)
     const nameInfo: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
     try {
-      const { owner, status } = await contract.statusOfName(name)
+      const { owner, status } = await contract.statusOfName(bareTLD(name))
       const itsme = owner === account
       Object.assign(nameInfo, { owner, available: itsme || status === 'available', status, itsme })
     } catch (e) {
