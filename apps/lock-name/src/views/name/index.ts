@@ -41,7 +41,7 @@ export class ViewName extends TailwindElement(style) {
     replace(`/name/${wrapTLD(this.name)}/${this.action}`)
   }
 
-  check = async (force = false) => {
+  check = async (e: any, force = false) => {
     if (this.pending) return
     this.pending = true
     if (await this.isDisconnected(force)) return
@@ -63,7 +63,7 @@ export class ViewName extends TailwindElement(style) {
 
   connectedCallback() {
     super.connectedCallback()
-    this.check(true)
+    this.check(null, true)
     emitter.on('router-change', this.check)
   }
   disconnectedCallback() {
