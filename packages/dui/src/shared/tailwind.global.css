@@ -4,7 +4,7 @@
 
 @layer components {
   .dui-app-main {
-    @apply float-left w-full py-4;
+    @apply float-left w-full pb-12;
     min-height: var(--appMainH);
     background: var(--appMainBg);
   }

@@ -15,6 +15,8 @@ import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/nav'
 import '@/components/names/list'
+import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/src/nav/nav'
 
 import style from './address.css?inline'
 @customElement('view-address')
@@ -67,9 +69,11 @@ export class ViewAddress extends TailwindElement(style) {
         ${when(
           this.address,
           () => html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
-            <div><b>${this.address}</b> ${this.itsme && '(me)'}</div>
+            <div><b>${this.address}</b>${when(this.itsme, () => html`<span class="mx-1">(me)</span>`)}</div>
             <div>
-              <dui-link href=${`${this.scan}/address/${this.address}`}>View on Explorer</dui-link>
+              <dui-nav slot="center" part="dui-nav">
+                <dui-link href=${`${this.scan}/address/${this.address}`}>View on Explorer</dui-link>
+              </dui-nav>
             </div>
           </div>`
         )}

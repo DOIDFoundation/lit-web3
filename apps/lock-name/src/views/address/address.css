@@ -1,0 +1,6 @@
+:host {
+  &::part(dui-nav) {
+    @apply flex;
+    margin-bottom: -2px;
+  }
+}
