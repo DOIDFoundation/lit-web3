@@ -1,0 +1,5 @@
+.item_key {
+  @apply w-52 font-medium;
+  min-width: 140px;
+  max-width: 180px;
+}
