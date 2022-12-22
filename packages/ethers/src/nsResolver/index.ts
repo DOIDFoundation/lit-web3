@@ -1,22 +1,26 @@
 export { check } from './checker'
 import { wrapTLD } from './uts'
+export { wrapTLD }
 import { getResolverAddress, getAccount, getResolverContract } from './controller'
 
 // Queries
-export const nameInfo = async (name: string, account?: string) => {
-  name = wrapTLD(name)
-  if (!account) account = await getAccount(account)
-  const contract = await getResolverContract(account)
-  const res: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
-  try {
-    const { owner, status } = await contract.statusOfName(name)
-    const itsme = owner === account
-    Object.assign(res, { owner, available: itsme || status === 'available', status, itsme })
-  } catch (e) {
-    console.log(e)
-    Object.assign(res, { available: true })
+export const nameInfo = async <T extends string | string[]>(req: T, account?: string) => {
+  const get = async (name: string) => {
+    name = wrapTLD(name)
+    if (!account) account = await getAccount(account)
+    const contract = await getResolverContract(account)
+    const nameInfo: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
+    try {
+      const { owner, status } = await contract.statusOfName(name)
+      const itsme = owner === account
+      Object.assign(nameInfo, { owner, available: itsme || status === 'available', status, itsme })
+    } catch (e) {
+      Object.assign(nameInfo, { available: true })
+    }
+    return nameInfo
   }
-  return res
+  if (Array.isArray(req)) return await Promise.all(req.map(get))
+  return await get(req)
 }
 export const ownerNames = async (address: string, account?: string) => {
   const contract = await getResolverContract(account)

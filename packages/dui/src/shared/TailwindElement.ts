@@ -1,6 +1,5 @@
 import { LitElement, unsafeCSS, CSSResult } from 'lit'
-
-import TailwindBase from './tailwind.global.css?inline'
+import { sleep } from '@lit-web3/ethers/src/utils'
 
 export declare class TAILWINDELEMENT extends LitElement {
   static styles: any
@@ -10,8 +9,10 @@ export declare class TAILWINDELEMENT extends LitElement {
   $: Function
   $$: Function
   $c: Function
+  isDisconnected: Function
 }
 
+import TailwindBase from './tailwind.global.css?inline'
 export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<TAILWINDELEMENT> =>
   class extends LitElement implements TAILWINDELEMENT {
     constructor() {
@@ -49,6 +50,10 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
     }
     on(type: string, listener: EventListener, options?: any) {
       this.addEventListener(type, listener, options)
+    }
+    isDisconnected = async (force = false) => {
+      if (!force) await sleep(50)
+      return !this.isConnected
     }
   }
 

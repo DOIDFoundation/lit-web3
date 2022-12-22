@@ -21,8 +21,8 @@ class SearchStore extends State {
     const { address, name, error } = check(keyword)
     if (address) return goto(`/address/${address}`)
     if (!error) {
-      const res = await nameInfo(name)
-      this.names = [res]
+      const res = await nameInfo([name])
+      this.names = [res[0]]
     }
     this.ts++
     this.pending = false

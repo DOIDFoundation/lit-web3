@@ -6,6 +6,7 @@ import 'lit/polyfill-support.js'
 import { TailwindElement, html, customElement, keyed } from './TailwindElement'
 import { Router, RouteConfig } from '@lit-labs/router'
 import { fallbackRender, fallbackEnter } from './router/fallback'
+import { routerGuard } from './router'
 import useBridge, { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import emitter from '@lit-web3/core/src/emitter'
 
@@ -13,26 +14,7 @@ import '@/variables-override.css' // => /apps/*/src/variables-override.css
 import '../c/global.css'
 
 useBridge()
-// Router
-;(function (history) {
-  var pushState = history.pushState
-  history.pushState = function (state, key, href) {
-    // self logic
-    setTimeout(() => {
-      emitter.emit('router-change', href ?? '')
-      setTimeout(() => {
-        window.scrollTo(0, 0)
-      }, 0)
-    }, 0)
-    // // that.pathname = getPathName(path ?? '')
-    // if (typeof history.onpushstate == 'function') {
-    //   history.onpushstate({ state: state, key, path })
-    // }
-    // ... whatever else you want to do
-    // maybe call onhashchange e.handler
-    return pushState.apply(history, [state, key, href])
-  }
-})(window.history)
+routerGuard.init()
 
 export default function ({ routes = <RouteConfig[]>[] } = {}) {
   // App Root
@@ -66,9 +48,9 @@ export default function ({ routes = <RouteConfig[]>[] } = {}) {
         history.replaceState({}, '', e.detail)
         this._router.goto(e.detail)
       })
+      // routerGuard.bind(this._router)
     }
 
-    firstUpdated() {}
     render() {
       return html`${keyed(bridgeStore.key, html`<app-main>${this._router.outlet()}</app-main>`)}`
     }

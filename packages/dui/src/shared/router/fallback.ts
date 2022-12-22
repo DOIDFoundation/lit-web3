@@ -1,4 +1,4 @@
-import { Router, Routes } from '@lit-labs/router'
+import type { Router, Routes } from '@lit-labs/router'
 import { html } from 'lit'
 
 export const fallbackRender = () => html`<span class="p-9 block text-center">Not Found</span>`
@@ -26,5 +26,3 @@ export const fallbackEnter = async (
   await router.goto('/' + (path ?? ''))
   return false
 }
-
-export { Routes }
