@@ -49,8 +49,8 @@
     "anonymous": false,
     "inputs": [
       { "indexed": true, "internalType": "uint256", "name": "id", "type": "uint256" },
-      { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "expires", "type": "uint256" }
+      { "indexed": true, "internalType": "string", "name": "name", "type": "string" },
+      { "indexed": true, "internalType": "address", "name": "owner", "type": "address" }
     ],
     "name": "NameRegistered",
     "type": "event"
@@ -88,6 +88,13 @@
     ],
     "name": "addr",
     "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bytes32", "name": "node", "type": "bytes32" }],
+    "name": "addr2",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -140,6 +147,17 @@
     "type": "function"
   },
   {
+    "inputs": [
+      { "internalType": "uint256", "name": "passId", "type": "uint256" },
+      { "internalType": "string", "name": "name", "type": "string" },
+      { "internalType": "address", "name": "owner", "type": "address" }
+    ],
+    "name": "claimLockedName",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "bytes32", "name": "commitment", "type": "bytes32" }],
     "name": "commit",
     "outputs": [],
@@ -179,6 +197,19 @@
     "name": "isApprovedForAll",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "name", "type": "string" },
+      { "internalType": "uint256", "name": "coinType", "type": "uint256" },
+      { "internalType": "address", "name": "a", "type": "address" },
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" }
+    ],
+    "name": "makeAddrMessage",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -274,7 +305,7 @@
       { "internalType": "bytes[]", "name": "data", "type": "bytes[]" }
     ],
     "name": "register",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -303,9 +334,12 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "node", "type": "bytes32" },
+      { "internalType": "string", "name": "name", "type": "string" },
       { "internalType": "uint256", "name": "coinType", "type": "uint256" },
-      { "internalType": "bytes", "name": "a", "type": "bytes" }
+      { "internalType": "address", "name": "a", "type": "address" },
+      { "internalType": "uint256", "name": "timestamp", "type": "uint256" },
+      { "internalType": "uint256", "name": "nonce", "type": "uint256" },
+      { "internalType": "bytes", "name": "signature", "type": "bytes" }
     ],
     "name": "setAddr",
     "outputs": [],
@@ -327,7 +361,8 @@
     "name": "statusOfName",
     "outputs": [
       { "internalType": "string", "name": "status", "type": "string" },
-      { "internalType": "address", "name": "owner", "type": "address" }
+      { "internalType": "address", "name": "owner", "type": "address" },
+      { "internalType": "uint256", "name": "id", "type": "uint256" }
     ],
     "stateMutability": "view",
     "type": "function"

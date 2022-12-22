@@ -89,7 +89,7 @@ export class ViewPasses extends TailwindElement(style) {
             target="_blank"
             rel="noopener"
             class="inline-flex my-1 text-base"
-            >Follow DOID Twitter and stay connected</<dui-link
+            >Follow DOID Twitter and stay connected</dui-link
           >
         </section>
 

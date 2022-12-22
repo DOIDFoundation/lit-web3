@@ -6,6 +6,8 @@ declare type NameInfo = {
   registered: boolean
   itsme: boolean
   stat: string
+  locked?: boolean
+  id?: `${number}`
 }
 declare type Commitment = {
   secret?: string

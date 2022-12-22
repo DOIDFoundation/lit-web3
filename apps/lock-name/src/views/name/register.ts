@@ -8,12 +8,15 @@ import {
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { commit, getCommitment } from '@lit-web3/ethers/src/nsResolver/registrar'
+import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
+import '@lit-web3/dui/src/doid-claim-name'
 
 import style from './register.css?inline'
 @customElement('view-name-register')
 export class ViewNameRegister extends TailwindElement(style) {
   @property() name = ''
+  @property({ type: Object }) nameInfo!: NameInfo
   @state() pending = false
   @state() ts = 0
   @state() step = 1
@@ -24,6 +27,13 @@ export class ViewNameRegister extends TailwindElement(style) {
   }
   get txSuccess() {
     return this.tx && !this.tx.ignored
+  }
+  get lockedByMe() {
+    const { locked, itsme } = this.nameInfo
+    return locked && itsme
+  }
+  get detailsLink() {
+    return `/name/${this.name}/details`
   }
 
   get = async () => {
@@ -44,6 +54,9 @@ export class ViewNameRegister extends TailwindElement(style) {
       this.pending = false
     }
   }
+  go2success = () => {
+    goto(this.detailsLink)
+  }
 
   connectedCallback() {
     this.get()
@@ -51,6 +64,15 @@ export class ViewNameRegister extends TailwindElement(style) {
   }
 
   render() {
+    if (!this.nameInfo.available)
+      return html`<div class="px-3">
+        This DOID name is already taken. <dui-link class="mx-1" href=${this.detailsLink}>See Details</dui-link>
+      </div>`
+    if (this.lockedByMe)
+      return html`<div class="px-3">
+        <h3 class="text-base mb-4">${`This DOID name is already locked by pass #${this.nameInfo.locked}`}</h3>
+        <doid-claim-name @success=${this.go2success} .nameInfo=${this.nameInfo}>Claim this name</doid-claim-name>
+      </div>`
     return html`<div class="px-3">
       <h3 class="text-base">Registering a name requires you to complete 3 steps</h3>
       <ol>

@@ -2,6 +2,7 @@ export { check } from './checker'
 import { bareTLD, wrapTLD } from './uts'
 export { wrapTLD }
 import { getResolverAddress, getAccount, getResolverContract } from './controller'
+import { formatUnits } from '@ethersproject/units'
 
 // Queries
 export const nameInfo = async <T extends string | string[]>(req: T, account?: string) => {
@@ -19,17 +20,22 @@ export const nameInfo = async <T extends string | string[]>(req: T, account?: st
       stat: ''
     }
     try {
-      const { owner, status } = await contract.statusOfName(bareTLD(name))
+      const res = await contract.statusOfName(bareTLD(name))
+      const { owner, status } = res
+      const id = formatUnits(res.id, 0)
       const itsme = owner === account
       const locked = status === 'locked'
       const available = status === 'available' || (itsme && locked)
+      const registered = status === 'registered'
       Object.assign(nameInfo, {
         owner,
         available,
-        registered: status === 'registered',
+        registered,
         stat: locked ? 'Locked by pass' : available ? 'Available' : 'Unavailable',
         status,
-        itsme
+        itsme,
+        id,
+        locked
       })
     } catch (e) {
       Object.assign(nameInfo, { available: true })
