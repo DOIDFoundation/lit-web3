@@ -1,4 +1,4 @@
-.Passes {
+.passes {
   height: 300px;
   @apply h-full bg-white;
 }

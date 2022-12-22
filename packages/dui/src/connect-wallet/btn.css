@@ -2,5 +2,5 @@
 }
 
 .connect-wallet-btn > ::part(dui-button) {
-  background: #373737 !important;
+  background: var(--colorDark) !important;
 }

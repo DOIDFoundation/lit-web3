@@ -4,10 +4,6 @@
   --bg2: #fffbf6;
   --bg3: #373737;
 
-  --btnBg: #ff920f;
-  --btnBgHover: #ffb65f;
-  --btnBgActive: #e08417;
-
   --radius: 1rem;
   --btn_radius: 0.25rem;
 
@@ -17,12 +13,28 @@
   --textBase: var(--text-base, 14px);
   --fontFamily: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
   --textColor: var(--text-color, rgb(55, 55, 55));
-  --doidLogoW: var(--doid-logo-w, 120px);
-  --doidLogoH: var(--doid-logo-h, 36px);
   --headerH: var(--header-height, 60px);
   --footerH: var(--footer-height, 60px);
   --appMainH: calc(100vh - var(--headerH) - var(--footerH) - var(--networkWarnH, 0px));
   --appMainBg: var(--app-main-bg, #fff);
+  /* Named colors */
+  --colorSecondary: var(--color-secondary, #1867c0);
+  --colorError: var(--color-error, #b00020);
+  --colorSuccess: var(--color-success, #4caf50);
+  --colorDark: var(--color-dark, #373737);
+  /* Buttons */
+  --btnBg: var(--btn-bg, #ff920f);
+  --btnBgHover: var(--btn-bg-hover, #ffb65f);
+  --btnBgActive: var(--btn-bg-active, #e08417);
+  --btnBgSecondary: var(--btn-bg-secondary, #1867c0);
+  --btnBgSecondaryHover: var(--btn-bg-secondary-hover, #2a73c5);
+  --btnBgSecondaryActive: var(--btn-bg-secondary-active, #4182cb);
+  --btnBgSuccess: var(--btn-bg-success, #4caf50);
+  --btnBgSuccessHover: var(--btn-bg-success-hover, #53b257);
+  --btnBgSuccessActive: var(--btn-bg-success-active, #60b864);
+  /* DOIDs */
+  --doidLogoW: var(--doid-logo-w, 120px);
+  --doidLogoH: var(--doid-logo-h, 36px);
 }
 
 @media (max-width: 1024px) {
