@@ -2,7 +2,6 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { TailwindElement, html } from '../shared/TailwindElement'
 
 import style from './text.css?inline'
-
 @customElement('dui-input-text')
 export class DuiInputText extends TailwindElement(style) {
   @property({ type: String }) placeholder = ''
@@ -50,17 +49,25 @@ export class DuiInputText extends TailwindElement(style) {
   onFocus(e: any) {
     e.target.select()
   }
+  updateVal() {
+    const input$ = this.$('input')
+    if (input$) input$.value = this.value
+  }
 
   onInput(e: Event) {
     e.stopImmediatePropagation()
     let val = (e.target as HTMLInputElement).value
     if (this.lower) val = val.toLowerCase()
     if (this.upper) val = val.toUpperCase()
-    this.value = this.$('input').value = val
+    this.value = val
+    this.updateVal()
     this.emit('input', val)
   }
-  onKeyup(e: KeyboardEvent) {
-    if (e.key === 'Enter') this.emit('submit', this.value)
+  onKeyup = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      this.emit('submit', this.value)
+      setTimeout(() => this.updateVal())
+    }
   }
 
   render() {

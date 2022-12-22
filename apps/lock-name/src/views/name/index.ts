@@ -7,7 +7,8 @@ import {
   when,
   repeat
 } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto, replace } from '@lit-web3/dui/src/shared/router'
+import { wrapTLD, nameInfo } from '@lit-web3/ethers/src/nsResolver'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
@@ -16,35 +17,59 @@ import './register'
 import './details'
 
 import style from './name.css?inline'
+import emitter from '@lit-web3/core/src/emitter'
 @customElement('view-name')
 export class ViewName extends TailwindElement(style) {
   @property() name = ''
   @property() action = ''
 
   @state() pending = false
-  @state() ts = 0
+  @state() disconnected = false
+  @state() nameInfo: NameInfo | null = null
 
   get inReg() {
-    return this.name && this.action === 'register'
+    return this.name && !this.pending && this.action === 'register'
   }
   get inDetails() {
-    return this.name && this.action === 'details'
+    return this.name && !this.pending && this.action === 'details'
   }
 
   get empty() {
     return !this.name
   }
+  goto = () => {
+    replace(`/name/${wrapTLD(this.name)}/${this.action}`)
+  }
 
-  get = async () => {
-    if (this.name && !this.action) {
-      goto(`/name/${this.name}/register`)
+  check = async (e: any, force = false) => {
+    if (this.pending) return
+    this.pending = true
+    if (await this.isDisconnected(force)) return
+    const wrapped = wrapTLD(this.name)
+    if (this.name !== wrapped) {
+      this.name = wrapped
+    } else {
+      try {
+        this.nameInfo = <NameInfo>await nameInfo(this.name)
+        if (!this.isConnected) return
+        this.action = this.nameInfo.available ? 'register' : 'details'
+      } catch (err) {
+        this.nameInfo = null
+      }
     }
-    this.ts++
+    this.goto()
+    this.pending = false
   }
 
   connectedCallback() {
-    this.get()
     super.connectedCallback()
+    this.check(null, true)
+    emitter.on('router-change', this.check)
+  }
+  disconnectedCallback() {
+    console.log('dis')
+    super.disconnectedCallback()
+    emitter.off('router-change', this.check)
   }
 
   render() {
@@ -58,8 +83,6 @@ export class ViewName extends TailwindElement(style) {
           <span slot="label"></span>
           <span slot="msgd"></span>
         </dui-ns-search>
-        <!-- Pending -->
-        ${when(this.pending, () => html`<i class="mdi mdi-loading"></i> Searching...`)}
         <!-- Tab -->
         ${when(
           this.name,
@@ -78,6 +101,8 @@ export class ViewName extends TailwindElement(style) {
             </div>
           </div>`
         )}
+        <!-- Pending -->
+        ${when(this.pending, () => html`<i class="mdi mdi-loading"></i> Loading...`)}
         <!-- Register -->
         ${when(this.inReg, () => html`<view-name-register .name=${this.name}></view-name-register>`)}
         <!-- Details -->

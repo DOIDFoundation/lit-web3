@@ -1,26 +1,26 @@
 export { check } from './checker'
-import { getContract, getContracts, useBridgeAsync, assignOverrides } from '../useBridge'
-// import { formatBytes32String } from '@ethersproject/strings'
-
-const getBridge = async () => (await useBridgeAsync()).bridge
-const getAccount = async (account?: string) => account || (await getBridge()).account
-
-export const getResolverContract = async (account?: string) =>
-  getContract('Resolver', { account: await getAccount(account) })
+import { wrapTLD } from './uts'
+export { wrapTLD }
+import { getResolverAddress, getAccount, getResolverContract } from './controller'
 
 // Queries
-
-export const nameInfo = async (name: string, account?: string) => {
-  if (!account) account = await getAccount(account)
-  const contract = await getResolverContract(account)
-  const res: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
-  try {
-    const { owner, status } = await contract.statusOfName(name)
-    Object.assign(res, { owner, available: status === 'available', status, itsme: owner === account })
-  } catch (e) {
-    Object.assign(res, { available: true })
+export const nameInfo = async <T extends string | string[]>(req: T, account?: string) => {
+  const get = async (name: string) => {
+    name = wrapTLD(name)
+    if (!account) account = await getAccount(account)
+    const contract = await getResolverContract(account)
+    const nameInfo: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
+    try {
+      const { owner, status } = await contract.statusOfName(name)
+      const itsme = owner === account
+      Object.assign(nameInfo, { owner, available: itsme || status === 'available', status, itsme })
+    } catch (e) {
+      Object.assign(nameInfo, { available: true })
+    }
+    return nameInfo
   }
-  return res
+  if (Array.isArray(req)) return await Promise.all(req.map(get))
+  return await get(req)
 }
 export const ownerNames = async (address: string, account?: string) => {
   const contract = await getResolverContract(account)
@@ -45,9 +45,7 @@ export const resolveName = async (name: string): Promise<Address> => {
 export const name = (): string => {
   return ''
 }
-export const address = (): string => {
-  return getContracts('Resolver')
-}
+export const address = getResolverAddress
 export const getAddress = async (cointType = 60): Promise<Address | string> => {
   return ''
 }

@@ -7,6 +7,7 @@
 
 import { isAddress } from '@ethersproject/address'
 import uts from './uts'
+export { bareTLD, wrapTLD } from './uts'
 
 export const isName = (name = '') => !uts(name).error
 

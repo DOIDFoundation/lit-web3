@@ -1,19 +1,11 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  repeat
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
-import { check, nameInfo } from '@lit-web3/ethers/src/nsResolver'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 import '@/components/favorites/btn'
+import '@/components/names/list'
 
 import style from './search.css?inline'
 @customElement('view-search')
@@ -47,25 +39,12 @@ export class ViewSearch extends TailwindElement(style) {
           <span slot="label"></span>
           <span slot="msgd"></span>
         </dui-ns-search>
-        <!-- Pending -->
-        ${when(searchStore.pending, () => html`<i class="mdi mdi-loading"></i> Searching...`)}
-        <!-- Empty -->
-        ${when(searchStore.empty, () => html`No Data`)}
-        <!-- List -->
-        ${repeat(
-          searchStore.names,
-          (item) =>
-            html`<div
-              @click=${this.goto}
-              class="flex justify-between items-center gap-4 border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
-            >
-              <b>${item.name}</b>
-              <div class="flex gap-4 items-center">
-                <span class="text-green-500">Available</span>
-                <doid-favorites-btn .name=${item.name}></doid-favorites-btn>
-              </div>
-            </div>`
-        )}
+        <!-- Names -->
+        <doid-name-list
+          .names=${searchStore.names}
+          .pending=${searchStore.pending}
+          .empty=${searchStore.empty}
+        ></doid-name-list>
       </div>
     </div>`
   }

@@ -16,10 +16,11 @@ export class txReceipt {
   public seq: any
   public delay: any
   public err: Error | any
+  public onSent: Function
   public txPromise: PromiseLike<any>
   constructor(
     txPromise: PromiseLike<any>,
-    { errorCodes = '', seq = undefined as any, delay = 0, allowAlmostSuccess = false } = {}
+    { errorCodes = '', seq = undefined as any, delay = 0, allowAlmostSuccess = false, onSent = () => {} } = {}
   ) {
     // super()
     this.pending = true
@@ -31,6 +32,7 @@ export class txReceipt {
     this.errorCodes = errorCodes
     this.seq = seq
     this.delay = delay
+    this.onSent = onSent
   }
   get success() {
     return this.status === 1
@@ -47,6 +49,7 @@ export class txReceipt {
       const eventMap = await getEventCodes(this.errorCodes)
       try {
         const tx = await this.txPromise
+        this.onSent(tx)
         const { hash, nonce } = tx
         this.seq.nonce = nonce
         // Add to txs queue

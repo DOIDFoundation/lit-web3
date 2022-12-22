@@ -6,7 +6,7 @@ body {
   @apply p-0 m-0 h-full;
 }
 html {
-  overflow-y: scroll;
+  @apply overflow-y-scroll scroll-smooth;
   color: var(--textColor);
 }
 body {
