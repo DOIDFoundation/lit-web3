@@ -122,6 +122,27 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "uint256", "name": "_passId", "type": "uint256" }],
+    "name": "claimDoid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }],
+    "name": "deactivateUser",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_passId", "type": "uint256" }],
+    "name": "exists",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
     "name": "getApproved",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
@@ -140,9 +161,30 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "string", "name": "_name", "type": "string" }],
+    "name": "getHashByName",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "bytes32", "name": "_hash", "type": "bytes32" }],
     "name": "getNameByHash",
     "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bytes32", "name": "_hash", "type": "bytes32" }],
+    "name": "getPassByHash",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "string", "name": "_name", "type": "string" }],
+    "name": "getPassByName",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -173,6 +215,13 @@
   {
     "inputs": [{ "internalType": "bytes32", "name": "_hash", "type": "bytes32" }],
     "name": "getUserByHash",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "string", "name": "_name", "type": "string" }],
+    "name": "getUserByName",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
@@ -419,6 +468,13 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "address", "name": "addr", "type": "address" }],
+    "name": "setDoidRegistry",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }],
     "name": "supportsInterface",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
@@ -490,5 +546,6 @@
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "pure",
     "type": "function"
-  }
+  },
+  { "inputs": [], "name": "version", "outputs": [], "stateMutability": "pure", "type": "function" }
 ]

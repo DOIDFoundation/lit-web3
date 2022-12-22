@@ -114,7 +114,8 @@ export class ViewPasses extends TailwindElement(style) {
                       () => html`<div class="pass-list">
                         ${repeat(
                           this.passes,
-                          (item: any) => html`<pass-item key=${item.id} .item=${item}></pass-item>`
+                          (item: any) =>
+                            html`<pass-item @change=${this.getUserPassList} key=${item.id} .item=${item}></pass-item>`
                         )}
                       </div>`
                     )}`

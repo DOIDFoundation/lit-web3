@@ -26,8 +26,8 @@
   &:disabled,
   &[pending],
   &.pending {
-    @apply cursor-not-allowed pointer-events-none;
-    background: #aaa;
+    @apply !cursor-not-allowed !pointer-events-none;
+    background: #aaa !important;
   }
   &.outlined {
     background-color: transparent;
