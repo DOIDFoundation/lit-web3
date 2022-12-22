@@ -10,7 +10,7 @@ export const replace = (path: string) => {
 }
 
 export const routerGuard = {
-  init: () => {
+  inject: () => {
     const { pushState, replaceState } = globalThis.history
     const emitRouterChange = (url: any) => {
       url += ''
@@ -32,7 +32,7 @@ export const routerGuard = {
   },
   goto: (url: string) => history.pushState({}, '', url),
   replace: (url: string) => history.replaceState({}, '', url),
-  bind: function (_router: Router) {
+  init: function (_router: Router) {
     emitter.on('router-goto', (e: any) => {
       history.pushState({}, '', e.detail)
       _router.goto(e.detail)

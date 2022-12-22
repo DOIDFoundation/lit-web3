@@ -9,6 +9,10 @@ export class DoidNameList extends TailwindElement(style) {
   @property() pending = false
   @property() empty = false
 
+  change() {
+    this.emit('change')
+  }
+
   connectedCallback() {
     super.connectedCallback()
   }
@@ -20,7 +24,12 @@ export class DoidNameList extends TailwindElement(style) {
       <!-- Empty -->
       ${when(this.empty, () => html`No Data`)}
       <!-- List -->
-      ${repeat(this.names, (item) => html`<doid-name-item .name=${item}></doid-name-item>`)}
+      <div class="flex flex-col gap-2">
+        ${repeat(
+          this.names,
+          (info) => html`<doid-name-item @change=${this.change} .nameInfo=${info}></doid-name-item>`
+        )}
+      </div>
     </div>`
   }
 }

@@ -119,6 +119,22 @@ export const lockPass = async (codeOrPass: any, name = '') => {
     }
   })
 }
+export const claim = async (passId: number) => {
+  const contract = await getLockerContract()
+  const [method, overrides] = ['claimDoid', {}]
+  const parameters = [+passId]
+  await assignOverrides(overrides, contract, method, parameters)
+  const call = contract[method](...parameters)
+  return new txReceipt(call, {
+    errorCodes: 'Locker',
+    seq: {
+      type: 'claim',
+      title: 'Claim Name',
+      ts: new Date().getTime(),
+      overrides
+    }
+  })
+}
 
 export const getInviteLimits = async (account?: string) => {
   if (!account) account = await getAccount()

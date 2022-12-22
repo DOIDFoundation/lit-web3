@@ -26,8 +26,8 @@
   &:disabled,
   &[pending],
   &.pending {
-    @apply cursor-not-allowed pointer-events-none;
-    background: #aaa;
+    @apply !cursor-not-allowed !pointer-events-none;
+    background: #aaa !important;
   }
   &.outlined {
     background-color: transparent;
@@ -43,6 +43,32 @@
         background: #f6f6f6;
         color: var(--btnBg);
         border: 1px solid;
+      }
+    }
+  }
+  &.secondary {
+    background: var(--btnBgSecondary);
+    &:not([disabled]) {
+      &:hover {
+        background: var(--btnBgSecondaryHover);
+        border-color: var(--btnBgSecondaryHover);
+      }
+      &:active {
+        background: var(--btnBgSecondaryActive);
+        border-color: var(--btnBgSecondaryActive);
+      }
+    }
+  }
+  &.success {
+    background: var(--btnBgSuccess);
+    &:not([disabled]) {
+      &:hover {
+        background: var(--btnBgSuccessHover);
+        border-color: var(--btnBgSuccessHover);
+      }
+      &:active {
+        background: var(--btnBgSuccessActive);
+        border-color: var(--btnBgSuccessActive);
       }
     }
   }

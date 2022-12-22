@@ -6,6 +6,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { formatUnits } from '@ethersproject/units'
 // Components
 import '@lit-web3/dui/src/connect-wallet/btn'
+import '@lit-web3/dui/src/link'
 import './share'
 import './item'
 
@@ -83,12 +84,12 @@ export class ViewPasses extends TailwindElement(style) {
               launch(22nd Dec,2022). Those locked but unminted names will be released to the public pool afterwards.
             </li>
           </ul>
-          <a
+          <dui-link
             href=${import.meta.env.VITE_APP_TWITTER}
             target="_blank"
             rel="noopener"
-            class="uri inline-flex my-2 text-base"
-            >Follow DOID Twitter and stay connected</a
+            class="inline-flex my-1 text-base"
+            >Follow DOID Twitter and stay connected</<dui-link
           >
         </section>
 
@@ -113,7 +114,8 @@ export class ViewPasses extends TailwindElement(style) {
                       () => html`<div class="pass-list">
                         ${repeat(
                           this.passes,
-                          (item: any) => html`<pass-item key=${item.id} .item=${item}></pass-item>`
+                          (item: any) =>
+                            html`<pass-item @change=${this.getUserPassList} key=${item.id} .item=${item}></pass-item>`
                         )}
                       </div>`
                     )}`
