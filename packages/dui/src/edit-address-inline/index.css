@@ -2,12 +2,15 @@
   min-width: 100px;
   max-width: 140px;
 }
-.addr_edit {
-  @apply w-60 lg_w-96;
+.edit {
+  @apply my-0;
+  & .addr_edit {
+    @apply w-56 lg_w-96;
+  }
 }
 @media (max-width: 1024px) {
   .addr_name {
-    min-width: 60px;
-    max-width: 80px;
+    min-width: 50px;
+    max-width: 60px;
   }
 }

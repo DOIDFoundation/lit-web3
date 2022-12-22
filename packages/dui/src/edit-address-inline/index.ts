@@ -44,7 +44,7 @@ export class EditInline extends TailwindElement(style) {
     const len = unicodelength(this.addr)
     this.addrValid = false
     switch (type) {
-      case 'eth':
+      case 'ETH':
         if (len != 42) this.err = { ...this.err, addr: `Invalid address` }
         break
       default:
@@ -61,9 +61,15 @@ export class EditInline extends TailwindElement(style) {
     this.validAddrByType()
   }
   saveAddr = () => {
-    if (!this.validate()) return
+    if (!this.validate() || !this.addrValid) return
     console.info(`save addr of ${this.type}: ${this.addr}`)
     setTimeout(() => (this.mode = ''))
+  }
+
+  cancel = () => {
+    this.mode = ''
+    this.err = { ...this.err, addr: '' }
+    this.pending = { ...this.pending, addr: false }
   }
 
   connectedCallback(): void {
@@ -74,42 +80,49 @@ export class EditInline extends TailwindElement(style) {
   disconnectedCallback = () => {
     super.disconnectedCallback()
   }
+
   render() {
-    return html`<div class="flex justify-start items-center mb-3">
+    return html`<div class="flex justify-start items-center my-3 ${this.mode}">
       <div class="addr_name text-gray-400">${this.type}</div>
-      <div class="grow addr_edit">
+      <div class="grow flex items-center">
+        <div class="addr_edit">
+          ${when(
+            this.mode === 'edit',
+            () =>
+              html` <dui-input-text
+                value=${this.addr}
+                class="sm"
+                @input=${this.onInputAddr}
+                ?disabled=${this.pending.tx}
+                ><span slot="msg"
+                  >${when(
+                    this.err.addr,
+                    () => html`<span class="text-red-500">${this.err.addr}</span>`,
+                    () => html``
+                  )}</span
+                ></dui-input-text
+              >`,
+            () =>
+              html`${when(
+                this.address,
+                () =>
+                  html`${this.address}<dui-copy .value=${this.address} sm icon class=""
+                      ><span slot="copied" class="text-green-500">
+                        <i class="mdi mdi-check-circle-outline"></i>
+                      </span>
+                      <span slot="copy"><i class="mdi mdi-content-copy"></i></span
+                    ></dui-copy>`,
+                () => html`<span class="text-gray-400">No set</span>`
+              )}`
+          )}
+        </div>
         ${when(
           this.mode === 'edit',
           () =>
-            html` <dui-input-text value=${this.addr} class="sm" @input=${this.onInputAddr} ?disabled=${this.pending.tx}
-              ><span slot="msg"
-                >${when(
-                  this.err.addr,
-                  () => html`<span class="text-red-500">${this.err.addr}</span>`,
-                  () => html``
-                )}</span
-              ></dui-input-text
-            >`,
+            html`<dui-button sm text class="ml-1 outlined" @click=${this.saveAddr}>Save</dui-button
+              ><dui-button sm text class="ml-1 outlined" @click=${this.cancel}>Cancel</dui-button>`,
           () =>
-            html`${when(
-              this.address,
-              () =>
-                html`${this.address}<dui-copy .value=${this.address} sm icon class="ml-1"
-                    ><span slot="copied" class="text-green-500">
-                      <i class="mdi mdi-check-circle-outline "></i>
-                    </span>
-                    <span slot="copy"><i class="mdi mdi-content-copy"></i></span
-                  ></dui-copy>`,
-              () => html`<span class="text-gray-400">No set</span>`
-            )}`
-        )}
-      </div>
-      <div class="ml-2">
-        ${when(
-          this.mode === 'edit',
-          () => html`<dui-button sm text class="outlined" @click=${this.saveAddr}>Save</dui-button>`,
-          () =>
-            html`<dui-button sm icon
+            html`<dui-button sm icon class="ml-1"
               ><i class="mdi mdi-pencil-outline" @click=${() => (this.mode = 'edit')}></i
             ></dui-button>`
         )}

@@ -14,6 +14,11 @@
       @apply text-sm py-4;
       height: 1.5rem;
     }
+    & .dui-input-right,
+    & .dui-input-left {
+      line-height: 1rem;
+      @apply py-4;
+    }
   }
   & .dui-input-msg,
   & .dui-input-tip,
