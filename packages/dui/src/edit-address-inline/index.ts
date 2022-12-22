@@ -8,7 +8,7 @@ import '../input/text'
 import '../copy'
 
 // Style
-import style from './index.css'
+import style from './index.css?inline'
 
 @customElement('edit-addr-inline')
 export class EditInline extends TailwindElement(style) {
