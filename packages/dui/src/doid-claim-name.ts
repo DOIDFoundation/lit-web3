@@ -69,7 +69,7 @@ export class DoidClaimName extends TailwindElement('') {
     return html`<dui-button
         ?disabled=${this.dialog}
         ?pending=${this.dialog}
-        class="secondary"
+        class="success"
         @click=${this.open}
         ?sm=${this.sm}
         ><slot>Claim</slot></dui-button

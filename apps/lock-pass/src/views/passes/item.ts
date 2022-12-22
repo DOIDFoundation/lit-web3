@@ -51,7 +51,7 @@ export class PassItem extends TailwindElement(style) {
         <img src=${this.item.meta.image} class="object-contain" />
       </div>
       <div
-        class="flex flex-col justify-between text-xs  ${classMap({
+        class="flex flex-col grow text-xs  ${classMap({
           'opacity-40': this.dialog,
           grayscale: this.dialog
         })}"

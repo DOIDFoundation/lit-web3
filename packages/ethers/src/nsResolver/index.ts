@@ -5,49 +5,51 @@ import { getResolverAddress, getAccount, getResolverContract } from './controlle
 import { formatUnits } from '@ethersproject/units'
 
 // Queries
+export const cookNameInfo = (src: Record<string, any>, opts = {}): NameInfo => {
+  const data: Record<string, any> = { ...src, ...opts }
+  const { owner, status, account } = data
+  const itsme = owner === account && !!account
+  const locked = status === 'locked'
+  const available = status === 'available' || (itsme && locked)
+  const registered = status === 'registered'
+  let stat = locked ? 'Locked by pass' : available ? 'Available' : 'Unavailable'
+  if (registered && itsme) stat = 'Registered'
+  const cooked = {
+    name: wrapTLD(data.name ?? name),
+    owner,
+    available,
+    registered,
+    stat,
+    status,
+    itsme,
+    id: formatUnits(data.id || 0, 0),
+    locked
+  }
+  return cooked
+}
 export const nameInfo = async <T extends string | string[]>(req: T, account?: string) => {
-  const get = async (name: string) => {
-    name = wrapTLD(name)
+  const get = async (name: string): Promise<NameInfo> => {
     if (!account) account = await getAccount(account)
     const contract = await getResolverContract(account)
-    const nameInfo: NameInfo = {
-      name,
-      status: '',
-      owner: '',
-      available: false,
-      itsme: false,
-      registered: false,
-      stat: ''
-    }
+    const nameInfo: any = { name: wrapTLD(name), account }
     try {
       const res = await contract.statusOfName(bareTLD(name))
-      const { owner, status } = res
-      const id = formatUnits(res.id, 0)
-      const itsme = owner === account
-      const locked = status === 'locked'
-      const available = status === 'available' || (itsme && locked)
-      const registered = status === 'registered'
-      Object.assign(nameInfo, {
-        owner,
-        available,
-        registered,
-        stat: locked ? 'Locked by pass' : available ? 'Available' : 'Unavailable',
-        status,
-        itsme,
-        id,
-        locked
-      })
-    } catch (e) {
-      Object.assign(nameInfo, { available: true })
-    }
+      Object.assign(nameInfo, cookNameInfo(res, nameInfo))
+    } catch (e) {}
     return nameInfo
   }
   if (Array.isArray(req)) return await Promise.all(req.map(get))
   return await get(req)
 }
-export const ownerNames = async (address: string, account?: string) => {
+export const ownerNames = async (owner: string, account?: string) => {
+  if (!account) account = await getAccount(account)
   const contract = await getResolverContract(account)
-  return await contract.namesOfOwner(address)
+  const names = []
+  try {
+    const res = await contract.namesOfOwner(owner)
+    names.push(...res.map((ref: any) => cookNameInfo(ref, { owner, account, status: 'registered' })))
+  } catch (err) {}
+  return names
 }
 export const ownerTokens = async (address: string, account?: string) => {
   const contract = await getResolverContract(account)

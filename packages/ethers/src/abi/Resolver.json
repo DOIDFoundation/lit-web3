@@ -82,19 +82,19 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "bytes32", "name": "node", "type": "bytes32" },
-      { "internalType": "uint256", "name": "coinType", "type": "uint256" }
-    ],
+    "inputs": [{ "internalType": "bytes32", "name": "node", "type": "bytes32" }],
     "name": "addr",
-    "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "bytes32", "name": "node", "type": "bytes32" }],
-    "name": "addr2",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "inputs": [
+      { "internalType": "bytes32", "name": "node", "type": "bytes32" },
+      { "internalType": "uint256", "name": "coinType", "type": "uint256" }
+    ],
+    "name": "addrOfType",
+    "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -266,7 +266,7 @@
       {
         "components": [
           { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
-          { "internalType": "bytes", "name": "name", "type": "bytes" }
+          { "internalType": "string", "name": "name", "type": "string" }
         ],
         "internalType": "struct IDoidRegistry.DoidInfo[]",
         "name": "",
