@@ -1,23 +1,18 @@
-const key = 'doidFavors'
-export const getFavorites = () => {
-  const saved = localStorage.getItem(key) || '[]'
-  return JSON.parse(saved)
-}
-const save = (favors: []) => localStorage.setItem(key, JSON.stringify(favors))
-export const favor = (name: unknown) => {
+const key = 'doid.favors'
+export const getFavorites = (): FavorName[] => JSON.parse(localStorage.getItem(key) || '[]')
+const save = (favors: FavorName[]) => localStorage.setItem(key, JSON.stringify(favors))
+export const favor = (name: string) => {
   const exist = exists(name, true)
-  if (typeof name === 'string') {
-    name = { name }
-  }
+  const favorName = typeof name === 'string' ? { name } : name
   if (!exist) {
     const favors = getFavorites()
-    favors.push(name)
+    favors.push(favorName)
     save(favors)
   }
 }
-export const exists = (name: unknown, del = false) => {
+export const exists = (name: string, del = false) => {
   const favors = getFavorites()
-  const found = favors.some((r: Record<string, unknown>, i: number) => {
+  const found = favors.some((r, i) => {
     const exist = r.name === name
     if (del && exist) favors.splice(i, 1)
     return exist

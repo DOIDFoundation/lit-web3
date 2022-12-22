@@ -3,28 +3,32 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '../favorites/btn'
 
-import style from './list.css?inline'
+import style from './item.css?inline'
 @customElement('doid-name-item')
 export class DoidNameItem extends TailwindElement(style) {
-  @property() name!: NameInfo
+  @property() nameInfo!: NameInfo
 
   goto() {
-    const { name, available } = this.name
+    const { name, available } = this.nameInfo
     goto(`/name/${name}/${available ? 'register' : 'details'}`)
+  }
+
+  change() {
+    this.emit('change')
   }
 
   render() {
     return html`<div class="doid-name-item">
       <div
         @click=${this.goto}
-        class="flex justify-between items-center gap-4 border p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
+        class="flex justify-between items-center gap-4 border p-3 shadow-sm cursor-pointer bg-gray-50 hover_bg-gray-100 rounded-md"
       >
-        <b>${this.name.name}</b>
+        <b>${this.nameInfo.name}</b>
         <div class="flex gap-4 items-center">
-          <span class="${classMap(this.$c([this.name.available ? 'text-green-500' : 'text-red-500']))}"
-            >${this.name.available ? 'Available' : 'Unavailable'}</span
+          <span class="${classMap(this.$c([this.nameInfo.available ? 'text-green-500' : 'text-red-500']))}"
+            >${this.nameInfo.stat}</span
           >
-          <doid-favorites-btn .name=${this.name.name}></doid-favorites-btn>
+          <doid-favorites-btn @change=${this.change} .name=${this.nameInfo.name}></doid-favorites-btn>
         </div>
       </div>
     </div>`

@@ -9,11 +9,28 @@ export const nameInfo = async <T extends string | string[]>(req: T, account?: st
     name = wrapTLD(name)
     if (!account) account = await getAccount(account)
     const contract = await getResolverContract(account)
-    const nameInfo: NameInfo = { name, status: '', owner: '', available: false, itsme: false }
+    const nameInfo: NameInfo = {
+      name,
+      status: '',
+      owner: '',
+      available: false,
+      itsme: false,
+      registered: false,
+      stat: ''
+    }
     try {
       const { owner, status } = await contract.statusOfName(bareTLD(name))
       const itsme = owner === account
-      Object.assign(nameInfo, { owner, available: itsme || status === 'available', status, itsme })
+      const locked = status === 'locked'
+      const available = status === 'available' || (itsme && locked)
+      Object.assign(nameInfo, {
+        owner,
+        available,
+        registered: status === 'registered',
+        stat: locked ? 'Locked by pass' : available ? 'Available' : 'Unavailable',
+        status,
+        itsme
+      })
     } catch (e) {
       Object.assign(nameInfo, { available: true })
     }

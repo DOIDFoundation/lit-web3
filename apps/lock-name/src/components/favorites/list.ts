@@ -1,26 +1,35 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  repeat
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { getFavorites } from '@/components/favorites/store'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 import '@/components/favorites/btn'
+import '@/components/names/list'
 
 import style from './list.css?inline'
 @customElement('doid-favorites')
 export class ViewFavorites extends TailwindElement(style) {
-  @state() favorites: any[] = getFavorites()
+  @state() favorites = getFavorites()
+  @state() names: NameInfo[] = []
+  @state() pending = false
+  @state() ts = 0
 
-  get() {
+  get empty() {
+    return !this.pending && !this.names.length
+  }
+
+  get = async () => {
+    this.pending = true
     this.favorites = getFavorites()
+    this.names = <NameInfo[]>await nameInfo(this.favorites.map((r: FavorName) => r.name))
+    this.pending = false
+    this.ts++
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.get()
   }
 
   render() {
@@ -30,19 +39,14 @@ export class ViewFavorites extends TailwindElement(style) {
         <p class="text-base">No names have been saved</p>
         <p>To add names to favourites, click the heart icon next to any desired name.</p>
       </div>`
-    return html`${repeat(
-      this.favorites,
-      (favored) =>
-        html`<div
-          @click=${() => goto(`/name/${favored.name}`)}
-          class="flex justify-between items-center gap-4 border my-2 p-3 shadow-sm cursor-pointer hover_bg-gray-100 rounded-md"
-        >
-          <b>${favored.name}</b>
-          <div class="flex gap-4 items-center">
-            <span class="text-green-500">Available</span>
-            <doid-favorites-btn .name=${favored.name} @change=${this.get}></doid-favorites-btn>
-          </div>
-        </div>`
-    )}`
+    return html`
+      <!-- Names -->
+      <doid-name-list
+        @change=${this.get}
+        .names=${this.names}
+        .pending=${!this.ts && this.pending}
+        .empty=${this.empty}
+      ></doid-name-list>
+    `
   }
 }

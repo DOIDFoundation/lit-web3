@@ -14,7 +14,7 @@ import '@/variables-override.css' // => /apps/*/src/variables-override.css
 import '../c/global.css'
 
 useBridge()
-routerGuard.init()
+routerGuard.inject()
 
 export default function ({ routes = <RouteConfig[]>[] } = {}) {
   // App Root
@@ -39,16 +39,7 @@ export default function ({ routes = <RouteConfig[]>[] } = {}) {
 
     connectedCallback(): void {
       super.connectedCallback()
-      // Trick for @lit-labs/router
-      emitter.on('router-goto', (e: any) => {
-        history.pushState({}, '', e.detail)
-        this._router.goto(e.detail)
-      })
-      emitter.on('router-replace', (e: any) => {
-        history.replaceState({}, '', e.detail)
-        this._router.goto(e.detail)
-      })
-      // routerGuard.bind(this._router)
+      routerGuard.init(this._router)
     }
 
     render() {
