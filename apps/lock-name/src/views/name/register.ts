@@ -121,6 +121,7 @@ export class ViewNameRegister extends TailwindElement(style) {
     try {
       this.tx = await register(this.name)
       this.done = await this.tx.wait()
+      clearCommitment(this.name)
     } catch (err: any) {
       if (err.code !== 4001) {
         this.err = err.message

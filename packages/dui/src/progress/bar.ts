@@ -27,7 +27,7 @@ export class ProgressBar extends TailwindElement(style) {
       if (this.randomTo) {
         this.randomProgress = this.percent
         this.randomTimer = setInterval(() => {
-          this.randomProgress += Math.floor(Math.random() * (0.5 - 0.1 + 1) + 0.1)
+          this.randomProgress += Math.floor(Math.random() * (0.2 - 0.1 + 1) + 0.1)
           if (this.randomProgress >= this.randomTo) clearInterval(this.randomTimer)
         }, 200)
       } else {
