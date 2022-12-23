@@ -1,7 +1,8 @@
 export { check } from './checker'
 import { bareTLD, wrapTLD } from './uts'
 export { wrapTLD }
-import { getResolverAddress, getAccount, getResolverContract } from './controller'
+import { getAccount } from '../useBridge'
+import { getResolverAddress, getResolverContract } from './controller'
 import { formatUnits } from '@ethersproject/units'
 
 // Queries
@@ -29,8 +30,8 @@ export const cookNameInfo = (src: Record<string, any>, opts = {}): NameInfo => {
 }
 export const nameInfo = async <T extends string | string[]>(req: T, account?: string) => {
   const get = async (name: string): Promise<NameInfo> => {
-    if (!account) account = await getAccount(account)
-    const contract = await getResolverContract(account)
+    if (!account) account = await getAccount()
+    const contract = await getResolverContract()
     const nameInfo: any = { name: wrapTLD(name), account }
     try {
       const res = await contract.statusOfName(bareTLD(name))
@@ -42,8 +43,8 @@ export const nameInfo = async <T extends string | string[]>(req: T, account?: st
   return await get(req)
 }
 export const ownerNames = async (owner: string, account?: string) => {
-  if (!account) account = await getAccount(account)
-  const contract = await getResolverContract(account)
+  if (!account) account = await getAccount()
+  const contract = await getResolverContract()
   const names = []
   try {
     const res = await contract.namesOfOwner(owner)
@@ -51,8 +52,8 @@ export const ownerNames = async (owner: string, account?: string) => {
   } catch (err) {}
   return names
 }
-export const ownerTokens = async (address: string, account?: string) => {
-  const contract = await getResolverContract(account)
+export const ownerTokens = async (address: string) => {
+  const contract = await getResolverContract()
   return await contract.tokensOfOwner(address)
 }
 

@@ -1,22 +1,16 @@
-import { assignOverrides, txReceipt, getChainId, getAccount, getResolverContract } from './controller'
+import { getResolverContract } from './controller'
+import { assignOverrides, getAccount } from '../useBridge'
+import { txReceipt } from '../txReceipt'
 import { formatBytes32String } from '@ethersproject/strings'
+import { useStorage } from '../useStorage'
 
-export const secretKey = async (name: string) => `${await getChainId()}.${name}`
+export const secretKey = async (name: string) => `.${name}`
 const now = () => new Date().getTime()
-
-// Commitment cache
-export const getCommitment = async (name: string) => {
-  const saved = sessionStorage.getItem(await secretKey(name))
-  if (saved) return JSON.parse(saved)
-}
-export const saveCommitment = async (name: string, data: Commitment) => {
-  const saved = (await getCommitment(name)) || {}
-  Object.assign(saved, data)
-  sessionStorage.setItem(await secretKey(name), JSON.stringify(saved))
-}
+const getStorage = async (name: string) => await useStorage(`reg.${name}`, sessionStorage)
 
 export const makeCommitment = async (name: string, owner?: string, secret = '', data = []): Promise<Commitment> => {
-  const saved = await getCommitment(name)
+  const storage = await getStorage(name)
+  const saved = await storage.get()
   if (saved) return saved
   const contract = await getResolverContract()
   if (!owner) owner = await getAccount()
@@ -24,7 +18,7 @@ export const makeCommitment = async (name: string, owner?: string, secret = '', 
     secret: await contract.makeCommitment(name, owner, formatBytes32String(secret), data),
     ts: now()
   }
-  await saveCommitment(name, commitment)
+  await storage.set(commitment, { merge: true })
   return commitment
 }
 
@@ -35,6 +29,7 @@ export const commit = async (name: string) => {
   const parameters = [commitment.secret]
   await assignOverrides(overrides, contract, method, parameters)
   const call = contract[method](...parameters)
+  const storage = await getStorage(name)
   const tx = new txReceipt(call, {
     errorCodes: 'Resolver',
     seq: {
@@ -43,7 +38,7 @@ export const commit = async (name: string) => {
       ts: now(),
       overrides
     },
-    onSent: () => saveCommitment(name, { ts: now() })
+    onSent: () => storage.set({ ts: now() }, { merge: true })
   })
   return tx
 }

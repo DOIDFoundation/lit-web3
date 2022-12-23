@@ -84,7 +84,7 @@ export class TxQueue {
       if (!force && seq.pending) return
       seq.pending = true
       try {
-        const res = await this.provider.provider.waitForTransaction(seq.hash)
+        const res = await this.provider.waitForTransaction(seq.hash)
         const { status } = res
         seq.status = status
         if (status === 1) {
