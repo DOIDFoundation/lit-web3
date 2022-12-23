@@ -1,8 +1,95 @@
+:host {
+  --menuIcon: #333;
+  --menuIcon2: #fff;
+  &::part(dui-nav) {
+    display: none;
+  }
+  &::slotted {
+    display: none;
+  }
+}
 .dui-header {
   @apply float-left w-full;
   height: var(--headerH);
   background: var(--bg2);
   &::part(connect-wallet-btn) {
     @apply text-xs;
+  }
+}
+
+.nav-menu-btn-1,
+.nav-menu-btn::before,
+.nav-menu-btn::after {
+  @apply absolute;
+  content: '';
+  overflow: hidden;
+  display: block;
+  width: 15px;
+  height: 2px;
+  left: 9px;
+  background: var(--menuIcon);
+  transition: all 0.2s;
+}
+
+.nav-menu-btn {
+  @apply w-8 h-8 left-2;
+  margin-top: -3px;
+}
+.nav-menu-btn {
+  @apply z-40;
+  line-height: 1;
+  position: relative;
+  will-change: left;
+  transition: all 0.2s;
+  & .nav-menu-btn-1 {
+    top: 15px;
+    transform-origin: center;
+    transition: all 0.2s;
+    will-change: transform;
+  }
+  &::before {
+    top: 9px;
+    @apply absolute;
+    transition: all 0.2s;
+    will-change: transform;
+    transform-origin: left top;
+  }
+  &::after {
+    top: 22px;
+    @apply absolute;
+    transition: all 0.2s;
+    will-change: transform;
+    transform-origin: left bottom;
+  }
+  &.active {
+    /* left: calc(3rem); */
+    & .nav-menu-btn-1 {
+      transform: scaleX(0);
+    }
+    &::before,
+    &::after {
+      background: var(--menuIcon2);
+    }
+    &::before {
+      @apply absolute left-0 top-0 w-full;
+      transform: rotate(45deg) translate(7px, -1px);
+    }
+    &::after {
+      @apply absolute left-0 top-full w-full;
+      transform: rotate(-45deg) translate(7px, 0);
+    }
+  }
+}
+.nav-menu-body {
+  @apply z-30 fixed invisible w-full h-full top-0 left-0 opacity-0;
+  top: -100vh;
+  background: rgba(51, 51, 51, 0.99);
+  transition: all 0.2s ease-out;
+  &.active {
+    @apply visible opacity-100;
+    top: 0;
+  }
+  & * {
+    color: #fff !important;
   }
 }
