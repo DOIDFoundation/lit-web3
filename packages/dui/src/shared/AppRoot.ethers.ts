@@ -13,8 +13,8 @@ import emitter from '@lit-web3/core/src/emitter'
 import '@/variables-override.css' // => /apps/*/src/variables-override.css
 import '../c/global.css'
 
-useBridge()
 routerGuard.inject()
+useBridge()
 
 export default function ({ routes = <RouteConfig[]>[] } = {}) {
   // App Root
@@ -31,13 +31,10 @@ export default function ({ routes = <RouteConfig[]>[] } = {}) {
     constructor() {
       super()
       // Trick for @lit-app/state
-      emitter.on('force-request-update', async () => {
-        await 0
-        this.requestUpdate()
-      })
+      emitter.on('force-request-update', () => setTimeout(() => this.requestUpdate()))
     }
 
-    connectedCallback(): void {
+    connectedCallback() {
       super.connectedCallback()
       routerGuard.init(this._router)
     }

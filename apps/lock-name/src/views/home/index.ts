@@ -1,5 +1,5 @@
 import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
-import emitter from '@lit-web3/core/src/emitter'
+import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
@@ -8,7 +8,7 @@ import style from './home.css?inline'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
   goto = (e: CustomEvent) => {
-    emitter.emit('router-goto', `/search/${e.detail}`)
+    goto(`/search/${e.detail}`)
   }
   render() {
     return html`<div class="home">

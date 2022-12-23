@@ -2,10 +2,10 @@ import { TailwindElement, html, when, state } from '@lit-web3/dui/src/shared/Tai
 import { customElement } from 'lit/decorators.js'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { LENs, lockPass, checkNameExists, getInviteCode, getPassCateLen, getPassInfo } from '@/lib/locker'
-import emitter from '@lit-web3/core/src/emitter'
 import uts from '@lit-web3/ethers/src/nsResolver/uts'
 import { ref, createRef } from 'lit/directives/ref.js'
 import { unicodelength } from '@lit-web3/ethers/src/stringlength'
+import { replace } from '@lit-web3/dui/src/shared/router'
 // Components
 import '@lit-web3/dui/src/connect-wallet/btn'
 import '@lit-web3/dui/src/tx-state'
@@ -134,7 +134,6 @@ export class ViewLock extends TailwindElement(style) {
       this.tx = await lockPass(this.passInfo || this.code, this.name)
       this.dialog = true
       this.success = await this.tx.wait()
-      // emitter.emit('router-goto', '/passes')
     } catch (err: any) {
       let msg = err.message || err.code
       if (err.code === 4001) {
@@ -168,7 +167,7 @@ export class ViewLock extends TailwindElement(style) {
         this.passInfo = {}
         try {
           const info = await getPassInfo(reqPID)
-          if (info.name) return emitter.emit('router-replace', '/passes')
+          if (info.name) return replace('/passes')
           this.passInfo = info
         } catch (e) {
           location.href = '/'
