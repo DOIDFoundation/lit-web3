@@ -1,0 +1,18 @@
+:host {
+  &::part(step-title) {
+  }
+}
+
+.card {
+  @apply relative flex flex-col bg-gray-100 p-4 pt-5 pl-14 gap-4;
+  &::before {
+    @apply left-3 top-3 absolute flex justify-center items-center w-8 h-8 bg-white rounded-full font-bold border;
+    content: attr(idx);
+  }
+  &.active {
+    @apply bg-slate-200;
+    &::before {
+      @apply border-slate-400;
+    }
+  }
+}

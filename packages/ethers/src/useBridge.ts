@@ -142,7 +142,8 @@ export const getWalletAccount = async () =>
 export const getAccount = async (force = false) => (force ? await getWalletAccount() : (await getBridge()).account)
 export const getNetwork = async () => (await getBridge()).network.current
 export const getChainId = async () => (await getNetwork()).chainId
-export const getEnvKey = async (key = '') => (await useBridgeAsync()).envKey + (key ? `.${key}` : '')
+export const getEnvKey = async (key = '', withoutAddr = false) =>
+  (withoutAddr ? await getChainId() : (await useBridgeAsync()).envKey) + (key ? `.${key}` : '')
 export const getSigner = async () => (await getBridge()).provider.getSigner(await getAccount())
 export const getBlockNumber = async () => {
   const { blockNumber } = await useBridgeAsync()
