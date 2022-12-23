@@ -34,7 +34,7 @@ export const getICId = (code: string) => {
 }
 export const getPassCateLen = (code: string) => PassCate[getICate(code) ?? 'C'] ?? PassCate.C
 export const getInviteCode = async (account?: string) => {
-  if (!account) account = await getAccount(account)
+  if (!account) account = await getAccount()
   const CHash = keccak256(toUtf8Bytes('C'))
   let code = ''
   // Sig way is offline
@@ -45,7 +45,7 @@ export const getInviteCode = async (account?: string) => {
   // } catch (err) {
   //   throw await normalizeTxErr(err)
   // }
-  code = hexlify(BigInt(account) ^ BigInt(CHash))
+  code = hexlify(BigInt(account!) ^ BigInt(CHash))
   return [code.replace('0x', ''), 'c', '0'].join('')
 }
 
@@ -63,7 +63,7 @@ export const alreadyHasPasses = async () => {
 
 export const getPasses = async (account?: string, withDetail = false) => {
   if (!account) account = await getAccount()
-  const contract = await getLockerContract(account)
+  const contract = await getLockerContract()
   return await contract[withDetail ? 'getUserPassesInfo' : 'getUserPassList'](account)
 }
 
@@ -78,7 +78,7 @@ export const getNameByHash = async (hash: string) => {
 }
 
 export const getPassInfo = async (passId: string, account?: string) => {
-  const contract = await getLockerContract(account)
+  const contract = await getLockerContract()
   const passCate = await getPassCates()
   let info: Record<string, string | number> = { id: passId, cate: 'C', len: 6, name: '' }
   try {
@@ -121,7 +121,7 @@ export const lockPass = async (codeOrPass: any, name = '') => {
 
 export const getInviteLimits = async (account?: string) => {
   if (!account) account = await getAccount()
-  const contract = await getLockerContract(account)
+  const contract = await getLockerContract()
   const res = await contract.getUserInvitedNumber(account)
   return formatUnits(res[1], 0)
 }
