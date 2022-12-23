@@ -8,6 +8,7 @@ export const getAccount = async (account?: string) => account || (await getBridg
 export const getSigner = async (account?: string) => (await getBridge()).provider.getSigner(await getAccount(account))
 export const getResolverAddress = () => getContracts('Resolver')
 export const getChainId = async () => (await getBridge()).network.current.chainId
+export const getProvider = async () => (await getBridge()).provider
 
 export const getResolverContract = async (account?: string) =>
   getContract('Resolver', { account: await getAccount(account) })

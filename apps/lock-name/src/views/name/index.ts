@@ -67,7 +67,6 @@ export class ViewName extends TailwindElement(style) {
     emitter.on('router-change', this.check)
   }
   disconnectedCallback() {
-    console.log('dis')
     super.disconnectedCallback()
     emitter.off('router-change', this.check)
   }
@@ -106,7 +105,10 @@ export class ViewName extends TailwindElement(style) {
         <!-- Register -->
         ${when(this.inReg, () => html`<view-name-register .name=${this.name}></view-name-register>`)}
         <!-- Details -->
-        ${when(this.inDetails, () => html`<view-name-details .name=${this.name}></view-name-details>`)}
+        ${when(
+          this.inDetails,
+          () => html`<view-name-details .name=${this.name} .info=${this.nameInfo}></view-name-details>`
+        )}
       </div>
     </div>`
   }

@@ -6,8 +6,18 @@
 // console.log(addr)
 
 import { isAddress } from '@ethersproject/address'
+import { formatsByName } from '../address-encoder'
 import uts from './uts'
 export { bareTLD, wrapTLD } from './uts'
+export { formatsByName, formatsByCoinType } from '../address-encoder'
+
+// ETH, BSC
+export const coinTypes = Object.fromEntries(
+  ['ETH', 'BSC'].map((type: string) => {
+    const { coinType, name } = formatsByName[type]
+    return [coinType, { name, coinType, address: '' }]
+  })
+)
 
 export const isName = (name = '') => !uts(name).error
 
