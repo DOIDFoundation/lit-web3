@@ -76,26 +76,23 @@ export const ownerRecords = async (name?: string) => {
 }
 export const setAddrSignMessage = async (name: string, account: string, coinType: number | string) => {
   let res
-  try {
-    const _name = bareTLD(name)
-    let contract = await getResolverContract()
-    // node, coinType, account, timestamp, nonce, signature
-    const provider = await getBridgeProvider()
-    const bockNum = await provider.getBlockNumber()
-    const timestamp = (await provider.getBlock(bockNum)).timestamp
-    const nonce = BigNumber.from(randomBytes(32))
-    const msg = await contract.makeAddrMessage(_name, coinType, account, timestamp, nonce)
-    const signature = await (await getSigner()).signMessage(msg)
-    res = {
-      name,
-      dest: account,
-      timestamp,
-      nonce: nonce._hex,
-      signature,
-      msg
-    }
-  } catch (e: any) {
-    console.error(e)
+
+  const _name = bareTLD(name)
+  let contract = await getResolverContract()
+  // node, coinType, account, timestamp, nonce, signature
+  const provider = await getBridgeProvider()
+  const bockNum = await provider.getBlockNumber()
+  const timestamp = (await provider.getBlock(bockNum)).timestamp
+  const nonce = BigNumber.from(randomBytes(32))
+  const msg = await contract.makeAddrMessage(_name, coinType, account, timestamp, nonce)
+  const signature = await (await getSigner()).signMessage(msg)
+  res = {
+    name,
+    dest: account,
+    timestamp,
+    nonce: nonce._hex,
+    signature,
+    msg
   }
   return res
 }

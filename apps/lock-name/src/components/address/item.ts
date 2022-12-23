@@ -114,6 +114,7 @@ export class EditInline extends TailwindElement(style) {
             .name=${this.name}
             .coin=${this.coinType}
             .owner=${this.isOwner}
+            .currentAddr=${this.address}
             @success=${this.onSuccess}
           ></doid-set-record-wallet>`,
         () => html``

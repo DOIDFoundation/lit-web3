@@ -11,6 +11,8 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { setAddrSignMessage, setAddrByOwner } from '@lit-web3/ethers/src/nsResolver'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
 
+import { sleep } from '@lit-web3/ethers/src/utils'
+
 // Components
 import '@lit-web3/dui/src/step-card'
 // Styles
@@ -20,13 +22,14 @@ import style from './set.css?inline'
 export class SetRecordWallet extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean }) owner = false
-  @property({ type: Object }) coin = {}
+  @property({ type: Object }) coin: any = {}
   @property({ type: String }) name = ''
+  @property({ type: String }) currentAddr = ''
 
   @state() step = 1 //step1: sign, step2: set
   @state() signatureInfo: any = {}
-  @state() pending: Record<string, boolean> = { sign: false, set: false }
-  @state() err: Record<string, string> = { sign: '', set: '' }
+  @state() pending = false
+  @state() err = ''
   @state() stored: Record<string, string> = {}
   @state() tx: any = null
   @state() success = false
@@ -47,16 +50,17 @@ export class SetRecordWallet extends TailwindElement(style) {
     return this.step === 1
   }
   get signature() {
-    return this.stored.signature || this.signatureInfo.signature
+    return this.stored.signature || this.signatureInfo?.signature
   }
   get txPending() {
     return this.tx && !this.tx?.ignored
   }
   get btnSignDisabled() {
-    return this.pending.sign || this.err.sign || this.owner || this.txPending
+    if (!this.currentAddr) return false
+    return this.pending || this.err || this.owner || this.txPending
   }
   get btnSetDisabled() {
-    return this.pending.set || this.err.sign || !this.signature || !this.owner || this.txPending
+    return this.pending || this.err || !this.signature || !this.owner || this.txPending
   }
 
   getStorage = async () => {
@@ -69,43 +73,47 @@ export class SetRecordWallet extends TailwindElement(style) {
     if (this.stored?.signature) this.step = 2
   }
   getSignatureMessage = async () => {
-    // get sign
-    if (this.pending.sign || !this.name || !this.ownerAddress || !this.coin.coinType || !this.account) return
-    this.pending.sign = true
-    this.err.sign = ''
-    try {
-      this.signatureInfo = await setAddrSignMessage(this.name, this.account, this.coin.coinType)
-      const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
-
-      storage.set({ ...this.stored, ...this.signatureInfo })
-    } catch (e: any) {
-      this.err.sign = e.message
-    } finally {
-      this.pending.sign = false
-    }
+    this.signatureInfo = await setAddrSignMessage(this.name, this.account, this.coin.coinType)
+    const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
+    const data = { ...this.stored, ...this.signatureInfo }
+    storage.set(data)
+    this.stored = data
   }
   next = async () => {
-    this.step = 2
-    if (!this.owner) {
-      this.getSignatureMessage()
+    // get sign
+    if (!this.name || !this.ownerAddress || !this.coin.coinType || !this.account) return
+    if (this.owner && this.currentAddr) return
+    this.pending = true
+    this.err = ''
+    try {
+      await this.getSignatureMessage()
+      this.step = 2
+    } catch (err: any) {
+      if (err.code === 4001) return
+      this.err = err.message
+    } finally {
+      this.pending = false
     }
   }
   setAddr = async () => {
-    if (this.pending.set) return
-    this.pending.set = true
-    this.err.set = ''
+    if (this.pending) return
+    this.pending = true
+    this.err = ''
     this.success = false
     const { name, coinType, dest, timestamp, nonce, signature } = this.stored
     const storage = await this.getStorage()
     try {
       this.tx = await setAddrByOwner(name, coinType, dest, +timestamp, nonce, signature)
-      this.success = await this.tx.wait()
+      const success = await this.tx.wait()
       storage.remove()
+      await sleep(1000)
+      this.success = success
       this.emit('success')
     } catch (e: any) {
-      this.err.set = e
+      this.err = e
+      console.error(e)
     } finally {
-      this.pending.set = false
+      this.pending = false
       storage.remove()
     }
   }
@@ -139,7 +147,7 @@ export class SetRecordWallet extends TailwindElement(style) {
         </div>
         <div>
           ${when(
-            this.pending.sign && !this.ownerAddress,
+            this.pending && !this.ownerAddress,
             () => html``,
             () => html`<div class="px-3">
               <h3 class="text-base">Setting an address requires you to complete 2 steps</h3>
@@ -189,17 +197,17 @@ export class SetRecordWallet extends TailwindElement(style) {
                     sm
                     @click=${this.next}
                     ?disabled=${this.btnSignDisabled}
-                    ?pending=${this.pending.sign}
+                    ?pending=${this.pending}
                     >Sign message<i
-                      class="mdi ml-2 ${classMap(this.$c([this.pending.sign ? 'mdi-loading' : 'mdi-chevron-right']))}"
+                      class="mdi ml-2 ${classMap(this.$c([this.pending ? 'mdi-loading' : 'mdi-chevron-right']))}"
                     ></i>
                   </dui-button>`,
                   () => html`<dui-button
                     sm
                     @click=${this.setAddr}
                     ?disabled=${this.btnSetDisabled}
-                    ?pending=${this.pending.set}
-                    >Set<i class="mdi ml-2 ${classMap(this.$c([this.pending.set ? 'mdi-loading' : '']))}"></i>
+                    ?pending=${this.pending}
+                    >Set<i class="mdi ml-2 ${classMap(this.$c([this.pending ? 'mdi-loading' : '']))}"></i>
                   </dui-button>`
                 )}
               </div>
