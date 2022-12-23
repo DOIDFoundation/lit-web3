@@ -116,7 +116,7 @@ export const setAddrByOwner = async (
   await assignOverrides(overrides, contract, method, parameters)
   const call = contract[method](...parameters)
   return new txReceipt(call, {
-    errorCodes: 'setCoinAddress',
+    errorCodes: 'Resolver',
     allowAlmostSuccess: true,
     seq: {
       type: 'setAddr',

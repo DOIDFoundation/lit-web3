@@ -64,6 +64,7 @@ export class EditInline extends TailwindElement(style) {
   }
   onSuccess = () => {
     this.mode = ''
+    this.checkEditInfo()
     this.emit('success')
   }
 
@@ -89,7 +90,7 @@ export class EditInline extends TailwindElement(style) {
                   <i class="mdi mdi-check-circle-outline"></i>
                 </span>
                 <span slot="copy"><i class="mdi mdi-content-copy"></i></span
-              ></dui-copy>`,
+              ></dui-copy> `,
             () =>
               html`${when(
                 this.isOwner,

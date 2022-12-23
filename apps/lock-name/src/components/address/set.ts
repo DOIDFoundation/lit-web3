@@ -38,30 +38,29 @@ export class SetRecordWallet extends TailwindElement(style) {
     return this.stored.msg
   }
   get account() {
-    // account
     return bridgeStore.bridge.account
   }
   get isStep1() {
     return this.step === 1
   }
-
   get signature() {
     return this.stored.signature || this.signatureInfo.signature
   }
-
   get txPending() {
     return this.tx && !this.tx?.ignored
   }
   get btnSignDisabled() {
     return this.pending.sign || this.err.sign || this.owner || this.txPending
   }
-  // get
   get btnSetDisabled() {
-    // owner
     return this.pending.set || this.err.sign || !this.signature || !this.owner || this.txPending
   }
+
+  getStorage = async () => {
+    return await useStorage(`sign.${this.name}`, sessionStorage, true)
+  }
   getStoredInfo = async () => {
-    const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
+    const storage = await this.getStorage()
     const stored = await storage.get()
     this.stored = stored
     if (this.stored?.signature) this.step = 2
@@ -80,7 +79,6 @@ export class SetRecordWallet extends TailwindElement(style) {
       this.err.sign = e.message
     } finally {
       this.pending.sign = false
-      // this.ts++
     }
   }
   next = async () => {
@@ -93,16 +91,19 @@ export class SetRecordWallet extends TailwindElement(style) {
     if (this.pending.set) return
     this.pending.set = true
     this.err.set = ''
+    this.success = false
     const { name, coinType, dest, timestamp, nonce, signature } = this.stored
+    const storage = await this.getStorage()
     try {
       this.tx = await setAddrByOwner(name, coinType, dest, +timestamp, nonce, signature)
       this.success = await this.tx.wait()
+      storage.remove()
       this.emit('success')
     } catch (e: any) {
       this.err.set = e
     } finally {
       this.pending.set = false
-      // remove session
+      storage.remove()
     }
   }
 
@@ -119,11 +120,11 @@ export class SetRecordWallet extends TailwindElement(style) {
       <div class="dui-container">
         <div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
           <div>You are setting <b>${this.coin.name}</b> address to ${this.account}</div>
-          <div><a href="javascript:void(0)">Change address to set</a></div>
+          <!-- <div><a href="javascript:void(0)">Change address to set</a></div> -->
         </div>
         <div>
           ${when(
-            this.pending.sign,
+            this.pending.sign && !this.ownerAddress,
             () => html``,
             () => html`<div class="px-3">
               <h3 class="text-base">Setting an address requires you to complete 2 steps</h3>

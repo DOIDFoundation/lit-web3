@@ -38,7 +38,6 @@ export class ViewNameDetails extends TailwindElement(style) {
   connectedCallback() {
     this.get()
     super.connectedCallback()
-    // console.info({ info: this.info })
     this.fetchRecords()
   }
 
