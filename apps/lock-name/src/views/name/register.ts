@@ -74,7 +74,7 @@ export class ViewNameRegister extends TailwindElement(style) {
     const cd = 60
     this.cd = cd
     this.timer = setInterval(() => {
-      if (this.cd-- <= 0) this.goStep3()
+      if (--this.cd <= 0) this.goStep3()
     }, 1000)
   }
   goStep3 = () => {
