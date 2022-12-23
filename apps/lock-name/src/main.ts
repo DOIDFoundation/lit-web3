@@ -18,8 +18,8 @@ export class AppMain extends TailwindElement('') {
   }
   render() {
     return html`<network-warning></network-warning>
-      <dui-header>
-        <dui-nav slot="center">
+      <dui-header menuable>
+        <dui-nav slot="center" menuable>
           <dui-link href="/" nav alias="/search">Search</dui-link>
           <dui-link href="/favorites" nav>Favorites</dui-link>
           ${when(this.account, () => html`<dui-link href=${`/address/${this.account}`} nav exact>My DOID</dui-link>`)}

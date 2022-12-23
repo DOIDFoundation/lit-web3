@@ -1,7 +1,7 @@
 import { keccak256 } from '@ethersproject/keccak256'
 import { toUtf8Bytes } from '@ethersproject/strings'
 import { arrayify, hexlify } from '@ethersproject/bytes'
-import { getContract, getBridge, assignOverrides, getChainId } from '@lit-web3/ethers/src/useBridge'
+import { getContract, assignOverrides, getChainId, getAccount } from '@lit-web3/ethers/src/useBridge'
 // import { normalizeTxErr } from '@lit-web3/ethers/src/parseErr'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import { PassCates, PassCate } from '@lit-web3/ethers/src/constants/passcate'
@@ -9,14 +9,12 @@ import { formatUnits } from '@ethersproject/units'
 import { ZERO_HASH } from '@lit-web3/ethers/src/utils'
 
 export const LENs = [64, 130]
-const getAccount = async (account?: string) => account || (await getBridge()).account
 
 export const getPassCates = async () => PassCates[await getChainId()]
 export const getPassCate = async () =>
   Object.fromEntries(Object.entries(await getPassCates()).map((r) => [r[1][0], r[0]]))
 
-export const getLockerContract = async (account?: string) =>
-  getContract('Locker', { account: await getAccount(account) })
+export const getLockerContract = async () => getContract('Locker', { account: await getAccount() })
 
 const non0x = (code: string) => code.replace(/^0x/, '')
 const getLen = (non0xCode: string) => LENs[non0xCode.length < LENs[1] ? 0 : 1]

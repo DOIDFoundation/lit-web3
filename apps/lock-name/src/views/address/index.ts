@@ -1,15 +1,9 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  repeat
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { screenStore } from '@lit-web3/core/src/screen'
 import { ownerNames } from '@lit-web3/ethers/src/nsResolver'
+import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
@@ -22,6 +16,7 @@ import style from './address.css?inline'
 @customElement('view-address')
 export class ViewAddress extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
+  bindScreen: any = new StateController(this, screenStore)
   @property() address = ''
   @property() action = ''
   @state() names: NameInfo[] = []
@@ -40,6 +35,9 @@ export class ViewAddress extends TailwindElement(style) {
   }
   get itsme() {
     return this.bridge.account === this.address
+  }
+  get shortAddr() {
+    return shortAddress(this.address)
   }
 
   get = async () => {
@@ -69,7 +67,12 @@ export class ViewAddress extends TailwindElement(style) {
         ${when(
           this.address,
           () => html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
-            <div><b>${this.address}</b>${when(this.itsme, () => html`<span class="mx-1">(me)</span>`)}</div>
+            <div>
+              <b>${screenStore.isMobi ? this.shortAddr : this.address}</b>${when(
+                this.itsme,
+                () => html`<span class="mx-1">(me)</span>`
+              )}
+            </div>
             <div>
               <dui-nav slot="center" part="dui-nav">
                 <dui-link href=${`${this.scan}/address/${this.address}`}>View on Explorer</dui-link>

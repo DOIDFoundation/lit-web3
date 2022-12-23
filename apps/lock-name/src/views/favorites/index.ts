@@ -1,12 +1,4 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  repeat
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '@/components/favorites/list'
