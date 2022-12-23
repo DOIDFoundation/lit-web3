@@ -1,54 +1,64 @@
 export { check } from './checker'
 import { bareTLD, wrapTLD } from './uts'
 export { wrapTLD }
-import { getResolverAddress, getAccount, getResolverContract, getProvider } from './controller'
+
+import { getAccount, getBridgeProvider, assignOverrides, getSigner } from '../useBridge'
+import { getResolverAddress, getResolverContract } from './controller'
 import { formatUnits } from '@ethersproject/units'
 import { randomBytes } from '@ethersproject/random'
 import { coinTypes } from './checker'
 import { BigNumber } from '@ethersproject/bignumber'
+import { txReceipt } from '../txReceipt'
 
 // Queries
+export const cookNameInfo = (src: Record<string, any>, opts = {}): NameInfo => {
+  const data: Record<string, any> = { ...src, ...opts }
+  const { owner, status, account } = data
+  const itsme = owner === account && !!account
+  const locked = status === 'locked'
+  const available = status === 'available' || (itsme && locked)
+  const registered = status === 'registered'
+  let stat = locked ? 'Locked by pass' : available ? 'Available' : 'Unavailable'
+  if (registered && itsme) stat = 'Registered'
+  const cooked = {
+    name: wrapTLD(data.name ?? name),
+    owner,
+    available,
+    registered,
+    stat,
+    status,
+    itsme,
+    id: formatUnits(data.id || 0, 0),
+    locked
+  }
+  return cooked
+}
 export const nameInfo = async <T extends string | string[]>(req: T, account?: string) => {
-  const get = async (name: string) => {
-    name = wrapTLD(name)
-    if (!account) account = await getAccount(account)
-    const contract = await getResolverContract(account)
-    const nameInfo: NameInfo = {
-      name,
-      status: '',
-      owner: '',
-      available: false,
-      itsme: false,
-      registered: false,
-      stat: ''
-    }
+  const get = async (name: string): Promise<NameInfo> => {
+    if (!account) account = await getAccount()
+    const contract = await getResolverContract()
+    const nameInfo: any = { name: wrapTLD(name), account }
     try {
-      const { owner, status } = await contract.statusOfName(bareTLD(name))
-      const itsme = owner === account
-      const locked = status === 'locked'
-      const available = status === 'available' || (itsme && locked)
-      Object.assign(nameInfo, {
-        owner,
-        available,
-        registered: status === 'registered',
-        stat: locked ? 'Locked by pass' : available ? 'Available' : 'Unavailable',
-        status,
-        itsme
-      })
-    } catch (e) {
-      Object.assign(nameInfo, { available: true })
-    }
+      const res = await contract.statusOfName(bareTLD(name))
+      Object.assign(nameInfo, cookNameInfo(res, nameInfo))
+    } catch (e) {}
     return nameInfo
   }
   if (Array.isArray(req)) return await Promise.all(req.map(get))
   return await get(req)
 }
-export const ownerNames = async (address: string, account?: string) => {
-  const contract = await getResolverContract(account)
-  return await contract.namesOfOwner(address)
+export const ownerNames = async (owner: string, account?: string) => {
+  if (!account) account = await getAccount()
+  const contract = await getResolverContract()
+  const names = []
+  try {
+    const res = await contract.namesOfOwner(owner)
+    names.push(...res.map((ref: any) => cookNameInfo(ref, { owner, account, status: 'registered' })))
+  } catch (err) {}
+  return names
 }
-export const ownerTokens = async (address: string, account?: string) => {
-  const contract = await getResolverContract(account)
+export const ownerTokens = async (address: string) => {
+  const contract = await getResolverContract()
   return await contract.tokensOfOwner(address)
 }
 export const ownerRecords = async (name?: string) => {
@@ -68,38 +78,53 @@ export const setAddrSignMessage = async (name: string, account: string, coinType
   let res
   try {
     const _name = bareTLD(name)
-    let contract = await getResolverContract(getResolverAddress())
+    let contract = await getResolverContract()
     // node, coinType, account, timestamp, nonce, signature
-    const node_name = await contract.nameHash(_name)
-    const provider = await getProvider()
+    const provider = await getBridgeProvider()
     const bockNum = await provider.getBlockNumber()
     const timestamp = (await provider.getBlock(bockNum)).timestamp
     const nonce = BigNumber.from(randomBytes(32))
-    const signature = await contract.makeAddrMessage(node_name, coinType, account, timestamp, nonce)
+    const msg = await contract.makeAddrMessage(_name, coinType, account, timestamp, nonce)
+    const signature = await (await getSigner()).signMessage(msg)
     res = {
       name,
-      account,
+      dest: account,
       timestamp,
-      nonce,
-      signature
+      nonce: nonce._hex,
+      signature,
+      msg
     }
   } catch (e: any) {
     console.error(e)
   }
   return res
 }
+
 export const setAddrByOwner = async (
   name: string,
   coinType: number | string,
   account: string,
   timestamp: number,
-  nonce: number,
+  nonce: string,
   signature: string
 ) => {
-  let contract = await getResolverContract(getResolverAddress())
-  try {
-    return contract.setAddr(name, coinType, account, timestamp, nonce, signature)
-  } catch (e: any) {}
+  let contract = await getResolverContract()
+  const method = 'setAddr'
+  const overrides = {}
+  const parameters = [bareTLD(name), coinType, account, +timestamp, nonce, signature]
+
+  await assignOverrides(overrides, contract, method, parameters)
+  const call = contract[method](...parameters)
+  return new txReceipt(call, {
+    errorCodes: 'setCoinAddress',
+    allowAlmostSuccess: true,
+    seq: {
+      type: 'setAddr',
+      title: `set Address ${account}`,
+      ts: new Date().getTime(),
+      overrides
+    }
+  })
 }
 
 // Naming Service (NS) Methods https://docs.ethers.io/v5/api/providers/provider/#Provider--ens-methods

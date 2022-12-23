@@ -28,7 +28,7 @@ export class ViewName extends TailwindElement(style) {
   @state() nameInfo: NameInfo | null = null
 
   get inReg() {
-    return this.name && !this.pending && this.action === 'register'
+    return this.nameInfo && !this.pending && this.action === 'register'
   }
   get inDetails() {
     return this.name && !this.pending && this.action === 'details'
@@ -37,21 +37,23 @@ export class ViewName extends TailwindElement(style) {
   get empty() {
     return !this.name
   }
+
   goto = () => {
     replace(`/name/${wrapTLD(this.name)}/${this.action}`)
   }
 
-  check = async (e: any, force = false) => {
+  check = async (e: unknown, force = false) => {
     if (this.pending) return
-    this.pending = true
     if (await this.isDisconnected(force)) return
+    this.pending = true
     const wrapped = wrapTLD(this.name)
     if (this.name !== wrapped) {
       this.name = wrapped
     } else {
       try {
+        if (await this.isDisconnected(true)) return
         this.nameInfo = <NameInfo>await nameInfo(this.name)
-        if (!this.isConnected) return
+        if (await this.isDisconnected(true)) return
         if (!this.action) this.action = this.nameInfo.available ? 'register' : 'details'
       } catch (err) {
         this.nameInfo = null
@@ -103,7 +105,10 @@ export class ViewName extends TailwindElement(style) {
         <!-- Pending -->
         ${when(this.pending, () => html`<i class="mdi mdi-loading"></i> Loading...`)}
         <!-- Register -->
-        ${when(this.inReg, () => html`<view-name-register .name=${this.name}></view-name-register>`)}
+        ${when(
+          this.inReg,
+          () => html`<view-name-register .name=${this.name} .nameInfo=${this.nameInfo}></view-name-register>`
+        )}
         <!-- Details -->
         ${when(
           this.inDetails,

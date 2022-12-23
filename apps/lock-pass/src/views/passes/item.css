@@ -2,9 +2,8 @@
   --posterSize: 90px;
 }
 .pass {
-  @apply relative;
+  @apply relative flex h-full gap-4 p-4 border border-gray-300;
   min-height: 8.5rem;
-  @apply flex gap-4 p-4 border border-gray-300;
   /* & .pass-cate {
     @apply w-4 h-9 right-2 top-0 absolute flex justify-center text-xs;
     background: url(@/assets/images/mark.svg) no-repeat;

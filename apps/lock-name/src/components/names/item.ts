@@ -25,7 +25,12 @@ export class DoidNameItem extends TailwindElement(style) {
       >
         <b>${this.nameInfo.name}</b>
         <div class="flex gap-4 items-center">
-          <span class="${classMap(this.$c([this.nameInfo.available ? 'text-green-500' : 'text-red-500']))}"
+          <span
+            class="${classMap(
+              this.$c([
+                this.nameInfo.available ? 'text-green-500' : this.nameInfo.registered ? 'opacity-75' : 'text-red-500'
+              ])
+            )}"
             >${this.nameInfo.stat}</span
           >
           <doid-favorites-btn @change=${this.change} .name=${this.nameInfo.name}></doid-favorites-btn>

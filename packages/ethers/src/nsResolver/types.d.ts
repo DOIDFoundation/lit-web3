@@ -1,11 +1,15 @@
 declare type NameInfo = {
   name: string
-  status: string
   owner: string
-  available: boolean
-  registered: boolean
-  itsme: boolean
-  stat: string
+  status?: string
+  registered?: boolean
+  available?: boolean
+  itsme?: boolean
+  stat?: string
+  locked?: boolean
+  id?: string
+  tokenID?: TokenID
+  account?: string
 }
 declare type Commitment = {
   secret?: string

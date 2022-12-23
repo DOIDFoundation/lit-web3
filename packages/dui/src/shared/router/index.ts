@@ -1,45 +1,47 @@
 import emitter from '@lit-web3/core/src/emitter'
 import type { Router } from '@lit-labs/router'
 
-export const goto = (path: string) => {
-  emitter.emit('router-goto', path)
-}
+const bareOrigin = (url: string) => url.replace(location.origin, '')
+const match = (url: any) => bareOrigin(location.href) === bareOrigin(url)
 
-export const replace = (path: string) => {
-  emitter.emit('router-replace', path)
-}
-
+// Trick for @lit-labs/router
 export const routerGuard = {
+  router: <Router | any>{},
+  injected: false,
   inject: () => {
-    const { pushState, replaceState } = globalThis.history
+    if (routerGuard.injected) return
+    routerGuard.injected = true
+    const { pushState, replaceState } = history
     const emitRouterChange = (url: any) => {
-      url += ''
-      if (location.href.replace(location.origin, '') === url.replace(location.origin, '')) return false
       setTimeout(() => {
         emitter.emit('router-change', url)
         setTimeout(() => window.scrollTo(0, 0))
       })
-      return true
     }
     history.pushState = function (state, key, url) {
-      if (!emitRouterChange(url)) return
-      return pushState.apply(history, [state, key, url])
+      pushState.apply(history, [state, key, url])
+      emitRouterChange(url)
     }
     history.replaceState = function (state, key, url) {
-      if (!emitRouterChange(url)) return
-      return replaceState.apply(history, [state, key, url])
+      replaceState.apply(history, [state, key, url])
+      emitRouterChange(url)
     }
   },
-  goto: (url: string) => history.pushState({}, '', url),
-  replace: (url: string) => history.replaceState({}, '', url),
-  init: function (_router: Router) {
-    emitter.on('router-goto', (e: any) => {
-      history.pushState({}, '', e.detail)
-      _router.goto(e.detail)
-    })
-    emitter.on('router-replace', (e: any) => {
-      history.replaceState({}, '', e.detail)
-      _router.goto(e.detail)
-    })
+  goto: (url: string) => {
+    if (match(url)) return
+    history.pushState({}, '', url)
+    routerGuard.router.goto(url)
+  },
+  replace: (url: string) => {
+    if (match(url)) return
+    history.replaceState({}, '', url)
+    routerGuard.router.goto(url)
+  },
+  init: (_router: Router) => {
+    routerGuard.router = _router
   }
 }
+
+export const goto = routerGuard.goto
+export const replace = routerGuard.replace
+export default routerGuard

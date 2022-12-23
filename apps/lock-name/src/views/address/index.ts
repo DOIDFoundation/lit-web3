@@ -9,9 +9,13 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { ownerNames } from '@lit-web3/ethers/src/nsResolver'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/src/nav/nav'
+import '@/components/names/list'
+import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/nav/nav'
 
 import style from './address.css?inline'
@@ -20,6 +24,7 @@ export class ViewAddress extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property() address = ''
   @property() action = ''
+  @state() names: NameInfo[] = []
 
   @state() pending = false
   @state() ts = 0
@@ -27,15 +32,20 @@ export class ViewAddress extends TailwindElement(style) {
   get bridge() {
     return bridgeStore.bridge
   }
-
   get empty() {
-    return !this.address
+    return this.ts && !this.pending && !this.names.length
   }
   get scan() {
     return this.bridge.network.current.scan
   }
+  get itsme() {
+    return this.bridge.account === this.address
+  }
 
   get = async () => {
+    this.pending = true
+    this.names = await ownerNames(this.address)
+    this.pending = false
     this.ts++
   }
 
@@ -55,26 +65,25 @@ export class ViewAddress extends TailwindElement(style) {
           <span slot="label"></span>
           <span slot="msgd"></span>
         </dui-ns-search>
-        <!-- Pending -->
-        ${when(this.pending, () => html`<i class="mdi mdi-loading"></i> Searching...`)}
         <!-- Tab -->
         ${when(
           this.address,
           () => html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
+            <div><b>${this.address}</b>${when(this.itsme, () => html`<span class="mx-1">(me)</span>`)}</div>
             <div>
-              <b>${this.address}</b>
-            </div>
-            <div>
-              <dui-link href=${`${this.scan}/address/${this.address}`}>View on Explorer</dui-link>
+              <dui-nav slot="center" part="dui-nav">
+                <dui-link href=${`${this.scan}/address/${this.address}`}>View on Explorer</dui-link>
+              </dui-nav>
             </div>
           </div>`
         )}
-        <!-- Register -->
-        <div class="px-3">
-          <ul>
-            <li>lists</li>
-          </ul>
-        </div>
+        <!-- Names -->
+        <doid-name-list
+          @change=${this.get}
+          .names=${this.names}
+          .pending=${!this.ts && this.pending}
+          .empty=${this.empty}
+        ></doid-name-list>
       </div>
     </div>`
   }

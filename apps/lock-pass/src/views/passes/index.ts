@@ -89,7 +89,7 @@ export class ViewPasses extends TailwindElement(style) {
             target="_blank"
             rel="noopener"
             class="inline-flex my-1 text-base"
-            >Follow DOID Twitter and stay connected</<dui-link
+            >Follow DOID Twitter and stay connected</dui-link
           >
         </section>
 
@@ -111,7 +111,7 @@ export class ViewPasses extends TailwindElement(style) {
                       // Loading
                       () => html`<i class="mdi mdi-loading mr-1"></i>Loading...`,
                       // List
-                      () => html`<div class="pass-list">
+                      () => html`<div class="pass-list grid md_grid-cols-2 gap-4">
                         ${repeat(
                           this.passes,
                           (item: any) =>

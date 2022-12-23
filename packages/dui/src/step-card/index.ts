@@ -16,7 +16,7 @@ export class DuiCard extends TailwindElement(style) {
   }
   render() {
     return html`
-      <div class="card ${classMap(this.$c([this.class]))}" idx=${this.index}>
+      <div class="card h-full ${classMap(this.$c([this.class]))}" idx=${this.index}>
         <slot name="title" part="step-title"></slot>
         <slot name="description" part="step-desc"></slot>
       </div>

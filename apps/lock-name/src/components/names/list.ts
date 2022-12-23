@@ -22,7 +22,7 @@ export class DoidNameList extends TailwindElement(style) {
       <!-- Pending -->
       ${when(this.pending, () => html`<i class="mdi mdi-loading"></i> Searching...`)}
       <!-- Empty -->
-      ${when(this.empty, () => html`No Data`)}
+      ${when(this.empty, () => html`<p class="px-3">No Data</p>`)}
       <!-- List -->
       <div class="flex flex-col gap-2">
         ${repeat(

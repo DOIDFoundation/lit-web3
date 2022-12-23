@@ -29,7 +29,7 @@ class BridgeStore extends State {
     return this.bridge.store.wallet?.account || this.wallet?.account || ''
   }
   get envKey(): string {
-    return [this.bridge.network.chainId, this.bridge.account].join('-')
+    return `${this.bridge.network.chainId}.${this.bridge.account}`
   }
   get noAccount() {
     return (this.wallet?.inited === true || this.bridge.alreadyTried) && !this.account
@@ -111,7 +111,7 @@ const initBridge = () => {
   new BlockPolling()
 }
 
-const getBridge = () => {
+const wrapBridge = () => {
   return {
     bridgeStore,
     blockNumber: bridgeStore.blockNumber,
@@ -125,33 +125,26 @@ const getBridge = () => {
 export default (autoConnect = false) => {
   initBridge()
   bridgeStore.bridge.tryConnect(autoConnect)
-  return getBridge()
+  return wrapBridge()
 }
 
 export const useBridgeAsync = async (autoConnect = false) => {
   initBridge()
   await bridgeStore.bridge.tryConnect(autoConnect)
-  return getBridge()
+  return wrapBridge()
 }
 
-export const getABI = async (name: string) => {
-  return (await import(`./abi/${name}.json`)).default
-}
-
-export const getAccount = async (force = false) => {
-  await useBridgeAsync()
-  if (force) {
-    const res = (await bridgeStore.bridge.provider.send('eth_requestAccounts')) ?? []
-    return res[0] ?? ''
-  }
-  return bridgeStore.bridge.account
-}
-
-export const getNetwork = async () => {
-  await useBridgeAsync()
-  return bridgeStore.bridge.network.current
-}
-
+export const getABI = async (name: string) => (await import(`./abi/${name}.json`)).default
+export const getBridge = async () => (await useBridgeAsync()).bridge
+export const getBridgeProvider = async () => (await getBridge()).provider
+export const getWalletAccount = async () =>
+  ((await (await getBridgeProvider()).send('eth_requestAccounts')) ?? [])[0] ?? ''
+export const getAccount = async (force = false) => (force ? await getWalletAccount() : (await getBridge()).account)
+export const getNetwork = async () => (await getBridge()).network.current
+export const getChainId = async () => (await getNetwork()).chainId
+export const getEnvKey = async (key = '', withoutAddr = false) =>
+  (withoutAddr ? await getChainId() : (await useBridgeAsync()).envKey) + (key ? `.${key}` : '')
+export const getSigner = async () => (await getBridge()).provider.getSigner(await getAccount())
 export const getBlockNumber = async () => {
   const { blockNumber } = await useBridgeAsync()
   return bridgeStore.blockNumber ?? blockNumber
@@ -216,14 +209,12 @@ export const getContract = async (
     getContractOpts
   >{}
 ) => {
-  const bridge = (await useBridgeAsync()).bridge
-  const provider = bridge.provider
   const abi = await getABI(name)
   if (!abi) throw new Error(`abi not found: ${name}`)
   if (!address && !abi) throw new Error(`Contract ${address} not found`)
-  if (!account) account = bridge.account
+  if (!account) account = await getAccount()
   if (!account && requireAccount) account = await getAccount()
-  return new Contract(address, abi, account ? provider.getSigner(account) : provider.provider)
+  return new Contract(address, abi, await (account ? getSigner() : getBridgeProvider()))
 }
 
 export const getTokenContract = async (token: Tokenish, options = <getContractOpts>{}) =>

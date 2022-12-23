@@ -45,6 +45,9 @@ export class ViewNameDetails extends TailwindElement(style) {
   fetchRecords = async () => {
     this.records = await ownerRecords(this.info?.name)
   }
+  onSuccess = () => {
+    this.fetchRecords()
+  }
 
   render() {
     if (new URL(location.href).searchParams.get('sign')) return html``
@@ -70,6 +73,7 @@ export class ViewNameDetails extends TailwindElement(style) {
                       .item=${item}
                       .name=${this.name}
                       .owner=${this.info.itsme}
+                      @success=${this.onSuccess}
                     ></doid-addr-item>`
                 )}`
             )}

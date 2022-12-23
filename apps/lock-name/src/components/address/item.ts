@@ -1,4 +1,6 @@
 import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { useStorage } from '@lit-web3/ethers/src/useStorage'
 
 // Components
 import '@lit-web3/dui/src/button'
@@ -11,6 +13,7 @@ import style from './item.css?inline'
 
 @customElement('doid-addr-item')
 export class EditInline extends TailwindElement(style) {
+  bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) item: any = {}
   @property({ type: Boolean }) owner = false
   @property({ type: String }) name = ''
@@ -21,12 +24,20 @@ export class EditInline extends TailwindElement(style) {
   @state() addr = ''
   @state() addrValid = false
   @state() mode = ''
+  @state() stored: Record<string, string> = {}
 
+  get account() {
+    return bridgeStore.bridge.account
+  }
   get isOwner() {
     return this.owner == true
   }
   get isEditing() {
     return this.mode === 'edit'
+  }
+
+  get isStored() {
+    return this.stored?.source && this.stored?.coinType == this.coinType.coinType
   }
   get editDisabled() {
     return this.isEditing == true
@@ -36,68 +47,30 @@ export class EditInline extends TailwindElement(style) {
     return this.item.address
   }
 
-  /* validate = () => {
-    if (!this.addr) {
-      this.err = { ...this.err, addr: 'Required' }
-    } else {
-      this.err = { ...this.err, addr: '' }
-    }
-    return !this.inputErr
-  }
-
-  get inputErr() {
-    for (let k in this.err) {
-      if (k === 'tx') continue
-      if (this.err[k]) return true
-    }
-    return false
-  }
-
-  validAddrByType = (type = this.type) => {
-    this.err = { ...this.err, addr: '' }
-    const len = unicodelength(this.addr)
-    this.addrValid = false
-    switch (type) {
-      case 'ETH':
-        if (len != 42) this.err = { ...this.err, addr: `Invalid address` }
-        break
-      default:
-        if (len < 32) this.err = { ...this.err, addr: `Invalid address` }
-        break
-    }
-
-    this.addrValid = !this.err.addr
-  }
-
-  onInputAddr = (e: CustomEvent) => {
-    this.addr = e.detail
-    this.err = { ...this.err, addr: '', tx: '' }
-    this.validAddrByType()
-  }
-  saveAddr = () => {
-    if (!this.validate() || !this.addrValid) return
-    console.info(`save addr of ${this.type}: ${this.addr}`)
-    setTimeout(() => (this.mode = ''))
-  }
-
-  cancel = () => {
-    this.mode = ''
-    this.err = { ...this.err, addr: '' }
-    this.pending = { ...this.pending, addr: false }
-  } */
-
   get coinType() {
     return { name: this.item.name, coinType: this.item.coinType }
   }
 
-  setAddr = () => {
+  async checkEditInfo() {
+    const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
+    const stored = await storage.get()
+    this.stored = stored
+  }
+  setAddr = async () => {
     this.mode = 'edit'
     // session
+    const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
+    storage.set({ ...this.coinType, source: this.address || this.account })
+  }
+  onSuccess = () => {
+    this.mode = ''
+    this.emit('success')
   }
 
-  connectedCallback(): void {
+  async connectedCallback(): void {
     super.connectedCallback()
     this.addr = this.address
+    await this.checkEditInfo()
   }
 
   disconnectedCallback = () => {
@@ -134,8 +107,14 @@ export class EditInline extends TailwindElement(style) {
         </div>
       </div>
       ${when(
-        this.isEditing,
-        () => html`<doid-set-record-wallet .name=${this.name} .coin=${this.coinType}></doid-set-record-wallet>`,
+        this.isEditing || this.isStored,
+        () =>
+          html`<doid-set-record-wallet
+            .name=${this.name}
+            .coin=${this.coinType}
+            .owner=${this.isOwner}
+            @success=${this.onSuccess}
+          ></doid-set-record-wallet>`,
         () => html``
       )}`
   }
