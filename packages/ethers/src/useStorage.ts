@@ -12,6 +12,7 @@ export const useStorage = async (name: string, store = localStorage, withoutEnv 
       const key = await getEnvKey(name, withoutEnv)
       if (merge) data = Object.assign((await get()) ?? {}, data)
       store.setItem(key, JSON.stringify(data))
-    }
+    },
+    remove: async () => store.removeItem(await getEnvKey(name))
   }
 }

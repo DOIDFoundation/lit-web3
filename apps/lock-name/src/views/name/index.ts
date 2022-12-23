@@ -31,7 +31,7 @@ export class ViewName extends TailwindElement(style) {
     return this.nameInfo && !this.pending && this.action === 'register'
   }
   get inDetails() {
-    return this.name && !this.pending && this.action === 'details'
+    return this.nameInfo && !this.pending && this.action === 'details'
   }
 
   get empty() {
@@ -87,9 +87,9 @@ export class ViewName extends TailwindElement(style) {
         <!-- Tab -->
         ${when(
           this.name,
-          () => html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
+          () => html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between items-end">
             <div>
-              <b>${this.name}</b>
+              <b class="text-lg">${this.name}</b>
               ${when(this.name === 'doid', () => html`<em>(Registrant)</em>`)}
             </div>
             <div>

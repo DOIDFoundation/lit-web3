@@ -34,10 +34,10 @@ export class ViewFavorites extends TailwindElement(style) {
 
   render() {
     if (!this.favorites.length)
-      return html`<div class="text-center">
-        <b><i class="mdi mdi-heart-outline text-2xl text-gray-200"></i></b>
-        <p class="text-base">No names have been saved</p>
-        <p>To add names to favourites, click the heart icon next to any desired name.</p>
+      return html`<div class="text-center my-4">
+        <b class="block my-4"><i class="mdi mdi-heart-outline text-2xl text-gray-200"></i></b>
+        <p class="text-base">No names have been favorited</p>
+        <p>To add names to favorites, click the heart icon next to any desired name.</p>
       </div>`
     return html`
       <!-- Names -->

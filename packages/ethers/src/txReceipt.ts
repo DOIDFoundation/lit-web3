@@ -17,10 +17,20 @@ export class txReceipt {
   public delay: any
   public err: Error | any
   public onSent: Function
+  public onSuccess: Function
+  public onError: Function
   public txPromise: PromiseLike<any>
   constructor(
     txPromise: PromiseLike<any>,
-    { errorCodes = '', seq = undefined as any, delay = 0, allowAlmostSuccess = false, onSent = () => {} } = {}
+    {
+      errorCodes = '',
+      seq = undefined as any,
+      delay = 0,
+      allowAlmostSuccess = false,
+      onSent = () => {},
+      onSuccess = () => {},
+      onError = () => {}
+    } = {}
   ) {
     // super()
     this.pending = true
@@ -33,9 +43,14 @@ export class txReceipt {
     this.seq = seq
     this.delay = delay
     this.onSent = onSent
+    this.onSuccess = onSuccess
+    this.onError = onError
   }
   get success() {
     return this.status === 1
+  }
+  get processing() {
+    return this.status === 2
   }
   get almostSuccess() {
     return this.status === 4
@@ -100,11 +115,13 @@ export class txReceipt {
         } else {
           await checkReceipt()
         }
+        this.onSuccess(tx)
       } catch (err: any) {
         await normalizeTxErr(err)
         if (err.code === 4001) this.status = 3
         else if (this.status !== 4) this.status = 0
         this.err = err
+        this.onError(err)
         throw err
       } finally {
         this.pending = false

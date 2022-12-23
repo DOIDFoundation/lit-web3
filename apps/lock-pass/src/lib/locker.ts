@@ -1,7 +1,7 @@
 import { keccak256 } from '@ethersproject/keccak256'
 import { toUtf8Bytes } from '@ethersproject/strings'
 import { arrayify, hexlify } from '@ethersproject/bytes'
-import { getContract, useBridgeAsync, assignOverrides } from '@lit-web3/ethers/src/useBridge'
+import { getContract, getBridge, assignOverrides, getChainId } from '@lit-web3/ethers/src/useBridge'
 // import { normalizeTxErr } from '@lit-web3/ethers/src/parseErr'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import { PassCates, PassCate } from '@lit-web3/ethers/src/constants/passcate'
@@ -9,10 +9,9 @@ import { formatUnits } from '@ethersproject/units'
 import { ZERO_HASH } from '@lit-web3/ethers/src/utils'
 
 export const LENs = [64, 130]
-const getBridge = async () => (await useBridgeAsync()).bridge
 const getAccount = async (account?: string) => account || (await getBridge()).account
 
-export const getPassCates = async () => PassCates[(await getBridge()).network.current.chainId]
+export const getPassCates = async () => PassCates[await getChainId()]
 export const getPassCate = async () =>
   Object.fromEntries(Object.entries(await getPassCates()).map((r) => [r[1][0], r[0]]))
 
@@ -98,6 +97,7 @@ export const lockPass = async (codeOrPass: any, name = '') => {
   if (!id) {
     code = getICode(codeOrPass)
     const passCate = await getPassCate()
+    console.log(14)
     cate = passCate[getICate(codeOrPass)]
     id = getICId(codeOrPass)
   }
@@ -107,6 +107,7 @@ export const lockPass = async (codeOrPass: any, name = '') => {
   const parameters = isLockName ? [+id, name] : [code, name, cate, +id]
 
   await assignOverrides(overrides, contract, method, parameters)
+  console.log(2)
   const call = contract[method](...parameters)
   return new txReceipt(call, {
     errorCodes: 'Locker',

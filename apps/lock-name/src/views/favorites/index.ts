@@ -16,7 +16,12 @@ import style from './favorites.css?inline'
 export class ViewFavorites extends TailwindElement(style) {
   render() {
     return html`<div class="view-favorites">
-      <div class="dui-container px-3 my-8">
+      <div class="dui-container">
+        <dui-ns-search @search=${(e: CustomEvent) => goto(`/search/${e.detail}`)} placeholder="Search names">
+          <span slot="label"></span>
+          <span slot="msgd"></span>
+        </dui-ns-search>
+        <!-- Favorites -->
         <doid-favorites></doid-favorites>
       </div>
     </div>`

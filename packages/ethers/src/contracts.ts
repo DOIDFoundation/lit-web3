@@ -1,5 +1,4 @@
-import Network from './networks'
-import { useBridgeAsync } from './useBridge'
+import { getBridgeProvider, getBridge } from './useBridge'
 import { Contract } from '@ethersproject/contracts'
 import { BigNumber } from '@ethersproject/bignumber'
 // import { hexlify } from '@ethersproject/bytes'
@@ -25,8 +24,7 @@ export const estimateGasLimit = async (
 }
 
 export const getNonce = async (address?: string) => {
-  const { bridgeInstance } = await useBridgeAsync()
-  let { provider, account } = bridgeInstance
+  let { provider, account } = await getBridge()
   return await provider.getTransactionCount(address || account)
 }
 export const assignOverrides = async (overrides: any, ...args: any[]) => {
@@ -41,7 +39,7 @@ export const assignOverrides = async (overrides: any, ...args: any[]) => {
 }
 
 export const getAccount = async (): Promise<string> => {
-  const provider = (await useBridgeAsync()).bridge.provider
+  const provider = await getBridgeProvider()
   const res = (await provider.send('eth_requestAccounts')) ?? []
   return res[0] ?? ''
 }

@@ -1,8 +1,8 @@
 // Claim DOID name by passId
 import { TailwindElement, html } from './shared/TailwindElement'
 import { customElement, property, state } from 'lit/decorators.js'
-import { getContract, useBridgeAsync, assignOverrides } from '@lit-web3/ethers/src/useBridge'
-import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { getContract, assignOverrides } from '@lit-web3/ethers/src/useBridge'
+import { bridgeStore, StateController, getAccount } from '@lit-web3/ethers/src/useBridge'
 import { when } from 'lit/directives/when.js'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 // Components
@@ -10,7 +10,7 @@ import './dialog'
 import './tx-state'
 
 export const claim = async (passId: number) => {
-  const contract = await getContract('Locker', { account: (await useBridgeAsync()).bridge.account })
+  const contract = await getContract('Locker', { account: await getAccount() })
   const [method, overrides, parameters] = ['claimDoid', {}, [+passId]]
   await assignOverrides(overrides, contract, method, parameters)
   const call = contract[method](...parameters)
