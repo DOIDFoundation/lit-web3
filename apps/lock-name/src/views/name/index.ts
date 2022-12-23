@@ -31,7 +31,7 @@ export class ViewName extends TailwindElement(style) {
     return this.nameInfo && !this.pending && this.action === 'register'
   }
   get inDetails() {
-    return this.name && !this.pending && this.action === 'details'
+    return this.nameInfo && !this.pending && this.action === 'details'
   }
 
   get empty() {

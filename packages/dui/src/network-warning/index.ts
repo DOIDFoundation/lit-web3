@@ -1,12 +1,15 @@
-import { customElement, TailwindElement, html, when, state } from './shared/TailwindElement'
+import { customElement, TailwindElement, html, when, state, classMap } from '../shared/TailwindElement'
 import { animate } from '@lit-labs/motion'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { screenStore } from '@lit-web3/core/src/screen'
 // Components
-import './link'
+import '../link'
 
+import style from './network-warning.css?inline'
 @customElement('network-warning')
-export class NetworkWarning extends TailwindElement('') {
+export class NetworkWarning extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
+  bindScreen: any = new StateController(this, screenStore)
   @state() pending = false
 
   get bridge() {
@@ -33,25 +36,30 @@ export class NetworkWarning extends TailwindElement('') {
   toggle(del = false) {
     const { style } = document.documentElement
     const attr = '--networkWarnH'
-    del || !this.shown ? style.removeProperty(attr) : style.setProperty(attr, '24px')
+    del || !this.shown ? style.removeProperty(attr) : style.setProperty(attr, `${screenStore.md ? 48 : 24}px`)
   }
+  fit = () => {
+    this.toggle()
+  }
+  ro = new ResizeObserver(this.fit)
 
   connectedCallback() {
-    this.toggle()
     super.connectedCallback()
+    this.toggle()
+    this.ro.observe(document.documentElement)
   }
   disconnectedCallback(): void {
-    this.toggle(true)
     super.disconnectedCallback()
+    this.toggle(true)
+    this.ro.disconnect()
   }
 
   override render() {
     if (!this.shown) return
     return html`<span
-      class="overflow-hidden h-6 w-full flex text-red-600 items-center px-2 justify-center text-center bg-orange-200 ${this
-        .shown
-        ? 'h-6'
-        : 'h-0 opacity-0'}"
+      class="network-warning overflow-hidden w-full flex text-red-600 items-center px-2 justify-center text-center bg-orange-200 ${classMap(
+        { shown: this.shown }
+      )}"
       ${animate({ guard: () => this.shown, properties: ['opacity', 'height', 'visibility'] })}
     >
       <span>${this.txt}</span>
