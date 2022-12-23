@@ -34,6 +34,9 @@ export class SetRecordWallet extends TailwindElement(style) {
   get ownerAddress() {
     return this.stored.source
   }
+  get dest() {
+    return this.stored.dest
+  }
   get msg() {
     return this.stored.msg
   }
@@ -119,7 +122,19 @@ export class SetRecordWallet extends TailwindElement(style) {
     return html`<div class="set-record border border-gray-300 border-dashed pt-2 pb-5 mt-2">
       <div class="dui-container">
         <div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
-          <div>You are setting <b>${this.coin.name}</b> address to ${this.account}</div>
+          <div>
+            You are setting <b>${this.coin.name}</b> address to
+            ${when(
+              this.isStep1,
+              () =>
+                html`${when(
+                  this.owner,
+                  () => html``,
+                  () => html`${this.account}`
+                )}`,
+              () => html`${this.dest || this.account}`
+            )}
+          </div>
           <!-- <div><a href="javascript:void(0)">Change address to set</a></div> -->
         </div>
         <div>
@@ -184,9 +199,7 @@ export class SetRecordWallet extends TailwindElement(style) {
                     @click=${this.setAddr}
                     ?disabled=${this.btnSetDisabled}
                     ?pending=${this.pending.set}
-                    >Set<i
-                      class="mdi ml-2 ${classMap(this.$c([this.pending.set ? 'mdi-loading' : 'mdi-chevron-right']))}"
-                    ></i>
+                    >Set<i class="mdi ml-2 ${classMap(this.$c([this.pending.set ? 'mdi-loading' : '']))}"></i>
                   </dui-button>`
                 )}
               </div>
