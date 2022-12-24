@@ -6,7 +6,7 @@ import { getAccount, getBridgeProvider, assignOverrides, getSigner } from '../us
 import { getResolverAddress, getResolverContract } from './controller'
 import { formatUnits } from '@ethersproject/units'
 import { randomBytes } from '@ethersproject/random'
-import { coinTypes } from './checker'
+import { getRecords } from './checker'
 import { BigNumber } from '@ethersproject/bignumber'
 import { txReceipt } from '../txReceipt'
 
@@ -64,11 +64,11 @@ export const ownerTokens = async (address: string) => {
 export const ownerRecords = async (name?: string) => {
   if (!name) return
   let _name = bareTLD(name)
-  let contract = await getResolverContract(getResolverAddress())
+  let contract = await getResolverContract()
   const node_name = await contract.nameHash(_name)
   const addrs = await contract.addrs(node_name)
-  const res: Record<string, any | null> = { ...coinTypes }
-  addrs.map(([coinType, addr]: any) => {
+  const res = getRecords()
+  addrs.forEach(([coinType, addr]: any) => {
     const type: string = formatUnits(coinType, 0)
     if (res[type]) res[type].address = addr
   })

@@ -77,27 +77,28 @@ export class ViewNameDetails extends TailwindElement(style) {
             <strong>Addresses</strong>
             <div class="info-cnt">
               ${when(!this.ts && this.pending, () => html`<i class="mdi mdi-loading"></i>`)}
-              <div class="doid-addr-items -mt-1 flex justify-start items-start flex-col gap-4">
+              
                 ${when(
                   this.empty,
-                  () => html`Something went wrong`,
+                  () => html`<p class="text-red-500">Something went wrong</p>`,
                   () =>
-                    html`${repeat(
-                      this.records,
-                      (item: any) =>
-                        html`${keyed(
-                          item.address,
-                          html`<doid-addr-item
-                            key=${item.coinType}
-                            .item=${item}
-                            .name=${this.name}
-                            .owner=${this.info.itsme}
-                            @success=${this.onSuccess}
-                          ></doid-addr-item>`
-                        )}`
-                    )}`
-                )}
-              </div>
+                    html`<div class="doid-addr-items -mt-1 flex justify-start items-start flex-col gap-4"></div>
+                      ${repeat(
+                        this.records,
+                        (item: any) =>
+                          html`${keyed(
+                            item.address,
+                            html`<doid-addr-item
+                              key=${item.coinType}
+                              .item=${item}
+                              .name=${this.name}
+                              .owner=${this.info.itsme}
+                              @success=${this.onSuccess}
+                            ></doid-addr-item>`
+                          )}`
+                      )}`
+                )}</div>
+              
             </div>
           </li>
         </ul>
