@@ -9,10 +9,19 @@
     @apply left-3 top-3 absolute flex justify-center items-center w-8 h-8 bg-white rounded-full font-bold border;
     content: attr(idx);
   }
-  &.active {
+  &.active,
+  &.done {
     @apply bg-slate-200;
     &::before {
       @apply border-slate-400;
     }
+  }
+  &.done {
+    @apply border-transparent;
+    &::before {
+      @apply border-green-600 bg-green-50 text-green-600;
+    }
+  }
+  &.active {
   }
 }
