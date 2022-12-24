@@ -164,8 +164,8 @@ export class SetRecordWallet extends TailwindElement(style) {
 
   render() {
     return html`<div class="set-record border border-gray-300 border-dashed pt-2 pb-5 mt-2">
-      <div class="dui-container">
-        <div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
+      <div class="px-3">
+        <div class="border-b-2 flex my-4 px-3 pr-4 space-x-4 justify-between">
           <div>
             You are setting <b>${this.coin.name}</b> address to
             <b class="break-words break-all">${this.dest}</b>

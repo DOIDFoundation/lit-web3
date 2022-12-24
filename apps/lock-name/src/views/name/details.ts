@@ -73,7 +73,7 @@ export class ViewNameDetails extends TailwindElement(style) {
           )}
         </ul>
         <ul class="infos">
-          <li>
+          <li class="wrap">
             <strong>Addresses</strong>
             <div class="info-cnt">
               ${when(!this.ts && this.pending, () => html`<i class="mdi mdi-loading"></i>`)}

@@ -71,13 +71,14 @@ export class EditInline extends TailwindElement(style) {
     this.reset()
   }
 
-  reset = () => {
+  reset = (clear = false) => {
     this.mode = ''
     this.stored = {}
+    if (clear) this.storage.remove()
   }
 
   setAddr = async () => {
-    if (this.isEditing) return this.reset()
+    if (this.isEditing) return this.reset(true)
     // TODO: generate once
     emitter.emit('addr-edit')
     this.mode = 'edit'
