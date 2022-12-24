@@ -6,6 +6,7 @@ export const useStorage = async (name: string, store = localStorage, withoutEnv 
     const saved = store.getItem(itemKey)
     if (saved) return JSON.parse(saved)
   }
+  let listener: EventListener = (e: Event) => {}
   return {
     get,
     set: async (data: unknown, { merge = false } = {}) => {
@@ -13,6 +14,13 @@ export const useStorage = async (name: string, store = localStorage, withoutEnv 
       if (merge) data = Object.assign((await get()) ?? {}, data)
       store.setItem(key, JSON.stringify(data))
     },
-    remove: async () => store.removeItem(await getEnvKey(name, withoutEnv))
+    remove: async () => store.removeItem(await getEnvKey(name, withoutEnv)),
+    on: (fn: EventListener) => {
+      if (listener != fn) listener = fn
+      window.addEventListener('storage', listener)
+    },
+    off: () => {
+      window.removeEventListener('storage', listener)
+    }
   }
 }

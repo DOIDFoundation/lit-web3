@@ -131,6 +131,7 @@ export class SetRecordWallet extends TailwindElement(style) {
       storage.remove()
       await sleep(1000)
       this.success = success
+      this.step = 3
       this.emit('success')
     } catch (e: any) {
       this.err = e
@@ -148,6 +149,7 @@ export class SetRecordWallet extends TailwindElement(style) {
   }
   disconnectedCallback = () => {
     super.disconnectedCallback()
+    this.step = 1
   }
 
   render() {

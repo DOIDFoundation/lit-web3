@@ -1,6 +1,7 @@
 import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
+import emitter from '@lit-web3/core/src/emitter'
 
 // Components
 import '@lit-web3/dui/src/button'
@@ -21,11 +22,11 @@ export class EditInline extends TailwindElement(style) {
   @state() tip: Record<string, string> = { addr: '' }
   @state() err: Record<string, string> = { addr: '', tx: '' }
   @state() pending: Record<string, boolean> = { addr: false, tx: false }
-  @state() addr = ''
   @state() addrValid = false
   @state() mode = ''
   @state() stored: Record<string, string> = {}
 
+  storage: any = {}
   get account() {
     return bridgeStore.bridge.account
   }
@@ -52,15 +53,28 @@ export class EditInline extends TailwindElement(style) {
   }
 
   async checkEditInfo() {
-    const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
-    const stored = await storage.get()
+    const stored = await this.storage.get()
     this.stored = stored
   }
+
+  listener = (e: any) => {
+    // TODO: storageArea
+    // if (e.storageArea) console.log(e)
+    this.mode = ''
+    this.checkEditInfo()
+  }
+
+  destroy() {
+    this.mode = ''
+    emitter.off('addr-edit', this.listener)
+    this.storage.off()
+  }
+
   setAddr = async () => {
+    // TODO: generate once
+    emitter.emit('addr-edit')
     this.mode = 'edit'
-    // session
-    const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
-    storage.set({ ...this.coinType, source: this.address || this.account })
+    this.storage.set({ ...this.coinType, source: this.address || this.account })
   }
   onSuccess = () => {
     this.mode = ''
@@ -68,14 +82,18 @@ export class EditInline extends TailwindElement(style) {
     this.emit('success')
   }
 
-  async connectedCallback(): void {
+  async connectedCallback() {
     super.connectedCallback()
-    this.addr = this.address
+    this.storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
     await this.checkEditInfo()
+    console.info('aaa', this.stored)
+    emitter.on('addr-edit', this.listener)
+    this.storage.on(this.listener)
   }
 
-  disconnectedCallback = () => {
+  disconnectedCallback = async () => {
     super.disconnectedCallback()
+    this.destroy()
   }
 
   render() {
