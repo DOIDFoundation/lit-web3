@@ -14,6 +14,7 @@ import { useStorage } from '@lit-web3/ethers/src/useStorage'
 
 // Components
 import '@lit-web3/dui/src/step-card'
+import '@lit-web3/dui/src/dialog/prompt'
 // Styles
 import style from './set.css?inline'
 
@@ -32,6 +33,7 @@ export class SetRecordWallet extends TailwindElement(style) {
   @state() stored: Record<string, string> = {}
   @state() tx: any = null
   @state() success = false
+  @state() dialog = false
 
   get ownerAddress() {
     return this.stored.source
@@ -74,6 +76,12 @@ export class SetRecordWallet extends TailwindElement(style) {
     return this.pending || this.err || !this.signature || !this.owner || this.txPending
   }
 
+  showTip = () => {
+    this.dialog = true
+  }
+  close = () => {
+    this.dialog = false
+  }
   getStorage = async () => {
     return await useStorage(`sign.${this.name}`, sessionStorage, true)
   }
@@ -134,8 +142,8 @@ export class SetRecordWallet extends TailwindElement(style) {
       this.success = success
       this.step = 3
       this.emit('success')
-    } catch (e: any) {
-      this.err = e
+    } catch (err: any) {
+      this.err = err.message
     } finally {
       this.pending = false
       storage.remove()
@@ -151,6 +159,7 @@ export class SetRecordWallet extends TailwindElement(style) {
   disconnectedCallback = () => {
     super.disconnectedCallback()
     this.step = 1
+    this.dialog = false
   }
 
   render() {
@@ -159,9 +168,18 @@ export class SetRecordWallet extends TailwindElement(style) {
         <div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
           <div>
             You are setting <b>${this.coin.name}</b> address to
-            <b>${this.dest}</b>
+            <b class="break-words break-all">${this.dest}</b>
           </div>
-          <!-- <div><a href="javascript:void(0)">Change address to set</a></div> -->
+          <div @click=${this.showTip}>
+            <a href="javascript:void(0)" class="text-blue-400">Change address to set</a>
+          </div>
+          ${when(
+            this.dialog,
+            () => html`<dui-prompt class="min-h-fit" @close=${this.close}>
+              <div class="text-base">Open your wallet and switch to the address you want to set.</div>
+              <span slot="bottom"></span>
+            </dui-prompt>`
+          )}
         </div>
         <div>
           ${when(
