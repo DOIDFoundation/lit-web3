@@ -10,7 +10,7 @@ export class DuiButton extends TailwindElement(style) {
   @property({ type: String }) label = ''
   @property({ type: String }) iconPos = 'left'
   @property({ type: String }) class = ''
-  @property() href: string | undefined
+  @property() href?: string
   @property({ type: Boolean }) disabled = false
   @property({ type: Boolean }) pending = false
   @property({ type: Boolean }) icon = false

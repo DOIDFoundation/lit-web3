@@ -1,7 +1,16 @@
-import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  property,
+  when,
+  state,
+  classMap
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
 import emitter from '@lit-web3/core/src/emitter'
+import { scrollTop } from '@lit-web3/dui/src/shared/router'
 
 // Components
 import '@lit-web3/dui/src/button'
@@ -22,7 +31,7 @@ export class EditInline extends TailwindElement(style) {
 
   @state() tip: Record<string, string> = { addr: '' }
   @state() err: Record<string, string> = { addr: '', tx: '' }
-  @state() pending: Record<string, boolean> = { addr: false, tx: false }
+  @state() pending = false
   @state() addrValid = false
   @state() mode = ''
   @state() stored: Record<string, string> = {}
@@ -35,14 +44,14 @@ export class EditInline extends TailwindElement(style) {
     return this.owner == true
   }
   get isEditing() {
-    return this.mode === 'edit'
+    return this.mode === 'edit' || this.isStored
   }
 
   get isStored() {
-    return this.stored?.source && this.stored?.coinType == this.coinType.coinType
+    return !!this.stored?.source && this.stored?.coinType === this.coinType.coinType
   }
   get editDisabled() {
-    return this.isEditing == true
+    return this.pending
   }
 
   get address() {
@@ -59,27 +68,25 @@ export class EditInline extends TailwindElement(style) {
   }
 
   listener = (e: any) => {
-    // TODO: storageArea
-    // if (e.storageArea) console.log(e)
-    this.mode = ''
-    this.checkEditInfo()
+    this.reset()
   }
 
-  destroy() {
+  reset = () => {
     this.mode = ''
-    emitter.off('addr-edit', this.listener)
-    this.storage.off()
+    this.stored = {}
   }
 
   setAddr = async () => {
+    if (this.isEditing) return this.reset()
     // TODO: generate once
     emitter.emit('addr-edit')
     this.mode = 'edit'
     this.storage.set({ ...this.coinType, source: this.address || this.account })
+    scrollTop()
+    await this.checkEditInfo()
   }
-  onSuccess = () => {
-    this.mode = ''
-    this.checkEditInfo()
+  onSuccess = (e: CustomEvent) => {
+    this.reset()
     this.emit('success')
   }
 
@@ -87,41 +94,40 @@ export class EditInline extends TailwindElement(style) {
     super.connectedCallback()
     this.storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
     await this.checkEditInfo()
-    console.info('aaa', this.stored)
     emitter.on('addr-edit', this.listener)
     this.storage.on(this.listener)
   }
-
   disconnectedCallback = async () => {
     super.disconnectedCallback()
-    this.destroy()
+    this.reset()
+    emitter.off('addr-edit', this.listener)
+    this.storage.off()
   }
 
   render() {
     return html`<div class="flex items-center ${this.mode}">
-        <div class="addr_name w-14 lg_w-20 text-gray-400">${this.coinType.name}</div>
+        <div class="addr_name w-14 lg_w-16 text-gray-400">${this.coinType.name}</div>
         <div class="grow flex items-center">
           ${when(
             this.address,
             () => html`<dui-address avatar copy .address=${this.address}></dui-address>`,
-            () =>
-              html`${when(
-                this.isOwner,
-                () => html`<span class="text-gray-400">No set</span></dui-button>`,
-                () => html``
-              )}`
+            () => html`<span class="text-gray-400">No set</span>`
           )}
           ${when(
-            this.isOwner && !this.isEditing,
-            () => html`<dui-button sm icon class="ml-1" .disabled=${this.editDisabled}
-              ><i class="mdi mdi-pencil-outline" @click=${this.setAddr}></i
-            ></dui-button>`,
-            () => html``
+            this.isOwner,
+            () => html`<dui-button @click=${this.setAddr} sm icon class="ml-1" .disabled=${this.editDisabled}
+              ><i
+                class="mdi  ${classMap({
+                  'mdi-pencil-off-outline': this.isEditing,
+                  'mdi-pencil-outline': !this.isEditing
+                })}"
+              ></i
+            ></dui-button>`
           )}
         </div>
       </div>
       ${when(
-        this.isEditing || this.isStored,
+        this.isEditing,
         () =>
           html`<doid-set-record-wallet
             .name=${this.name}
@@ -129,8 +135,7 @@ export class EditInline extends TailwindElement(style) {
             .owner=${this.isOwner}
             .currentAddr=${this.address}
             @success=${this.onSuccess}
-          ></doid-set-record-wallet>`,
-        () => html``
+          ></doid-set-record-wallet>`
       )}`
   }
 }

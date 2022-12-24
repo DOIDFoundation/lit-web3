@@ -4,6 +4,8 @@ import type { Router } from '@lit-labs/router'
 const bareOrigin = (url: string) => url.replace(location.origin, '')
 const match = (url: any) => bareOrigin(location.href) === bareOrigin(url)
 
+export const scrollTop = (y = 0) => setTimeout(() => window.scrollTo(0, y))
+
 // Trick for @lit-labs/router
 export const routerGuard = {
   router: <Router | any>{},
@@ -15,7 +17,7 @@ export const routerGuard = {
     const emitRouterChange = (url: any) => {
       setTimeout(() => {
         emitter.emit('router-change', url)
-        setTimeout(() => window.scrollTo(0, 0))
+        scrollTop()
       })
     }
     history.pushState = function (state, key, url) {
