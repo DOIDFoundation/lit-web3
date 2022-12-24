@@ -5,10 +5,11 @@ import {
   property,
   when,
   classMap,
+  repeat,
   state
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { setAddrSignMessage, setAddrByOwner } from '@lit-web3/ethers/src/nsResolver'
+import { getSignerMessage, signMessage, setAddressByOwner } from '@lit-web3/ethers/src/nsResolver'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
 
 import { sleep } from '@lit-web3/ethers/src/utils'
@@ -41,10 +42,19 @@ export class SetRecordWallet extends TailwindElement(style) {
     return this.stored.dest
   }
   get msg() {
-    return this.stored.msg
+    return this.stored.message || ''
+  }
+  get cookedMsg() {
+    return this.msg.split('\n').map((r: string) => {
+      const title: string = (r.match(/^(.+:\s)/) || [])[0] || ''
+      return { title, content: r.replace(title, '') }
+    })
   }
   get account() {
     return bridgeStore.bridge.account
+  }
+  get coinType() {
+    return this.coin.coinType
   }
   get isStep1() {
     return this.step === 1
@@ -72,21 +82,34 @@ export class SetRecordWallet extends TailwindElement(style) {
     this.stored = stored
     if (this.stored?.signature) this.step = 2
   }
-  getSignatureMessage = async () => {
-    this.signatureInfo = await setAddrSignMessage(this.name, this.account, this.coin.coinType)
-    const storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
-    const data = { ...this.stored, ...this.signatureInfo }
+  getSignerMessage = async () => {
+    const dest: string = this.account
+    const coinType: number = this.coin.coinType
+    // name, dest, coinType
+    const res = await getSignerMessage(this.name, dest, coinType)
+    // get {name, dest, timestamp,nonce, message}, and store
+    const storage = await this.getStorage()
+    const data = { ...this.stored, ...res }
     storage.set(data)
     this.stored = data
   }
-  next = async () => {
+  signMessage = async () => {
+    const storage = await this.getStorage()
+    // get signature and store
+    const signature = await signMessage(this.msg)
+    const data = { ...this.stored, ...signature }
+    storage.set(data)
+    this.stored = data
+  }
+
+  sign = async () => {
     // get sign
-    if (!this.name || !this.ownerAddress || !this.coin.coinType || !this.account) return
+    if (!this.name || !this.ownerAddress || !this.coin.coinType || !this.account || !this.msg) return
     if (this.owner && this.currentAddr) return
     this.pending = true
     this.err = ''
     try {
-      await this.getSignatureMessage()
+      await this.signMessage()
       this.step = 2
     } catch (err: any) {
       if (err.code === 4001) return
@@ -103,7 +126,7 @@ export class SetRecordWallet extends TailwindElement(style) {
     const { name, coinType, dest, timestamp, nonce, signature } = this.stored
     const storage = await this.getStorage()
     try {
-      this.tx = await setAddrByOwner(name, coinType, dest, +timestamp, nonce, signature)
+      this.tx = await setAddressByOwner(name, coinType, dest, +timestamp, nonce, signature)
       const success = await this.tx.wait()
       storage.remove()
       await sleep(1000)
@@ -111,16 +134,17 @@ export class SetRecordWallet extends TailwindElement(style) {
       this.emit('success')
     } catch (e: any) {
       this.err = e
-      console.error(e)
     } finally {
       this.pending = false
       storage.remove()
     }
   }
 
-  async connectedCallback(): void {
+  async connectedCallback() {
     super.connectedCallback()
     await this.getStoredInfo()
+    if (this.signature) return
+    await this.getSignerMessage()
   }
   disconnectedCallback = () => {
     super.disconnectedCallback()
@@ -132,16 +156,7 @@ export class SetRecordWallet extends TailwindElement(style) {
         <div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
           <div>
             You are setting <b>${this.coin.name}</b> address to
-            ${when(
-              this.isStep1,
-              () =>
-                html`${when(
-                  this.owner,
-                  () => html``,
-                  () => html`${this.account}`
-                )}`,
-              () => html`${this.dest || this.account}`
-            )}
+            <b>${this.dest}</b>
           </div>
           <!-- <div><a href="javascript:void(0)">Change address to set</a></div> -->
         </div>
@@ -152,24 +167,26 @@ export class SetRecordWallet extends TailwindElement(style) {
             () => html`<div class="px-3">
               <h3 class="text-base">Setting an address requires you to complete 2 steps</h3>
               <div class="grid md_grid-cols-2 gap-4 my-4">
-                <dui-card index="1" class="rounded-md ${classMap({ active: this.step >= 1 })}">
+                <dui-card index="1" class="rounded-md ${classMap({ done: this.step > 1, active: this.step >= 1 })}">
                   <div slot="title">
                     <b>SIGN A MESSAGE TO VERIFY YOUR ADDRESS</b>
                   </div>
                   <div slot="description" class="flex flex-col gap-2">
                     <p>Your wallet will open and following message will be shown:</p>
 
-                    <div>
+                    <div class="break-words break-all">
                       ${when(
                         this.msg,
-                        () => html`<span class="text-gray-500">Message:</span>
-                          <p class="break-words">${this.msg}</p>`,
-                        () => html``
+                        () =>
+                          html`<span class="text-gray-500">Message:</span> ${repeat(
+                              this.cookedMsg,
+                              (msg) => html`<p><b>${msg.title}</b>${msg.content}</p>`
+                            )}`
                       )}
                     </div>
                   </div>
                 </dui-card>
-                <dui-card index="2" class="rounded-md ${classMap({ active: this.step >= 2 })}">
+                <dui-card index="2" class="rounded-md ${classMap({ done: this.step > 2, active: this.step >= 2 })}">
                   <div slot="title">
                     <b>Complete Setting</b>
                   </div>
@@ -195,7 +212,7 @@ export class SetRecordWallet extends TailwindElement(style) {
                   this.isStep1,
                   () => html`<dui-button
                     sm
-                    @click=${this.next}
+                    @click=${this.sign}
                     ?disabled=${this.btnSignDisabled}
                     ?pending=${this.pending}
                     >Sign message<i
