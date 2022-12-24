@@ -170,15 +170,18 @@ export class SetRecordWallet extends TailwindElement(style) {
             You are setting <b>${this.coin.name}</b> address to
             <b class="break-words break-all">${this.dest}</b>
           </div>
-          <div @click=${this.showTip}>
-            <a href="javascript:void(0)" class="text-blue-400">Change address to set</a>
-          </div>
           ${when(
-            this.dialog,
-            () => html`<dui-prompt class="min-h-fit" @close=${this.close}>
-              <div class="text-base">Open your wallet and switch to the address you want to set.</div>
-              <span slot="bottom"></span>
-            </dui-prompt>`
+            this.isStep1,
+            () => html`<div @click=${this.showTip}>
+                <a href="javascript:void(0)" class="text-blue-400">Change address to set</a>
+              </div>
+              ${when(
+                this.dialog,
+                () => html`<dui-prompt class="min-h-fit" @close=${this.close}>
+                  <div class="text-base">Open your wallet and switch to the address you want to set.</div>
+                  <span slot="bottom"></span>
+                </dui-prompt>`
+              )}`
           )}
         </div>
         <div>
