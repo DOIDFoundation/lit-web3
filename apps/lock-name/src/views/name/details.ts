@@ -5,7 +5,8 @@ import {
   property,
   state,
   repeat,
-  when
+  when,
+  keyed
 } from '@lit-web3/dui/src/shared/TailwindElement'
 // import { goto } from '@lit-web3/dui/src/shared/router'
 import { nameInfo, ownerRecords } from '@lit-web3/ethers/src/nsResolver'
@@ -18,7 +19,7 @@ import style from './details.css?inline'
 @customElement('view-name-details')
 export class ViewNameDetails extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
-  @property({ type: nameInfo }) info = {}
+  @property({ type: nameInfo }) info: any = {}
   @property() name = ''
 
   @state() pending = false
@@ -67,13 +68,16 @@ export class ViewNameDetails extends TailwindElement(style) {
                 html`${repeat(
                   this.records,
                   (item: any) =>
-                    html`<doid-addr-item
-                      key=${item.coinType}
-                      .item=${item}
-                      .name=${this.name}
-                      .owner=${this.info.itsme}
-                      @success=${this.onSuccess}
-                    ></doid-addr-item>`
+                    html`${keyed(
+                      item.address,
+                      html`<doid-addr-item
+                        key=${item.coinType}
+                        .item=${item}
+                        .name=${this.name}
+                        .owner=${this.info.itsme}
+                        @success=${this.onSuccess}
+                      ></doid-addr-item>`
+                    )}`
                 )}`
             )}
           </div>

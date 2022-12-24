@@ -51,6 +51,7 @@ export class EditInline extends TailwindElement(style) {
   get coinType() {
     return { name: this.item.name, coinType: this.item.coinType }
   }
+  editedAddr = ''
 
   async checkEditInfo() {
     const stored = await this.storage.get()
@@ -76,7 +77,7 @@ export class EditInline extends TailwindElement(style) {
     this.mode = 'edit'
     this.storage.set({ ...this.coinType, source: this.address || this.account })
   }
-  onSuccess = () => {
+  onSuccess = (e: CustomEvent) => {
     this.mode = ''
     this.checkEditInfo()
     this.emit('success')
@@ -86,7 +87,6 @@ export class EditInline extends TailwindElement(style) {
     super.connectedCallback()
     this.storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
     await this.checkEditInfo()
-    console.info('aaa', this.stored)
     emitter.on('addr-edit', this.listener)
     this.storage.on(this.listener)
   }

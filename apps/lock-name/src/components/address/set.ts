@@ -12,8 +12,6 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { getSignerMessage, signMessage, setAddressByOwner } from '@lit-web3/ethers/src/nsResolver'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
 
-import { sleep } from '@lit-web3/ethers/src/utils'
-
 // Components
 import '@lit-web3/dui/src/step-card'
 // Styles
@@ -65,9 +63,12 @@ export class SetRecordWallet extends TailwindElement(style) {
   get txPending() {
     return this.tx && !this.tx?.ignored
   }
+  get isCurrentEqualToDest() {
+    return this.currentAddr === this.dest?.toLowerCase()
+  }
   get btnSignDisabled() {
     if (!this.currentAddr) return false
-    return this.pending || this.err || this.owner || this.txPending
+    return this.pending || this.err || this.isCurrentEqualToDest || this.txPending
   }
   get btnSetDisabled() {
     return this.pending || this.err || !this.signature || !this.owner || this.txPending
@@ -105,7 +106,8 @@ export class SetRecordWallet extends TailwindElement(style) {
   sign = async () => {
     // get sign
     if (!this.name || !this.ownerAddress || !this.coin.coinType || !this.account || !this.msg) return
-    if (this.owner && this.currentAddr) return
+    if (this.isCurrentEqualToDest) return
+    // if (this.owner && this.currentAddr) return
     this.pending = true
     this.err = ''
     try {
@@ -129,7 +131,6 @@ export class SetRecordWallet extends TailwindElement(style) {
       this.tx = await setAddressByOwner(name, coinType, dest, +timestamp, nonce, signature)
       const success = await this.tx.wait()
       storage.remove()
-      await sleep(1000)
       this.success = success
       this.step = 3
       this.emit('success')
@@ -144,7 +145,7 @@ export class SetRecordWallet extends TailwindElement(style) {
   async connectedCallback() {
     super.connectedCallback()
     await this.getStoredInfo()
-    if (this.signature) return
+    if (this.dest == this.account || this.signature) return
     await this.getSignerMessage()
   }
   disconnectedCallback = () => {
