@@ -5,7 +5,8 @@ import { useStorage } from '@lit-web3/ethers/src/useStorage'
 // Components
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/copy'
+import '@lit-web3/dui/src/address'
+import '@lit-web3/dui/src/copy/icon'
 import './set'
 
 // Style
@@ -79,18 +80,12 @@ export class EditInline extends TailwindElement(style) {
   }
 
   render() {
-    return html`<div class="w-full flex justify-start items-center my-3 ${this.mode}">
-        <div class="addr_name text-gray-400">${this.coinType.name}</div>
-        <div class="grow inline-flex items-center">
+    return html`<div class="flex items-center ${this.mode}">
+        <div class="addr_name w-14 lg_w-20 text-gray-400">${this.coinType.name}</div>
+        <div class="grow flex items-center">
           ${when(
             this.address,
-            () => html`<div class="mr-1">${this.address}</div>
-              <dui-copy .value=${this.address} sm icon
-                ><span slot="copied" class="text-green-500">
-                  <i class="mdi mdi-check-circle-outline"></i>
-                </span>
-                <span slot="copy"><i class="mdi mdi-content-copy"></i></span
-              ></dui-copy> `,
+            () => html`<dui-address avatar copy .address=${this.address}></dui-address>`,
             () =>
               html`${when(
                 this.isOwner,

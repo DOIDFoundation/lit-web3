@@ -30,12 +30,16 @@ class ScreenStore extends State {
   constructor() {
     super()
     const ro = new ResizeObserver(() => {
+      this.screen.ts++
+      console.log('ji', match(breakpoints.lg))
+      this.screen.isMobi = match(breakpoints.lg)
+      this.screen.md = match(breakpoints.md)
       emitter.emit('force-request-update')
     })
     ro.observe(document.documentElement)
   }
   get isMobi() {
-    return this.screen.isMobi && this.screen.ts
+    return this.screen.isMobi
   }
   get md() {
     return this.screen.md && this.screen.ts

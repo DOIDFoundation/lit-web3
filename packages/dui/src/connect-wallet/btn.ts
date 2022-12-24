@@ -3,9 +3,9 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import emitter from '@lit-web3/core/src/emitter'
 // Components
 import './dialog'
-import '../avatar'
+import '../address'
 import '../menu/drop'
-import '../copy'
+import '../copy/icon'
 
 import style from './btn.css?inline'
 @customElement('connect-wallet-btn')
@@ -16,7 +16,7 @@ export class ConnectWalletBtn extends TailwindElement(style) {
   @state() dialog = false
   @state() menu = false
 
-  get fullAddress() {
+  get account() {
     return bridgeStore.bridge.account
   }
   get addr() {
@@ -52,7 +52,7 @@ export class ConnectWalletBtn extends TailwindElement(style) {
         ${when(
           this.addr,
           () =>
-            html`<dui-avatar class="mr-1"></dui-avatar>${this.addr}${when(
+            html`<dui-address avatar short></dui-address>${when(
                 this.dropable,
                 () =>
                   html`<i
@@ -71,15 +71,10 @@ export class ConnectWalletBtn extends TailwindElement(style) {
         () => html`<dui-drop show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
           <div class="flex w-full justify-between items-center py-3 pl-4 pr-2">
             <div class="flex items-center space-x-2">
-              <dui-avatar></dui-avatar>
+              <dui-address-avatar></dui-address-avatar>
               <span>${this.addr}</span>
               <span>
-                <dui-copy .value=${this.fullAddress} sm icon>
-                  <span slot="copied" class="text-green-500">
-                    <i class="mdi mdi-check-circle-outline "></i>
-                  </span>
-                  <span slot="copy"><i class="mdi mdi-content-copy"></i></span>
-                </dui-copy>
+                <dui-copy-icon .value=${this.account}></dui-copy-icon>
                 <dui-button sm icon href=${this.scan}><i class="mdi mdi-open-in-new"></i></dui-button
               ></span>
             </div>

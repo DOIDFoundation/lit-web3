@@ -16,8 +16,9 @@ export class DuiCopy extends TailwindElement(style) {
   @state() copiedShow = false
   timer: any = null
 
-  firstUpdated() {}
-  async doCopy() {
+  async doCopy(e: Event) {
+    e.preventDefault()
+    e.stopImmediatePropagation()
     clearTimeout(this.timer)
     const text = this.value
     if (!text) return
@@ -39,7 +40,7 @@ export class DuiCopy extends TailwindElement(style) {
       <dui-button
         ?icon=${this.icon}
         ?sm=${this.sm}
-        @click="${this.doCopy}"
+        @click=${this.doCopy}
         class="${(classMap({ copied: this.copiedShow }), this.class)}"
       >
         ${this.copied && this.copiedShow

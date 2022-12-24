@@ -1,5 +1,17 @@
-.item_key {
-  @apply w-52 font-medium;
-  min-width: 140px;
-  max-width: 180px;
+.infos {
+  &:not(:first-child) {
+    @apply mt-3 pt-2 border-t border-dashed border-gray-300;
+  }
+  & > li {
+    @apply flex py-2;
+    & > strong {
+      @apply block uppercase w-32 lg_w-40 font-medium;
+    }
+    &.single {
+      @apply py-0 items-center;
+      & .info-cnt {
+        @apply flex items-center;
+      }
+    }
+  }
 }
