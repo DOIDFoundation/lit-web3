@@ -35,7 +35,7 @@ export class ViewSearch extends TailwindElement(style) {
   render() {
     return html`<div class="view-search">
       <div class="dui-container">
-        <dui-ns-search .text=${this.keyword} @search=${this.onSearch} placeholder="Search name or addresses">
+        <dui-ns-search .text=${this.keyword} @search=${this.onSearch} placeholder="Search names or addresses">
           <span slot="label"></span>
           <span slot="msgd"></span>
         </dui-ns-search>

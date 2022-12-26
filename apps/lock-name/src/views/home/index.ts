@@ -18,7 +18,7 @@ export class ViewHome extends TailwindElement(style) {
           <p slot="msg" class="my-2">Safer, faster and easier entrance to chains, contacts and dApps</p>
         </doid-symbol>
         <div class="max-w-xl mx-auto">
-          <dui-ns-search @search=${this.goto} placeholder="Search name or addresses">
+          <dui-ns-search @search=${this.goto} placeholder="Search names or addresses">
             <span slot="label"></span>
             <span slot="msgd"></span>
           </dui-ns-search>

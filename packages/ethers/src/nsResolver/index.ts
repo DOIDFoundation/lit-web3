@@ -1,4 +1,4 @@
-export { check } from './checker'
+export { checkDOIDName } from './checker'
 import { bareTLD, wrapTLD } from './uts'
 export { wrapTLD }
 
@@ -14,7 +14,7 @@ import { txReceipt } from '../txReceipt'
 export const cookNameInfo = (src: Record<string, any>, opts = {}): NameInfo => {
   const data: Record<string, any> = { ...src, ...opts }
   const { owner, status, account } = data
-  const itsme = owner === account && !!account
+  const itsme = !!account && owner.toLowerCase() === account.toLowerCase()
   const locked = status === 'locked'
   const available = status === 'available' || (itsme && locked)
   const registered = status === 'registered'

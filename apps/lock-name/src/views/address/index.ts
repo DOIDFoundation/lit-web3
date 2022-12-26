@@ -34,7 +34,7 @@ export class ViewAddress extends TailwindElement(style) {
     return this.bridge.network.current.scan
   }
   get itsme() {
-    return this.bridge.account === this.address
+    return this.bridge.account.toLowerCase() === this.address.toLowerCase()
   }
   get shortAddr() {
     return shortAddress(this.address)

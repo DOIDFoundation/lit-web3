@@ -112,7 +112,7 @@ export class EditInline extends TailwindElement(style) {
           ${when(
             this.address,
             () => html`<dui-address avatar copy .address=${this.address}></dui-address>`,
-            () => html`<span class="text-gray-400">No set</span>`
+            () => html`<span class="text-gray-400">Not set</span>`
           )}
           ${when(
             this.isOwner,

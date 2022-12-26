@@ -1,9 +1,10 @@
-import { TailwindElement, html, when, customElement } from '../shared/TailwindElement'
+import { TailwindElement, html, when, customElement, ref, createRef } from '../shared/TailwindElement'
 import { property, state } from 'lit/decorators.js'
 import { searchStore, StateController } from './store'
 import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
 import emitter from '@lit-web3/core/src/emitter'
-import { check, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
+import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
+import { validateDOIDName, checkDOIDName } from '../validator/doid-name'
 // Components
 import '../input/text'
 import '../button'
@@ -12,6 +13,11 @@ import '../button'
 import style from './index.css?inline'
 @customElement('dui-ns-search')
 export class duiNsSearch extends TailwindElement(style) {
+  validateDOIDName: any
+  constructor() {
+    super()
+    validateDOIDName.bind(this, { allowAddress: true })()
+  }
   bindStore: any = new StateController(this, searchStore)
   bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = ''
@@ -22,18 +28,12 @@ export class duiNsSearch extends TailwindElement(style) {
   @state() pending: Record<string, boolean> = { tx: false, keyword: false }
   @state() checkedKeyword: Record<string, unknown> = {}
 
+  inputNameRef: any = createRef()
+
   onInput = (e: CustomEvent) => {
-    let val = e.detail
-    let err = ''
-    if (val.length < this.min) {
-      err = `Name is too short. Names must be at least ${this.min} characters long`
-    } else {
-      this.checkedKeyword = check(val)
-      if (this.checkedKeyword.error) err = 'Invalid Names or Addresses'
-    }
-    this.err = err
-    if (!this.err) {
-    }
+    const { val, error, msg } = this.validateDOIDName(e)
+    this.err = msg
+    if (error) return
     this.keyword = val
   }
 
@@ -45,14 +45,16 @@ export class duiNsSearch extends TailwindElement(style) {
   }
 
   connectedCallback() {
-    if (typeof this.text !== 'undefined') this.keyword = this.text
     super.connectedCallback()
+    const { name = '', address = '' } = checkDOIDName(this.text)
+    this.keyword = name || address
   }
 
   render() {
     return html`
       <dui-input-text
         class="scan-search"
+        ${ref(this.inputNameRef)}
         @input=${this.onInput}
         @submit=${this.doSearch}
         value=${this.keyword}

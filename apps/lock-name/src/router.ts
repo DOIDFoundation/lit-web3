@@ -1,5 +1,8 @@
 import { html } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
+import { checkDOIDName, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
+import { isAddress } from '@ethersproject/address'
+import emitter from '@lit-web3/core/src/emitter'
 
 export const routes = [
   {
@@ -13,9 +16,18 @@ export const routes = [
   },
   {
     name: 'search',
-    path: '/search/:keyword',
+    path: '/search/:keyword?',
     render: ({ keyword = '' }) => html`<view-search .keyword=${keyword}></view-search>`,
-    enter: async () => {
+    enter: async ({ keyword = '' }) => {
+      const { error, val } = checkDOIDName(keyword, { allowAddress: true })
+      if (val && val !== keyword) {
+        emitter.emit('router-goto', `/search/${val}`)
+        return false
+      }
+      if (error) {
+        emitter.emit('router-goto', '/')
+        return false
+      }
       await import('@/views/search')
       return true
     }
@@ -25,7 +37,16 @@ export const routes = [
     path: '/name/:name?/:action?',
     render: ({ name = '', action = '' }) =>
       html`${keyed(name, html`<view-name .name=${name} .action=${action}></view-name>`)}`,
-    enter: async () => {
+    enter: async ({ name = '' }) => {
+      const { error, val } = checkDOIDName(name)
+      if (val && wrapTLD(val) !== wrapTLD(name)) {
+        emitter.emit('router-goto', `/name/${wrapTLD(val)}`)
+        return false
+      }
+      if (error) {
+        emitter.emit('router-goto', '/')
+        return false
+      }
       await import('@/views/name')
       return true
     }
@@ -35,7 +56,11 @@ export const routes = [
     path: '/address/:address?/:action?',
     render: ({ address = '', action = '' }) =>
       html`${keyed(address, html`<view-address .address=${address} .action=${action}></view-address>`)}`,
-    enter: async () => {
+    enter: async ({ address = '' }) => {
+      if (address && !isAddress(address)) {
+        emitter.emit('router-goto', '/address')
+        return false
+      }
       await import('@/views/address')
       return true
     }

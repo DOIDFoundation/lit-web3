@@ -28,6 +28,13 @@ export const routerGuard = {
       replaceState.apply(history, [state, key, url])
       emitRouterChange(url)
     }
+    // Listener
+    emitter.on('router-goto', (e: Event) => {
+      setTimeout(() => routerGuard.goto((e as CustomEvent).detail))
+    })
+    emitter.on('router-replace', (e: Event) => {
+      setTimeout(() => routerGuard.replace((e as CustomEvent).detail))
+    })
   },
   goto: (url: string) => {
     if (match(url)) return

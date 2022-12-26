@@ -6,6 +6,7 @@ import uts from '@lit-web3/ethers/src/nsResolver/uts'
 import { ref, createRef } from 'lit/directives/ref.js'
 import { unicodelength } from '@lit-web3/ethers/src/stringlength'
 import { replace } from '@lit-web3/dui/src/shared/router'
+import { validateDOIDName } from '@lit-web3/dui/src/validator/doid-name'
 // Components
 import '@lit-web3/dui/src/connect-wallet/btn'
 import '@lit-web3/dui/src/tx-state'
@@ -18,15 +19,23 @@ import '@lit-web3/dui/src/doid-symbol'
 import style from './lock.css?inline'
 @customElement('view-lock')
 export class ViewLock extends TailwindElement(style) {
+  validateDOIDName: any
+  constructor() {
+    super()
+    validateDOIDName.bind(this)()
+  }
   bindBridge: any = new StateController(this, bridgeStore)
   @state() code = ''
   @state() name = ''
   @state() passInfo: any = null
-  @state() err: Record<string, string> = { tx: '', name: '', code: '' }
+  @state() err = ''
+  @state() errTx = ''
+  @state() errCode = ''
   @state() tip: Record<string, string> = { name: '' }
   @state() nameValid = false
   @state() tx: any = undefined
-  @state() pending: Record<string, boolean> = { tx: false, name: false }
+  @state() pending = false
+  @state() pendingTx = false
   @state() success = false
   @state() inited = false
   @state() dialog = false
@@ -37,7 +46,7 @@ export class ViewLock extends TailwindElement(style) {
     return bridgeStore.bridge
   }
   get nextPending() {
-    return this.pending.tx || this.pending.name
+    return this.pendingTx || this.pending
   }
   get nextDisabled() {
     if (this.passInfo && !this.name) return true
@@ -47,10 +56,7 @@ export class ViewLock extends TailwindElement(style) {
   }
 
   get inputErr() {
-    for (let k in this.err) {
-      if (k === 'tx') continue
-      if (this.err[k]) return true
-    }
+    if (this.errCode || this.err) return true
     return false
   }
   get nameMinLen() {
@@ -64,52 +70,39 @@ export class ViewLock extends TailwindElement(style) {
   }
 
   resetState(all = false) {
-    for (let k in this.err) this.err[k] = ''
-    for (let k in this.pending) this.pending[k] = false
+    this.err = this.errCode = this.errTx = ''
+    this.pending = this.pendingTx = false
     this.success = false
     if (all) this.nameValid = false
   }
 
   async onInputName(e: CustomEvent) {
-    if (bridgeStore.notReady) {
-      this.err = { ...this.err, name: `Please connect your wallet first` }
-      return
-    }
-    this.name = e.detail
-    this.err = { ...this.err, name: '', tx: '' }
-    this.nameValid = false
-    if (!this.name) return
-    const len = unicodelength(this.name)
-    if (len < this.nameMinLen) {
-      this.err = { ...this.err, name: ` ${this.nameMinLen} characters required` }
-      return
-    }
+    const { name, error, msg, length } = this.validateDOIDName(e)
+    this.err = msg
+    if (error) return
+    this.name = name
     // Just a tip
-    this.tip = { ...this.tip, name: len > this.nameMinLen ? `Minimum ${this.nameMinLen} characters required` : '' }
-    const chkUTS = uts(this.name)
-    if (chkUTS.error) {
-      this.err = { ...this.err, name: 'Malformed doid name' }
-      return
+    this.tip = {
+      ...this.tip,
+      name: length > this.nameMinLen ? `${this.nameMinLen} characters is recommended` : ''
     }
-    this.inputNameRef.value.$('input').value = this.name = chkUTS.domain
-    this.name = chkUTS.domain
-    this.pending = { ...this.pending, name: true }
+    this.pending = true
     try {
       const taken = await checkNameExists(this.name)
-      this.err = { ...this.err, name: taken ? 'Already taken, try another name' : '' }
+      this.err = taken ? 'Already taken, try another name' : ''
       this.nameValid = !taken
     } catch (err) {
     } finally {
-      this.pending = { ...this.pending, name: false }
+      this.pending = false
     }
   }
 
   async onInputCode(e: CustomEvent) {
     this.code = e.detail
-    this.err = { ...this.err, code: '', tx: '' }
+    this.errCode = this.errTx = ''
     const len = this.code.length
     if (len && len < LENs[0]) {
-      this.err = { ...this.err, code: 'Invalid or expired invitation code' }
+      this.errCode = 'Invalid or expired invitation code'
     }
   }
 
@@ -119,9 +112,9 @@ export class ViewLock extends TailwindElement(style) {
 
   async validate(): Promise<boolean> {
     if (this.code || this.passInfo) {
-      this.err = { ...this.err, code: '' }
+      this.errCode = ''
     } else {
-      this.err = { ...this.err, code: 'Required' }
+      this.errCode = 'Required'
     }
     return !this.inputErr
   }
@@ -129,7 +122,7 @@ export class ViewLock extends TailwindElement(style) {
   async next() {
     if (!(await this.validate())) return
     this.resetState()
-    this.pending = { ...this.pending, tx: true }
+    this.pending = true
     try {
       this.tx = await lockPass(this.passInfo || this.code, this.name)
       this.dialog = true
@@ -137,19 +130,19 @@ export class ViewLock extends TailwindElement(style) {
     } catch (err: any) {
       let msg = err.message || err.code
       if (err.code === 4001) {
-        this.err = { ...this.err, tx: msg }
+        this.errTx = msg
         return this.close()
       }
       if (this.passInfo) {
         this.close(true)
       }
       if (/( IC| IR| II|arrayify|minted)/.test(msg)) {
-        this.err = { ...this.err, code: 'Invalid or expired invitation code' }
+        this.errCode = 'Invalid or expired invitation code'
       } else if (/( IU)/.test(msg)) {
-        this.err = { ...this.err, code: 'One wallet address can only activate one invitation code' }
-      } else if (/( IV| AL| IN)/.test(msg)) this.err = { ...this.err, name: 'Already taken, try another name' }
+        this.errCode = 'One wallet address can only activate one invitation code'
+      } else if (/( IV| AL| IN)/.test(msg)) this.err = 'Already taken, try another name'
     } finally {
-      this.pending = { ...this.pending, tx: false }
+      this.pending = false
     }
   }
 
@@ -197,14 +190,14 @@ export class ViewLock extends TailwindElement(style) {
                 value=${this.code}
                 placeholder="Enter your invitation code"
                 required
-                ?disabled=${this.pending.tx}
+                ?disabled=${this.pendingTx}
               >
                 <span slot="label">Invitation Code</span>
                 <span slot="tip">
                   <dui-link href="/help">get invitation</dui-link>
                 </span>
                 <span slot="msg">
-                  ${when(this.err.code, () => html`<span class="text-red-500">${this.err.code}</span>`)}
+                  ${when(this.errCode, () => html`<span class="text-red-500">${this.errCode}</span>`)}
                 </span>
               </dui-input-text>`
             )}
@@ -217,20 +210,20 @@ export class ViewLock extends TailwindElement(style) {
               value=${this.name}
               placeholder="e.g. vitalik"
               ?required=${this.passInfo}
-              ?disabled=${this.pending.tx}
+              ?disabled=${this.pendingTx}
             >
               <span slot="label">Name you wish to lock</span>
               <span slot="right">
                 <p class="flex gap-2">
-                  ${when(this.pending.name, () => html`<i class="mdi mdi-loading"></i>`)}
+                  ${when(this.pending, () => html`<i class="mdi mdi-loading"></i>`)}
                   ${when(this.nameValid, () => html`<i class="mdi mdi-check text-green-500"></i>`)}
                   <b>.doid</b>
                 </p>
               </span>
               <span slot="msg">
                 ${when(
-                  this.err.name,
-                  () => html`<span class="text-red-500">${this.err.name}</span>`,
+                  this.err,
+                  () => html`<span class="text-red-500">${this.err}</span>`,
                   () =>
                     html`${when(
                       this.tip.name,
@@ -259,7 +252,7 @@ export class ViewLock extends TailwindElement(style) {
                   <i class="mdi -mr-1 ml-1 ${this.nextPending ? 'mdi-loading' : 'mdi-chevron-right'}"></i>
                 </span>
               </dui-button>
-              <p class="mt-4 w-64 text-xs mx-auto text-red-500 break-words">${this.err.tx}</p>
+              <p class="mt-4 w-64 text-xs mx-auto text-red-500 break-words">${this.errTx}</p>
             </div>
             <p class="text-xs w-full my-8 mt-12 mx-auto text-center break-words">
               Note: If your transaction reverted due to name confliction, your lock pass NFT will still be available for
