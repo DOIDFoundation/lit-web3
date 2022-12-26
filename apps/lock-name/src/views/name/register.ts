@@ -175,7 +175,7 @@ export class ViewNameRegister extends TailwindElement(style) {
           </p>
         </li>
         <li class="${classMap({ done: this.done || this.step > 2, active: this.step >= 2 })}">
-          <b>Wait for ${this.cd ? `${this.cd} seconds` : '1 minute'}</b>
+          <b>Wait for ${this.cd || this.step > 2 ? `${this.cd} seconds` : '1 minute'}</b>
           <p>
             The waiting period is required to ensure another person hasn’t tried to register the same name and protect
             you after your request.

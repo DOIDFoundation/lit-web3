@@ -10,6 +10,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { ownerRecords } from '@lit-web3/ethers/src/nsResolver'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { ZERO } from '@lit-web3/ethers/src/utils'
 // Components
 import '@/components/address/item'
 
@@ -30,6 +31,9 @@ export class ViewNameDetails extends TailwindElement(style) {
   get empty() {
     return this.ts && !this.records?.length
   }
+  get notOwned() {
+    return this.info.owner === ZERO
+  }
   get details() {
     const address = this.info.owner
     return [
@@ -47,6 +51,7 @@ export class ViewNameDetails extends TailwindElement(style) {
   }
 
   fetchRecords = async () => {
+    if (this.notOwned) return
     this.pending = true
     try {
       this.records = await ownerRecords(this.info.name)
@@ -67,7 +72,11 @@ export class ViewNameDetails extends TailwindElement(style) {
             (detail) => html`<li class="single">
               <strong>${detail.title}</strong>
               <div class="info-cnt">
-                <dui-address avatar copy .address=${detail.address} href=${detail.link}></dui-address>
+                ${when(
+                  this.notOwned,
+                  () => html`Not owned`,
+                  () => html`<dui-address avatar copy .address=${detail.address} href=${detail.link}></dui-address>`
+                )}
               </div>
             </li>`
           )}
@@ -76,29 +85,28 @@ export class ViewNameDetails extends TailwindElement(style) {
           <li class="wrap">
             <strong>Addresses</strong>
             <div class="info-cnt">
+              ${when(this.notOwned, () => html`No address found`)}
               ${when(!this.ts && this.pending, () => html`<i class="mdi mdi-loading"></i>`)}
-              
-                ${when(
-                  this.empty,
-                  () => html`<p class="text-red-500">Something went wrong</p>`,
-                  () =>
-                    html`<div class="doid-addr-items -mt-1 flex justify-start items-start flex-col gap-4"></div>
-                      ${repeat(
-                        this.records,
-                        (item: any) =>
-                          html`${keyed(
-                            item.address,
-                            html`<doid-addr-item
-                              key=${item.coinType}
-                              .item=${item}
-                              .name=${this.name}
-                              .owner=${this.info.itsme}
-                              @success=${this.onSuccess}
-                            ></doid-addr-item>`
-                          )}`
-                      )}`
-                )}</div>
-              
+              ${when(
+                this.empty,
+                () => html`<p class="text-red-500">Something went wrong</p>`,
+                () =>
+                  html`<div class="doid-addr-items -mt-1 flex justify-start items-start flex-col gap-4"></div>
+                    ${repeat(
+                      this.records,
+                      (item: any) =>
+                        html`${keyed(
+                          item.address,
+                          html`<doid-addr-item
+                            key=${item.coinType}
+                            .item=${item}
+                            .name=${this.name}
+                            .owner=${this.info.itsme}
+                            @success=${this.onSuccess}
+                          ></doid-addr-item>`
+                        )}`
+                    )}`
+              )}
             </div>
           </li>
         </ul>

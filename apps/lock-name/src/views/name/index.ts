@@ -28,10 +28,10 @@ export class ViewName extends TailwindElement(style) {
   @state() nameInfo: NameInfo | null = null
 
   get inReg() {
-    return this.nameInfo && !this.pending && this.action === 'register'
+    return this.nameInfo && this.action === 'register'
   }
   get inDetails() {
-    return this.nameInfo && !this.pending && this.action === 'details'
+    return this.nameInfo && this.action === 'details'
   }
 
   get empty() {
@@ -102,8 +102,6 @@ export class ViewName extends TailwindElement(style) {
             </div>
           </div>`
         )}
-        <!-- Pending -->
-        ${when(this.pending, () => html`<i class="mdi mdi-loading"></i> Loading...`)}
         <!-- Register -->
         ${when(
           this.inReg,
