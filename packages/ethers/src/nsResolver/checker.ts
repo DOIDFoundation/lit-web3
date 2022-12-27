@@ -6,22 +6,23 @@
 // console.log(addr)
 
 import { isAddress } from '@ethersproject/address'
-import { formatsByName } from '../address-encoder'
+import getAddressEncoder from '../address-encoder'
 import uts from './uts'
 import { bareTLD, wrapTLD } from './uts'
 export { bareTLD, wrapTLD }
-export { formatsByName, formatsByCoinType } from '../address-encoder'
 import { bridgeStore } from '../useBridge'
 import { unicodelength } from '../stringlength'
 
 // ETH, BSC
-export const getRecords = () =>
-  Object.fromEntries(
+export const getRecords = async () => {
+  const { formatsByName } = await getAddressEncoder()
+  return Object.fromEntries(
     ['ETH', 'BSC'].map((type: string) => {
       const { coinType, name } = formatsByName[type]
       return [coinType, { name, coinType, address: '' }]
     })
   )
+}
 
 export const checkDOIDName = (
   val: string | undefined,

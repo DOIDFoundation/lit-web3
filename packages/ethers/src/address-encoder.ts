@@ -1,6 +1,7 @@
-import './node.polyfill'
-import * as addressEncoder from '@ensdomains/address-encoder/lib/index.umd.js'
+import bufferPolyfill from './node.polyfill'
 
-const { formatsByName, formatsByCoinType } = addressEncoder
-
-export { formatsByName, formatsByCoinType }
+export default async () => {
+  await bufferPolyfill()
+  const { formatsByName, formatsByCoinType } = await import('@ensdomains/address-encoder/lib/index.umd.js')
+  return { formatsByName, formatsByCoinType }
+}

@@ -68,7 +68,7 @@ export const ownerRecords = async (name?: string) => {
   let contract = await getResolverContract()
   const node_name = await contract.nameHash(_name)
   const addrs = await contract.addrs(node_name)
-  const res = getRecords()
+  const res = await getRecords()
   addrs.forEach(([coinType, addr]: any) => {
     const type: string = formatUnits(coinType, 0)
     if (res[type]) res[type].address = addr
