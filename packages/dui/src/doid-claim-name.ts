@@ -5,6 +5,7 @@ import { getContract, assignOverrides } from '@lit-web3/ethers/src/useBridge'
 import { bridgeStore, StateController, getAccount } from '@lit-web3/ethers/src/useBridge'
 import { when } from 'lit/directives/when.js'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
+import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
 import './dialog'
 import './tx-state'
@@ -36,7 +37,7 @@ export class DoidClaimName extends TailwindElement('') {
   @state() dialog = false
 
   get name() {
-    return this.nameInfo?.name
+    return bareTLD(this.nameInfo?.name)
   }
   get passId() {
     return this.nameInfo?.id || 0
@@ -88,7 +89,7 @@ export class DoidClaimName extends TailwindElement('') {
                   You are claiming for:
                   <p class="text-black my-4 text-lg"><b class="text-blue-600">${this.name}</b>.doid</p>
                   <p class="">
-                    ${html`(Note: This pass <b class="text-base text-orange-500">#${this.passId}</b> will be burned after claiming.)</b></b>`}
+                    ${html`Note: This pass <b class="text-base text-orange-500">#${this.passId}</b> will be burned after claiming.</b></b>`}
                   </p>
                 </div>
               `
@@ -97,7 +98,7 @@ export class DoidClaimName extends TailwindElement('') {
               this.txPending,
               () => html`<tx-state
                 .tx=${this.tx}
-                .opts=${{ state: { success: `Success. You are the registrant of ${this.name} now` } }}
+                .opts=${{ state: { success: `Success. You are the registrant of ${this.name}.doid now` } }}
                 ><dui-button slot="view" @click=${() => this.close(true)}>Close</dui-button></tx-state
               >`,
               () =>
