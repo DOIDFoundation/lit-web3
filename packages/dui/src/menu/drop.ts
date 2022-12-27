@@ -19,9 +19,11 @@ export class DuiDrop extends TailwindElement(style) {
   }
   listen() {
     window.addEventListener('click', this._chk)
+    window.addEventListener('touchstart', this._chk)
   }
   unlisten() {
     window.removeEventListener('click', this._chk)
+    window.removeEventListener('touchstart', this._chk)
   }
 
   protected shouldUpdate(props: Map<PropertyKey, unknown>): boolean {

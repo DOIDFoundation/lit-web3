@@ -21,7 +21,7 @@ export const cookNameInfo = (src: Record<string, any>, opts = {}): NameInfo => {
   let stat = locked ? 'Locked by pass' : available ? 'Available' : 'Unavailable'
   if (registered && itsme) stat = 'Registered'
   const cooked = {
-    name: wrapTLD(data.name ?? name),
+    name: wrapTLD(data.name),
     owner,
     available,
     registered,
@@ -37,7 +37,8 @@ export const nameInfo = async <T extends string | string[]>(req: T, account?: st
   const get = async (name: string): Promise<NameInfo> => {
     if (!account) account = await getAccount()
     const contract = await getResolverContract()
-    const nameInfo: any = { name: wrapTLD(name), account }
+    name = wrapTLD(name)
+    const nameInfo: any = { name, account }
     try {
       const res = await contract.statusOfName(bareTLD(name))
       Object.assign(nameInfo, cookNameInfo(res, nameInfo))

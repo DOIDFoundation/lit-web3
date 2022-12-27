@@ -18,7 +18,7 @@ class SearchStore extends State {
   search = async (keyword: string) => {
     this.pending = true
     this.names = []
-    const { address, name } = checkDOIDName(keyword, { allowAddress: true })
+    const { address, name } = checkDOIDName(keyword, { allowAddress: true, wrap: true })
     if (address) return goto(`/address/${address}`)
     if (name) {
       const res = (await nameInfo([name])) as NameInfo[]

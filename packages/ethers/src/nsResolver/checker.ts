@@ -8,7 +8,8 @@
 import { isAddress } from '@ethersproject/address'
 import { formatsByName } from '../address-encoder'
 import uts from './uts'
-export { bareTLD, wrapTLD } from './uts'
+import { bareTLD, wrapTLD } from './uts'
+export { bareTLD, wrapTLD }
 export { formatsByName, formatsByCoinType } from '../address-encoder'
 import { bridgeStore } from '../useBridge'
 import { unicodelength } from '../stringlength'
@@ -22,19 +23,11 @@ export const getRecords = () =>
     })
   )
 
-declare type ValidateDOIDName = {
-  name?: string
-  address?: string
-  val?: string // name or address
-  error?: boolean
-  msg?: string
-  length?: number
-}
-
 export const checkDOIDName = (
   val: string | undefined,
-  { allowAddress = false, requireWallet = true, len = 2 } = {}
-): ValidateDOIDName => {
+  { allowAddress = false, requireWallet = true, len = 2, wrap = false } = <CheckNameOptions>{}
+): CheckedName => {
+  val = bareTLD(val)
   if (!val) return { error: true }
   if (allowAddress && isAddress(val)) return { address: val, val }
   // Not connected
@@ -43,7 +36,8 @@ export const checkDOIDName = (
   const length = unicodelength(val)
   if (length < len) return { error: true, msg: `Minimum ${len} characters required` }
   // Check UTS
-  const { error, domain: name } = uts(val)
+  const { error, domain } = uts(val)
+  const name = wrap ? wrapTLD(domain) : domain
   if (error) return { error: true, msg: allowAddress ? 'Invalid name or address' : 'Invalid DOID name' }
   return { name, val: name, length }
 }

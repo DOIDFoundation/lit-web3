@@ -14,6 +14,8 @@ import style from './index.css?inline'
 @customElement('dui-ns-search')
 export class duiNsSearch extends TailwindElement(style) {
   validateDOIDName: any
+  _checked: CheckedName = {}
+  inputNameRef: any = createRef()
   constructor() {
     super()
     validateDOIDName.bind(this, { allowAddress: true })()
@@ -25,10 +27,7 @@ export class duiNsSearch extends TailwindElement(style) {
   @property() text: string | undefined
   @state() keyword = ''
   @state() err = ''
-  @state() pending: Record<string, boolean> = { tx: false, keyword: false }
-  @state() checkedKeyword: Record<string, unknown> = {}
-
-  inputNameRef: any = createRef()
+  @state() pending = false
 
   onInput = (e: CustomEvent) => {
     const { val, error, msg } = this.validateDOIDName(e)
@@ -40,13 +39,13 @@ export class duiNsSearch extends TailwindElement(style) {
   doSearch() {
     if (!bridgeStore.bridge.account) return emitter.emit('connect-wallet')
     if (this.err) return
-    if (this.checkedKeyword.name) this.keyword = wrapTLD(this.keyword)
+    if (this._checked.name) this.keyword = wrapTLD(this.keyword)
     this.emit('search', this.keyword)
   }
 
   connectedCallback() {
     super.connectedCallback()
-    const { name = '', address = '' } = checkDOIDName(this.text)
+    const { name = '', address = '' } = checkDOIDName(this.text, { wrap: true })
     this.keyword = name || address
   }
 
@@ -59,7 +58,7 @@ export class duiNsSearch extends TailwindElement(style) {
         @submit=${this.doSearch}
         value=${this.keyword}
         placeholder=${this.placeholder}
-        ?disabled=${this.pending.tx}
+        ?disabled=${this.pending}
       >
         <span slot="label"><slot name="label"></slot></span>
         <span slot="right" class="-mr-1">

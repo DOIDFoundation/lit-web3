@@ -95,7 +95,6 @@ export const lockPass = async (codeOrPass: any, name = '') => {
   if (!id) {
     code = getICode(codeOrPass)
     const passCate = await getPassCate()
-    console.log(14)
     cate = passCate[getICate(codeOrPass)]
     id = getICId(codeOrPass)
   }
@@ -105,7 +104,6 @@ export const lockPass = async (codeOrPass: any, name = '') => {
   const parameters = isLockName ? [+id, name] : [code, name, cate, +id]
 
   await assignOverrides(overrides, contract, method, parameters)
-  console.log(2)
   const call = contract[method](...parameters)
   return new txReceipt(call, {
     errorCodes: 'Locker',

@@ -19,7 +19,7 @@ export const routes = [
     path: '/search/:keyword?',
     render: ({ keyword = '' }) => html`<view-search .keyword=${keyword}></view-search>`,
     enter: async ({ keyword = '' }) => {
-      const { error, val } = checkDOIDName(keyword, { allowAddress: true })
+      const { error, val } = checkDOIDName(keyword, { allowAddress: true, wrap: true })
       if (val && val !== keyword) {
         emitter.emit('router-goto', `/search/${val}`)
         return false
@@ -38,8 +38,8 @@ export const routes = [
     render: ({ name = '', action = '' }) =>
       html`${keyed(name, html`<view-name .name=${name} .action=${action}></view-name>`)}`,
     enter: async ({ name = '' }) => {
-      const { error, val } = checkDOIDName(name)
-      if (val && wrapTLD(val) !== wrapTLD(name)) {
+      const { error, val } = checkDOIDName(name, { wrap: true })
+      if (val && val !== wrapTLD(name)) {
         emitter.emit('router-goto', `/name/${wrapTLD(val)}`)
         return false
       }
