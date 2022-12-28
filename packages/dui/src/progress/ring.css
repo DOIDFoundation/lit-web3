@@ -1,0 +1,32 @@
+:host {
+  @apply block relative w-full h-full;
+  --bg: #d2d5db;
+  --fg: #4caf50;
+}
+
+circle {
+  @apply w-full h-full;
+  fill: none;
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 0.3s;
+  transform: rotate(-90deg);
+  &.b {
+    stroke: var(--bg);
+  }
+  &.f {
+    stroke: var(--fg);
+  }
+  &.p {
+    /* stroke: #f1fdf4; */
+    stroke: rgba(9, 253, 70, 0.05);
+  }
+}
+.text {
+  @apply top-0 left-0 w-full h-full absolute flex justify-center items-center;
+  &.done {
+    color: var(--fg);
+  }
+  &.active {
+    color: var(--fg);
+  }
+}

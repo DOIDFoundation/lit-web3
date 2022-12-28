@@ -2,8 +2,8 @@ import { TailwindElement, html, customElement, property, state, when, styleMap }
 // Components
 
 import style from './bar.css?inline'
-@customElement('progress-bar')
-export class ProgressBar extends TailwindElement(style) {
+@customElement('dui-progress-bar')
+export class DuiProgressBar extends TailwindElement(style) {
   @property({ type: Number }) percent = 0
   @property({ type: Number }) randomTo = 0
   @property({ type: Number }) precision = 2
