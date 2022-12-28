@@ -15,14 +15,14 @@ export declare class TAILWINDELEMENT extends LitElement {
 import TailwindBase from './tailwind.global.css?inline'
 export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<TAILWINDELEMENT> =>
   class extends LitElement implements TAILWINDELEMENT {
+    static styles = (Array.isArray(styles) ? styles.flat() : [TailwindBase, styles]).map((r) => {
+      return r instanceof CSSResult ? r : unsafeCSS(r)
+    })
     constructor() {
       super()
       // Trick for external link, todo: use import svg instead
       this.attachShadow({ mode: 'open' }).innerHTML = import.meta.env.VITE_APP_MDI
     }
-    static styles = (Array.isArray(styles) ? styles.flat() : [TailwindBase, styles]).map((r) =>
-      r instanceof CSSResult ? r : unsafeCSS(r)
-    )
     // classMap from arrayify
     $c(req: [] | Record<string, unknown>) {
       if (Array.isArray(req)) {

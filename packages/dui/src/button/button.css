@@ -59,6 +59,19 @@
       }
     }
   }
+  &.minor {
+    background: var(--btnBgSecondary);
+    &:not([disabled]) {
+      &:hover {
+        background: var(--btnBgSecondaryHover);
+        border-color: var(--btnBgSecondaryHover);
+      }
+      &:active {
+        background: var(--btnBgSecondaryActive);
+        border-color: var(--btnBgSecondaryActive);
+      }
+    }
+  }
   &.success {
     background: var(--btnBgSuccess);
     &:not([disabled]) {

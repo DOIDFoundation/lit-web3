@@ -1,18 +1,37 @@
-import { customElement, TailwindElement, html, state } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, state, property } from '../shared/TailwindElement'
 import { sleep } from '@lit-web3/ethers/src/utils'
 import { animate } from '@lit-labs/motion'
 
 import style from './dialog.css?inline'
-
 @customElement('dui-dialog')
 export class DuiDialog extends TailwindElement(style) {
+  @property({ type: Boolean }) persistent = false
   @state() model = false
 
-  async close() {
+  close = async () => {
     this.model = false
     await sleep(200)
     this.remove()
     this.emit('close')
+  }
+
+  onEsc = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') setTimeout(() => this.close())
+  }
+  listen() {
+    window.addEventListener('keydown', this.onEsc)
+  }
+  unlisten() {
+    window.removeEventListener('keydown', this.onEsc)
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    if (!this.persistent) this.listen()
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    if (!this.persistent) this.unlisten()
   }
 
   override render() {
@@ -39,14 +58,14 @@ export class DuiDialog extends TailwindElement(style) {
           >
             <i class="mdi mdi-close"></i>
           </i>
-          <div part="dialog-header" class="w-full p-4 pr-8 flex justify-between items-center text-base">
+          <div part="dialog-header" class="w-full rounded-t-xl p-4 pr-8 flex justify-between items-center text-base">
             <slot name="header"></slot></div
         ></slot>
         <slot name="center">
           <div part="dialog-body" class="p-4"><slot></slot></div>
         </slot>
         <slot name="bottom">
-          <div part="dialog-footer" class="p-4"><slot name="footer"></slot></div>
+          <div part="dialog-footer" class="w-full p-4 rounded-b-xl"><slot name="footer"></slot></div>
         </slot>
       </div>
       <div

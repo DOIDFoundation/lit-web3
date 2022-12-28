@@ -108,17 +108,17 @@ export class EditInline extends TailwindElement(style) {
   render() {
     return html`<div class="flex items-center ${this.mode}">
         <div class="addr_name w-14 lg_w-16 text-gray-400">${this.coinType.name}</div>
-        <div class="grow flex items-center">
+        <div class="grow flex items-center h-8">
           ${when(
             this.address,
             () => html`<dui-address avatar copy .address=${this.address}></dui-address>`,
-            () => html`<span class="text-gray-400">Not set</span>`
+            () => html`<span class="text-gray-400 mr-1">Not set</span>`
           )}
           ${when(
             this.isOwner,
-            () => html`<dui-button @click=${this.setAddr} sm icon class="ml-1" .disabled=${this.editDisabled}
+            () => html`<dui-button @click=${this.setAddr} sm icon .disabled=${this.editDisabled}
               ><i
-                class="mdi  ${classMap({
+                class="mdi ${classMap({
                   'mdi-pencil-off-outline': this.isEditing,
                   'mdi-pencil-outline': !this.isEditing
                 })}"
