@@ -13,7 +13,7 @@ const seed = 'secret'
 export const getCommitment = async (name: string): Promise<Commitment | undefined> => {
   const storage = await getStorage(name)
   const commitment = await storage.get()
-  if (commitment && now() - commitment.ts >= 86400 * 1000) {
+  if (commitment && (!commitment.sent || now() - commitment.ts >= 86400 * 1000)) {
     storage.remove()
     return
   }
@@ -51,8 +51,8 @@ export const commit = async (name: string) => {
       ts: now(),
       overrides
     },
-    onSent: () => storage.set({ ts: now() }, { merge: true }),
-    onSuccess: () => storage.set({ ts: now() }, { merge: true }),
+    onSent: () => storage.set({ ts: now(), sent: true }, { merge: true }),
+    onSuccess: () => storage.set({ ts: now(), success: true }, { merge: true }),
     onError: () => storage.remove()
   })
   return tx

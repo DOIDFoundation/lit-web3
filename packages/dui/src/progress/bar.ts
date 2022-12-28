@@ -11,7 +11,7 @@ export class DuiProgressBar extends TailwindElement(style) {
   @property({ type: Boolean }) state = false
 
   @state() pending = false
-  @state() randomProgress = this.randomTo
+  @state() randomProgress = this.percent
   @state() randomTimer: any = null
 
   get progress() {
@@ -25,9 +25,10 @@ export class DuiProgressBar extends TailwindElement(style) {
   protected shouldUpdate(props: Map<PropertyKey, unknown>): boolean {
     if (props.has('randomTo')) {
       if (this.randomTo) {
+        clearInterval(this.randomTimer)
         this.randomProgress = this.percent
         this.randomTimer = setInterval(() => {
-          this.randomProgress += Math.floor(Math.random() * (0.2 - 0.1 + 1) + 0.1)
+          this.randomProgress += Math.floor(Math.random() * (0.1 - 0.01 + 1) + 0.01)
           if (this.randomProgress >= this.randomTo) clearInterval(this.randomTimer)
         }, 200)
       } else {

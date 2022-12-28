@@ -12,6 +12,9 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '@lit-web3/dui/src/doid-claim-name'
 import '@lit-web3/dui/src/progress/bar'
+import '@lit-web3/dui/src/progress/ring'
+import '@lit-web3/dui/src/tx-state'
+import '@lit-web3/dui/src/tip'
 
 import style from './register.css?inline'
 @customElement('view-name-register')
@@ -59,8 +62,8 @@ export class ViewNameRegister extends TailwindElement(style) {
     if (this.step === 3) {
       if (this.pending && !this.tx) return 70
       if (this.tx) return 75
+      return 68
     }
-    if (this.step === 3) return 68
     return 0
   }
   get randomTo() {
@@ -70,6 +73,7 @@ export class ViewNameRegister extends TailwindElement(style) {
     return 0
   }
   goStep2 = () => {
+    this.tx = null
     this.step = 2
     const cd = 60
     this.cd = cd
@@ -105,8 +109,9 @@ export class ViewNameRegister extends TailwindElement(style) {
         if (/( IC)/.test(err.message)) {
           this.err = 'This name is already committed by someone else, please try again later'
         }
+        this.err = err.message
+        clearCommitment(this.name)
       }
-      clearCommitment(this.name)
       this.tx = null
     } finally {
       this.pending = false
@@ -125,10 +130,11 @@ export class ViewNameRegister extends TailwindElement(style) {
     } catch (err: any) {
       if (err.code !== 4001) {
         this.err = err.message
+        clearCommitment(this.name)
       }
-      this.tx = null
     } finally {
       this.pending = false
+      this.tx = null
     }
   }
 
@@ -167,29 +173,71 @@ export class ViewNameRegister extends TailwindElement(style) {
       </h3>
       <ol>
         <li class="${classMap({ done: this.done || this.step > 1, active: this.step >= 1 })}">
-          <b>Request to register</b>
-          <p>
-            Your wallet will open and you will be asked to confirm the first of two transactions required for
-            registration. If the second transaction is not processed within 7 days of the first, you will need to start
-            again from step 1.
-          </p>
+          <dui-progress-ring state .percent=${this.step > 1 ? 100 : this.percent ? 50 : 0} .randomTo="100"
+            >${when(
+              this.step > 1,
+              () => html`<i class="mdi mdi-check text-lg"></i>`,
+              () => 1
+            )}</dui-progress-ring
+          >
+          <b
+            >Request to register
+            <dui-tip
+              >Your wallet will open and you will be asked to confirm the first of two transactions required for
+              registration. If the second transaction is not processed within 7 days of the first, you will need to
+              start again from step 1.</dui-tip
+            >
+          </b>
+          <div class="desc">
+            ${when(
+              this.step === 1,
+              () => html`${when(this.tx && !this.tx.ignored, () => html`<tx-state .tx=${this.tx} inline></tx-state>`)}`
+            )}
+          </div>
         </li>
         <li class="${classMap({ done: this.done || this.step > 2, active: this.step >= 2 })}">
-          <b>Wait for ${this.cd || this.step > 2 ? `${this.cd} seconds` : '1 minute'}</b>
-          <p>
-            The waiting period is required to ensure another person hasn’t tried to register the same name and protect
-            you after your request.
-          </p>
+          <dui-progress-ring
+            state
+            .percent=${this.step > 2 ? 100 : this.timer ? ((60 - this.cd) * 100) / 60 : 0}
+            .randomTo="100"
+            >${when(
+              this.step > 2,
+              () => html`<i class="mdi mdi-check text-lg"></i>`,
+              () => 2
+            )}</dui-progress-ring
+          >
+          <b
+            >Wait for 1 minute
+            <dui-tip
+              >The waiting period is required to ensure another person hasn’t tried to register the same name and
+              protect you after your request.</dui-tip
+            ></b
+          >
+          <div class="cnt">${when(this.step === 2 && this.timer, () => html`${this.cd} seconds remaining`)}</div>
         </li>
         <li class="${classMap({ done: this.done, active: this.step >= 3 })}">
-          <b>Complete Registration</b>
-          <p>
-            Click ‘register’ and your wallet will re-open. Only after the 2nd transaction is confirmed you'll know if
-            you got the name.
-          </p>
+          <dui-progress-ring
+            state
+            .percent=${this.done ? 100 : this.percent > 68 ? (this.tx ? 66 : 33) : 0}
+            .randomTo="100"
+            >3</dui-progress-ring
+          >
+          <b
+            >Complete Registration
+            <dui-tip
+              >Click ‘register’ and your wallet will re-open. Only after the 2nd transaction is confirmed you'll know if
+              you got the name.</dui-tip
+            ></b
+          >
+          <div class="cnt">
+            ${when(
+              this.step === 3,
+              () => html`${when(this.tx && !this.tx.ignored, () => html`<tx-state .tx=${this.tx} inline></tx-state>`)}`
+            )}
+          </div>
         </li>
       </ol>
-      <progress-bar .percent=${this.percent} .randomTo=${this.randomTo} class="my-4"></progress-bar>
+      <dui-progress-bar .percent=${this.percent} .randomTo=${this.randomTo} class="my-4"></dui-progress-bar>
       <div class="my-4 flex justify-center items-center h-9">
         <dui-button
           @click=${this.register}

@@ -2,9 +2,7 @@ import { TailwindElement, html, when, state } from '@lit-web3/dui/src/shared/Tai
 import { customElement } from 'lit/decorators.js'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { LENs, lockPass, checkNameExists, getInviteCode, getPassCateLen, getPassInfo } from '@/lib/locker'
-import uts from '@lit-web3/ethers/src/nsResolver/uts'
 import { ref, createRef } from 'lit/directives/ref.js'
-import { unicodelength } from '@lit-web3/ethers/src/stringlength'
 import { replace } from '@lit-web3/dui/src/shared/router'
 import { validateDOIDName } from '@lit-web3/dui/src/validator/doid-name'
 // Components

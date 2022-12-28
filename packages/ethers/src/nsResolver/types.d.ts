@@ -14,6 +14,8 @@ declare type NameInfo = {
 declare type Commitment = {
   secret?: string
   ts?: number
+  sent?: boolean
+  success?: boolean
 }
 
 declare type CheckNameOptions = {

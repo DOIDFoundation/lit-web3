@@ -9,6 +9,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto, replace } from '@lit-web3/dui/src/shared/router'
 import { wrapTLD, nameInfo } from '@lit-web3/ethers/src/nsResolver'
+import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
@@ -20,6 +21,7 @@ import style from './name.css?inline'
 import emitter from '@lit-web3/core/src/emitter'
 @customElement('view-name')
 export class ViewName extends TailwindElement(style) {
+  bindBridge: any = new StateController(this, bridgeStore)
   @property() name = ''
   @property() action = ''
 
@@ -28,10 +30,10 @@ export class ViewName extends TailwindElement(style) {
   @state() nameInfo: NameInfo | null = null
 
   get inReg() {
-    return this.nameInfo && this.action === 'register'
+    return !bridgeStore.noAccount && this.nameInfo && this.action === 'register'
   }
   get inDetails() {
-    return this.nameInfo && this.action === 'details'
+    return !bridgeStore.noAccount && this.nameInfo && this.action === 'details'
   }
 
   get empty() {
@@ -101,6 +103,10 @@ export class ViewName extends TailwindElement(style) {
               </dui-nav>
             </div>
           </div>`
+        )}
+        ${when(
+          bridgeStore.noAccount,
+          () => html`<p class="my-8 text-center"><connect-wallet-btn></connect-wallet-btn></p>`
         )}
         <!-- Register -->
         ${when(
