@@ -179,7 +179,6 @@ export class SetRecordWallet extends TailwindElement(style) {
                 this.dialog,
                 () => html`<dui-prompt @close=${this.close}>
                   <div class="text-base">Open your wallet and switch to the address you want to set.</div>
-                  <span slot="bottom"></span>
                 </dui-prompt>`
               )}`
           )}

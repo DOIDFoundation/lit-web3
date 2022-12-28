@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, property, when, unsafeHTML } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, property, when, unsafeHTML, classMap } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
 // Components
@@ -10,13 +10,9 @@ export class TxState extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) tx: any
   @property({ type: Boolean }) txType = false
+  @property({ type: Boolean, attribute: true }) inline = false
   @property({ type: Boolean }) onlyAwaitHash = false
   @property({ type: Object }) opts: any = {}
-
-  constructor() {
-    super()
-    // new StateController(this, this.tx)
-  }
 
   get bridge() {
     return bridgeStore.bridge
@@ -48,7 +44,7 @@ export class TxState extends TailwindElement(style) {
         ;[icon, txt, css] = [this.icons.success, state?.success || `Success`, 'success']
         break
       case 2:
-        ;[icon, txt] = [this.icons.wait, `Confirm the transaction.`]
+        ;[icon, txt] = [this.icons.wait, `Confirm the transaction...`]
         break
       case 4:
         ;[icon, txt, css] = [this.icons.almostSuccess, this.tx.err?.message || `Almost Success`, 'warn']
@@ -65,8 +61,10 @@ export class TxState extends TailwindElement(style) {
   }
 
   override render() {
-    return html`<div class="tx-state m-4">
-      <div class="tx-state-icon my-3 text-3xl mx-auto ${this.state.css}">
+    return html`<div
+      class="tx-state ${classMap(this.$c([this.inline ? 'inline-flex flex-wrap' : 'flex flex-col m-4']))}"
+    >
+      <div class="tx-state-icon mx-auto ${classMap(this.$c([this.inline ? 'mr-2' : 'text-3xl my-3', this.state.css]))}">
         ${when(
           this.tx.pending && !this.hashOk,
           () => html`<slot name="pending">
@@ -75,7 +73,9 @@ export class TxState extends TailwindElement(style) {
           () => html`<span>${unsafeHTML(this.state.icon)}</span>`
         )}
       </div>
-      <div class="tx-state-msg my-4"><slot>${this.state.txt}</slot></div>
+      <div class="tx-state-msg grow ${classMap(this.$c([this.inline ? '' : 'my-4']))}">
+        <slot>${this.state.txt}</slot>
+      </div>
       <div class="flex gap-4">
         ${when(
           this.tx.hash,
