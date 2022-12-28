@@ -11,7 +11,7 @@ export class AppMain extends TailwindElement('') {
   render() {
     return html`<network-warning></network-warning>
       <dui-header>
-        <div slot="sublogo" class="flex items-center"><a href="/">ART SCAN</a></div>
+        <div slot="sublogo" class="flex items-center"></div>
         <dui-nav slot="center">
           <dui-link href="/collections" nav>Collections</dui-link>
         </dui-nav>

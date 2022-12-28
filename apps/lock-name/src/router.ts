@@ -39,6 +39,7 @@ export const routes = [
       html`${keyed(name, html`<view-name .name=${name} .action=${action}></view-name>`)}`,
     enter: async ({ name = '' }) => {
       const { error, val } = checkDOIDName(name, { wrap: true })
+
       if (val && val !== wrapTLD(name)) {
         emitter.emit('router-goto', `/name/${wrapTLD(val)}`)
         return false
