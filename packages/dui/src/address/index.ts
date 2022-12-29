@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, state, when, property } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, when, property } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { screenStore } from '@lit-web3/core/src/screen'
 import { shortAddress } from '@lit-web3/ethers/src/utils'

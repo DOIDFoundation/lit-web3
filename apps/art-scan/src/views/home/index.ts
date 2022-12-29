@@ -10,7 +10,7 @@ import style from './index.css?inline'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
   goto = (e: CustomEvent) => {
-    goto(`/collection/${e.detail}`)
+    goto(`/artist/${e.detail}`)
   }
   render() {
     return html`<div class="home">

@@ -1,3 +1,4 @@
+import { subgraphQuery } from './graph'
 const res2Json = (response: any) => {
   return response
     .json()
@@ -10,35 +11,54 @@ const res2Json = (response: any) => {
     })
 }
 export const queryCollectionsByOwner = async (minter: string) => {
-  // fake
-  const url = `https://api.opensea.io/api/v1/assets?owner=${minter}`
-
   const data = await new Promise((resolve, reject) => {
-    fetch(`${url}`, {
-      method: 'GET'
-    })
+    const _minter = `${minter.toLowerCase()}`
+    return subgraphQuery()(
+      `{
+        tokens(orderBy: createdAt,orderDirection: desc, where: {minter: "${_minter}"}) {
+          id
+          createdAt
+          tokenID
+          owner {
+            id
+          }
+          collection {
+            id
+            name
+            tokens {
+              id tokenURI tokenID tokenURI
+            }
+          }
+        }
+      }`
+    )
       .then(res2Json)
+      .then(async (data: any) => {
+        const _data = data.tokens.map((r: any) => {
+          let tokenId = '',
+            tokenUri = ''
+          const { id: _id } = r
+          r.collection.tokens.forEach(({ id, tokenID: token_id, tokenURI: token_uri }: any) => {
+            if (id == _id) {
+              tokenId = token_id
+              tokenUri = token_uri
+            }
+          })
+          return { ...r, tokenId, tokenUri }
+        })
+        // meta json
+        await Promise.all(
+          _data.map(async (r: any) => {
+            const { image_url, name, description, external_url }: any = await fetch(r.tokenUri, {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json', accept: 'application/json, */*' }
+            }).then(res2Json)
+            r.meta = { image_url, name, description, external_url }
+          })
+        )
+        return _data
+      })
       .then(resolve, reject)
-  }).then((r: any) => {
-    return r.assets?.map((item: any) => {
-      const {
-        creator: {
-          address,
-          user: { username }
-        },
-        token_id,
-        collection: { name, description, image_url, created_date }
-      } = item
-      return {
-        name,
-        description,
-        token_id,
-        image: image_url,
-        username,
-        creator: address,
-        createAt: created_date
-      }
-    })
   })
   return data
 }

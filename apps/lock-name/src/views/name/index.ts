@@ -1,12 +1,4 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  repeat
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto, replace } from '@lit-web3/dui/src/shared/router'
 import { wrapTLD, nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
