@@ -1,6 +1,6 @@
 {
   "name": "@lit-web3/lock-name",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "",
   "private": true,
   "scripts": {
@@ -10,9 +10,9 @@
   },
   "keywords": [],
   "dependencies": {
-    "@lit-web3/core": "workspace:*",
-    "@lit-web3/dui": "workspace:*",
-    "@lit-web3/ethers": "workspace:*"
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest"
   },
   "license": "MIT"
 }

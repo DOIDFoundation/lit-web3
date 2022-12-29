@@ -6,8 +6,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@lit-web3/core": "workspace:*",
-    "@lit-web3/dui": "workspace:*"
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest"
   },
   "peerDependencies": {
     "@ethersproject/address": "^5",
