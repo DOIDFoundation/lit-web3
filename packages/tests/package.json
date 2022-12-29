@@ -1,0 +1,26 @@
+{
+  "name": "@lit-web3/tests",
+  "private": true,
+  "scripts": {
+    "coverage": "vitest run --coverage",
+    "dev": "vite",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest"
+  },
+  "devDependencies": {
+    "@vitest/ui": "latest",
+    "cross-fetch": "latest",
+    "msw": "^0.49.2",
+    "jsdom": "latest",
+    "vitest": "latest"
+  },
+  "stackblitz": {
+    "startCommand": "npm run test:ui"
+  }
+}

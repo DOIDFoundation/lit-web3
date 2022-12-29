@@ -6,8 +6,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@lit-web3/core": "workspace:*",
-    "@lit-web3/ethers": "workspace:*",
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest",
     "@metamask/jazzicon": "^2"
   },
   "peerDependencies": {

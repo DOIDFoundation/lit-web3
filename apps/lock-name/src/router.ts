@@ -17,10 +17,11 @@ export const routes = [
   {
     name: 'search',
     path: '/search/:keyword?',
-    render: ({ keyword = '' }) => html`<view-search .keyword=${keyword}></view-search>`,
+    render: ({ keyword = '' }) => html`<view-search .keyword=${decodeURIComponent(keyword)}></view-search>`,
     enter: async ({ keyword = '' }) => {
-      const { error, val } = checkDOIDName(keyword, { allowAddress: true, wrap: true })
-      if (val && val !== keyword) {
+      const decoded = decodeURIComponent(keyword)
+      const { error, val } = checkDOIDName(decoded, { allowAddress: true, wrap: true })
+      if (val && val !== decoded) {
         emitter.emit('router-goto', `/search/${val}`)
         return false
       }
@@ -36,11 +37,11 @@ export const routes = [
     name: 'name',
     path: '/name/:name?/:action?',
     render: ({ name = '', action = '' }) =>
-      html`${keyed(name, html`<view-name .name=${name} .action=${action}></view-name>`)}`,
+      html`${keyed(name, html`<view-name .name=${decodeURIComponent(name)} .action=${action}></view-name>`)}`,
     enter: async ({ name = '' }) => {
-      const { error, val } = checkDOIDName(name, { wrap: true })
-
-      if (val && val !== wrapTLD(name)) {
+      const decoded = decodeURIComponent(name)
+      const { error, val } = checkDOIDName(decoded, { wrap: true })
+      if (val && val !== wrapTLD(decoded)) {
         emitter.emit('router-goto', `/name/${wrapTLD(val)}`)
         return false
       }
@@ -56,7 +57,10 @@ export const routes = [
     name: 'address',
     path: '/address/:address?/:action?',
     render: ({ address = '', action = '' }) =>
-      html`${keyed(address, html`<view-address .address=${address} .action=${action}></view-address>`)}`,
+      html`${keyed(
+        address,
+        html`<view-address .address=${decodeURIComponent(address)} .action=${action}></view-address>`
+      )}`,
     enter: async ({ address = '' }) => {
       if (address && !isAddress(address)) {
         emitter.emit('router-goto', '/address')

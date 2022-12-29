@@ -1,19 +1,28 @@
 import { customElement, property, state } from 'lit/decorators.js'
 import { TailwindElement, html } from '../shared/TailwindElement'
 
+const converter = (val: string | null, type: unknown, { lower = false, upper = false } = {}) => {
+  if (val) {
+    val = val?.trim()
+    if (lower) val = val.toLowerCase()
+    else if (upper) val = val.toUpperCase()
+  }
+  return val
+}
+
 import style from './text.css?inline'
 @customElement('dui-input-text')
 export class DuiInputText extends TailwindElement(style) {
   @property({ type: String }) placeholder = ''
   @property({ type: String }) type = 'text'
   @property({ type: String }) class = ''
-  @property({ type: String }) value = ''
   @property({ type: Boolean }) disabled = false
   @property({ type: Boolean }) autoforce = false
   @property({ type: Boolean }) required = false
   @property({ type: Boolean }) lower = false
   @property({ type: Boolean }) upper = false
   @property({ type: Boolean }) err = false
+  @property({ type: String, converter }) value = ''
   @property({ type: Number }) debounce = 300
 
   @state() rightSlotted = false
@@ -57,9 +66,7 @@ export class DuiInputText extends TailwindElement(style) {
   onInput(e: Event) {
     e.stopImmediatePropagation()
     let val = (e.target as HTMLInputElement).value
-    if (this.lower) val = val.toLowerCase()
-    if (this.upper) val = val.toUpperCase()
-    this.value = val
+    this.value = converter(val, null, { lower: this.lower, upper: this.upper }) || ''
     this.updateVal()
     this.emit('input', val)
   }

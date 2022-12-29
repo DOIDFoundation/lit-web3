@@ -30,6 +30,7 @@ export const checkDOIDName = (
 ): CheckedName => {
   val = bareTLD(val)
   if (!val) return { error: true }
+  val = decodeURIComponent(val)
   if (allowAddress && isAddress(val)) return { address: val, val }
   // Not connected
   if (requireWallet && bridgeStore.notReady) return { error: true, msg: `Please connect your wallet first` }

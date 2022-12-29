@@ -1,5 +1,5 @@
 const { resolve } = require('path')
-const glob = require('glob')
+// const glob = require('glob')
 const { defineConfig, splitVendorChunkPlugin, normalizePath } = require('vite')
 const { VitePWA } = require('vite-plugin-pwa')
 const { createHtmlPlugin } = require('vite-plugin-html')
@@ -128,14 +128,19 @@ const viteConfig = (options = {}) => {
           }
         }),
         legacy({
-          polyfills: ['es.object.from-entries']
+          polyfills: ['web.url', 'es.object.from-entries']
         })
       ]
     }
     // options (shallow merge)
-    for (var key in options) {
-      Object.assign(defaultConfig[key], Object.assign({}, defaultConfig[key], options[key]))
+    const merge = (src, dest) => {
+      for (var key in dest) {
+        let [vSrc, vDest] = [src[key], dest[key]]
+        if (vSrc && !Array.isArray(vSrc) && typeof vSrc === 'object') merge(vSrc, vDest)
+        else src[key] = vDest
+      }
     }
+    merge(defaultConfig, options)
     return defineConfig(defaultConfig)
   }
 }
