@@ -22,7 +22,7 @@ import emitter from '@lit-web3/core/src/emitter'
 @customElement('view-name')
 export class ViewName extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
-  @property() name = ''
+  @property({ type: String }) name = ''
   @property() action = ''
 
   @state() pending = false
