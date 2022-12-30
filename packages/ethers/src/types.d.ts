@@ -13,8 +13,8 @@ declare interface Meta {
 }
 
 declare interface NFTToken {
-  address: Address
-  tokenID: TokenID
+  address?: Address
+  tokenID?: TokenID
   name?: string
   uri?: string // ERC1155 asis ERC721 tokenURI
   tokenURI?: string
@@ -29,6 +29,7 @@ declare interface NFTToken {
   txHash?: Address
   txs?: NFTTokenTxs
   seq?: string
+  sequence?: string
   approved?: boolean
 }
 declare interface Token {
