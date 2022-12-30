@@ -40,7 +40,7 @@ export class CollectionList extends TailwindElement(style) {
               <div class="order-2 lg_order-none lg_col-span-3">
                 <doid-collections keyword=${this.name}></doid-collections>
               </div>
-              <div class="order-1 lg_order-none lg_col-start-5 lg_col-span-1 bg-gray-200 h-32 p-4">
+              <div class="order-1 lg_order-none lg_col-start-5 lg_col-span-1 bg-gray-100 h-32 p-4">
                 <artist-info .name=${this.name}></artist-info>
               </div>
             </div>`
