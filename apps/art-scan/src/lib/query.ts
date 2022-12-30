@@ -1,4 +1,5 @@
 import { subgraphQuery } from './graph'
+import { getResolverAddress } from '@lit-web3/ethers/src/nsResolver/controller'
 const res2Json = (response: any) => {
   return response
     .json()
@@ -10,12 +11,41 @@ const res2Json = (response: any) => {
       return data
     })
 }
+export const queryHoldlNums = async (account: string) => {
+  const contractAddr = await getResolverAddress()
+  const _account = account.toLowerCase()
+  return subgraphQuery()(
+    `{
+      owns: tokens(
+        orderBy: createdAt
+        orderDirection: desc
+        where: {collection_not_contains: "${contractAddr}" owner:"${_account}"}
+      ) {id
+      }
+      mints: tokens(
+        orderBy: createdAt
+        orderDirection: desc
+        where: {collection_not_contains: "${contractAddr}" minter:"${_account}"}) {
+        id
+      }
+    }`
+  )
+    .then(res2Json)
+    .then(async (data: any) => {
+      const { owns, mints } = data
+      return {
+        owns: owns.length,
+        mints: mints.length
+      }
+    })
+}
 export const queryCollectionsByOwner = async (minter: string) => {
+  const contractAddr = await getResolverAddress()
   const data = await new Promise((resolve, reject) => {
     const _minter = `${minter.toLowerCase()}`
     return subgraphQuery()(
       `{
-        tokens(orderBy: createdAt,orderDirection: desc, where: {minter: "${_minter}"}) {
+        tokens(orderBy: createdAt,orderDirection: desc, where: {minter: "${_minter}" collection_not_contains:"${contractAddr}"}) {
           id
           createdAt
           tokenID
