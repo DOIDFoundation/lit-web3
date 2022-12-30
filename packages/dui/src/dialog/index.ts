@@ -1,3 +1,4 @@
+// Todo: ShadowRoot should be created as childNodes of document.body
 import { customElement, TailwindElement, html, state, property } from '../shared/TailwindElement'
 import { sleep } from '@lit-web3/ethers/src/utils'
 import { animate } from '@lit-labs/motion'

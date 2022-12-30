@@ -1,5 +1,5 @@
 import { getResolverContract } from './controller'
-import { bareTLD } from './uts'
+import { bareTLD } from './checker'
 import { assignOverrides, getAccount } from '../useBridge'
 import { txReceipt } from '../txReceipt'
 import { formatBytes32String } from '@ethersproject/strings'

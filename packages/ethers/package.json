@@ -9,7 +9,8 @@
     "@ensdomains/address-encoder": "^0.2.20",
     "@lit-web3/core": "workspace:latest",
     "buffer": "^6.0.3",
-    "tr46": "^3.0.0"
+    "tr46": "^3.0.0",
+    "safe-decode-uri-component": "latest"
   },
   "devDependencies": {
     "@types/tr46": "^3.0.0"

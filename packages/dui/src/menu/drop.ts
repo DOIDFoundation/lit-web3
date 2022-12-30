@@ -1,3 +1,4 @@
+// Todo: ShadowRoot should be created as childNodes of document.body
 import { customElement, TailwindElement, html, property } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 

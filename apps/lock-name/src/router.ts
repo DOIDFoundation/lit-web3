@@ -3,6 +3,7 @@ import { keyed } from 'lit/directives/keyed.js'
 import { checkDOIDName, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { isAddress } from '@ethersproject/address'
 import emitter from '@lit-web3/core/src/emitter'
+import safeDecodeURIComponent from 'safe-decode-uri-component'
 
 export const routes = [
   {
@@ -17,10 +18,10 @@ export const routes = [
   {
     name: 'search',
     path: '/search/:keyword?',
-    render: ({ keyword = '' }) => html`<view-search .keyword=${decodeURIComponent(keyword)}></view-search>`,
+    render: ({ keyword = '' }) => html`<view-search .keyword=${safeDecodeURIComponent(keyword)}></view-search>`,
     enter: async ({ keyword = '' }) => {
-      const decoded = decodeURIComponent(keyword)
-      const { error, val } = checkDOIDName(decoded, { allowAddress: true, wrap: true })
+      const decoded = safeDecodeURIComponent(keyword)
+      const { error, val } = await checkDOIDName(decoded, { allowAddress: true, wrap: true })
       if (val && val !== decoded) {
         emitter.emit('router-goto', `/search/${val}`)
         return false
@@ -37,10 +38,10 @@ export const routes = [
     name: 'name',
     path: '/name/:name?/:action?',
     render: ({ name = '', action = '' }) =>
-      html`${keyed(name, html`<view-name .name=${decodeURIComponent(name)} .action=${action}></view-name>`)}`,
+      html`${keyed(name, html`<view-name .name=${safeDecodeURIComponent(name)} .action=${action}></view-name>`)}`,
     enter: async ({ name = '' }) => {
-      const decoded = decodeURIComponent(name)
-      const { error, val } = checkDOIDName(decoded, { wrap: true })
+      const decoded = safeDecodeURIComponent(name)
+      const { error, val } = await checkDOIDName(decoded, { wrap: true })
       if (val && val !== wrapTLD(decoded)) {
         emitter.emit('router-goto', `/name/${wrapTLD(val)}`)
         return false
@@ -59,7 +60,7 @@ export const routes = [
     render: ({ address = '', action = '' }) =>
       html`${keyed(
         address,
-        html`<view-address .address=${decodeURIComponent(address)} .action=${action}></view-address>`
+        html`<view-address .address=${safeDecodeURIComponent(address)} .action=${action}></view-address>`
       )}`,
     enter: async ({ address = '' }) => {
       if (address && !isAddress(address)) {
