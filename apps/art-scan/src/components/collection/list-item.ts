@@ -23,20 +23,24 @@ export class CollectionList extends TailwindElement(style) {
     return 'ETH'
   }
   get tokenId() {
-    return this.item.token_id.length > 30 ? '' : `#${this.item.token_id}`
+    const _tokenId = this.item.tokenID ?? ''
+    return _tokenId.length > 30 ? '' : `#${_tokenId}`
   }
   get createTime() {
-    return new Date(this.item.createAt)
+    return new Date(1000 * this.item.createdAt).toLocaleString()
   }
   get wrapName() {
-    // TODO: full name
     return wrapTLD(this.name)
   }
   get ownerName() {
-    return 'owner.doid'
+    return this.item.owner?.id
   }
-  get collectName() {
+  get title() {
     return `${this.wrapName} ${this.tokenId}`
+  }
+
+  get meta() {
+    return this.item.meta
   }
 
   goto = () => {
@@ -45,20 +49,20 @@ export class CollectionList extends TailwindElement(style) {
   }
   render() {
     return html`<div class="item p-4 cursor-pointer" @click="${this.goto}">
-      <div class="font-medium">${this.collectName}</div>
+      <div class="font-medium">${this.title}</div>
       <div class="flex gap-4 py-4">
         <div
           class="w-24 h-24 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
-          style=${styleMap({ backgroundImage: `url(${this.item.image})` })}
+          style=${styleMap({ backgroundImage: `url(${this.meta.image_url})` })}
         ></div>
         <div>
-          <span class="text-base mb-2">${this.item.name}</span>
-          <p class="break-words break-all text-xs">${this.item.description}</p>
+          <span class="text-base mb-2">${this.meta?.name}</span>
+          <p class="break-words break-all text-xs">${this.meta.description}</p>
         </div>
       </div>
       <div class="text-xs">
-        ${when(this.CoinType === 'ETH', () => html`<i class="mdi mdi-ethereum"></i>`)} Minted on
-        ${this.createTime.toLocaleString()}, Owned by ${this.ownerName}
+        ${when(this.CoinType === 'ETH', () => html`<i class="mdi mdi-ethereum"></i>`)} Minted on ${this.createTime},
+        Owned by ${this.ownerName}
       </div>
     </div> `
   }

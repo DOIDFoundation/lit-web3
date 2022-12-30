@@ -9,7 +9,8 @@ export const AllNetworks = {
     provider: 'https://mainnet.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',
     providerWs: 'wss://mainnet.infura.io/ws/v3/50e9845f779f4770a64fa6f47e238d10',
     scan: 'https://etherscan.io',
-    icon: ''
+    icon: '',
+    graph: 'https://api.studio.thegraph.com/query/38900/artscan/v0.0.4'
   },
   '0xaa36a7': {
     chainId: '0xaa36a7',
@@ -20,7 +21,8 @@ export const AllNetworks = {
     provider: 'https://sepolia.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',
     providerWs: 'wss://sepolia.infura.io/ws/v3/50e9845f779f4770a64fa6f47e238d10',
     scan: 'https://sepolia.etherscan.io',
-    icon: ''
+    icon: '',
+    graph: 'https://api.studio.thegraph.com/query/38900/artscan/v0.0.4'
   },
   '0x5': {
     chainId: '0x5',
@@ -31,7 +33,8 @@ export const AllNetworks = {
     provider: 'https://goerli.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',
     providerWs: 'wss://goerli.infura.io/ws/v3/50e9845f779f4770a64fa6f47e238d10',
     scan: 'https://goerli.etherscan.io',
-    icon: ''
+    icon: '',
+    graph: 'https://api.studio.thegraph.com/query/38900/artscan/v0.0.4'
   }
 }
 export const EtherNetworks = ['0x1', '0xaa36a7', '0x5']

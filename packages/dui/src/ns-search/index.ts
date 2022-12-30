@@ -73,7 +73,7 @@ export class duiNsSearch extends TailwindElement(style) {
             () =>
               html`<slot name="msgd"
                 ><span class="text-gray-400"
-                  >Start looking up an artist or artwork by DOID, e.g. nocreative.doid, 5h.reva.doid/#3</span
+                  >e.g. sabet.doid, sabet.doid/galaxy-sailor-in-motion-2021-sabet#293032</span
                 ></slot
               >`
           )}

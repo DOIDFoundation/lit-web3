@@ -1,3 +1,5 @@
+import { subgraphQuery } from './graph'
+import { getResolverAddress } from '@lit-web3/ethers/src/nsResolver/controller'
 const res2Json = (response: any) => {
   return response
     .json()
@@ -9,36 +11,84 @@ const res2Json = (response: any) => {
       return data
     })
 }
-export const queryCollectionsByOwner = async (minter: string) => {
-  // fake
-  const url = `https://api.opensea.io/api/v1/assets?owner=${minter}`
-
-  const data = await new Promise((resolve, reject) => {
-    fetch(`${url}`, {
-      method: 'GET'
-    })
-      .then(res2Json)
-      .then(resolve, reject)
-  }).then((r: any) => {
-    return r.assets?.map((item: any) => {
-      const {
-        creator: {
-          address,
-          user: { username }
-        },
-        token_id,
-        collection: { name, description, image_url, created_date }
-      } = item
+export const queryHoldlNums = async (account: string) => {
+  const contractAddr = await getResolverAddress()
+  const _account = account.toLowerCase()
+  return subgraphQuery()(
+    `{
+      owns: tokens(
+        orderBy: createdAt
+        orderDirection: desc
+        where: {collection_not_contains: "${contractAddr}" owner:"${_account}"}
+      ) {id
+      }
+      mints: tokens(
+        orderBy: createdAt
+        orderDirection: desc
+        where: {collection_not_contains: "${contractAddr}" minter:"${_account}"}) {
+        id
+      }
+    }`
+  )
+    .then(res2Json)
+    .then(async (data: any) => {
+      const { owns, mints } = data
       return {
-        name,
-        description,
-        token_id,
-        image: image_url,
-        username,
-        creator: address,
-        createAt: created_date
+        owns: owns.length,
+        mints: mints.length
       }
     })
+}
+export const queryCollectionsByOwner = async (minter: string) => {
+  const contractAddr = await getResolverAddress()
+  const data = await new Promise((resolve, reject) => {
+    const _minter = `${minter.toLowerCase()}`
+    return subgraphQuery()(
+      `{
+        tokens(orderBy: createdAt,orderDirection: desc, where: {minter: "${_minter}" collection_not_contains:"${contractAddr}"}) {
+          id
+          createdAt
+          tokenID
+          owner {
+            id
+          }
+          collection {
+            id
+            name
+            tokens {
+              id tokenURI tokenID tokenURI
+            }
+          }
+        }
+      }`
+    )
+      .then(res2Json)
+      .then(async (data: any) => {
+        const _data = data.tokens.map((r: any) => {
+          let tokenId = '',
+            tokenUri = ''
+          const { id: _id } = r
+          r.collection.tokens.forEach(({ id, tokenID: token_id, tokenURI: token_uri }: any) => {
+            if (id == _id) {
+              tokenId = token_id
+              tokenUri = token_uri
+            }
+          })
+          return { ...r, tokenId, tokenUri }
+        })
+        // meta json
+        await Promise.all(
+          _data.map(async (r: any) => {
+            const { image_url, name, description, external_url }: any = await fetch(r.tokenUri, {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json', accept: 'application/json, */*' }
+            }).then(res2Json)
+            r.meta = { image_url, name, description, external_url }
+          })
+        )
+        return _data
+      })
+      .then(resolve, reject)
   })
   return data
 }

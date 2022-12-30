@@ -79,7 +79,7 @@ export class CollectionDetail extends TailwindElement(style) {
                   <span class="text-gray-400">${this.keyword}</span>
                 </div>
                 <div class="flex lg_flex-col gap-2 mb-2">
-                  <span>Collected by:</span>
+                  <span>Owned by:</span>
                   <span class="text-gray-400">owner.doid</span>
                 </div>
                 <div class="flex lg_flex-col gap-2 mb-2">
@@ -88,7 +88,7 @@ export class CollectionDetail extends TailwindElement(style) {
                 </div>
 
                 <div class="mt-6">
-                  <div class="text-base mb-3">Meta</div>
+                  <div class="text-base mb-3">Meta Info.</div>
                   <div class="flex flex-col gap-2">
                     <div class="flex gap-2">
                       <span class="text-sm">Contract address:</span>

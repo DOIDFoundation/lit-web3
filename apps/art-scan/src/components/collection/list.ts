@@ -9,6 +9,7 @@ import {
   keyed
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
+import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { queryCollectionsByOwner } from '@/lib/query'
 
 // Components
@@ -36,15 +37,16 @@ export class CollectionList extends TailwindElement(style) {
     if (_keyword) searchStore.search(_keyword)
   }
   async getCollections() {
-    const minter = ''
-    // TODO: get minter address from name query
+    // get name
+    const res = <NameInfo>await nameInfo(this.keyword)
+    const minter = res.owner
     if (this.pending || !minter) return
     this.pending = true
     this.err = ''
     try {
-      this.collections = await queryCollectionsByOwner(minter)
+      const tokens = (await queryCollectionsByOwner(minter)) as any[]
+      this.collections = tokens || []
     } catch (err: any) {
-      console.error(err.message)
       this.err = err.message || err
     } finally {
       this.ts++
@@ -65,7 +67,7 @@ export class CollectionList extends TailwindElement(style) {
             this.pending,
             () => html`<i class="mdi mdi-loading mr-1"></i>Loading...`,
             () =>
-              html`<div class="grid lg_grid-cols-2 gap-4">
+              html`<div class="grid gap-4">
                 ${repeat(
                   this.collections,
                   (item: any) =>
