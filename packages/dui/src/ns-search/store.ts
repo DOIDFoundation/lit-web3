@@ -1,6 +1,7 @@
 import { State, property } from '@lit-app/state'
 export { StateController } from '@lit-app/state'
-import { checkDOIDName, nameInfo } from '@lit-web3/ethers/src/nsResolver'
+import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
+import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 import { goto } from '../shared/router'
 
 class SearchStore extends State {
@@ -18,7 +19,7 @@ class SearchStore extends State {
   search = async (keyword: string) => {
     this.pending = true
     this.names = []
-    const { address, name } = checkDOIDName(keyword, { allowAddress: true, wrap: true })
+    const { address, name } = await checkDOIDName(keyword, { allowAddress: true, wrap: true })
     if (address) return goto(`/address/${address}`)
     if (name) {
       const res = (await nameInfo([name])) as NameInfo[]

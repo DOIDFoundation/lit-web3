@@ -3,8 +3,8 @@ import { property, state } from 'lit/decorators.js'
 import { searchStore, StateController } from './store'
 import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
 import emitter from '@lit-web3/core/src/emitter'
-import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
-import { validateDOIDName, checkDOIDName } from '../validator/doid-name'
+import { wrapTLD, checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
+import { validateDOIDName } from '../validator/doid-name'
 // Components
 import '../input/text'
 import '../button'
@@ -29,8 +29,8 @@ export class duiNsSearch extends TailwindElement(style) {
   @state() err = ''
   @state() pending = false
 
-  onInput = (e: CustomEvent) => {
-    const { val, error, msg } = this.validateDOIDName(e)
+  onInput = async (e: CustomEvent) => {
+    const { val, error, msg } = await this.validateDOIDName(e)
     this.err = msg
     if (error) return
     this.keyword = val
@@ -43,9 +43,9 @@ export class duiNsSearch extends TailwindElement(style) {
     this.emit('search', this.keyword)
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback()
-    const { name = '', address = '' } = checkDOIDName(this.text, { wrap: true })
+    const { name = '', address = '' } = await checkDOIDName(this.text, { wrap: true })
     this.keyword = name || address
   }
 

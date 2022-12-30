@@ -74,8 +74,8 @@ export class ViewLock extends TailwindElement(style) {
     if (all) this.nameValid = false
   }
 
-  async onInputName(e: CustomEvent) {
-    const { name, error, msg, length } = this.validateDOIDName(e)
+  onInputName = async (e: CustomEvent) => {
+    const { name, error, msg, length } = await this.validateDOIDName(e)
     this.err = msg
     if (error) return
     this.name = name
