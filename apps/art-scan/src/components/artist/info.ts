@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { queryHoldlNums } from '@/lib/query'
 // Components
@@ -9,7 +9,6 @@ import style from './info.css?inline'
 @customElement('artist-info')
 export class ArtistInfo extends TailwindElement(style) {
   @property() name = ''
-
   @state() info?: NameInfo
   @state() hodls?: any
 
@@ -20,7 +19,6 @@ export class ArtistInfo extends TailwindElement(style) {
   getOwnerInfo = async () => {
     this.info = (await nameInfo(this.name)) as NameInfo
   }
-
   getHodlInfo = async () => {
     this.hodls = (await queryHoldlNums(this.owner)) as any
   }
@@ -29,17 +27,19 @@ export class ArtistInfo extends TailwindElement(style) {
     await this.getOwnerInfo()
     await this.getHodlInfo()
   }
-
   render() {
-    return html`<div class="artist-info">
-      <div class="text-base mb-2">${this.name}</div>
-      <div class="flex gap-2">
-        <div><dui-address .address=${this.info?.owner} avatar short copy class="text-xs"></dui-address></div>
-      </div>
-      <div class="w-full flex gap-2 text-xs mt-3">
-        <div>${this.hodls?.mints ?? 0} <span class="text-gray-500">artworks</span>,</div>
-        <span>${this.hodls?.owns ?? 0} <span class="text-gray-500">owns</span></span>
-      </div>
-    </div>`
+    return html`${keyed(
+      this.info,
+      html`<div class="artist-info">
+        <div class="text-base mb-2">${this.name}</div>
+        <div class="flex gap-2">
+          <div><dui-address .address=${this.info?.owner} avatar short copy class="text-xs"></dui-address></div>
+        </div>
+        <div class="w-full flex gap-2 text-xs mt-3">
+          <div>${this.hodls?.mintNum ?? 0} <span class="text-gray-500">artworks</span>,</div>
+          <span>${this.hodls?.ownNum ?? 0} <span class="text-gray-500">owns</span></span>
+        </div>
+      </div>`
+    )}`
   }
 }

@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, property, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, when, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
@@ -27,7 +27,7 @@ export class CollectionList extends TailwindElement(style) {
     super.connectedCallback()
   }
   render() {
-    return html` <div class="view-artist">
+    return html`<div class="view-artist">
       <div class="dui-container">
         <dui-ns-search .text=${this.name} @search=${this.onSearch} placeholder="DOID of artist or artwork">
           <span slot="label"></span>
@@ -36,14 +36,17 @@ export class CollectionList extends TailwindElement(style) {
         ${when(
           this.name,
           () =>
-            html`<div class="grid grid-cols-1 lg_grid-cols-5 gap-4">
-              <div class="order-2 lg_order-none lg_col-span-3">
-                <doid-collections keyword=${this.name}></doid-collections>
-              </div>
-              <div class="order-1 lg_order-none lg_col-start-5 lg_col-span-1 bg-gray-100 h-32 p-4">
-                <artist-info .name=${this.name}></artist-info>
-              </div>
-            </div>`
+            html`${keyed(
+              this.name,
+              html`<div class="grid grid-cols-1 lg_grid-cols-5 gap-4">
+                <div class="order-2 lg_order-none lg_col-span-3">
+                  <doid-collections keyword=${this.name}></doid-collections>
+                </div>
+                <div class="order-1 lg_order-none lg_col-start-5 lg_col-span-1 bg-gray-100 h-32 p-4">
+                  <artist-info .name=${this.name}></artist-info>
+                </div>
+              </div>`
+            )}`
         )}
       </div>
     </div>`
