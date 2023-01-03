@@ -72,13 +72,10 @@ export class ViewName extends TailwindElement(style) {
     return html`<div class="view-name">
       <div class="dui-container">
         <dui-ns-search
-          .text=${this.name}
+          .default=${this.name}
           @search=${(e: CustomEvent) => goto(`/search/${e.detail}`)}
-          placeholder="Search names"
-        >
-          <span slot="label"></span>
-          <span slot="msgd"></span>
-        </dui-ns-search>
+          placeholder="Search DOID names"
+        ></dui-ns-search>
         <!-- Tab -->
         ${when(
           this.name,

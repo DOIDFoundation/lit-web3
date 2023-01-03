@@ -56,13 +56,9 @@ export class ViewAddress extends TailwindElement(style) {
     return html`<div class="view-address">
       <div class="dui-container">
         <dui-ns-search
-          .text=${this.address}
+          .default=${this.address}
           @search=${(e: CustomEvent) => goto(`/address/${e.detail}`)}
-          placeholder="Search addresses"
-        >
-          <span slot="label"></span>
-          <span slot="msgd"></span>
-        </dui-ns-search>
+        ></dui-ns-search>
         <!-- Tab -->
         ${when(
           this.address,

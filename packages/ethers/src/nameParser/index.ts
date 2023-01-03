@@ -1,15 +1,15 @@
 import { checkDOIDName, wrapTLD } from '../nsResolver/checker'
-import safeDecodeURIComponent from 'safe-decode-uri-component'
+import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 
-//
-export const parseString = async (str = '') => {
+// eg. packages/tests/test/ethers/nameParser.test.ts
+export const parseString = async (str = ''): Promise<DOIDObject> => {
   str = safeDecodeURIComponent(str)
-  const { DOIDName, item } = (str.match(/^(?<DOIDName>[^\/]+?)\/(?<item>.*)$/) || {}).groups ?? {}
+  const { DOIDName, Token } = (str.match(/^(?<DOIDName>[^\/]+?)\/(?<Token>.*)$/) || {}).groups ?? {}
   // DOIDName
   const DOID = await checkDOIDName(DOIDName, { wrap: true })
   // Token
-  const [tokenName, tokenIDs = ''] = item.split('#')
-  const [tokenID, sequence] = tokenIDs.split('-')
+  const [tokenName, tokenIDs = ''] = Token.split('#')
+  const { tokenID = '', sequence = '' } = (tokenIDs.match(/^(?<tokenID>\d+)-?(?<sequence>\d+)?$/) || {}).groups ?? {}
   const token = {
     name: tokenName,
     tokenID,
@@ -18,8 +18,8 @@ export const parseString = async (str = '') => {
   return { DOID, name: DOID.name, token }
 }
 //
-export const stringify = (doidNameObject: DOIDNameObject) => {
-  let { name, token } = doidNameObject
+export const stringify = (doidObject: DOIDObject) => {
+  let { name, token } = doidObject
   let res = wrapTLD(name)
   if (!token) return res
   const { name: tokenName, tokenID, sequence } = token
@@ -28,8 +28,8 @@ export const stringify = (doidNameObject: DOIDNameObject) => {
   return `${res}#${tokenID}${sequence ? `-${sequence}` : ''}`
 }
 
-export const DOIDNameParser = async (src: string | DOIDNameObject) => {
-  const parsed: DOIDNameObject = {}
+export const DOIDNameParser = async (src: string | DOIDObject) => {
+  const parsed: DOIDObject = {}
   if (typeof src === 'string') {
     src = safeDecodeURIComponent(src)
     Object.assign(parsed, await parseString(<string>src))

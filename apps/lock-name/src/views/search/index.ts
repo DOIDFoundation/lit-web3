@@ -35,10 +35,7 @@ export class ViewSearch extends TailwindElement(style) {
   render() {
     return html`<div class="view-search">
       <div class="dui-container">
-        <dui-ns-search .text=${this.keyword} @search=${this.onSearch} placeholder="Search names or addresses">
-          <span slot="label"></span>
-          <span slot="msgd"></span>
-        </dui-ns-search>
+        <dui-ns-search .default=${this.keyword} @search=${this.onSearch}></dui-ns-search>
         <!-- Names -->
         <doid-name-list
           .names=${searchStore.names}

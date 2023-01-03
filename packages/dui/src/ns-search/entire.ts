@@ -11,11 +11,11 @@ import '../button'
 
 // Style
 import style from './index.css?inline'
-@customElement('dui-ns-search')
-export class duiNsSearch extends ValidateDOIDName(TailwindElement(style), { allowAddress: true }) {
+@customElement('doid-search-entire')
+export class DoidSearchEntire extends ValidateDOIDName(TailwindElement(style), { allowAddress: true }) {
   bindStore: any = new StateController(this, searchStore)
   bindBridge: any = new StateController(this, bridgeStore)
-  @property() placeholder = 'Search names or addresses'
+  @property() placeholder = ''
   @property() default: string | undefined
   @property({ type: Boolean }) entire = false
   @state() keyword = ''
@@ -62,7 +62,12 @@ export class duiNsSearch extends ValidateDOIDName(TailwindElement(style), { allo
           ${when(
             this.err,
             () => html`<span class="text-red-500">${this.err}</span>`,
-            () => html`<slot name="msg"></slot>`
+            () =>
+              html`<slot name="msgd"
+                ><span class="text-gray-400"
+                  >e.g. sabet.doid, sabet.doid/galaxy-sailor-in-motion-2021-sabet#293032</span
+                ></slot
+              >`
           )}
         </span>
       </dui-input-text>

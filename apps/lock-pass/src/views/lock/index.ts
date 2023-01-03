@@ -4,7 +4,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { LENs, lockPass, checkNameExists, getInviteCode, getPassCateLen, getPassInfo } from '@/lib/locker'
 import { ref, createRef } from 'lit/directives/ref.js'
 import { replace } from '@lit-web3/dui/src/shared/router'
-import { validateDOIDName } from '@lit-web3/dui/src/validator/doid-name'
+import { ValidateDOIDName } from '@lit-web3/dui/src/validator/doid-name'
 // Components
 import '@lit-web3/dui/src/connect-wallet/btn'
 import '@lit-web3/dui/src/tx-state'
@@ -16,12 +16,7 @@ import '@lit-web3/dui/src/doid-symbol'
 
 import style from './lock.css?inline'
 @customElement('view-lock')
-export class ViewLock extends TailwindElement(style) {
-  validateDOIDName: any
-  constructor() {
-    super()
-    validateDOIDName.bind(this)()
-  }
+export class ViewLock extends ValidateDOIDName(TailwindElement(style)) {
   bindBridge: any = new StateController(this, bridgeStore)
   @state() code = ''
   @state() name = ''
@@ -37,8 +32,6 @@ export class ViewLock extends TailwindElement(style) {
   @state() success = false
   @state() inited = false
   @state() dialog = false
-
-  inputNameRef: any = createRef()
 
   get bridge() {
     return bridgeStore.bridge
@@ -203,7 +196,7 @@ export class ViewLock extends TailwindElement(style) {
           <!-- Name -->
           <div class="my-0 mx-auto text-center">
             <dui-input-text
-              ${ref(this.inputNameRef)}
+              ${ref(this.input$)}
               @input=${this.onInputName}
               value=${this.name}
               placeholder="e.g. vitalik"

@@ -1,4 +1,4 @@
-declare interface DOIDNameObject extends CheckedName {
+declare interface DOIDObject extends CheckedName {
   DOID?: CheckedName
   name?: string
   address?: string
@@ -6,3 +6,4 @@ declare interface DOIDNameObject extends CheckedName {
   tokenID?: string
   sequence?: string
 }
+declare type DOIDish = DOIDObject | string

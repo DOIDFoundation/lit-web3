@@ -18,10 +18,7 @@ export class ViewHome extends TailwindElement(style) {
           <p slot="msg" class="my-2">Safer, faster and easier entrance to chains, contacts and dApps</p>
         </doid-symbol>
         <div class="max-w-xl mx-auto">
-          <dui-ns-search @search=${this.goto} placeholder="Search DOID name">
-            <span slot="label"></span>
-            <span slot="msgd"></span>
-          </dui-ns-search>
+          <dui-ns-search @search=${this.goto} placeholder="Search DOID names"></dui-ns-search>
         </div>
         <p class="my-4 text-center">
           <dui-link class="ml-1" href="https://lockpass.doid.tech/passes">👉 Claim locked names</dui-link>
