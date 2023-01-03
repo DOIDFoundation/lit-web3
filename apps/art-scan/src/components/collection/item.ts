@@ -7,9 +7,9 @@ import {
   when,
   styleMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
-// import { queryCollection } from '@/lib/query'
+import { queryCollection } from '@/lib/query'
 // Components
-import './breadscrumb'
+import '@lit-web3/dui/src/address'
 // Style
 import style from './item.css?inline'
 
@@ -23,27 +23,36 @@ export class CollectionDetail extends TailwindElement(style) {
   @state() err = ''
   @state() ts = 0
 
+  get empty() {
+    return !this.pending && !!this.ts && !this.meta.name
+  }
   get tokenId() {
     const str = this.token.split('#')
     const tokenId = str[1]?.split('-')[0] || ''
     return tokenId ? `#${tokenId}` : ''
   }
-
-  get items() {
-    const routes = []
-    if (this.keyword) routes.push({ name: this.keyword, url: `/collection/${this.keyword}` })
-    // item name, tokenId
-    if (this.token) routes.push({ name: this.token, url: `/collection/${this.keyword}/${this.token}` })
-    return routes
+  get meta() {
+    return this.item.meta || {}
+  }
+  get marketplace() {
+    return this.item.marketplace || {}
   }
 
-  getCollection = () => {
+  async getCollection() {
+    // TODO://get address after token split
+    const itemName = ''
+    const tokenId = ''
+    const minter = ''
+    // const seq = ''
     if (this.pending) return
+    if (!itemName || !tokenId || !minter) return
     this.pending = true
     this.err = ''
     try {
-      // input:
-      // this.item = queryCollection()
+      // input: itemName, tokenId, minter, seq
+      const collections = (await queryCollection(itemName, tokenId, minter)) as any[]
+      this.item = collections[0] || []
+      console.info(this.item)
     } catch (err: any) {
       this.err = err.message || err
     } finally {
@@ -51,57 +60,69 @@ export class CollectionDetail extends TailwindElement(style) {
       this.pending = false
     }
   }
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback()
     this.getCollection()
   }
   render() {
     return html`<div class="comp-collection">
-      <coll-breadcrumb .items=${this.items}></coll-breadcrumb>
       ${when(
-        this.pending,
-        () => html`<i class="mdi mdi-loading"></i>`,
+        this.empty,
+        () => html``,
         () =>
           html` ${when(
-            !this.err,
-            () => html`<div class="mt-4 flex flex-col lg_flex-row gap-4 lg_gap-8">
-              <div class="lg_shrink-0 flex flex-col gap-2 justify-center items-center p-4 lg_px-6 bg-gray-200">
-                <div
-                  class="w-32 h-32 lg_w-60 lg_h-60 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
-                  style=${styleMap({ backgroundImage: `url(${this.item?.image})` })}
-                ></div>
-                <div class="text-base mb-2">Name of collection</div>
-                <div>${this.item.description}</div>
-              </div>
-              <div class="grow">
-                <div class="flex lg_flex-col gap-2 mb-2">
-                  <span>Created by:</span>
-                  <span class="text-gray-400">${this.keyword}</span>
-                </div>
-                <div class="flex lg_flex-col gap-2 mb-2">
-                  <span>Owned by:</span>
-                  <span class="text-gray-400">owner.doid</span>
-                </div>
-                <div class="flex lg_flex-col gap-2 mb-2">
-                  <span>Marketplace:</span>
-                  <span></span>
-                </div>
-
-                <div class="mt-6">
-                  <div class="text-base mb-3">Meta Info.</div>
-                  <div class="flex flex-col gap-2">
-                    <div class="flex gap-2">
-                      <span class="text-sm">Contract address:</span>
-                      <span></span>
+            this.pending,
+            () => html`<i class="mdi mdi-loading"></i>`,
+            () =>
+              html`${when(
+                !this.err,
+                () => html`<div class="mt-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
+                  <div class="lg_col-span-2 flex flex-col gap-2 justify-center items-center p-4 lg_px-6 bg-gray-100">
+                    <div
+                      class="w-full h-80 lg_w-60 lg_h-60 lg_grow bg-white bg-center bg-no-repeat bg-cover"
+                      style=${styleMap({ backgroundImage: `url(${this.meta.image_url})` })}
+                    ></div>
+                    <div class="text-base mb-2">${this.meta.name}</div>
+                    <div class="break-words break-all text-gray-500">${this.meta.description}</div>
+                  </div>
+                  <div class="mt-8 lg_mt-0 lg_col-span-3">
+                    <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
+                      <span>Created by:</span>
+                      <span class="text-gray-500">${this.keyword}</span>
                     </div>
-                    <div class="flex gap-2">
-                      <span class="text-sm">Token ID:</span>
-                      <span>${this.tokenId}</span>
+                    <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
+                      <span>Owned by:</span>
+                      <span class="text-gray-500">${this.item.owner}</span>
+                    </div>
+                    <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
+                      <span>Marketplace:</span>
+                      <a .href=${this.marketplace.url} class="text-blue-500" target="_blank"
+                        >${this.marketplace.title}</a
+                      >
+                    </div>
+
+                    <div class="mt-6 lg_mt-6">
+                      <div class="text-base mb-3">Meta Info.</div>
+                      <div class="flex flex-col gap-2">
+                        <div class="flex gap-2 items-center text-xs lg_text-sm">
+                          <span>Contract:</span>
+                          <a .href=${this.item.contractUrl} class="lg_text-sm text-blue-500" target="_blank"
+                            >${this.item.id}</a
+                          >
+                        </div>
+                        <div class="flex gap-2  text-xs lg_text-sm">
+                          <span>Token ID:</span>
+                          <span class="text-gray-500">${this.item.tokenId}</span>
+                        </div>
+                        <div class="flex gap-2 items-center  text-xs lg_text-sm">
+                          <span>Chain:</span>
+                          <span><span class="text-gray-500">Ethereum</span><i class="mdi mdi-ethereum ml-1"></i></span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>`
+                </div>`
+              )}`
           )}`
       )}
     </div>`

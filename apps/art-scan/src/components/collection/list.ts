@@ -29,7 +29,7 @@ export class CollectionList extends TailwindElement(style) {
   @state() collections: any[] = []
 
   get empty() {
-    return this.collections.length == 0
+    return !this.pending && this.ts && !this.collections.length
   }
 
   search = async (keyword?: string) => {
@@ -61,26 +61,28 @@ export class CollectionList extends TailwindElement(style) {
   render() {
     return html`<div class="doid-collections">
       ${when(
-        !this.empty,
+        this.empty,
+        // Empty
+        () => html`No collection yet.`,
         () =>
-          html`${when(
+          html` ${when(
             this.pending,
+            // Loading
             () => html`<i class="mdi mdi-loading mr-1"></i>Loading...`,
-            () =>
-              html`<div class="grid gap-4">
-                ${repeat(
-                  this.collections,
-                  (item: any) =>
-                    html`${keyed(
-                      item.name,
-                      html`<div class="bg-gray-100 mb-1 break-words break-all">
-                        <doid-coll-item .item=${item} .name=${this.keyword}></doid-coll-item>
-                      </div>`
-                    )}`
-                )}
-              </div>`
-          )}`,
-        () => html`No collection yet.`
+            // List
+            () => html`<div class="grid gap-4">
+              ${repeat(
+                this.collections,
+                (item: any) =>
+                  html`${keyed(
+                    item.name,
+                    html`<div class="bg-gray-100 mb-1 break-words break-all">
+                      <doid-coll-item .item=${item} .name=${this.keyword}></doid-coll-item>
+                    </div>`
+                  )}`
+              )}
+            </div>`
+          )}`
       )}
     </div>`
   }

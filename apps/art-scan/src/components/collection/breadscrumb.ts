@@ -6,12 +6,13 @@ import style from './breadcrumb.css?inline'
 @customElement('coll-breadcrumb')
 export class CollectionBreadcrumb extends TailwindElement(style) {
   @property() items: any[] = []
+  @property() class = ''
 
   connectedCallback() {
     super.connectedCallback()
   }
   render() {
-    return html`<div class="inline-flex gap-1">
+    return html`<div class="inline-flex gap-1 ${this.class}">
       ${repeat(
         this.items,
         (item: any, idx) =>
