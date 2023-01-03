@@ -38,7 +38,7 @@ export class duiNsSearch extends ValidateDOIDName(TailwindElement(style), { allo
 
   async connectedCallback() {
     super.connectedCallback()
-    const { name = '', address = '' } = await checkDOIDName(this.default, { wrap: true })
+    const { name = '', address = '' } = await checkDOIDName(this.default, { allowAddress: true, wrap: true })
     this.keyword = name || address
   }
 

@@ -32,10 +32,10 @@ export class ViewNameDetails extends TailwindElement(style) {
     return this.ts && !this.records?.length
   }
   get notOwned() {
-    return !this.info.owner || this.info.owner === ZERO
+    return this.info.owner === ZERO
   }
   get details() {
-    const address = this.info.owner || ZERO
+    const address = this.info.owner
     return [
       { title: 'Registrant', registrant: true, address },
       { title: 'Controller', address }

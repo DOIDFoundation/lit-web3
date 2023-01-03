@@ -1,6 +1,6 @@
 declare type NameInfo = {
   name: string
-  owner: string
+  owner?: string
   status?: string
   registered?: boolean
   available?: boolean

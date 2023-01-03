@@ -12,7 +12,7 @@ import '../button'
 // Style
 import style from './index.css?inline'
 @customElement('doid-search-entire')
-export class DoidSearchEntire extends ValidateDOIDName(TailwindElement(style), { allowAddress: true }) {
+export class DoidSearchEntire extends ValidateDOIDName(TailwindElement(style), { allowAddress: false }) {
   bindStore: any = new StateController(this, searchStore)
   bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = ''
