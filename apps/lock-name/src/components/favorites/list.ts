@@ -22,7 +22,7 @@ export class ViewFavorites extends TailwindElement(style) {
   get = async () => {
     this.pending = true
     this.favorites = getFavorites()
-    this.names = <NameInfo[]>await nameInfo(this.favorites.map((r: FavorName) => r.name))
+    this.names = await nameInfo(this.favorites.map((r: FavorName) => r.name))
     this.pending = false
     this.ts++
   }

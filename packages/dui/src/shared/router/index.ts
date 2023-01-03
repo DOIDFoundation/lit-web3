@@ -1,8 +1,9 @@
 import emitter from '@lit-web3/core/src/emitter'
 import type { Router } from '@lit-labs/router'
+import safeDecodeURIComponent from 'safe-decode-uri-component'
 
 const bareOrigin = (url: string) => url.replace(location.origin, '')
-const match = (url: any) => bareOrigin(decodeURIComponent(location.href)) === bareOrigin(url)
+const match = (url: any) => bareOrigin(safeDecodeURIComponent(location.href)) === bareOrigin(url)
 
 export const scrollTop = (y = 0) => setTimeout(() => window.scrollTo(0, y))
 

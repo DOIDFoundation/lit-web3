@@ -20,7 +20,6 @@ declare type Commitment = {
 
 declare type CheckNameOptions = {
   allowAddress?: boolean
-  requireWallet?: boolean
   len?: number
   wrap?: boolean
 }

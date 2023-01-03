@@ -41,7 +41,7 @@ export const routes = [
     },
     enter: async ({ keyword = '', assetName = '' }) => {
       // TODO: assetName check
-      const { error, val } = checkDOIDName(keyword, { wrap: true, allowAddress: false })
+      const { error, val } = await checkDOIDName(keyword, { wrap: true, allowAddress: false })
       if (val && val !== keyword) {
         emitter.emit('router-goto', `/collection/${val}`)
         return false

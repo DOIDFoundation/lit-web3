@@ -1,6 +1,7 @@
 import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto, replace } from '@lit-web3/dui/src/shared/router'
-import { wrapTLD, nameInfo } from '@lit-web3/ethers/src/nsResolver'
+import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
+import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 // Components
 import '@lit-web3/dui/src/ns-search'
@@ -46,7 +47,7 @@ export class ViewName extends TailwindElement(style) {
     } else {
       try {
         if (await this.isDisconnected(true)) return
-        this.nameInfo = <NameInfo>await nameInfo(this.name)
+        this.nameInfo = await nameInfo(this.name)
         if (await this.isDisconnected(true)) return
         if (!this.action) this.action = this.nameInfo.available ? 'register' : 'details'
       } catch (err) {

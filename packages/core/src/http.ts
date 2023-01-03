@@ -2,7 +2,6 @@
 
 const checkStatus = function (response: Response) {
   let { status: code, statusText: message } = response
-  console.log(code, 'code...')
   if (response.ok) return response // HTTP-status 200-299
   if (!message) message += code
   let error = new Error(message)

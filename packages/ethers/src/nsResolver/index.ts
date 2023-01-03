@@ -1,6 +1,4 @@
-export { checkDOIDName } from './checker'
-import { bareTLD, wrapTLD } from './uts'
-export { wrapTLD }
+import { bareTLD, wrapTLD } from './checker'
 
 import { getAccount, getBridgeProvider, assignOverrides, getSigner } from '../useBridge'
 import { getResolverAddress, getResolverContract } from './controller'
@@ -33,19 +31,21 @@ export const cookNameInfo = (src: Record<string, any>, opts = {}): NameInfo => {
   }
   return cooked
 }
-export const nameInfo = async <T extends string | string[]>(req: T, account?: string) => {
-  const get = async (name: string): Promise<NameInfo> => {
+
+type NameInfoParam<T> = T extends Array<infer P> ? NameInfo[] : NameInfo
+export const nameInfo = async <T>(req: T, account?: string): Promise<NameInfoParam<T>> => {
+  const get = async (name: any): Promise<any> => {
     if (!account) account = await getAccount()
     const contract = await getResolverContract()
     name = wrapTLD(name)
-    const nameInfo: any = { name, account }
+    const nameInfo: NameInfo = { name, account, owner: '' }
     try {
       const res = await contract.statusOfName(bareTLD(name))
       Object.assign(nameInfo, cookNameInfo(res, nameInfo))
     } catch (e) {}
     return nameInfo
   }
-  if (Array.isArray(req)) return await Promise.all(req.map(get))
+  if (Array.isArray(req)) return <any>await Promise.all(req.map(get))
   return await get(req)
 }
 export const ownerNames = async (owner: string, account?: string) => {
