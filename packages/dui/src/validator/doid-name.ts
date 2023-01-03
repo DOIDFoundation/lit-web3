@@ -2,6 +2,7 @@ import { TAILWINDELEMENT } from '../shared/TailwindElement'
 import { createRef } from 'lit/directives/ref.js'
 import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 
+// Validate DOID Name
 export const validateDOIDName = function (this: any, opts: CheckNameOptions = {}) {
   return (this.validateDOIDName = async (e: CustomEvent): Promise<CheckedName> => {
     this.DOID = {}
@@ -18,22 +19,14 @@ export const validateDOIDName = function (this: any, opts: CheckNameOptions = {}
     return checked
   })
 }
-
-declare class validateDOIDNameInterface {
-  validateDOIDName: any
-  DOID: CheckedName
-  input$: any
-}
-
 // Mixin
 export const ValidateDOIDName = <T extends PublicConstructor<TAILWINDELEMENT>>(
   superClass: T,
   opts: CheckNameOptions = {}
 ) => {
-  class MyMixinClass extends superClass {
+  return class extends superClass {
     validateDOIDName = validateDOIDName.bind(this, opts)()
     DOID = {}
     input$ = createRef()
-  }
-  return MyMixinClass as PublicConstructor<validateDOIDNameInterface> & T
+  } as PublicConstructor<ValidateDOIDNameInterface> & T
 }
