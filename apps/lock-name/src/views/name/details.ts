@@ -32,12 +32,12 @@ export class ViewNameDetails extends TailwindElement(style) {
     return this.ts && !this.records?.length
   }
   get notOwned() {
-    return this.info.owner === ZERO
+    return !this.info.owner || this.info.owner === ZERO
   }
   get details() {
-    const address = this.info.owner
+    const address = this.info.owner || ZERO
     return [
-      { title: 'Registrant', address },
+      { title: 'Registrant', registrant: true, address },
       { title: 'Controller', address }
     ].map((r: any) => {
       r.link = `/address/${r.address}`
@@ -73,7 +73,7 @@ export class ViewNameDetails extends TailwindElement(style) {
               <strong>${detail.title}</strong>
               <div class="info-cnt">
                 ${when(
-                  this.notOwned,
+                  this.notOwned && !detail.registrant,
                   () => html`Not owned`,
                   () => html`<dui-address avatar copy .address=${detail.address} href=${detail.link}></dui-address>`
                 )}
