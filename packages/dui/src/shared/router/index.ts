@@ -1,6 +1,6 @@
 import emitter from '@lit-web3/core/src/emitter'
 import type { Router } from '@lit-labs/router'
-import safeDecodeURIComponent from 'safe-decode-uri-component'
+import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 
 const bareOrigin = (url: string) => url.replace(location.origin, '')
 const match = (url: any) => bareOrigin(safeDecodeURIComponent(location.href)) === bareOrigin(url)

@@ -5,7 +5,9 @@
     "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "safe-decode-uri-component": "latest"
+  },
   "devDependencies": {},
   "peerDependencies": {
     "lit": "^2",

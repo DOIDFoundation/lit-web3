@@ -3,7 +3,7 @@ import { keyed } from 'lit/directives/keyed.js'
 import { checkDOIDName, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { isAddress } from '@ethersproject/address'
 import emitter from '@lit-web3/core/src/emitter'
-import safeDecodeURIComponent from 'safe-decode-uri-component'
+import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 
 export const routes = [
   {

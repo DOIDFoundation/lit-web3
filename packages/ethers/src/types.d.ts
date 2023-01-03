@@ -1,6 +1,6 @@
 declare type Address = `0x${string}` | string
-declare type TokenID = `${number}` // >= 0
-declare type TokenURI = `http${string}.json` | ''
+declare type TokenID = string
+declare type TokenURI = string
 
 declare interface Meta {
   name: string
