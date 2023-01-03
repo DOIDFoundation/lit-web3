@@ -34,7 +34,7 @@ export const routes = [
   },
   {
     name: 'collection',
-    path: '/collection/:keyword/:assetName',
+    path: '/collection/:keyword/:assetName?',
     render: ({ keyword = '', assetName = '' }) => {
       const hash = `${assetName}${location.hash}`
       return html`<view-collection .keyword=${keyword} .token=${hash}></view-collection>`

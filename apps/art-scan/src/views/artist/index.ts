@@ -18,6 +18,7 @@ export class CollectionList extends TailwindElement(style) {
     if (_name) searchStore.search(_name)
   }
   onSearch = (e: CustomEvent) => {
+    // TODO: diff name or collection
     goto(`/artist/${e.detail}`)
     this.name = e.detail
     this.search(e.detail)

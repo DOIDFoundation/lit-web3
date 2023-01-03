@@ -153,7 +153,9 @@ export const getNonce = async (address?: string) => {
   if (!address) address = await getAccount()
   return await bridgeInstance.provider.getTransactionCount(address)
 }
-export const getGraph = async (path = '') => (await getNetwork()).graph ?? '' + path
+export const getGraph = async (path = '') => ((await getNetwork()).graph ?? '') + path
+
+export const getOpensea = async (path = '') => ((await getNetwork()).opensea ?? '') + path
 
 // offest: past seconds, default: 0 (current block)
 // blockNumber, default: current block
