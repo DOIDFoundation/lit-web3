@@ -12,6 +12,7 @@ import style from './index.css?inline'
 export class CollectionList extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)
   @property() name = ''
+  @property() tokenName = ''
 
   search = async (name?: string) => {
     const _name = name ?? this.name
@@ -20,7 +21,7 @@ export class CollectionList extends TailwindElement(style) {
   onSearch = (e: CustomEvent) => {
     // TODO: diff name or collection
     goto(`/artist/${e.detail}`)
-    this.name = e.detail
+    this.name = 'astsbt.doid' || e.detail
     this.search(e.detail)
   }
 
@@ -32,7 +33,7 @@ export class CollectionList extends TailwindElement(style) {
       <div class="dui-container">
         <doid-search-entire .default=${this.name} @search=${this.onSearch} placeholder="DOID of artist or artwork">
           <span slot="label"></span>
-          <span slot="msgd"></span>
+          <span slot="msg"></span>
         </doid-search-entire>
         ${when(
           this.name,

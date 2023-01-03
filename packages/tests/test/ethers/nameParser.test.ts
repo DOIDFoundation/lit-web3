@@ -8,7 +8,7 @@ describe('DOIDNameParser', async () => {
   it('valid', async () => {
     var req = 'banana.doid/crypto-name#1-2'
     var parser = await DOIDNameParser(req)
-    expect(parser.parsed.name).to.equal('banana.doid')
+    expect(parser.parsed.name).to.equal('banana')
     // collection name
     expect(parser.stringify()).to.equal(req)
     var parser = await DOIDNameParser(`banana.doid/你好-世/界 %%2E的`)

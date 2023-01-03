@@ -13,6 +13,8 @@ import style from './index.css?inline'
 @customElement('view-collection')
 export class ViewCollection extends TailwindElement(style) {
   bindStore: any = new StateController(this, searchStore)
+  @property() name = ''
+  @property() tokenName = ''
   @property() keyword = ''
   @property() token = ''
   get items() {
@@ -41,7 +43,7 @@ export class ViewCollection extends TailwindElement(style) {
       <div class="dui-container">
         <doid-search-entire .default=${this.keyword} @search=${this.onSearch} placeholder="DOID of artist or artwork">
           <span slot="label"></span>
-          <span slot="msgd"></span>
+          <span slot="msg"></span>
         </doid-search-entire>
         <coll-breadcrumb .items=${this.items} class="mb-2"></coll-breadcrumb>
         ${when(

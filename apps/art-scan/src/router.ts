@@ -1,10 +1,11 @@
 import { html } from 'lit'
-import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
+import { keyed } from 'lit/directives/keyed.js'
 import emitter from '@lit-web3/core/src/emitter'
+import { parseDOIDURI } from '@lit-web3/ethers/src/nameParser'
 
 export const routes = [
   {
-    name: 'lock',
+    name: 'home',
     path: '/',
     render: () => html`<view-home></view-home>`,
     enter: async () => {
@@ -14,35 +15,38 @@ export const routes = [
   },
   {
     name: 'artist',
-    path: '/artist/:name',
-    render: ({ name = '' }) => {
-      return html`<view-artist .name=${name}></view-artist>`
+    path: '/artist/:name?/:tokenName?',
+    render: ({ name = '', tokenName = '' }) => {
+      return html`${keyed(name, html`<view-artist .name=${name} .tokenName=${tokenName}></view-artist>`)}`
     },
-    enter: async ({ name = '' }) => {
-      const { error, val } = checkDOIDName(name, { wrap: true, allowAddress: false })
-      if (val && val !== name) {
-        emitter.emit('router-goto', '/artist/${val}')
+    enter: async ({ name = '', tokenName = '' }) => {
+      const { error, val, consistent } = await parseDOIDURI(name, tokenName)
+      if (!consistent) {
+        emitter.emit('router-goto', `/artist/${val}`)
         return false
       }
       if (error) {
         emitter.emit('router-goto', '/')
         return false
       }
-      await import('@/views/artist/index')
+      await import('@/views/artist')
       return true
     }
   },
   {
     name: 'collection',
-    path: '/collection/:keyword/:assetName?',
-    render: ({ keyword = '', assetName = '' }) => {
-      const hash = `${assetName}${location.hash}`
-      return html`<view-collection .keyword=${keyword} .token=${hash}></view-collection>`
+    path: '/collection/:name?/:tokenName?',
+    render: ({ name = '', tokenName = '' }) => {
+      return html`<view-collection
+        .name=${name}
+        .tokenName=${tokenName}
+        .keyword=${name}
+        .token=${`${tokenName}${location.hash}`}
+      ></view-collection>`
     },
-    enter: async ({ keyword = '', assetName = '' }) => {
-      // TODO: assetName check
-      const { error, val } = await checkDOIDName(keyword, { wrap: true, allowAddress: false })
-      if (val && val !== keyword) {
+    enter: async ({ name = '', tokenName = '' }) => {
+      const { error, val, consistent } = await parseDOIDURI(name, tokenName)
+      if (!consistent) {
         emitter.emit('router-goto', `/collection/${val}`)
         return false
       }
@@ -50,7 +54,7 @@ export const routes = [
         emitter.emit('router-goto', '/')
         return false
       }
-      await import('@/views/collection/index')
+      await import('@/views/collection')
       return true
     }
   }

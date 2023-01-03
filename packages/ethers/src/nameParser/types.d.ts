@@ -5,5 +5,8 @@ declare interface DOIDObject extends CheckedName {
   token?: NFTToken
   tokenID?: string
   sequence?: string
+  error?: boolean
+  msg?: string
+  consistent?: boolean
 }
 declare type DOIDish = DOIDObject | string
