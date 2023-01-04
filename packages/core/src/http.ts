@@ -43,8 +43,8 @@ const http = async function (uri: string, options: Jsonish = {}) {
     mode: 'cors',
     credentials: 'same-origin'
   }
-  Object.assign(options, opts, options)
-  if (options.headers) Object.assign(options.headers, opts.headers, options.headers)
+  Object.assign(options, opts, { ...options })
+  if (options.headers) Object.assign(options.headers, opts.headers, { ...options.headers })
   return fetch(uri, options)
     .then(checkStatus)
     .then(parseRes)

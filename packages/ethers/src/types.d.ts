@@ -4,12 +4,12 @@ declare type TokenURI = string
 
 declare interface Meta {
   name: string
-  description: string
-  image: string
-  creator: string
-  publisher: string
+  description?: string
+  image?: string
+  creator?: string
+  publisher?: string
   external_url?: string
-  properties: Record<string, any>
+  properties?: Record<string, any>
 }
 
 declare interface NFTToken {

@@ -13,8 +13,11 @@ export class CollectionList extends TailwindElement(style) {
   @property() name = ''
 
   get tokenId() {
-    const _tokenId = this.item.tokenID ?? ''
-    return _tokenId.length > 30 ? '' : `#${_tokenId}`
+    const _tokenId = this.item.tokenId
+    return _tokenId ? `#${_tokenId}` : ''
+  }
+  get tokenIdShow() {
+    return this.tokenId ? `#${this.tokenId}` : ''
   }
   get createTime() {
     return new Date(1000 * this.item.createdAt).toLocaleString()
@@ -28,17 +31,14 @@ export class CollectionList extends TailwindElement(style) {
   get title() {
     return `${this.wrapName} ${this.tokenId}`
   }
-
   get meta() {
-    return this.item.meta
+    return this.item.meta || {}
   }
 
   goto = () => {
     if (!this.tokenId) return
-    // goto detail
-    const slug = this.meta.name.split(' ').join('-')
-    // TODO:
-    goto(`/collection/${this.name}/${slug}_${this.item.tokenID}`)
+    // TODO: get slug
+    goto(`/collection/${this.name}/${this.item.slug}_${this.tokenId}_${this.item.seq}`)
   }
   render() {
     return html`<div class="item p-4 cursor-pointer" @click="${this.goto}">
@@ -46,7 +46,7 @@ export class CollectionList extends TailwindElement(style) {
       <div class="flex gap-4 py-4">
         <div
           class="w-24 h-24 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
-          style=${styleMap({ backgroundImage: `url(${this.meta.image_url})` })}
+          style=${styleMap({ backgroundImage: `url(${this.meta.image})` })}
         ></div>
         <div>
           <span class="text-base mb-2">${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i></span>

@@ -10,7 +10,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
-import { queryCollectionsByOwner } from '@/lib/query'
+import { getColls } from '@/lib/query'
 
 // Components
 import './list-item'
@@ -39,13 +39,13 @@ export class CollectionList extends TailwindElement(style) {
   async getCollections() {
     // get name
     const res = <NameInfo>await nameInfo(this.keyword)
-    const minter = res.owner
+    const minter = res.owner.toLowerCase()
     if (this.pending || !minter) return
     this.pending = true
     this.err = ''
     try {
-      const tokens = (await queryCollectionsByOwner(minter)) as any[]
-      this.collections = tokens || []
+      const collections = (await getColls(minter)) as any[]
+      this.collections = collections || []
     } catch (err: any) {
       this.err = err.message || err
     } finally {

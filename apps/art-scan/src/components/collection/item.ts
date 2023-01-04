@@ -7,7 +7,7 @@ import {
   when,
   styleMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
-import { queryCollection } from '@/lib/query'
+import { getColl } from '@/lib/query'
 // Components
 import '@lit-web3/dui/src/address'
 // Style
@@ -40,17 +40,18 @@ export class CollectionDetail extends TailwindElement(style) {
 
   async getCollection() {
     // TODO://get address after token split
-    const itemName = ''
-    const tokenId = ''
+    // TODO: SET EMPTY
     const minter = ''
-    // const seq = ''
+    const slug = ''
+    const tokenId = ''
+    const seq = ''
     if (this.pending) return
-    if (!itemName || !tokenId || !minter) return
+    if (!slug || !tokenId || !minter) return
     this.pending = true
     this.err = ''
     try {
-      // input: itemName, tokenId, minter, seq
-      const collections = (await queryCollection(itemName, tokenId, minter)) as any[]
+      // input: slug, tokenId, minter, seq
+      const collections = (await getColl(minter, slug, tokenId, seq)) as any[]
       this.item = collections[0] || []
       console.info(this.item)
     } catch (err: any) {
@@ -62,7 +63,7 @@ export class CollectionDetail extends TailwindElement(style) {
   }
   async connectedCallback() {
     super.connectedCallback()
-    this.getCollection()
+    await this.getCollection()
   }
   render() {
     return html`<div class="comp-collection">
@@ -92,7 +93,7 @@ export class CollectionDetail extends TailwindElement(style) {
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
                       <span>Owned by:</span>
-                      <span class="text-gray-500">${this.item.owner}</span>
+                      <span class="text-gray-500">${this.item.owner?.id}</span>
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
                       <span>Marketplace:</span>
