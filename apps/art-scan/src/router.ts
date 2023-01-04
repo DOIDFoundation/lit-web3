@@ -1,7 +1,9 @@
 import { html } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
 import emitter from '@lit-web3/core/src/emitter'
-import { parseDOIDURI } from '@lit-web3/ethers/src/nameParser'
+import { parseDOIDFromRouter, getKeyFromRouter } from '@lit-web3/ethers/src/DOIDParser'
+
+const cached: Map<string, unknown> = new Map()
 
 export const routes = [
   {
@@ -17,15 +19,22 @@ export const routes = [
     name: 'artist',
     path: '/artist/:name?/:tokenName?',
     render: ({ name = '', tokenName = '' }) => {
-      return html`${keyed(name, html`<view-artist .name=${name} .tokenName=${tokenName}></view-artist>`)}`
+      const DOID = cached.get(getKeyFromRouter(name, tokenName))
+      return html`${keyed(name, html`<view-artist .DOID=${DOID}></view-artist>`)}`
     },
     enter: async ({ name = '', tokenName = '' }) => {
-      const { error, val, consistent } = await parseDOIDURI(name, tokenName)
-      if (!consistent) {
-        emitter.emit('router-goto', `/artist/${val}`)
+      if (name && tokenName) {
+        emitter.emit('router-goto', `/collection/${name}/${tokenName}${location.hash}`)
         return false
       }
-      if (error) {
+      const [DOID, key] = await parseDOIDFromRouter(name, tokenName)
+      if (DOID.equal) {
+        cached.set(key, DOID)
+      } else {
+        emitter.emit('router-goto', `/artist/${DOID.name}`)
+        return false
+      }
+      if (DOID.error && (name || tokenName)) {
         emitter.emit('router-goto', '/')
         return false
       }
@@ -37,7 +46,9 @@ export const routes = [
     name: 'collection',
     path: '/collection/:name?/:tokenName?',
     render: ({ name = '', tokenName = '' }) => {
+      const DOID = cached.get(getKeyFromRouter(name, tokenName))
       return html`<view-collection
+        .DOID=${DOID}
         .name=${name}
         .tokenName=${tokenName}
         .keyword=${name}
@@ -45,12 +56,18 @@ export const routes = [
       ></view-collection>`
     },
     enter: async ({ name = '', tokenName = '' }) => {
-      const { error, val, consistent } = await parseDOIDURI(name, tokenName)
-      if (!consistent) {
-        emitter.emit('router-goto', `/collection/${val}`)
+      if (name && !tokenName) {
+        emitter.emit('router-goto', `/artist/${name}`)
         return false
       }
-      if (error) {
+      const [DOID, key] = await parseDOIDFromRouter(name, tokenName)
+      if (DOID.equal) {
+        cached.set(key, DOID)
+      } else {
+        emitter.emit('router-goto', `/collection/${DOID.uri}`)
+        return false
+      }
+      if (DOID.error && (name || tokenName)) {
         emitter.emit('router-goto', '/')
         return false
       }

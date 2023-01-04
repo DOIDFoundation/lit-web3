@@ -7,6 +7,11 @@ declare interface DOIDObject extends CheckedName {
   sequence?: string
   error?: boolean
   msg?: string
-  consistent?: boolean
+  equal?: boolean
+  uri?: string
 }
 declare type DOIDish = DOIDObject | string
+
+declare type stringifyOptions = {
+  keepIdentifier: boolean
+}

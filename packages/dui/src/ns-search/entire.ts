@@ -32,7 +32,7 @@ export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
   doSearch() {
     if (this.err) return
     if (this.DOID.val) this.keyword = this.DOID.val
-    this.emit('search', this.keyword)
+    this.emit('search', this.DOID)
   }
 
   async connectedCallback() {

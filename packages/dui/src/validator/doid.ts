@@ -1,13 +1,13 @@
 import { TAILWINDELEMENT } from '../shared/TailwindElement'
 import { createRef } from 'lit/directives/ref.js'
-import DOIDNameParser from '@lit-web3/ethers/src/nameParser'
+import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 
 // Validate DOID format, eg. vincent.doid/The Starry Night#3-1
 export const validateDOID = function (this: any, opts = {}) {
   return (this.validateDOID = async (e: CustomEvent): Promise<CheckedName> => {
     const inputVal = e.detail
     this.DOID = {}
-    const parser = await DOIDNameParser(inputVal)
+    const parser = await DOIDParser(inputVal)
     const { parsed } = parser
     const { val, error, msg } = parsed
     const valWithIdentifier = parser.stringify({ keepIdentifier: true })

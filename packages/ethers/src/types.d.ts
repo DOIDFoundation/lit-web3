@@ -16,6 +16,7 @@ declare interface NFTToken {
   address?: Address
   tokenID?: TokenID
   name?: string
+  slugName?: string
   uri?: string // ERC1155 asis ERC721 tokenURI
   tokenURI?: string
   block?: number

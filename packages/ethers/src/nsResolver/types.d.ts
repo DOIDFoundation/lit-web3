@@ -27,7 +27,9 @@ declare type CheckedName = {
   name?: string
   address?: string
   val?: string // name or address
+  doid?: string
   error?: boolean
   msg?: string
   length?: number
+  equal?: boolean
 }
