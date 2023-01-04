@@ -10,10 +10,12 @@ import '@lit-web3/dui/src/nav/nav'
 export class AppMain extends TailwindElement('') {
   render() {
     return html`<network-warning></network-warning>
-      <dui-header>
+      <dui-header menuable>
         <div slot="sublogo" class="flex items-center"></div>
-        <dui-nav slot="center">
-          <dui-link href="/collections" nav>Collections</dui-link>
+        <dui-nav slot="center" menuable>
+          <dui-link href="/" nav alias="/search">Home</dui-link>
+          <dui-link href="/artist" nav>Artist</dui-link>
+          <dui-link href="/collection" nav>Collection</dui-link>
         </dui-nav>
       </dui-header>
       <main class="dui-app-main">

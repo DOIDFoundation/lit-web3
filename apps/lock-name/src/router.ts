@@ -1,6 +1,6 @@
 import { html } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
-import { checkDOIDName, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
+import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 import { isAddress } from '@ethersproject/address'
 import emitter from '@lit-web3/core/src/emitter'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
@@ -20,9 +20,8 @@ export const routes = [
     path: '/search/:keyword?',
     render: ({ keyword = '' }) => html`<view-search .keyword=${safeDecodeURIComponent(keyword)}></view-search>`,
     enter: async ({ keyword = '' }) => {
-      const decoded = safeDecodeURIComponent(keyword)
-      const { error, val } = await checkDOIDName(decoded, { allowAddress: true, wrap: true })
-      if (val && val !== decoded) {
+      const { error, val, equal } = await checkDOIDName(keyword, { allowAddress: true, wrap: true })
+      if (val && !equal) {
         emitter.emit('router-goto', `/search/${val}`)
         return false
       }
@@ -40,10 +39,9 @@ export const routes = [
     render: ({ name = '', action = '' }) =>
       html`${keyed(name, html`<view-name .name=${safeDecodeURIComponent(name)} .action=${action}></view-name>`)}`,
     enter: async ({ name = '' }) => {
-      const decoded = safeDecodeURIComponent(name)
-      const { error, val } = await checkDOIDName(decoded, { wrap: true })
-      if (val && val !== wrapTLD(decoded)) {
-        emitter.emit('router-goto', `/name/${wrapTLD(val)}`)
+      const { error, val, equal } = await checkDOIDName(name, { wrap: true })
+      if (val && !equal) {
+        emitter.emit('router-goto', `/name/${val}`)
         return false
       }
       if (error) {

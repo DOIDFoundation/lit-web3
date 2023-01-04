@@ -38,7 +38,7 @@ export const nameInfo = async <T>(req: T, account?: string): Promise<NameInfoPar
     if (!account) account = await getAccount()
     const contract = await getResolverContract()
     name = wrapTLD(name)
-    const nameInfo: NameInfo = { name, account, owner: '' }
+    const nameInfo: NameInfo = { name, account }
     try {
       const res = await contract.statusOfName(bareTLD(name))
       Object.assign(nameInfo, cookNameInfo(res, nameInfo))
