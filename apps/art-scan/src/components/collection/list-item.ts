@@ -26,7 +26,7 @@ export class CollectionList extends TailwindElement(style) {
     return new Date(1000 * this.item.createdAt).toLocaleString()
   }
   get ownerName() {
-    return this.item.owner?.id
+    return this.item.owner
   }
   get title() {
     return `${this.name} ${this.tokenID}`
@@ -38,7 +38,7 @@ export class CollectionList extends TailwindElement(style) {
   goto = () => {
     if (!this.tokenID) return
     // TODO: get slug
-    // goto(`/collection/${this.name}/${this.item.slug}_${this.tokenID}_${this.item.seq}`)
+    goto(`/collection/${this.name}/${this.item.slug}_${this.tokenId}_${this.item.sequence}`)
   }
   render() {
     return html`<div class="item p-4 cursor-pointer" @click="${this.goto}">
@@ -49,7 +49,14 @@ export class CollectionList extends TailwindElement(style) {
           style=${styleMap({ backgroundImage: `url(${this.meta.image})` })}
         ></div>
         <div>
-          <span class="text-base mb-2">${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i></span>
+          ${when(
+            this.meta.name,
+            () =>
+              html`<div>
+                <span class="text-base mb-2">${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i></span>
+              </div>`
+          )}
+
           <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta.description}</p>
         </div>
       </div>

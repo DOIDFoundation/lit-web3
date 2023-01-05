@@ -43,7 +43,7 @@ export class CollectionList extends TailwindElement(style) {
     this.err = ''
     try {
       const collections = (await getColls(minter)) as any[]
-      this.collections = collections || []
+      this.collections = collections.filter((coll: Coll) => coll.meta?.name != this.name) || []
     } catch (err: any) {
       this.err = err.message || err
     } finally {
@@ -74,7 +74,7 @@ export class CollectionList extends TailwindElement(style) {
                 this.collections,
                 (item: any) =>
                   html`${keyed(
-                    item.name,
+                    item.meta?.name,
                     html`<div class="bg-gray-100 mb-1 break-words break-all">
                       <doid-coll-item .DOID=${this.DOID} .item=${item}></doid-coll-item>
                     </div>`
