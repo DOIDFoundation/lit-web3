@@ -8,6 +8,7 @@ import {
   styleMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { getColl } from '@/lib/query'
+import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 // Components
 import '@lit-web3/dui/src/address'
 // Style
@@ -17,20 +18,23 @@ import { getNetwork, getOpensea } from '@lit-web3/ethers/src/useBridge'
 @customElement('doid-collection')
 export class CollectionDetail extends TailwindElement(style) {
   @property() DOID!: DOIDObject
-
+  @state() cooked: DOIDObject | undefined
   @state() item: Coll = {}
   @state() pending = false
   @state() err = ''
   @state() ts = 0
 
-  get name() {
+  get doid() {
+    return this.DOID.doid
+  }
+  get doidName() {
     return this.DOID.name
   }
   get token() {
-    return this.DOID.token
+    return this.DOID?.token
   }
   get minter() {
-    return this.token?.address ?? ''
+    return this.token?.minter ?? ''
   }
   get tokenID() {
     return this.token?.tokenID ?? ''
@@ -45,23 +49,26 @@ export class CollectionDetail extends TailwindElement(style) {
   @state() scanUrl = ''
 
   get empty() {
-    return !this.pending && !!this.ts && !this.meta.name
+    return !this.pending && !!this.ts && !this.meta?.name
   }
   get meta() {
-    return this.item.meta || {}
+    return this.item.meta
   }
 
   async getCollection() {
     // TODO://get address after token split
     // TODO: SET EMPTY
     if (this.pending) return
-    if (!this.slugName || !this.tokenID || !this.minter) return
+
+    console.log(this.minter, this.slugName, this.tokenID, this.sequence)
+    if (!(this.slugName || this.tokenID || this.minter)) return
     this.pending = true
     this.err = ''
     try {
       // input: slug, tokenId, minter, seq
-      const collections = (await getColl(this.minter, this.slugName, this.tokenID, this.sequence)) as Coll
+      const collections = (await getColl(this)) as Coll
       this.item = collections || {}
+      console.log(collections)
     } catch (err: any) {
       this.err = err.message || err
     } finally {
@@ -77,11 +84,12 @@ export class CollectionDetail extends TailwindElement(style) {
     const uri = (await getNetwork()).scan
     this.scanUrl = `${uri}/address/${this.item.address}`
   }
+
   async connectedCallback() {
     super.connectedCallback()
-    await this.getCollection()
-    await this.getOpenseaUrl()
-    await this.getScanUrl()
+    this.getCollection()
+    this.getOpenseaUrl()
+    this.getScanUrl()
   }
   render() {
     return html`<div class="comp-collection">
@@ -99,15 +107,15 @@ export class CollectionDetail extends TailwindElement(style) {
                   <div class="lg_col-span-2 flex flex-col gap-2 justify-center items-center p-4 lg_px-6 bg-gray-100">
                     <div
                       class="w-full h-80 lg_w-60 lg_h-60 lg_grow bg-white bg-center bg-no-repeat bg-cover"
-                      style=${styleMap({ backgroundImage: `url(${this.meta.image})` })}
+                      style=${styleMap({ backgroundImage: `url(${this.meta?.image})` })}
                     ></div>
-                    <div class="text-base mb-2">${this.meta.name}</div>
-                    <div class="break-words break-all text-gray-500">${this.meta.description}</div>
+                    <div class="text-base mb-2">${this.meta?.name}</div>
+                    <div class="break-words break-all text-gray-500">${this.meta?.description}</div>
                   </div>
                   <div class="mt-8 lg_mt-0 lg_col-span-3">
                     <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
                       <span>Created by:</span>
-                      <span class="text-gray-500">${this.name}</span>
+                      <span class="text-gray-500">${this.doid}</span>
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
                       <span>Owned by:</span>

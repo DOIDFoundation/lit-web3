@@ -26,8 +26,8 @@ export class CollectionList extends TailwindElement(style) {
   @state() ts = 0
   @state() collections: any[] = []
 
-  get name() {
-    return this.DOID.name!
+  get doid() {
+    return this.DOID.doid
   }
 
   get empty() {
@@ -36,14 +36,14 @@ export class CollectionList extends TailwindElement(style) {
 
   async getCollections() {
     // get name
-    const { owner = '' } = await nameInfo(this.name)
+    const { owner = '' } = await nameInfo(this.doid)
     const minter = owner.toLowerCase()
     if (this.pending || !minter) return
     this.pending = true
     this.err = ''
     try {
-      const collections = (await getColls(minter)) as any[]
-      this.collections = collections.filter((coll: Coll) => coll.meta?.name != this.name) || []
+      const collections = (await getColls({ minter })) as any[]
+      this.collections = collections.filter((coll: Coll) => coll.meta?.name != this.doid) || []
     } catch (err: any) {
       this.err = err.message || err
     } finally {

@@ -13,8 +13,8 @@ export class ArtistInfo extends TailwindElement(style) {
   @state() info?: NameInfo
   @state() hodls?: any
 
-  get name() {
-    return this.DOID.name!
+  get doid() {
+    return this.DOID.doid
   }
 
   get owner() {
@@ -22,7 +22,7 @@ export class ArtistInfo extends TailwindElement(style) {
   }
 
   getOwnerInfo = async () => {
-    this.info = await nameInfo(this.name)
+    this.info = await nameInfo(this.doid)
   }
   getHodlInfo = async () => {
     this.hodls = (await queryHoldlNums(this.owner)) as any
@@ -36,7 +36,7 @@ export class ArtistInfo extends TailwindElement(style) {
     return html`${keyed(
       this.info,
       html`<div class="artist-info">
-        <div class="text-base mb-2">${this.name}</div>
+        <div class="text-base mb-2">${this.doid}</div>
         <div class="flex gap-2">
           <div><dui-address .address=${this.info?.owner} avatar short copy class="text-xs"></dui-address></div>
         </div>

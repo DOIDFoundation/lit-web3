@@ -47,7 +47,7 @@ export const routes = [
     path: '/collection/:name?/:tokenName?',
     render: ({ name = '', tokenName = '' }) => {
       const DOID = cached.get(getKeyFromRouter(name, tokenName))
-      return html`<view-collection .DOID=${DOID}></view-collection>`
+      return html`${keyed(name + tokenName, html`<view-collection .DOID=${DOID}></view-collection>`)}`
     },
     enter: async ({ name = '', tokenName = '' }) => {
       // if (name && !tokenName) {

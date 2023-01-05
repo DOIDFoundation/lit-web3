@@ -46,17 +46,15 @@ export const queryHoldlNums = async (account: string) => {
   return { ownNum, mintNum }
 }
 
-export const genCollectionsQuery = (minter = '', slug = '', tokenId = '', seq = '') => {
-  const _minter = minter.toLowerCase()
+export const genCollectionsQuery = ({ minter = '', slugName = '', tokenID = '', sequence = '' } = <CollOptions>{}) => {
+  // slugName's priority is lower
+  if (minter && tokenID && sequence) slugName = ''
   return `{
-    collections(${genWhere({ artist: _minter, slug }, { allowEmpty: false })}
+    collections(${genWhere({ artist: minter.toLowerCase(), slug: slugName }, { allowEmpty: false })}
       orderBy: totalTokens orderDirection: desc
     ) {
       id slug tokens(orderBy: createdAt, orderDirection: desc, ${genWhere(
-        {
-          collectionId: tokenId,
-          collectionSeq: seq
-        },
+        { collectionId: tokenID, collectionSeq: sequence },
         { allowEmpty: false }
       )}) {
         id collectionId collectionSeq tokenURI createdAt owner { id } contract {id}
@@ -65,11 +63,10 @@ export const genCollectionsQuery = (minter = '', slug = '', tokenId = '', seq = 
   }`
 }
 
-export const getColls = async (minter = '', slug = '', tokenID = '', seq = ''): Promise<Coll[]> => {
+export const getColls = async (options: CollOptions): Promise<Coll[]> => {
   // exclude zero
-  if (minter == ZERO) return []
-  const _minter = `${minter.toLowerCase()}`
-  const { collections = [] } = (await _subgraphQuery()(genCollectionsQuery(_minter, slug, tokenID, seq))) || {}
+  if (options.minter == ZERO) return []
+  const { collections = [] } = (await _subgraphQuery()(genCollectionsQuery(options))) || {}
   const data = await Promise.all(
     collections
       .filter((r: GraphRecord) => r.tokens.length)
@@ -87,6 +84,6 @@ export const getColls = async (minter = '', slug = '', tokenID = '', seq = ''): 
   return data
 }
 
-export const getColl = async (...args: any[]): Promise<Coll | undefined> => {
-  return (await getColls(...args))[0]
+export const getColl = async (options: CollOptions): Promise<Coll | undefined> => {
+  return (await getColls(options))[0]
 }

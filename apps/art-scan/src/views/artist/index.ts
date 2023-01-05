@@ -11,8 +11,8 @@ import style from './index.css?inline'
 export class CollectionList extends TailwindElement(style) {
   @property() DOID!: DOIDObject
 
-  get name() {
-    return this.DOID.name!
+  get doid() {
+    return this.DOID.doid
   }
 
   onSearch = (e: CustomEvent) => {
@@ -33,10 +33,10 @@ export class CollectionList extends TailwindElement(style) {
           <span slot="msg"></span>
         </doid-search-entire>
         ${when(
-          this.name,
+          this.doid,
           () =>
             html`${keyed(
-              this.name,
+              this.doid,
               html`<div class="grid grid-cols-1 lg_grid-cols-5 gap-4">
                 <div class="order-2 lg_order-none lg_col-span-3">
                   <doid-collections .DOID=${this.DOID}></doid-collections>

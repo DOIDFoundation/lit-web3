@@ -12,15 +12,15 @@ import style from './index.css?inline'
 export class ViewCollection extends TailwindElement(style) {
   @property() DOID!: DOIDObject
 
-  get name() {
-    return this.DOID.name
+  get doid() {
+    return this.DOID.doid
   }
-  get uri() {
-    return this.DOID.uri
+  get tokenName() {
+    return this.DOID.token?.name
   }
   get items() {
     const routes = []
-    if (this.uri) routes.push({ name: this.name, url: `/collection/${this.name}` })
+    if (this.tokenName) routes.push({ name: this.doid, url: `/collection/${this.doid}` })
     if (routes.length) routes.push({ name: 'Collection' })
     return routes
   }
@@ -42,7 +42,7 @@ export class ViewCollection extends TailwindElement(style) {
         </doid-search-entire>
         <coll-breadcrumb .items=${this.items} class="mb-2"></coll-breadcrumb>
         ${when(
-          this.uri,
+          this.tokenName,
           () => html`<!-- collection -->
             <doid-collection .DOID=${this.DOID}></doid-collection>`,
           () => html`<!-- artist's collections -->
