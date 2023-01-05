@@ -85,9 +85,9 @@ export class CollectionDetail extends TailwindElement(style) {
 
   async connectedCallback() {
     super.connectedCallback()
-    this.getCollection()
-    this.getOpenseaUrl()
-    this.getScanUrl()
+    await this.getCollection()
+    await this.getOpenseaUrl()
+    await this.getScanUrl()
   }
   render() {
     return html`<div class="comp-collection">
@@ -121,7 +121,9 @@ export class CollectionDetail extends TailwindElement(style) {
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
                       <span>Marketplace:</span>
-                      <a .href=${this.openseaUrl} class="text-blue-500" target="_blank">${this.openseaUrl}</a>
+                      <a .href=${this.openseaUrl} class="text-blue-500" target="_blank"
+                        >${this.openseaUrl && new URL(this.openseaUrl).origin}</a
+                      >
                     </div>
 
                     <div class="mt-6 lg_mt-6">
