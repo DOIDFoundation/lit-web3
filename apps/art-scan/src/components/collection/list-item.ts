@@ -12,6 +12,7 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 import { normalizeUri } from '@lit-web3/core/src/uri'
 // Components
 import '@lit-web3/dui/src/address'
+import '@lit-web3/dui/src/link'
 // Styles
 import style from './list-item.css?inline'
 
@@ -58,9 +59,10 @@ export class CollectionList extends TailwindElement(style) {
   }
 
   render() {
-    return html`<div class="item p-4 cursor-pointer">
-      <div class="font-medium"><span @click="${this.goto}">${this.DOID.token?.name}</span></div>
-      <div class="font-medium"><span @click="${this.goto}">${this.meta?.name}</span></div>
+    return html`<div class="item p-4">
+      <div class="font-medium">
+        <dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.meta?.name}</dui-link>
+      </div>
       <div class="flex gap-4 py-4">
         <div
           class="w-24 h-24 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
@@ -71,9 +73,9 @@ export class CollectionList extends TailwindElement(style) {
             this.meta?.name,
             () =>
               html`<div>
-                <span class="text-base mb-2" @click="${this.goto}"
+                <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
                   >${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i
-                ></span>
+                ></dui-link>
               </div>`
           )}
 

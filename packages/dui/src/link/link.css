@@ -38,6 +38,9 @@
       @apply border-b-current;
     }
   }
+  &[link] {
+    @apply underline;
+  }
   &[text] {
     @apply text-current underline;
 

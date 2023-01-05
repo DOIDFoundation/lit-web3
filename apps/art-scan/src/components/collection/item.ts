@@ -8,9 +8,9 @@ import {
   styleMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { getColl } from '@/lib/query'
-import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 // Components
 import '@lit-web3/dui/src/address'
+import '@lit-web3/dui/src/link'
 // Style
 import style from './item.css?inline'
 import { getNetwork, getOpensea } from '@lit-web3/ethers/src/useBridge'
@@ -111,29 +111,31 @@ export class CollectionDetail extends TailwindElement(style) {
                     <div class="break-words break-all text-gray-500">${this.meta?.description}</div>
                   </div>
                   <div class="mt-8 lg_mt-0 lg_col-span-3">
-                    <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
-                      <span>Created by:</span>
+                    <div class="flex lg_flex-col gap-2 mb-2">
+                      <b>Created by:</b>
                       <span class="text-gray-500">${this.doid}</span>
                     </div>
-                    <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
-                      <span>Owned by:</span>
+                    <div class="flex lg_flex-col gap-2 mb-2">
+                      <b>Owned by:</b>
                       <span class="text-gray-500">${this.item.owner}</span>
                     </div>
-                    <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
-                      <span>Marketplace:</span>
-                      <a .href=${this.openseaUrl} class="text-blue-500" target="_blank"
-                        >${this.openseaUrl && new URL(this.openseaUrl).origin}</a
+                    <div class="flex lg_flex-col gap-2 mb-2">
+                      <b>Marketplace:</b>
+                      <dui-link open href=${this.openseaUrl}
+                        >${this.openseaUrl && new URL(this.openseaUrl).origin}</dui-link
                       >
                     </div>
 
                     <div class="mt-6 lg_mt-6">
-                      <div class="text-base mb-3">Meta Info.</div>
+                      <div class="text-base mb-3"><b>Meta Info.</b></div>
                       <div class="flex flex-col gap-2">
-                        <div class="flex gap-2 items-center text-xs lg_text-sm">
+                        <div class="flex gap-2 items-center">
                           <span>Contract:</span>
-                          <a .href=${this.scanUrl} class="lg_text-sm text-blue-500" target="_blank"
-                            >${this.item.address}</a
-                          >
+                          <dui-address
+                            href=${this.scanUrl}
+                            class="lg_text-sm text-blue-500"
+                            .address=${this.item.address}
+                          ></dui-address>
                         </div>
                         <div class="flex gap-2  text-xs lg_text-sm">
                           <span>Token ID:</span>

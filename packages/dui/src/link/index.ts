@@ -1,5 +1,14 @@
 import emitter from '@lit-web3/core/src/emitter'
-import { TailwindElement, html, customElement, classMap, property, state, ifDefined } from '../shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  classMap,
+  property,
+  state,
+  ifDefined,
+  when
+} from '../shared/TailwindElement'
 
 const getPathName = (path?: string) => new URL(path ?? location.href).pathname
 const getPath = (pathname?: string) => (pathname ?? getPathName()).replace(/^(\/\w+)\/?.*?$/, '$1')
@@ -13,6 +22,8 @@ export class DuiLink extends TailwindElement(style) {
   @property({ type: String }) alias = ''
   @property({ type: Boolean }) exact = false
   @property({ type: Boolean }) disabled = false
+  @property({ type: Boolean }) open = false
+  @property({ type: Boolean }) link = false
   @property() click: any
   @property({ type: Boolean }) nav = false // as navigator
   @property({ type: Boolean }) text = false // as text with underline
@@ -70,6 +81,7 @@ export class DuiLink extends TailwindElement(style) {
       part="dui-link"
       ?nav=${this.nav}
       ?text=${this.text}
+      ?link=${this.link}
       ?active=${!this.exact && this.active}
       ?exact-active=${this.exacted}
       target="${ifDefined(this._target)}"
@@ -78,7 +90,7 @@ export class DuiLink extends TailwindElement(style) {
       class="dui-link ${classMap(this.$c([{ 'router-active': this.active }, this.class]))}"
       @click=${this.block}
       ?disabled=${this.disabled}
-      ><slot></slot
-    ></a>`
+      ><slot></slot>${when(this.open, () => html`<i class="ml-1 mdi mdi-open-in-new"></i>`)}</a
+    >`
   }
 }

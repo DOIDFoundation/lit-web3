@@ -1,4 +1,6 @@
 import { TailwindElement, html, customElement, repeat, property, when } from '@lit-web3/dui/src/shared/TailwindElement'
+// Components
+import '@lit-web3/dui/src/link'
 
 // Style
 import style from './breadcrumb.css?inline'
@@ -19,7 +21,7 @@ export class CollectionBreadcrumb extends TailwindElement(style) {
           html`
             ${when(
               item.url,
-              () => html`<a class="text-blue-500" .href=${item.url}>${item.name}</a>`,
+              () => html`<dui-link link href=${item.url}>${item.name}</dui-link>`,
               () => html`<span>${item.name}</span>`
             )}
             ${when(idx < this.items.length - 1, () => html`<span class="inline-block mx-1 text-gray-400">/ </span>`)}
