@@ -60,7 +60,6 @@ export class CollectionDetail extends TailwindElement(style) {
     // TODO: SET EMPTY
     if (this.pending) return
 
-    console.log(this.minter, this.slugName, this.tokenID, this.sequence)
     if (!(this.slugName || this.tokenID || this.minter)) return
     this.pending = true
     this.err = ''
@@ -68,7 +67,6 @@ export class CollectionDetail extends TailwindElement(style) {
       // input: slug, tokenId, minter, seq
       const collections = (await getColl(this)) as Coll
       this.item = collections || {}
-      console.log(collections)
     } catch (err: any) {
       this.err = err.message || err
     } finally {

@@ -1,24 +1,12 @@
-import { _subgraphQuery } from './graph'
-import { getResolverAddress } from '@lit-web3/ethers/src/nsResolver/controller'
 import { ZERO } from '@lit-web3/ethers/src/utils'
 import { genWhere } from '@lit-web3/core/src/graph'
 import http from '@lit-web3/core/src/http'
+import { _subgraphQuery } from './graph'
 import { cookColl } from './collection'
+import { normalizeUri } from '@lit-web3/core/src/uri'
 
-const res2Json = (response: any) => {
-  return response
-    .json()
-    .catch((err: any) => {
-      throw { error: err, message: 'Malformed JSON' }
-    })
-    .then((res: any) => {
-      var data = res.data || res.result || res
-      return data
-    })
-}
 // artist hodls
 export const queryHoldlNums = async (account: string) => {
-  const contractAddr = await getResolverAddress()
   const _account = account.toLowerCase()
   let ownNum = 0,
     mintNum = 0
@@ -28,14 +16,16 @@ export const queryHoldlNums = async (account: string) => {
         owns: tokens(
           orderBy: createdAt
           orderDirection: desc
-          where: {collection_not_contains: "${contractAddr}" owner:"${_account}"}
-        ) {id
+          where: {owner_: {id: "${_account}"}}
+        ) {
+          id
         }
         mints: tokens(
           orderBy: createdAt
           orderDirection: desc
-          where: {collection_not_contains: "${contractAddr}" minter:"${_account}"}) {
-          id
+          where: {artist: "${_account}"}
+        ) {
+          id collection {id}
         }
       }`
     )
@@ -54,7 +44,10 @@ export const genCollectionsQuery = ({ minter = '', slugName = '', tokenID = '', 
       orderBy: totalTokens orderDirection: desc
     ) {
       id slug tokens(orderBy: createdAt, orderDirection: desc, ${genWhere(
-        { collectionId: tokenID, collectionSeq: sequence },
+        {
+          collectionId: tokenID,
+          collectionSeq: sequence
+        },
         { allowEmpty: false }
       )}) {
         id collectionId collectionSeq tokenURI createdAt owner { id } contract {id}
@@ -75,7 +68,8 @@ export const getColls = async (options: CollOptions): Promise<Coll[]> => {
       .map(async (coll: Coll) => {
         let meta: Meta = { name: '' }
         try {
-          if (coll.tokenURI) meta = await http.get(coll.tokenURI)
+          const uri = normalizeUri(coll.tokenURI)
+          if (uri) meta = await http['get'](uri)
         } catch (e) {}
         coll.meta = meta
         return coll
