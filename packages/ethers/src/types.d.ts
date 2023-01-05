@@ -13,6 +13,7 @@ declare interface Meta {
 }
 
 declare interface NFTToken {
+  minter?: string
   address?: Address
   tokenID?: TokenID
   name?: string

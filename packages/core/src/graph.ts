@@ -17,7 +17,7 @@ export const genWhere = (params?: Object, options: Jsonish = { allowEmpty: true,
   return options.brackets ? `(where: {${query}})` : `where: {${query}}`
 }
 
-export const subgraphQuery = async (query: string, api: string) => {
+export const subgraphQuery = async (query: string, api: string): Promise<any> => {
   let res = {}
   if (!api) throw new Error(`No support`)
   try {

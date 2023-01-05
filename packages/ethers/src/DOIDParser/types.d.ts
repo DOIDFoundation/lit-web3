@@ -11,6 +11,7 @@ declare interface DOIDObject extends CheckedName {
   equal?: boolean
   uri?: string
   decoded?: string
+  parsed?: DOIDObject
 }
 declare type DOIDish = DOIDObject | string
 

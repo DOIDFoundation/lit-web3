@@ -1,16 +1,21 @@
 import { checkDOIDName, wrapTLD } from '../nsResolver/checker'
 import { safeDecodeURIComponent, safeEncodeURIComponent } from '@lit-web3/core/src/uri'
 import slugify from '@lit-web3/core/src/slugify'
+import { reverseDOIDName } from './query'
 
-const cookeDOID = async (DOIDName: string, token: NFTToken): Promise<DOIDObject> => {
+const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Promise<DOIDObject> => {
   // DOIDName
   const DOID = await checkDOIDName(DOIDName)
   let { error, msg, name, doid } = DOID
   // Cook
-  const cooked = { DOID, name, doid, token, error, msg }
+  const cooked: DOIDObject = { DOID, name, doid, token, error, msg }
   token.slugName = slugify(token.name ?? '')
+  const val = stringify(cooked)
+  const equal = decoded === val
+  if (equal) token.minter = await reverseDOIDName(name)
   Object.assign(cooked, {
-    val: stringify(cooked),
+    val,
+    equal,
     uri: stringify(cooked, { encode: true })
   })
   return cooked
@@ -27,9 +32,7 @@ export const parseFromString = async (src = ''): Promise<DOIDObject> => {
     tokenID,
     sequence
   }
-  const cooked = await cookeDOID(DOIDName, token)
-  cooked.equal = decoded === cooked.val
-  return cooked
+  return await cookeDOID(DOIDName, token, decoded)
 }
 
 export const getKeyFromRouter = (name = '', tokenName = '', hash = '') =>
@@ -57,9 +60,7 @@ export const parseFromColl = async (coll: any): Promise<DOIDObject> => {
   const DOIDName = coll.name ?? coll.DOIDName
   const decoded = safeDecodeURIComponent(DOIDName)
   const token = coll.token ?? { name: coll.tokenName, tokenID: coll.tokenID, sequence: coll.sequence }
-  const cooked = await cookeDOID(DOIDName, token)
-  cooked.equal = decoded === cooked.val
-  return cooked
+  return await cookeDOID(DOIDName, token, decoded)
 }
 
 export const parse = async <T>(src: T): Promise<DOIDObject> => {
