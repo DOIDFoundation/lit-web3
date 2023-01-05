@@ -57,7 +57,6 @@ export class CollectionList extends TailwindElement(style) {
     this.getCollections()
   }
   render() {
-    console.log(this.DOID)
     return html`<div class="doid-collections">
       ${when(
         this.empty,
