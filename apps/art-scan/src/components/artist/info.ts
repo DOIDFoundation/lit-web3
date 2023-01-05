@@ -8,16 +8,21 @@ import style from './info.css?inline'
 
 @customElement('artist-info')
 export class ArtistInfo extends TailwindElement(style) {
-  @property() name = ''
+  @property() DOID!: DOIDObject
+
   @state() info?: NameInfo
   @state() hodls?: any
+
+  get name() {
+    return this.DOID.name!
+  }
 
   get owner() {
     return this.info?.owner ?? ''
   }
 
   getOwnerInfo = async () => {
-    this.info = (await nameInfo(this.name)) as NameInfo
+    this.info = await nameInfo(this.name)
   }
   getHodlInfo = async () => {
     this.hodls = (await queryHoldlNums(this.owner)) as any

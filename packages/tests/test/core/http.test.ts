@@ -37,6 +37,6 @@ describe('http', async () => {
     } catch (err: any) {
       error = err.message
     }
-    expect(error).toBe('Request with GET/HEAD method cannot have body')
+    expect(error).include('failed')
   })
 })

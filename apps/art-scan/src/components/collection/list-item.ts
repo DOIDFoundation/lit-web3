@@ -1,44 +1,44 @@
 import { TailwindElement, html, customElement, property, styleMap } from '@lit-web3/dui/src/shared/TailwindElement'
-import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
-import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
-import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 // Styles
 import style from './list-item.css?inline'
 
 @customElement('doid-coll-item')
 export class CollectionList extends TailwindElement(style) {
-  bindStore: any = new StateController(this, searchStore)
+  @property() DOID!: DOIDObject
   @property({ type: Object }) item: any = {}
-  @property() name = ''
 
-  get tokenId() {
-    const _tokenId = this.item.tokenId
-    return _tokenId ? `#${_tokenId}` : ''
+  get name() {
+    return this.DOID.doid
   }
-  get tokenIdShow() {
-    return this.tokenId ? `#${this.tokenId}` : ''
+  get val() {
+    return this.DOID.val
+  }
+
+  get tokenID() {
+    const _tokenID = this.item.tokenID
+    return _tokenID ? `#${_tokenID}` : ''
+  }
+  get tokenIDShow() {
+    return this.tokenID ? `#${this.tokenID}` : ''
   }
   get createTime() {
     return new Date(1000 * this.item.createdAt).toLocaleString()
-  }
-  get wrapName() {
-    return wrapTLD(this.name)
   }
   get ownerName() {
     return this.item.owner?.id
   }
   get title() {
-    return `${this.wrapName} ${this.tokenId}`
+    return `${this.name} ${this.tokenID}`
   }
   get meta() {
     return this.item.meta || {}
   }
 
   goto = () => {
-    if (!this.tokenId) return
+    if (!this.tokenID) return
     // TODO: get slug
-    goto(`/collection/${this.name}/${this.item.slug}_${this.tokenId}_${this.item.seq}`)
+    // goto(`/collection/${this.name}/${this.item.slug}_${this.tokenID}_${this.item.seq}`)
   }
   render() {
     return html`<div class="item p-4 cursor-pointer" @click="${this.goto}">

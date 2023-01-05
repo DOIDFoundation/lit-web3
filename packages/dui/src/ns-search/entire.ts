@@ -2,8 +2,7 @@ import { TailwindElement, html, when, customElement, ref } from '../shared/Tailw
 import { property, state } from 'lit/decorators.js'
 import { searchStore, StateController } from './store'
 import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
-import emitter from '@lit-web3/core/src/emitter'
-import { wrapTLD, checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
+import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 import { ValidateDOID } from '../validator/doid'
 // Components
 import '../input/text'
@@ -22,21 +21,22 @@ export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
   @state() err = ''
   @state() pending = false
 
-  onInput = async (e: CustomEvent) => {
-    const { val, error, msg } = await this.validateDOID(e)
+  onInput = async (e?: CustomEvent) => {
+    await this.validateDOID(e ?? this.keyword)
+    const { error, val, msg = '' } = this.DOID
     this.err = msg
     if (error) return
-    this.keyword = val
+    if (val) this.keyword = val
   }
 
-  doSearch() {
-    if (this.err) return
-    if (this.DOID.val) this.keyword = this.DOID.val
-    this.emit('search', this.DOID)
+  doSearch = async () => {
+    await this.onInput()
+    if (!this.DOID.error) this.emit('search', this.DOID)
   }
 
   async connectedCallback() {
     super.connectedCallback()
+    if (typeof this.default === 'undefined') return
     const { name = '', address = '' } = await checkDOIDName(this.default, { wrap: true })
     this.keyword = name || address
   }

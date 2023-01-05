@@ -23,10 +23,10 @@ export const routes = [
       return html`${keyed(name, html`<view-artist .DOID=${DOID}></view-artist>`)}`
     },
     enter: async ({ name = '', tokenName = '' }) => {
-      if (name && tokenName) {
-        emitter.emit('router-goto', `/collection/${name}/${tokenName}${location.hash}`)
-        return false
-      }
+      // if (name && tokenName) {
+      //   emitter.emit('router-goto', `/collection/${name}/${tokenName}${location.hash}`)
+      //   return false
+      // }
       const [DOID, key] = await parseDOIDFromRouter(name, tokenName)
       if (DOID.equal) {
         cached.set(key, DOID)
@@ -47,19 +47,13 @@ export const routes = [
     path: '/collection/:name?/:tokenName?',
     render: ({ name = '', tokenName = '' }) => {
       const DOID = cached.get(getKeyFromRouter(name, tokenName))
-      return html`<view-collection
-        .DOID=${DOID}
-        .name=${name}
-        .tokenName=${tokenName}
-        .keyword=${name}
-        .token=${`${tokenName}${location.hash}`}
-      ></view-collection>`
+      return html`<view-collection .DOID=${DOID}></view-collection>`
     },
     enter: async ({ name = '', tokenName = '' }) => {
-      if (name && !tokenName) {
-        emitter.emit('router-goto', `/artist/${name}`)
-        return false
-      }
+      // if (name && !tokenName) {
+      //   emitter.emit('router-goto', `/artist/${name}`)
+      //   return false
+      // }
       const [DOID, key] = await parseDOIDFromRouter(name, tokenName)
       if (DOID.equal) {
         cached.set(key, DOID)

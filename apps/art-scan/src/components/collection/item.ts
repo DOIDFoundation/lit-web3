@@ -15,21 +15,34 @@ import style from './item.css?inline'
 
 @customElement('doid-collection')
 export class CollectionDetail extends TailwindElement(style) {
-  @property() keyword = ''
-  @property() token = ''
+  @property() DOID!: DOIDObject
 
   @state() item: any = { image: '' }
   @state() pending = false
   @state() err = ''
   @state() ts = 0
 
+  get name() {
+    return this.DOID.name
+  }
+  get token() {
+    return this.DOID.token
+  }
+  get minter() {
+    return this.token?.address ?? ''
+  }
+  get tokenID() {
+    return this.token?.tokenID ?? ''
+  }
+  get sequence() {
+    return this.token?.sequence ?? ''
+  }
+  get slugName() {
+    return this.token?.slugName ?? ''
+  }
+
   get empty() {
     return !this.pending && !!this.ts && !this.meta.name
-  }
-  get tokenId() {
-    const str = this.token.split('#')
-    const tokenId = str[1]?.split('-')[0] || ''
-    return tokenId ? `#${tokenId}` : ''
   }
   get meta() {
     return this.item.meta || {}
@@ -41,17 +54,13 @@ export class CollectionDetail extends TailwindElement(style) {
   async getCollection() {
     // TODO://get address after token split
     // TODO: SET EMPTY
-    const minter = ''
-    const slug = ''
-    const tokenId = ''
-    const seq = ''
     if (this.pending) return
-    if (!slug || !tokenId || !minter) return
+    if (!this.slugName || !this.tokenID || !this.minter) return
     this.pending = true
     this.err = ''
     try {
       // input: slug, tokenId, minter, seq
-      const collections = (await getColl(minter, slug, tokenId, seq)) as any[]
+      const collections = (await getColl(this.minter, this.slugName, this.tokenID, this.sequence)) as any[]
       this.item = collections[0] || []
       console.info(this.item)
     } catch (err: any) {
@@ -81,7 +90,7 @@ export class CollectionDetail extends TailwindElement(style) {
                   <div class="lg_col-span-2 flex flex-col gap-2 justify-center items-center p-4 lg_px-6 bg-gray-100">
                     <div
                       class="w-full h-80 lg_w-60 lg_h-60 lg_grow bg-white bg-center bg-no-repeat bg-cover"
-                      style=${styleMap({ backgroundImage: `url(${this.meta.image_url})` })}
+                      style="${styleMap({ backgroundImage: `url(${this.meta.image_url})` })}"
                     ></div>
                     <div class="text-base mb-2">${this.meta.name}</div>
                     <div class="break-words break-all text-gray-500">${this.meta.description}</div>
@@ -89,7 +98,7 @@ export class CollectionDetail extends TailwindElement(style) {
                   <div class="mt-8 lg_mt-0 lg_col-span-3">
                     <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
                       <span>Created by:</span>
-                      <span class="text-gray-500">${this.keyword}</span>
+                      <span class="text-gray-500">${this.name}</span>
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2 text-xs lg_text-sm">
                       <span>Owned by:</span>

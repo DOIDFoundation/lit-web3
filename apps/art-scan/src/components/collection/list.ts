@@ -8,7 +8,6 @@ import {
   repeat,
   keyed
 } from '@lit-web3/dui/src/shared/TailwindElement'
-import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { getColls } from '@/lib/query'
 
@@ -20,26 +19,25 @@ import style from './list.css?inline'
 
 @customElement('doid-collections')
 export class CollectionList extends TailwindElement(style) {
-  bindStore: any = new StateController(this, searchStore)
-  @property() keyword = ''
+  @property() DOID!: DOIDObject
 
   @state() pending = false
   @state() err = ''
   @state() ts = 0
   @state() collections: any[] = []
 
+  get name() {
+    return this.DOID.name!
+  }
+
   get empty() {
     return !this.pending && this.ts && !this.collections.length
   }
 
-  search = async (keyword?: string) => {
-    const _keyword = keyword ?? this.keyword
-    if (_keyword) searchStore.search(_keyword)
-  }
   async getCollections() {
     // get name
-    const res = <NameInfo>await nameInfo(this.keyword)
-    const minter = res.owner.toLowerCase()
+    const { owner = '' } = await nameInfo(this.name)
+    const minter = owner.toLowerCase()
     if (this.pending || !minter) return
     this.pending = true
     this.err = ''
@@ -59,6 +57,7 @@ export class CollectionList extends TailwindElement(style) {
     this.getCollections()
   }
   render() {
+    console.log(this.DOID)
     return html`<div class="doid-collections">
       ${when(
         this.empty,
@@ -77,7 +76,7 @@ export class CollectionList extends TailwindElement(style) {
                   html`${keyed(
                     item.name,
                     html`<div class="bg-gray-100 mb-1 break-words break-all">
-                      <doid-coll-item .item=${item} .name=${this.keyword}></doid-coll-item>
+                      <doid-coll-item .DOID=${this.DOID} .item=${item}></doid-coll-item>
                     </div>`
                   )}`
               )}

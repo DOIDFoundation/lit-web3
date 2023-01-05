@@ -1,6 +1,7 @@
 declare interface DOIDObject extends CheckedName {
   DOID?: CheckedName
   name?: string
+  doid?: string
   address?: string
   token?: NFTToken
   tokenID?: string
@@ -9,6 +10,7 @@ declare interface DOIDObject extends CheckedName {
   msg?: string
   equal?: boolean
   uri?: string
+  decoded?: string
 }
 declare type DOIDish = DOIDObject | string
 
