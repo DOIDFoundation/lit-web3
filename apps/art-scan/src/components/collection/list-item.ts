@@ -1,4 +1,11 @@
-import { TailwindElement, html, customElement, property, styleMap } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  property,
+  styleMap,
+  when
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { goto } from '@lit-web3/dui/src/shared/router'
@@ -13,23 +20,19 @@ export class CollectionList extends TailwindElement(style) {
   @property() name = ''
 
   get tokenId() {
-    const _tokenId = this.item.tokenId
-    return _tokenId ? `#${_tokenId}` : ''
-  }
-  get tokenIdShow() {
-    return this.tokenId ? `#${this.tokenId}` : ''
+    return this.item.tokenID
   }
   get createTime() {
-    return new Date(1000 * this.item.createdAt).toLocaleString()
+    return new Date(this.item.ctime).toLocaleString()
   }
   get wrapName() {
     return wrapTLD(this.name)
   }
   get ownerName() {
-    return this.item.owner?.id
+    return this.item.owner
   }
   get title() {
-    return `${this.wrapName} ${this.tokenId}`
+    return `${this.wrapName} ${this.tokenId ? `#${this.tokenId}` : ''}`
   }
   get meta() {
     return this.item.meta || {}
@@ -38,7 +41,7 @@ export class CollectionList extends TailwindElement(style) {
   goto = () => {
     if (!this.tokenId) return
     // TODO: get slug
-    goto(`/collection/${this.name}/${this.item.slug}_${this.tokenId}_${this.item.seq}`)
+    goto(`/collection/${this.name}/${this.item.slug}_${this.tokenId}_${this.item.sequence}`)
   }
   render() {
     return html`<div class="item p-4 cursor-pointer" @click="${this.goto}">
@@ -49,7 +52,14 @@ export class CollectionList extends TailwindElement(style) {
           style=${styleMap({ backgroundImage: `url(${this.meta.image})` })}
         ></div>
         <div>
-          <span class="text-base mb-2">${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i></span>
+          ${when(
+            this.meta.name,
+            () =>
+              html`<div>
+                <span class="text-base mb-2">${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i></span>
+              </div>`
+          )}
+
           <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta.description}</p>
         </div>
       </div>

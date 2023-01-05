@@ -9,6 +9,7 @@ import {
   keyed
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
+import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { getColls } from '@/lib/query'
 
@@ -32,6 +33,10 @@ export class CollectionList extends TailwindElement(style) {
     return !this.pending && this.ts && !this.collections.length
   }
 
+  get wrapName() {
+    return wrapTLD(this.keyword)
+  }
+
   search = async (keyword?: string) => {
     const _keyword = keyword ?? this.keyword
     if (_keyword) searchStore.search(_keyword)
@@ -39,13 +44,13 @@ export class CollectionList extends TailwindElement(style) {
   async getCollections() {
     // get name
     const res = <NameInfo>await nameInfo(this.keyword)
-    const minter = res.owner.toLowerCase()
+    const minter = ''.toLowerCase() || res.owner
     if (this.pending || !minter) return
     this.pending = true
     this.err = ''
     try {
       const collections = (await getColls(minter)) as any[]
-      this.collections = collections || []
+      this.collections = collections.filter((coll: Coll) => coll.meta?.name != this.wrapName) || []
     } catch (err: any) {
       this.err = err.message || err
     } finally {
@@ -75,7 +80,7 @@ export class CollectionList extends TailwindElement(style) {
                 this.collections,
                 (item: any) =>
                   html`${keyed(
-                    item.name,
+                    item.meta?.name,
                     html`<div class="bg-gray-100 mb-1 break-words break-all">
                       <doid-coll-item .item=${item} .name=${this.keyword}></doid-coll-item>
                     </div>`

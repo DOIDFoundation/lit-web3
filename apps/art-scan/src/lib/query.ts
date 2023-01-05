@@ -86,6 +86,7 @@ export const getColls = async (minter = '', slug = '', tokenID = '', seq = ''): 
   )
   return data
 }
+
 export const getColl = async (...args: any[]): Promise<Coll | undefined> => {
   return (await getColls(...args))[0]
 }
