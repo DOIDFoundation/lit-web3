@@ -30,6 +30,10 @@ export class CollectionList extends TailwindElement(style) {
     return this.DOID.name!
   }
 
+  get wrapName() {
+    return this.DOID.doid!
+  }
+
   get empty() {
     return !this.pending && this.ts && !this.collections.length
   }
@@ -43,7 +47,7 @@ export class CollectionList extends TailwindElement(style) {
     this.err = ''
     try {
       const collections = (await getColls(minter)) as any[]
-      this.collections = collections.filter((coll: Coll) => coll.meta?.name != this.name) || []
+      this.collections = collections.filter((coll: Coll) => coll.meta?.name != this.wrapName) || []
     } catch (err: any) {
       this.err = err.message || err
     } finally {

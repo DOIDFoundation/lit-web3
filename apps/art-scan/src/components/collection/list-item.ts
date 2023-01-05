@@ -9,6 +9,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
+import { normalizeUri } from '@lit-web3/core/src/uri'
 // Components
 import '@lit-web3/dui/src/address'
 // Styles
@@ -39,6 +40,9 @@ export class CollectionList extends TailwindElement(style) {
   get cookedUri() {
     return this.cooked.parsed?.uri
   }
+  get backgroundImage() {
+    return normalizeUri(this.meta.image_url || this.meta.image)
+  }
 
   cook = async () => {
     this.cooked = await DOIDParser({ DOIDName: this.DOIDName, token: this.token })
@@ -59,7 +63,7 @@ export class CollectionList extends TailwindElement(style) {
       <div class="flex gap-4 py-4">
         <div
           class="w-24 h-24 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
-          style=${styleMap({ backgroundImage: `url(${this.meta.image})` })}
+          style=${styleMap({ backgroundImage: `url(${this.backgroundImage})` })}
         ></div>
         <div>
           ${when(

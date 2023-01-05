@@ -4,18 +4,8 @@ import { ZERO } from '@lit-web3/ethers/src/utils'
 import { genWhere } from '@lit-web3/core/src/graph'
 import http from '@lit-web3/core/src/http'
 import { cookColl } from './collection'
+import { normalizeUri } from '@lit-web3/core/src/uri'
 
-const res2Json = (response: any) => {
-  return response
-    .json()
-    .catch((err: any) => {
-      throw { error: err, message: 'Malformed JSON' }
-    })
-    .then((res: any) => {
-      var data = res.data || res.result || res
-      return data
-    })
-}
 // artist hodls
 export const queryHoldlNums = async (account: string) => {
   const contractAddr = await getResolverAddress()
@@ -49,10 +39,10 @@ export const queryHoldlNums = async (account: string) => {
 export const genCollectionsQuery = (minter = '', slug = '', tokenId = '', seq = '') => {
   const _minter = minter.toLowerCase()
   return `{
-    collections(${genWhere({ artist: _minter, slug }, { allowEmpty: false })}
-      orderBy: totalTokens orderDirection: desc
+    collections(orderBy: totalTokens orderDirection: desc
+      ${genWhere({ artist: _minter, slug }, { allowEmpty: false })}
     ) {
-      id slug tokens(orderBy: createdAt, orderDirection: desc, ${genWhere(
+      id slug tokens(orderBy: createdAt orderDirection: desc ${genWhere(
         {
           collectionId: tokenId,
           collectionSeq: seq
@@ -78,7 +68,8 @@ export const getColls = async (minter = '', slug = '', tokenID = '', seq = ''): 
       .map(async (coll: Coll) => {
         let meta: Meta = { name: '' }
         try {
-          if (coll.tokenURI) meta = await http.get(coll.tokenURI)
+          const uri = normalizeUri(coll.tokenURI)
+          if (uri) meta = await http['get'](uri)
         } catch (e) {}
         coll.meta = meta
         return coll
