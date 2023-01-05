@@ -1,14 +1,12 @@
-import { _subgraphQuery } from './graph'
-import { getResolverAddress } from '@lit-web3/ethers/src/nsResolver/controller'
 import { ZERO } from '@lit-web3/ethers/src/utils'
 import { genWhere } from '@lit-web3/core/src/graph'
 import http from '@lit-web3/core/src/http'
+import { _subgraphQuery } from './graph'
 import { cookColl } from './collection'
 import { normalizeUri } from '@lit-web3/core/src/uri'
 
 // artist hodls
 export const queryHoldlNums = async (account: string) => {
-  const contractAddr = await getResolverAddress()
   const _account = account.toLowerCase()
   let ownNum = 0,
     mintNum = 0
@@ -18,14 +16,16 @@ export const queryHoldlNums = async (account: string) => {
         owns: tokens(
           orderBy: createdAt
           orderDirection: desc
-          where: {collection_not_contains: "${contractAddr}" owner:"${_account}"}
-        ) {id
+          where: {owner_: {id: "${_account}"}}
+        ) {
+          id
         }
         mints: tokens(
           orderBy: createdAt
           orderDirection: desc
-          where: {collection_not_contains: "${contractAddr}" minter:"${_account}"}) {
-          id
+          where: {artist: "${_account}"}
+        ) {
+          id collection {id}
         }
       }`
     )
