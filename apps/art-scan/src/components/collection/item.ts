@@ -1,18 +1,11 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  styleMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { getColl } from '@/lib/query'
 import { normalizeUri } from '@lit-web3/core/src/uri'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/src/img/loader'
 // Style
 import style from './item.css?inline'
 import { getNetwork, getOpensea } from '@lit-web3/ethers/src/useBridge'
@@ -47,6 +40,9 @@ export class CollectionDetail extends TailwindElement(style) {
   }
   get slugName() {
     return this.token?.slugName ?? ''
+  }
+  get backgroundImage() {
+    return normalizeUri(this.meta.image_url || this.meta.image)
   }
   @state() openseaUrl = ''
   @state() scanUrl = ''
@@ -105,10 +101,12 @@ export class CollectionDetail extends TailwindElement(style) {
                 !this.err,
                 () => html`<div class="mt-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
                   <div class="lg_col-span-2 flex flex-col gap-2 justify-center items-center p-4 lg_px-6 bg-gray-100">
-                    <div
-                      class="w-full h-80 lg_w-60 lg_h-60 lg_grow bg-white bg-center bg-no-repeat bg-cover"
-                      style=${styleMap({ backgroundImage: `url(${this.meta?.image})` })}
-                    ></div>
+                    <img-loader
+                      class="w-80 h-80 lg_w-60 lg_h-60"
+                      src=${this.backgroundImage}
+                      loading="lazy"
+                    ></img-loader>
+
                     <div class="text-base mb-2">${this.meta?.name}</div>
                     <div class="break-words break-all text-gray-500">${this.meta?.description}</div>
                   </div>

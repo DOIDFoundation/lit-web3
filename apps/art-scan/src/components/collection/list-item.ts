@@ -1,12 +1,4 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  styleMap,
-  when,
-  state
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { normalizeUri } from '@lit-web3/core/src/uri'
@@ -14,6 +6,7 @@ import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/src/img/loader'
 // Styles
 import style from './list-item.css?inline'
 
@@ -69,15 +62,15 @@ export class CollectionList extends TailwindElement(style) {
           <dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.meta.name}</dui-link>
         </div>
         <div class="flex gap-4 py-4">
-          <div
-            class="w-24 h-24 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
-            style=${styleMap({ backgroundImage: `url(${this.backgroundImage})` })}
-          ></div>
+          <img-loader class="shrink-0 w-24 h-24" src=${this.backgroundImage} loading="lazy"></img-loader>
           <div>
             <div>
-              <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
-                >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
-              ></dui-link>
+              ${when(
+                this.meta.name,
+                () => html`<dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
+                  >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
+                ></dui-link>`
+              )}
             </div>
 
             <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta.description}</p>
