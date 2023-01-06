@@ -1,4 +1,4 @@
-import { TAILWINDELEMENT } from '../shared/TailwindElement'
+import { TAILWINDELEMENT, Ref } from '../shared/TailwindElement'
 import { createRef } from 'lit/directives/ref.js'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 
@@ -24,6 +24,6 @@ export const ValidateDOID = <T extends PublicConstructor<TAILWINDELEMENT>>(super
   return class extends superClass {
     validateDOID = validateDOID.bind(this, opts)()
     DOID = {}
-    input$ = createRef()
+    input$: Ref<HTMLInputElement> = createRef()
   } as PublicConstructor<ValidateDOIDInterface> & T
 }

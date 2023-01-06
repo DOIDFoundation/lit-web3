@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, when, ref, createRef, property } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, when, ref, createRef, property, Ref } from '../shared/TailwindElement'
 // Component
 import './index'
 import '../button'
@@ -9,12 +9,12 @@ import style from './prompt.css?inline'
 // @ts-ignore
 export class DuiPrompt extends TailwindElement([DuiDialog.styles, style]) {
   @property({ type: Boolean }) button = false
-  el$: any = createRef()
+  el$: Ref<DuiDialog> = createRef()
   onClose() {
     this.emit('close')
   }
   refClose() {
-    this.el$.value.close()
+    this.el$.value?.close()
   }
 
   override render() {

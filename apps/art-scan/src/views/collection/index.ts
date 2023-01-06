@@ -10,13 +10,13 @@ import style from './index.css?inline'
 
 @customElement('view-collection')
 export class ViewCollection extends TailwindElement(style) {
-  @property() DOID!: DOIDObject
+  @property() DOID?: DOIDObject
 
   get doid() {
-    return this.DOID.doid
+    return this.DOID?.doid
   }
   get tokenName() {
-    return this.DOID.token?.name
+    return this.DOID?.token?.name
   }
   get items() {
     const routes = []
@@ -36,7 +36,7 @@ export class ViewCollection extends TailwindElement(style) {
   render() {
     return html`<div class="view-collection">
       <div class="dui-container">
-        <doid-search-entire .default=${this.DOID.val} @search=${this.onSearch} placeholder="DOID of artist or artwork">
+        <doid-search-entire .default=${this.DOID?.val} @search=${this.onSearch} placeholder="DOID of artist or artwork">
           <span slot="label"></span>
           <span slot="msg"></span>
         </doid-search-entire>

@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, state, ref, createRef } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, Ref, ref, createRef } from '../shared/TailwindElement'
 // Component
 import './index'
 import '../button'
@@ -8,12 +8,12 @@ import style from './confirm.css?inline'
 @customElement('dui-confirm')
 // @ts-ignore
 export class DuiConfirm extends TailwindElement([DuiDialog.styles, style]) {
-  el$: any = createRef()
+  el$: Ref<DuiDialog> = createRef()
   onClose() {
     this.emit('close')
   }
   refClose() {
-    this.el$.value.close()
+    this.el$.value?.close()
   }
   confirm() {
     this.emit('confirm')

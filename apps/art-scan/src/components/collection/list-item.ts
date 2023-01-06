@@ -12,13 +12,13 @@ import style from './list-item.css?inline'
 
 @customElement('doid-coll-item')
 export class CollectionList extends TailwindElement(style) {
-  @property() DOID!: DOIDObject
+  @property() DOID?: DOIDObject
   @property({ type: Object }) item: any = {}
   @state() cooked: DOIDObject | undefined
   @state() meta: any = {}
 
   get doid() {
-    return this.DOID.doid
+    return this.DOID?.doid
   }
   get createTime() {
     return new Date(this.item.ctime).toLocaleString()

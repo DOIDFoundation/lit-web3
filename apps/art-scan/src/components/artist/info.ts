@@ -8,13 +8,13 @@ import style from './info.css?inline'
 
 @customElement('artist-info')
 export class ArtistInfo extends TailwindElement(style) {
-  @property() DOID!: DOIDObject
+  @property() DOID?: DOIDObject
 
   @state() info?: NameInfo
   @state() hodls?: any
 
   get doid() {
-    return this.DOID.doid
+    return this.DOID?.doid
   }
 
   get owner() {
