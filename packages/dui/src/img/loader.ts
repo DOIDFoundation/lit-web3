@@ -1,20 +1,10 @@
-import {
-  TailwindElement,
-  customElement,
-  html,
-  property,
-  when,
-  classMap,
-  state,
-  ref,
-  createRef,
-  Ref
-} from '../shared/TailwindElement'
+import { TailwindElement, customElement, html, property, when, classMap, state } from '../shared/TailwindElement'
+import { LazyElement } from '../shared/LazyElement'
 // Styles
-import style from './loader.css'
+import style from './loader.css?inline'
 
 @customElement('img-loader')
-export class ImgLoader extends TailwindElement(style) {
+export class ImgLoader extends LazyElement(TailwindElement(style)) {
   @property() src = ''
   @property() loaded = false
   @property() stop = false
@@ -23,8 +13,6 @@ export class ImgLoader extends TailwindElement(style) {
   @state() imgLoaded = this.loaded
   @state() err = false
   @state() show = false
-
-  el$: Ref<HTMLElement> = createRef()
 
   get lazy() {
     return this.loading === 'lazy'
@@ -44,35 +32,17 @@ export class ImgLoader extends TailwindElement(style) {
     this.err = false
   }
 
-  observer?: IntersectionObserver
-  unobserve = () => this.el$?.value && this.observer?.unobserve(this.el$.value!)
-  observe = () => {
-    if (!this.lazy || this.observer) return
-    this.observer = new IntersectionObserver((entries) => {
-      if (entries[0].intersectionRatio <= 0) return
-      this.show = true
-      this.unobserve()
-    })
-    this.observer.observe(this.el$.value!)
-  }
-
-  firstUpdated() {
-    this.observe()
+  override onObserved = () => {
+    this.show = true
   }
 
   connectedCallback() {
     super.connectedCallback()
     this.show = this.loading === 'eager'
   }
-  disconnectedCallback() {
-    super.disconnectedCallback()
-    this.unobserve()
-  }
 
   render() {
-    return html`<i
-      ${ref(this.el$)}
-      class="${classMap({ loaded: this.firstLoaded, err: this.err, empty: this.empty, stop: this.stop })}"
+    return html`<i class="${classMap({ loaded: this.firstLoaded, err: this.err, empty: this.empty, stop: this.stop })}"
       >${when(
         this.uri,
         () => html`<img

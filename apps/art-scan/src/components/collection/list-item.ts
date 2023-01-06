@@ -1,7 +1,7 @@
 import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { LazyElement } from '@lit-web3/dui/src/shared/LazyElement'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { normalizeUri } from '@lit-web3/core/src/uri'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'
@@ -11,11 +11,11 @@ import '@lit-web3/dui/src/img/loader'
 import style from './list-item.css?inline'
 
 @customElement('doid-coll-item')
-export class CollectionList extends TailwindElement(style) {
+export class CollectionList extends LazyElement(TailwindElement(style)) {
   @property() DOID?: DOIDObject
   @property({ type: Object }) item: any = {}
-  @state() cooked: DOIDObject | undefined
-  @state() meta: any = {}
+  @state() cooked?: DOIDObject
+  @state() meta: Meta = {}
 
   get doid() {
     return this.DOID?.doid
@@ -33,21 +33,21 @@ export class CollectionList extends TailwindElement(style) {
   get cookedUri() {
     return this.cooked?.parsed?.uri
   }
-  get backgroundImage() {
-    return normalizeUri(this.meta.image_url || this.meta.image)
+  get tokenName() {
+    return this.meta.name ?? this.cooked?.parsed?.token?.name ?? this.DOID?.parsed?.token?.name
   }
 
   cook = async () => {
+    this.meta = await getMetaData(this.item.tokenURI)
     this.cooked = await DOIDParser({ DOIDName: this.doid, token: this.token })
   }
 
-  getMeta = async () => {
-    this.meta = await getMetaData(normalizeUri(this.item.tokenURI))
-  }
-  async connectedCallback() {
-    super.connectedCallback()
-    await this.getMeta()
+  override onObserved = () => {
     this.cook()
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
   }
 
   goto = () => {
@@ -55,31 +55,27 @@ export class CollectionList extends TailwindElement(style) {
   }
 
   render() {
-    return html`${when(
-      this.meta.name != this.doid,
-      () => html`<div class="item p-4">
-        <div class="font-medium">
-          <dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.meta.name}</dui-link>
-        </div>
-        <div class="flex gap-4 py-4">
-          <img-loader class="shrink-0 w-24 h-24" src=${this.backgroundImage} loading="lazy"></img-loader>
+    return html`<div class="item p-4">
+      <div class="font-medium">
+        <dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.tokenName}</dui-link>
+      </div>
+      <div class="flex gap-4 py-4">
+        <img-loader class="shrink-0 w-24 h-24" src=${this.meta.image} loading="lazy"></img-loader>
+        <div>
           <div>
-            <div>
-              ${when(
-                this.meta.name,
-                () => html`<dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
-                  >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
-                ></dui-link>`
-              )}
-            </div>
-
-            <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta.description}</p>
+            ${when(
+              this.tokenName,
+              () => html`<dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
+                >${this.tokenName}<i class="mdi mdi-ethereum ml-1"></i
+              ></dui-link>`
+            )}
           </div>
+          <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta.description}</p>
         </div>
-        <div class="text-xs">
-          Minted on ${this.createTime}, Owned by <dui-address class="ml-1" .address=${this.item.owner}></dui-address>
-        </div>
-      </div>`
-    )}`
+      </div>
+      <div class="text-xs">
+        Minted on ${this.createTime}, Owned by <dui-address class="ml-1" .address=${this.item.owner}></dui-address>
+      </div>
+    </div>`
   }
 }

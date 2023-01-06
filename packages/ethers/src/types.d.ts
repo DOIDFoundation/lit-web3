@@ -3,7 +3,7 @@ declare type TokenID = string
 declare type TokenURI = string
 
 declare interface Meta {
-  name: string
+  name?: string
   description?: string
   image?: string
   creator?: string

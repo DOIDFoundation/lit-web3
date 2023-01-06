@@ -69,7 +69,7 @@ export class CollectionDetail extends TailwindElement(style) {
     }
   }
   getMeta = async () => {
-    this.meta = await getMetaData(normalizeUri(this.item.tokenURI))
+    this.meta = await getMetaData(this.item.tokenURI)
   }
   getOpenseaUrl = async () => {
     const uri = await getOpensea()

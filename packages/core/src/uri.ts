@@ -5,10 +5,7 @@ export { safeDecodeURIComponent }
 export const safeEncodeURIComponent = (s: string) => s.replaceAll(/[;/?:@&=+$,#]/g, (r) => encodeURIComponent(r))
 
 export const normalizeUri = (uri = '') => {
-  let _uri = uri
+  if (/^(ipfs):/.test(uri)) return `https://ipfs.io/ipfs/${uri.replace(/^(ipfs):\/\//, '')}`
   // /^(https?|base64):/
-  if (/^(ipfs):/.test(uri)) {
-    _uri = `https://ipfs.io/ipfs/${uri.replace(/^(ipfs):\/\//, '')}`
-  }
-  return _uri
+  return uri
 }
