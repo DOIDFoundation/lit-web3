@@ -7,6 +7,7 @@ import { getMetaData } from '@lit-web3/ethers/src/metadata'
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/img/loader'
+import '@lit-web3/dui/src/loading/skeleton'
 // Styles
 import style from './list-item.css?inline'
 
@@ -57,20 +58,23 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
   render() {
     return html`<div class="item p-4">
       <div class="font-medium">
-        <dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.tokenName}</dui-link>
+        <loading-skeleton .expect=${this.tokenName}
+          ><dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.tokenName}</dui-link></loading-skeleton
+        >
       </div>
       <div class="flex gap-4 py-4">
         <img-loader class="shrink-0 w-24 h-24" src=${this.meta.image} loading="lazy"></img-loader>
         <div>
-          <div>
-            ${when(
-              this.tokenName,
-              () => html`<dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
+          <loading-skeleton .expect=${this.tokenName} num="3">
+            <div>
+              <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
                 >${this.tokenName}<i class="mdi mdi-ethereum ml-1"></i
-              ></dui-link>`
-            )}
-          </div>
-          <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta.description}</p>
+              ></dui-link>
+            </div>
+            <p class="break-words break-all text-xs lg_text-sm text-gray-500">
+              ${this.meta.description}
+            </p></loading-skeleton
+          >
         </div>
       </div>
       <div class="text-xs">
