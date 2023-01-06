@@ -6,6 +6,8 @@ import { getMetaData } from '@lit-web3/ethers/src/metadata'
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/img/loader'
+import '@lit-web3/dui/src/loading/icon'
+import '@lit-web3/dui/src/loading/skeleton'
 // Style
 import style from './item.css?inline'
 import { getNetwork, getOpensea } from '@lit-web3/ethers/src/useBridge'
@@ -95,22 +97,21 @@ export class CollectionDetail extends TailwindElement(style) {
         () =>
           html` ${when(
             this.pending,
-            () => html`<i class="mdi mdi-loading"></i>`,
+            () => html`<loading-icon></loading-icon>`,
             () =>
               html`${when(
                 !this.err,
                 () => html`<div class="my-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
-                  <div
-                    class="lg_col-span-2 flex flex-col gap-2 justify-center items-center p-4 lg_px-6 bg-gray-100 rounded-md"
-                  >
+                  <div class="lg_col-span-2 flex flex-col gap-2 items-center p-4 lg_px-6 bg-gray-100 rounded-md">
                     <img-loader
                       class="w-80 h-80 lg_w-60 lg_h-60"
                       src=${this.backgroundImage}
                       loading="lazy"
                     ></img-loader>
-
-                    <div class="text-base mb-2">${this.meta?.name}</div>
-                    <div class="break-words break-all text-gray-500">${this.meta?.description}</div>
+                    <loading-skeleton class="flex flex-col items-center" .expect=${this.meta?.name} num="3"
+                      ><div class="text-base mb-2">${this.meta?.name}</div>
+                      <div class="break-words break-all text-gray-500">${this.meta?.description}</div></loading-skeleton
+                    >
                   </div>
                   <div class="py-2 lg_mt-0 lg_col-span-3">
                     <div class="flex lg_flex-col gap-2 mb-2">
