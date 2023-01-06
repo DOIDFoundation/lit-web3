@@ -45,7 +45,7 @@ export class ImgLoader extends TailwindElement(style) {
   }
 
   observer?: IntersectionObserver
-  unobserve = () => this.observer?.unobserve(this.el$.value!)
+  unobserve = () => this.el$?.value && this.observer?.unobserve(this.el$.value!)
   observe = () => {
     if (!this.lazy || this.observer) return
     this.observer = new IntersectionObserver((entries) => {
