@@ -8,6 +8,8 @@ import {
   styleMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { getColl } from '@/lib/query'
+import { normalizeUri } from '@lit-web3/core/src/uri'
+import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
@@ -23,6 +25,7 @@ export class CollectionDetail extends TailwindElement(style) {
   @state() pending = false
   @state() err = ''
   @state() ts = 0
+  @state() meta: any = {}
 
   get doid() {
     return this.DOID?.doid
@@ -49,15 +52,10 @@ export class CollectionDetail extends TailwindElement(style) {
   @state() scanUrl = ''
 
   get empty() {
-    return !this.pending && !!this.ts && !this.meta?.name
-  }
-  get meta() {
-    return this.item.meta
+    return !this.pending && !!this.ts && !this.item.slugName
   }
 
   async getCollection() {
-    // TODO://get address after token split
-    // TODO: SET EMPTY
     if (this.pending) return
 
     if (!(this.slugName || this.tokenID || this.minter)) return
@@ -74,6 +72,9 @@ export class CollectionDetail extends TailwindElement(style) {
       this.pending = false
     }
   }
+  getMeta = async () => {
+    this.meta = await getMetaData(normalizeUri(this.item.tokenURI))
+  }
   getOpenseaUrl = async () => {
     const uri = await getOpensea()
     this.openseaUrl = this.item.openseaUri && uri ? `${uri}${this.item.openseaUri}` : ''
@@ -86,6 +87,7 @@ export class CollectionDetail extends TailwindElement(style) {
   async connectedCallback() {
     super.connectedCallback()
     await this.getCollection()
+    await this.getMeta()
     await this.getOpenseaUrl()
     await this.getScanUrl()
   }

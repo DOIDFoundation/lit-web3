@@ -1,9 +1,7 @@
 import { ZERO } from '@lit-web3/ethers/src/utils'
 import { genWhere } from '@lit-web3/core/src/graph'
-import http from '@lit-web3/core/src/http'
 import { _subgraphQuery } from './graph'
 import { cookColl } from './collection'
-import { normalizeUri } from '@lit-web3/core/src/uri'
 
 // artist hodls
 export const queryHoldlNums = async (account: string) => {
@@ -60,22 +58,10 @@ export const getColls = async (options: CollOptions): Promise<Coll[]> => {
   // exclude zero
   if (options.minter == ZERO) return []
   const { collections = [] } = (await _subgraphQuery()(genCollectionsQuery(options))) || {}
-  const data = await Promise.all(
-    collections
-      .filter((r: GraphRecord) => r.tokens.length)
-      .map((r: GraphRecord) => cookColl(r))
-      .flat()
-      .map(async (coll: Coll) => {
-        let meta: Meta = { name: '' }
-        try {
-          const uri = normalizeUri(coll.tokenURI)
-          if (uri) meta = await http['get'](uri)
-        } catch (e) {}
-        coll.meta = meta
-        return coll
-      })
-  )
-  return data
+  return collections
+    .filter((r: GraphRecord) => r.tokens.length)
+    .map((r: GraphRecord) => cookColl(r))
+    .flat()
 }
 
 export const getColl = async (options: CollOptions): Promise<Coll | undefined> => {

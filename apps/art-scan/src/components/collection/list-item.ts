@@ -10,6 +10,7 @@ import {
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { normalizeUri } from '@lit-web3/core/src/uri'
+import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
@@ -21,15 +22,13 @@ export class CollectionList extends TailwindElement(style) {
   @property() DOID?: DOIDObject
   @property({ type: Object }) item: any = {}
   @state() cooked: DOIDObject | undefined
+  @state() meta: any = {}
 
   get doid() {
     return this.DOID?.doid
   }
   get createTime() {
     return new Date(this.item.ctime).toLocaleString()
-  }
-  get meta() {
-    return this.item.meta
   }
   get token() {
     const { tokenID, sequence } = this.item
@@ -49,8 +48,12 @@ export class CollectionList extends TailwindElement(style) {
     this.cooked = await DOIDParser({ DOIDName: this.doid, token: this.token })
   }
 
-  connectedCallback(): void {
+  getMeta = async () => {
+    this.meta = await getMetaData(normalizeUri(this.item.tokenURI))
+  }
+  async connectedCallback() {
     super.connectedCallback()
+    await this.getMeta()
     this.cook()
   }
 
@@ -59,32 +62,31 @@ export class CollectionList extends TailwindElement(style) {
   }
 
   render() {
-    return html`<div class="item p-4">
-      <div class="font-medium">
-        <dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.meta?.name}</dui-link>
-      </div>
-      <div class="flex gap-4 py-4">
-        <div
-          class="w-24 h-24 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
-          style=${styleMap({ backgroundImage: `url(${this.backgroundImage})` })}
-        ></div>
-        <div>
-          ${when(
-            this.meta?.name,
-            () =>
-              html`<div>
-                <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
-                  >${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i
-                ></dui-link>
-              </div>`
-          )}
-
-          <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta?.description}</p>
+    return html`${when(
+      this.meta.name != this.doid,
+      () => html`<div class="item p-4">
+        <div class="font-medium">
+          <dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.meta.name}</dui-link>
         </div>
-      </div>
-      <div class="text-xs">
-        Minted on ${this.createTime}, Owned by <dui-address class="ml-1" .address=${this.item.owner}></dui-address>
-      </div>
-    </div> `
+        <div class="flex gap-4 py-4">
+          <div
+            class="w-24 h-24 shrink-0 bg-white bg-center bg-no-repeat bg-cover"
+            style=${styleMap({ backgroundImage: `url(${this.backgroundImage})` })}
+          ></div>
+          <div>
+            <div>
+              <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
+                >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
+              ></dui-link>
+            </div>
+
+            <p class="break-words break-all text-xs lg_text-sm text-gray-500">${this.meta.description}</p>
+          </div>
+        </div>
+        <div class="text-xs">
+          Minted on ${this.createTime}, Owned by <dui-address class="ml-1" .address=${this.item.owner}></dui-address>
+        </div>
+      </div>`
+    )}`
   }
 }
