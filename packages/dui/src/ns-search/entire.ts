@@ -2,7 +2,7 @@ import { TailwindElement, html, when, customElement, ref } from '../shared/Tailw
 import { property, state } from 'lit/decorators.js'
 import { searchStore, StateController } from './store'
 import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
-import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
+import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { ValidateDOID } from '../validator/doid'
 // Components
 import '../input/text'
@@ -37,8 +37,10 @@ export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
   async connectedCallback() {
     super.connectedCallback()
     if (typeof this.default === 'undefined') return
-    const { name = '', address = '' } = await checkDOIDName(this.default, { wrap: true })
-    this.keyword = name || address
+    const {
+      parsed: { error, val = '' }
+    } = await DOIDParser(this.default)
+    if (!error) this.keyword = val
   }
 
   render() {
