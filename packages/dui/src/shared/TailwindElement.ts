@@ -25,17 +25,14 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
     }
     // classMap from arrayify
     $c(req: [] | Record<string, unknown>) {
-      if (Array.isArray(req)) {
-        const res = {}
-        req.forEach((ret: string[] | string | Record<string, unknown>) => {
-          if (typeof ret === 'string') ret = ret.split(' ').filter((ret) => !!ret)
-          if (Array.isArray(ret)) ret = Object.fromEntries(ret.map((r) => [r, true]))
-          Object.assign(res, ret)
-        })
-        return res
-      } else {
-        return req
-      }
+      if (!Array.isArray(req)) return req
+      const res = {}
+      req.forEach((ret: string[] | string | Record<string, unknown>) => {
+        if (typeof ret === 'string') ret = ret.split(' ').filter((ret) => !!ret)
+        if (Array.isArray(ret)) ret = Object.fromEntries(ret.map((r) => [r, true]))
+        Object.assign(res, ret)
+      })
+      return res
     }
     // Query
     $(selector: string) {

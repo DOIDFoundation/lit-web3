@@ -4,7 +4,7 @@ import {
   customElement,
   property,
   state,
-  when,
+  Ref,
   styleMap,
   ref,
   createRef,
@@ -15,7 +15,7 @@ import {
 import style from './ring.css?inline'
 @customElement('dui-progress-ring')
 export class DuiProgressRing extends TailwindElement(style) {
-  el$: any = createRef()
+  el$: Ref<HTMLElement> = createRef()
 
   @property({ type: Number }) percent = 0
   @property({ type: Number }) randomTo = 0

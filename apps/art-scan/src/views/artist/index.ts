@@ -9,10 +9,10 @@ import style from './index.css?inline'
 
 @customElement('view-artist')
 export class CollectionList extends TailwindElement(style) {
-  @property() DOID!: DOIDObject
+  @property() DOID?: DOIDObject
 
   get doid() {
-    return this.DOID.doid
+    return this.DOID?.doid
   }
 
   onSearch = (e: CustomEvent) => {
@@ -28,7 +28,7 @@ export class CollectionList extends TailwindElement(style) {
   render() {
     return html`<div class="view-artist">
       <div class="dui-container">
-        <doid-search-entire .default=${this.DOID.val} @search=${this.onSearch} placeholder="DOID of artist or artwork">
+        <doid-search-entire .default=${this.DOID?.val} @search=${this.onSearch} placeholder="DOID of artist or artwork">
           <span slot="label"></span>
           <span slot="msg"></span>
         </doid-search-entire>
