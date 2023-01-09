@@ -37,7 +37,7 @@ export class CollectionList extends TailwindElement(style) {
     return this.doid && !this.pending && this.ts && !this.collections.length
   }
   get pagination(): Pagination {
-    return { page: this.page, pageSize: 3 }
+    return { page: this.page, pageSize: 5 }
   }
 
   async getCollections() {
@@ -50,9 +50,11 @@ export class CollectionList extends TailwindElement(style) {
     try {
       const collections = await getColls({ minter }, this.pagination)
       if (this.page) {
+        this.collections.push(...collections)
         this.nomore = collections.length < (this.pagination.pageSize || 1) ? true : false
+      } else {
+        this.collections = collections
       }
-      this.collections = collections
     } catch (err: any) {
       this.err = err.message || err
     } finally {

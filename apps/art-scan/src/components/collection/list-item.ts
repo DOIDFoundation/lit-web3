@@ -35,7 +35,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
     return this.cooked?.parsed?.uri
   }
   get tokenName() {
-    return this.meta.name ?? this.cooked?.parsed?.token?.name ?? this.DOID?.parsed?.token?.name
+    return this.meta?.name ?? this.cooked?.parsed?.token?.name ?? this.DOID?.parsed?.token?.name
   }
 
   cook = async () => {
@@ -63,7 +63,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
         >
       </div>
       <div class="flex gap-4 py-4">
-        <img-loader class="shrink-0 w-24 h-24" src=${this.meta.image} loading="lazy"></img-loader>
+        <img-loader class="shrink-0 w-24 h-24" .src=${this.meta?.image} loading="lazy"></img-loader>
         <div>
           <loading-skeleton .expect=${this.tokenName} num="3">
             <div>
@@ -72,7 +72,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
               ></dui-link>
             </div>
             <p class="break-words break-all text-xs lg_text-sm text-gray-500">
-              ${this.meta.description}
+              ${this.meta?.description}
             </p></loading-skeleton
           >
         </div>
