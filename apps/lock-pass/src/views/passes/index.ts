@@ -6,6 +6,7 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { formatUnits } from '@ethersproject/units'
 // Components
 import '@lit-web3/dui/src/connect-wallet/btn'
+import '@lit-web3/dui/src/loading/icon'
 import '@lit-web3/dui/src/link'
 import './share'
 import './item'
@@ -109,7 +110,7 @@ export class ViewPasses extends TailwindElement(style) {
                     html`${when(
                       this.pending,
                       // Loading
-                      () => html`<i class="mdi mdi-loading mr-1"></i>Loading...`,
+                      () => html`<loading-icon></loading-icon>`,
                       // List
                       () => html`<div class="pass-list grid md_grid-cols-2 gap-4">
                         ${repeat(

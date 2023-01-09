@@ -1,0 +1,35 @@
+.skeleton {
+  @apply inline-flex flex-col w-full h-full gap-4;
+}
+.p {
+  @apply w-24 h-full rounded-md overflow-hidden;
+  height: 1em;
+  background: rgba(222, 226, 230);
+  &::after {
+    content: '';
+    @apply block w-full h-full;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 8%,
+        rgba(255, 255, 255, 0.8) 36%,
+        rgba(255, 255, 255, 0) 66%
+      )
+      0% 0% / 1200px;
+    animation: skeleton 3s ease-in-out infinite;
+  }
+  &:nth-child(2) {
+    @apply w-36;
+  }
+  &:nth-child(3) {
+    @apply w-48;
+  }
+}
+
+@keyframes skeleton {
+  0% {
+    background-position: -1200px 0;
+  }
+  100% {
+    background-position: 1200px 0;
+  }
+}

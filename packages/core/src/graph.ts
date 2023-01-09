@@ -2,7 +2,10 @@ import http from './http'
 
 type Jsonish = Record<string, unknown>
 
-export const genWhere = (params?: Object, options: Jsonish = { allowEmpty: true, brackets: false }): string => {
+export const genWhere = (
+  params?: Record<string, unknown>,
+  options: Jsonish = { allowEmpty: true, brackets: false }
+): string => {
   if (!params) {
     return ''
   }

@@ -23,7 +23,7 @@
     "autoprefixer": "^10.4.13",
     "dotenv": "^16.0.3",
     "glob": "^8.0.3",
-    "postcss": "^8.4.20",
+    "postcss": "^8.4.21",
     "postcss-import": "^14.1.0",
     "postcss-nesting": "^10.2.0",
     "postcss-preset-env": "^7.8.3",

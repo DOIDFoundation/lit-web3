@@ -12,6 +12,7 @@ import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { getColls } from '@/lib/query'
 
 // Components
+import '@lit-web3/dui/src/loading/icon'
 import './list-item'
 import '@lit-web3/dui/src/pagination'
 // Styles
@@ -80,7 +81,9 @@ export class CollectionList extends TailwindElement(style) {
         () =>
           html` ${when(
             this.pending && !this.ts,
-            () => html`<i class="mdi mdi-loading mr-1"></i>Loading...`,
+            // Loading
+            () => html`<loading-icon></loading-icon>`,
+            // List
             () => html`<div class="grid gap-4">
                 ${repeat(
                   this.collections,

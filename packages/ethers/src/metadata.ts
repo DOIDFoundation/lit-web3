@@ -1,5 +1,6 @@
 import http from '@lit-web3/core/src/http'
 import { normalizeUri } from '@lit-web3/core/src/uri'
+import { useStorage } from './useStorage'
 
 export const normalize = (data: GraphRecord): Meta => {
   const meta = {
@@ -13,9 +14,15 @@ export const normalize = (data: GraphRecord): Meta => {
 export const getMetaData = async (tokenURI = ''): Promise<Meta> => {
   let meta: Meta = { name: '' }
   if (!tokenURI) return meta
+  // 1. from cache
+  const storage = await useStorage(`meta.${tokenURI}`, sessionStorage, true)
+  meta = await storage.get()
+  if (meta) return meta
+  // 2. from tokenURI
   try {
     const uri = normalizeUri(tokenURI)
-    meta = await http.get(uri)
+    meta = normalize(await http.get(uri))
   } catch (e) {}
-  return normalize(meta)
+  if (meta) storage.set(meta)
+  return meta
 }

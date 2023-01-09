@@ -10,7 +10,7 @@ export const queryHoldlNums = async (account: string) => {
     mintNum = 0
   if (account != ZERO) {
     const res = await _subgraphQuery()(
-      `{
+      `query tokens{
         owns: tokens(
           orderBy: createdAt
           orderDirection: desc
@@ -44,9 +44,7 @@ export const genCollectionsQuery = (
     collections(${genPaging(pagination)} ${genWhere(
     { artist: minter.toLowerCase(), slug: slugName },
     { allowEmpty: false }
-  )}
-      orderBy: totalTokens orderDirection: desc
-    ) {
+  )} orderBy: totalTokens orderDirection: desc) {
       id slug tokens(orderBy: createdAt, orderDirection: desc, ${genWhere(
         {
           collectionId: tokenID,
