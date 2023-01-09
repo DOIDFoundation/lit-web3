@@ -136,6 +136,7 @@ export class EditInline extends TailwindElement(style) {
             .owner=${this.isOwner}
             .currentAddr=${this.address}
             @success=${this.onSuccess}
+            class="mt-4"
           ></doid-set-record-wallet>`
       )}`
   }

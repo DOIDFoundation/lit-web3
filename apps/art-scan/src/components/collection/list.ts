@@ -13,7 +13,7 @@ import { getColls } from '@/lib/query'
 
 // Components
 import './list-item'
-
+import '@lit-web3/dui/src/pagination'
 // Styles
 import style from './list.css?inline'
 
@@ -25,13 +25,18 @@ export class CollectionList extends TailwindElement(style) {
   @state() err = ''
   @state() ts = 0
   @state() collections: any[] = []
+  @state() nomore = true
+  // pagination
+  @state() page = 1
 
   get doid() {
     return this.DOID?.doid
   }
-
   get empty() {
     return this.doid && !this.pending && this.ts && !this.collections.length
+  }
+  get pagination(): Pagination {
+    return { page: this.page, pageSize: 3 }
   }
 
   async getCollections() {
@@ -42,14 +47,24 @@ export class CollectionList extends TailwindElement(style) {
     this.pending = true
     this.err = ''
     try {
-      const collections = (await getColls({ minter })) as any[]
-      this.collections = collections || []
+      const collections = (await getColls({ minter }, this.pagination)) as any[]
+      if (this.page) {
+        this.nomore = collections.length < (this.pagination.pageSize || 1) ? true : false
+        this.collections.push(...collections)
+      } else {
+        this.collections = collections || []
+      }
     } catch (err: any) {
       this.err = err.message || err
     } finally {
       this.ts++
       this.pending = false
     }
+  }
+
+  loadmore = () => {
+    this.page++
+    this.getCollections()
   }
 
   connectedCallback() {
@@ -64,22 +79,30 @@ export class CollectionList extends TailwindElement(style) {
         () => html`No collection yet.`,
         () =>
           html` ${when(
-            this.pending,
-            // Loading
+            this.pending && !this.ts,
             () => html`<i class="mdi mdi-loading mr-1"></i>Loading...`,
-            // List
             () => html`<div class="grid gap-4">
-              ${repeat(
-                this.collections,
-                (item: any) =>
-                  html`${keyed(
-                    item,
-                    html`<div class="bg-gray-100 mb-1 break-words break-all rounded-md">
-                      <doid-coll-item .DOID=${this.DOID} .item=${item}></doid-coll-item>
-                    </div>`
-                  )}`
-              )}
-            </div>`
+                ${repeat(
+                  this.collections,
+                  (item: any) =>
+                    html`${keyed(
+                      item,
+                      html`<div class="bg-gray-100 mb-1 break-words break-all rounded-md">
+                        <doid-coll-item .DOID=${this.DOID} .item=${item}></doid-coll-item>
+                      </div>`
+                    )}`
+                )}
+              </div>
+              ${when(
+                this.ts,
+                () => html`<dui-pagination
+                  .pending=${this.pending}
+                  .all=${this.nomore}
+                  page-size="1"
+                  page=${this.page}
+                  @loadmore=${this.loadmore}
+                ></dui-pagination>`
+              )} `
           )}`
       )}
     </div>`
