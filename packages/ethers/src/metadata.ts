@@ -14,8 +14,12 @@ export const normalize = (data: GraphRecord): Meta => {
 export const getMetaData = async (tokenURI = ''): Promise<Meta> => {
   let meta: Meta = { name: '' }
   if (!tokenURI) return meta
-  // 1. from cache
-  const storage = await useStorage(`meta.${tokenURI}`, sessionStorage, true)
+  // 1. from cache (1d)
+  const storage = await useStorage(`meta.${tokenURI}`, {
+    store: sessionStorage,
+    withoutEnv: true,
+    ttl: 86400000
+  })
   meta = await storage.get()
   if (meta) return meta
   // 2. from tokenURI

@@ -7,8 +7,12 @@ import { bareTLD } from '../nsResolver/checker'
 
 export const reverseDOIDName = async (DOIDName = ''): Promise<Address> => {
   let ethAddr = ''
-  // 1. from cache
-  const storage = await useStorage(`doid.eth.${DOIDName}`, sessionStorage, true)
+  // 1. from cache (10m)
+  const storage = await useStorage(`doid.eth.${DOIDName}`, {
+    store: sessionStorage,
+    withoutEnv: true,
+    ttl: 1000 * 60 * 10
+  })
   ethAddr = await storage.get()
   if (ethAddr) return ethAddr
   // 2. from wallet

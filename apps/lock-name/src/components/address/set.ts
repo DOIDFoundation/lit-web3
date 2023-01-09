@@ -83,7 +83,7 @@ export class SetRecordWallet extends TailwindElement(style) {
     this.dialog = false
   }
   getStorage = async () => {
-    return await useStorage(`sign.${this.name}`, sessionStorage, true)
+    return await useStorage(`sign.${this.name}`, { store: sessionStorage, withoutEnv: true })
   }
   getStoredInfo = async () => {
     const storage = await this.getStorage()

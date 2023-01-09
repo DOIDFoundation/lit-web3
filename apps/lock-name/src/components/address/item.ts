@@ -93,7 +93,7 @@ export class EditInline extends TailwindElement(style) {
 
   async connectedCallback() {
     super.connectedCallback()
-    this.storage = await useStorage(`sign.${this.name}`, sessionStorage, true)
+    this.storage = await useStorage(`sign.${this.name}`, { store: sessionStorage, withoutEnv: true })
     await this.checkEditInfo()
     emitter.on('addr-edit', this.listener)
     this.storage.on(this.listener)

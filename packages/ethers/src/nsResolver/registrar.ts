@@ -7,7 +7,7 @@ import { useStorage } from '../useStorage'
 
 export const secretKey = async (name: string) => `.${name}`
 export const now = () => new Date().getTime()
-const getStorage = async (name: string) => await useStorage(`reg.${name}`, sessionStorage)
+const getStorage = async (name: string) => await useStorage(`reg.${name}`, { store: sessionStorage })
 const seed = 'secret'
 
 export const getCommitment = async (name: string): Promise<Commitment | undefined> => {

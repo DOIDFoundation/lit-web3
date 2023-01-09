@@ -1,26 +1,44 @@
 import { getEnvKey } from './useBridge'
 
-export const useStorage = async (name: string, store = localStorage, withoutEnv = false) => {
+const now = () => new Date().getTime()
+export const useStorage = async (name: string, { store = localStorage, withoutEnv = false, ttl = 0 } = {}) => {
+  const withExpire = ttl > 0
+  let saved = null
   const get = async () => {
     const itemKey = await getEnvKey(name, withoutEnv)
-    const saved = store.getItem(itemKey)
-    if (saved) return JSON.parse(saved)
+    saved = store.getItem(itemKey)
+    if (saved) {
+      saved = JSON.parse(saved)
+      //
+      if (withExpire) {
+        const { ex, data } = saved
+        if (now > ex) {
+          remove()
+          return null
+        }
+        return data
+      }
+    }
+    return saved
   }
-  let listener: EventListener = (e: Event) => {}
+  const set = async (data: unknown, { merge = false } = {}) => {
+    const key = await getEnvKey(name, withoutEnv)
+    if (merge) data = Object.assign((await get()) ?? {}, data)
+    const val = withExpire ? { data, ex: now() + ttl } : data
+    store.setItem(key, JSON.stringify(val))
+  }
+  const remove = async () => store.removeItem(await getEnvKey(name, withoutEnv))
+  let listener: EventListener
   return {
     get,
-    set: async (data: unknown, { merge = false } = {}) => {
-      const key = await getEnvKey(name, withoutEnv)
-      if (merge) data = Object.assign((await get()) ?? {}, data)
-      store.setItem(key, JSON.stringify(data))
-    },
-    remove: async () => store.removeItem(await getEnvKey(name, withoutEnv)),
+    set,
+    remove,
     on: (fn: EventListener) => {
       if (listener != fn) listener = fn
       window.addEventListener('storage', listener)
     },
     off: () => {
-      window.removeEventListener('storage', listener)
+      if (listener) window.removeEventListener('storage', listener)
     }
   }
 }
