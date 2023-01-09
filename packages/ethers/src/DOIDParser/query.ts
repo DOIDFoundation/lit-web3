@@ -18,12 +18,16 @@ export const reverseDOIDName = async (DOIDName = ''): Promise<Address> => {
   }
   // 3. from graph
   if (!ethAddr) {
-    const api = await getGraph()
-    const { doids = [] } = await subgraphQuery(
-      `{doids(where:{name:"${bareTLD(DOIDName)}"}){coinType address {id}}}`,
-      api
-    )
-    ethAddr = doids.length ? doids[0].address.id : ZERO
+    try {
+      const api = await getGraph()
+      const { doids = [] } = await subgraphQuery(
+        `query doids{doids(where:{name:"${bareTLD(DOIDName)}"}){coinType address {id}}}`,
+        api
+      )
+      ethAddr = doids.length ? doids[0].address.id : ZERO
+    } catch (err: any) {
+      console.error(err.messages)
+    }
   }
   if (ethAddr) storage.set(ethAddr)
   return ethAddr
