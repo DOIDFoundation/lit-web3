@@ -25,6 +25,17 @@ export const genWhere = (
   return options.brackets ? `(where: {${query}})` : `${options.allowEmpty || !empty_param ? `where: {${query}}` : ''}`
 }
 
+export const genPaging = (paging?: Pagination) => {
+  if (!paging) return ''
+  const { page, pageSize } = paging
+  const str: string[] = []
+  if (pageSize) {
+    str.push(`first: ${pageSize}`)
+    if (page && page > 1) str.push(`skip:${+pageSize * (+page - 1)}`)
+  }
+  return str.join(' ')
+}
+
 export const subgraphQuery = async (query: string, api: string): Promise<any> => {
   let res = {}
   if (!api) throw new Error(`No support`)

@@ -1,5 +1,5 @@
 import { ZERO } from '@lit-web3/ethers/src/utils'
-import { genWhere } from '@lit-web3/core/src/graph'
+import { genWhere, genPaging } from '@lit-web3/core/src/graph'
 import { _subgraphQuery } from './graph'
 import { cookColl } from './collection'
 
@@ -34,13 +34,17 @@ export const queryHoldlNums = async (account: string) => {
   return { ownNum, mintNum }
 }
 
-export const genCollectionsQuery = ({ minter = '', slugName = '', tokenID = '', sequence = '' } = <CollOptions>{}) => {
+export const genCollectionsQuery = (
+  { minter = '', slugName = '', tokenID = '', sequence = '' } = <CollOptions>{},
+  pagination?: Pagination
+) => {
   // slugName's priority is lower
   if (minter && tokenID && sequence) slugName = ''
-  return `query collections{
-    collections(${genWhere({ artist: minter.toLowerCase(), slug: slugName }, { allowEmpty: false })}
-      orderBy: totalTokens orderDirection: desc
-    ) {
+  return `{
+    collections(${genPaging(pagination)} ${genWhere(
+    { artist: minter.toLowerCase(), slug: slugName },
+    { allowEmpty: false }
+  )} orderBy: totalTokens orderDirection: desc) {
       id slug tokens(orderBy: createdAt, orderDirection: desc, ${genWhere(
         {
           collectionId: tokenID,
@@ -54,10 +58,13 @@ export const genCollectionsQuery = ({ minter = '', slugName = '', tokenID = '', 
   }`
 }
 
-export const getColls = async (options: CollOptions): Promise<Coll[]> => {
+export const getColls = async (
+  options: CollOptions,
+  pagination: Pagination = { pageSize: 5, page: 1 }
+): Promise<Coll[]> => {
   // exclude zero
   if (options.minter == ZERO) return []
-  const { collections = [] } = (await _subgraphQuery()(genCollectionsQuery(options))) || {}
+  const { collections = [] } = (await _subgraphQuery()(genCollectionsQuery(options, pagination))) || {}
   return collections
     .filter((r: GraphRecord) => r.tokens.length)
     .map((r: GraphRecord) => cookColl(r))
