@@ -1,28 +1,12 @@
-import http from './http'
+import http, { Jsonish } from './http'
 
-type Jsonish = Record<string, unknown>
-
-export const genWhere = (
-  params?: Record<string, unknown>,
-  options: Jsonish = { allowEmpty: true, brackets: false }
-): string => {
-  if (!params) {
-    return ''
-  }
-  const str: string[] = []
-  let empty_param = true
+export const genWhere = (params: Jsonish = {}): string => {
+  let conditions: string[] = []
   for (let k in params) {
-    let val: any = params[k]
-    if (options.allowEmpty) {
-      str.push(`${k}: "${val}"`)
-      empty_param = false
-    } else if (val || val == '0') {
-      empty_param = false
-      str.push(`${k}: "${val}"`)
-    }
+    let v = params[k]
+    if (v) conditions.push(`${k}:"${v}"`)
   }
-  const query = str.length ? `${str.join(', ')}` : ''
-  return options.brackets ? `(where: {${query}})` : `${options.allowEmpty || !empty_param ? `where: {${query}}` : ''}`
+  return conditions.join(' ')
 }
 
 export const genPaging = (paging?: Pagination) => {
@@ -30,17 +14,17 @@ export const genPaging = (paging?: Pagination) => {
   const { page, pageSize } = paging
   const str: string[] = []
   if (pageSize) {
-    str.push(`first: ${pageSize}`)
+    str.push(`first:${pageSize}`)
     if (page && page > 1) str.push(`skip:${+pageSize * (+page - 1)}`)
   }
   return str.join(' ')
 }
 
-export const subgraphQuery = async (query: string, api: string): Promise<any> => {
+export const subgraphQuery = async (api: string, query: string): Promise<any> => {
   let res = {}
   if (!api) throw new Error(`No support`)
   try {
-    res = await http.post(api, { query: query })
+    res = await http.post(api, { query })
   } catch (e: any) {
     throw new Error('GRAPH_QUERY_FAILED:' + e)
   }

@@ -5,26 +5,14 @@ import { cookColl } from './collection'
 
 // artist hodls
 export const queryHoldlNums = async (account: string) => {
-  const _account = account.toLowerCase()
+  const acc = account.toLowerCase()
   let ownNum = 0,
     mintNum = 0
   if (account != ZERO) {
     const res = await _subgraphQuery()(
-      `query tokens{
-        owns: tokens(
-          orderBy: createdAt
-          orderDirection: desc
-          where: {owner_: {id: "${_account}"}}
-        ) {
-          id
-        }
-        mints: tokens(
-          orderBy: createdAt
-          orderDirection: desc
-          where: {artist: "${_account}"}
-        ) {
-          id collection {id}
-        }
+      `{
+        owns:tokens(orderBy:createdAt orderDirection:desc where:{owner:"${acc}"}) {id}
+        mints:tokens(orderBy:createdAt orderDirection:desc where:{minter:"${acc}"}) {id}
       }`
     )
     const { owns = [], mints = [] } = res
@@ -34,26 +22,12 @@ export const queryHoldlNums = async (account: string) => {
   return { ownNum, mintNum }
 }
 
-export const genCollectionsQuery = (
-  { minter = '', slugName = '', tokenID = '', sequence = '' } = <CollOptions>{},
-  pagination?: Pagination
-) => {
-  // slugName's priority is lower
-  if (minter && tokenID && sequence) slugName = ''
+export const genCollectionsQuery = ({ minter = '', tokenID = '' } = <CollOptions>{}, pagination?: Pagination) => {
+  minter = minter.toLowerCase()
+  const conditions = { minter, tokenID }
   return `{
-    collections(${genPaging(pagination)} ${genWhere(
-    { artist: minter.toLowerCase(), slug: slugName },
-    { allowEmpty: false }
-  )} orderBy: totalTokens orderDirection: desc) {
-      id slug tokens(orderBy: createdAt, orderDirection: desc, ${genWhere(
-        {
-          collectionId: tokenID,
-          collectionSeq: sequence
-        },
-        { allowEmpty: false }
-      )}) {
-        id collectionId collectionSeq tokenURI createdAt owner { id } contract {id}
-      }
+    tokens(${genPaging(pagination)} where:{${genWhere(conditions)}} orderBy:createdAt orderDirection:desc){
+      id tokenURI createdAt owner { id }
     }
   }`
 }
@@ -64,11 +38,8 @@ export const getColls = async (
 ): Promise<Coll[]> => {
   // exclude zero
   if (options.minter == ZERO) return []
-  const { collections = [] } = (await _subgraphQuery()(genCollectionsQuery(options, pagination))) || {}
-  return collections
-    .filter((r: GraphRecord) => r.tokens.length)
-    .map((r: GraphRecord) => cookColl(r))
-    .flat()
+  const { tokens = [] } = (await _subgraphQuery()(genCollectionsQuery(options, pagination))) || {}
+  return tokens.map(cookColl)
 }
 
 export const getColl = async (options: CollOptions): Promise<Coll | undefined> => {

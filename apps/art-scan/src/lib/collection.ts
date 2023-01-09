@@ -1,27 +1,16 @@
-const cookToken = (token: GraphRecord): NFTToken => {
-  const {
-    collectionId: tokenID,
-    collectionSeq: sequence,
-    contract: { id: address = '' } = {},
-    tokenURI,
-    owner: { id: owner = '' } = {}
-  } = token
+export const cookToken = (token: GraphRecord): NFTToken => {
+  const { id, tokenURI, owner: { id: owner = '' } = {} } = token
+  const [address, tokenID] = id ? id.toString().split('-') : [token.contract.id, token.tokenID]
   return {
-    tokenID,
-    sequence,
     address,
+    tokenID,
     ctime: token.createdAt * 1000,
     tokenURI,
     owner
   }
 }
 
-export const cookColl = (coll: GraphRecord): Coll[] => {
-  const { id: slugID = '', slug: slugName = '' } = coll
-
-  return coll.tokens.map((token: GraphRecord): Coll => {
-    const cooked = cookToken(token)
-    const res = Object.assign(cooked, { slugName, slugID, openseaUri: `/${cooked.address}/${cooked.tokenID}` })
-    return res
-  })
+export const cookColl = (token: GraphRecord): Coll => {
+  const cooked = cookToken(token)
+  return Object.assign(cooked, { openseaUri: `/${cooked.address}/${cooked.tokenID}` })
 }

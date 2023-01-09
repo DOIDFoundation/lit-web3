@@ -8,7 +8,7 @@ export const _subgraphQuery =
     const api = (await getGraph(path)) || ''
     let res: GraphRecord = {}
     try {
-      res = await subgraphQuery(query, api)
+      res = await subgraphQuery(api, query)
     } catch (e) {
       // throw e
     }

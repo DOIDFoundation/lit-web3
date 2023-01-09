@@ -48,13 +48,11 @@ export class CollectionList extends TailwindElement(style) {
     this.pending = true
     this.err = ''
     try {
-      const collections = (await getColls({ minter }, this.pagination)) as any[]
+      const collections = await getColls({ minter }, this.pagination)
       if (this.page) {
         this.nomore = collections.length < (this.pagination.pageSize || 1) ? true : false
-        this.collections.push(...collections)
-      } else {
-        this.collections = collections || []
       }
+      this.collections = collections
     } catch (err: any) {
       this.err = err.message || err
     } finally {

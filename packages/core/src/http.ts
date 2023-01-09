@@ -32,7 +32,7 @@ const parseRes = function (response: any) {
     })
 }
 
-type Jsonish = Record<string, unknown>
+export type Jsonish = Record<string, unknown>
 
 const http = async function (uri: string, options: Jsonish = {}) {
   const opts = {
