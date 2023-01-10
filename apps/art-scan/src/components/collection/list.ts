@@ -48,7 +48,7 @@ export class CollectionList extends TailwindElement(style) {
     this.pending = true
     this.err = ''
     try {
-      const collections = await getColls({ minter }, this.pagination)
+      const collections = await getColls({ minter, doid: this.doid }, this.pagination)
       if (this.page) {
         this.nomore = collections.length < (this.pagination.pageSize || 1) ? true : false
       }

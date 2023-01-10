@@ -1,11 +1,12 @@
 import { TailwindElement, customElement, html, property, when, classMap, state } from '../shared/TailwindElement'
 import { LazyElement } from '../shared/LazyElement'
+import comporess from './compress'
 // Styles
 import style from './loader.css?inline'
 
 @customElement('img-loader')
 export class ImgLoader extends LazyElement(TailwindElement(style)) {
-  @property() src = ''
+  @property({ type: String }) src = ''
   @property() loaded = false
   @property() stop = false
   @property({ type: String }) loading = 'eager'
@@ -13,13 +14,17 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
   @state() imgLoaded = this.loaded
   @state() err = false
   @state() show = false
+  @state() blobSrc = ''
 
   get lazy() {
     return this.loading === 'lazy'
   }
+  get requireComporess() {
+    return this.src && !/\?(w|width)=/.test(this.src) && !this.blobSrc
+  }
   get uri() {
     if (!this.show || this.err) return ''
-    return this.src
+    return this.requireComporess ? this.blobSrc : this.src
   }
   get empty() {
     return !this.src || !this.uri
@@ -34,6 +39,13 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
 
   override onObserved = () => {
     this.show = true
+  }
+
+  protected shouldUpdate(props: Map<PropertyKey, unknown>): boolean {
+    if (props.has('src') && this.requireComporess) {
+      comporess(this.src).then((src) => (this.blobSrc = src))
+    }
+    return true
   }
 
   connectedCallback() {

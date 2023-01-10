@@ -8,7 +8,6 @@ declare interface NetworkInfo {
   providerWs?: string
   scan: string
   icon: string
-  native?: Record<string, unknown>
   domain?: string
 }
 declare interface ChainType {
@@ -35,3 +34,4 @@ declare interface Token {
   address?: string
 }
 declare type Tokenish = Token | string | any
+declare type ChainConf = Record<string, Record<string, string>>

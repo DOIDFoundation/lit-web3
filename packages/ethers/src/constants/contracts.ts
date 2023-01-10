@@ -1,5 +1,5 @@
 // All Contracts
-export const AllContracts: Record<string, Record<string, string>> = {
+export const AllContracts: ChainConf = {
   MultiCall: {
     '0x1': '0xeefba1e63905ef1d7acba5a8513c70307c1ce441',
     '0xaa36a7': '0x53c43764255c17bd724f74c4ef150724ac50a3ed',

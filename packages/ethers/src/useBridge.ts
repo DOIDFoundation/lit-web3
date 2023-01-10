@@ -1,5 +1,5 @@
 import { State, property } from '@lit-app/state'
-import Network from './networks'
+import Network, { Networks } from './networks'
 import Contracts from './constants/contracts'
 import { Bridge } from './bridge'
 import emitter from '@lit-web3/core/src/emitter'
@@ -141,6 +141,7 @@ export const getWalletAccount = async () =>
   ((await (await getBridgeProvider()).send('eth_requestAccounts')) ?? [])[0] ?? ''
 export const getAccount = async (force = false) => (force ? await getWalletAccount() : (await getBridge()).account)
 export const getNetwork = async () => (await getBridge()).network.current
+export const getNetworkSync = () => Networks[Network.chainId]
 export const getChainId = async () => (await getNetwork()).chainId
 export const getEnvKey = async (key = '', withoutAddr = false) =>
   (withoutAddr ? await getChainId() : (await useBridgeAsync()).envKey) + (key ? `.${key}` : '')
@@ -154,8 +155,6 @@ export const getNonce = async (address?: string) => {
   return await bridgeInstance.provider.getTransactionCount(address)
 }
 export const getGraph = async (path = '') => ((await getNetwork()).graph ?? '') + path
-
-export const getOpensea = async (path = '') => ((await getNetwork()).opensea ?? '') + path
 
 // offest: past seconds, default: 0 (current block)
 // blockNumber, default: current block

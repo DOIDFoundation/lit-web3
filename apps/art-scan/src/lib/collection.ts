@@ -12,5 +12,5 @@ export const cookToken = (token: GraphRecord): NFTToken => {
 
 export const cookColl = (token: GraphRecord): Coll => {
   const cooked = cookToken(token)
-  return Object.assign(cooked, { openseaUri: `/${cooked.address}/${cooked.tokenID}` })
+  return Object.assign(cooked, {})
 }
