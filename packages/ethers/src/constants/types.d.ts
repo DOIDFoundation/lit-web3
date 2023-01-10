@@ -8,6 +8,7 @@ declare interface NetworkInfo {
   providerWs?: string
   scan: string
   icon: string
+  native?: Record<string, unknown>
   domain?: string
 }
 declare interface ChainType {

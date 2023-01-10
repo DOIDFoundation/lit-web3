@@ -94,7 +94,6 @@ class MetaMask implements Wallet {
     }
     this.disconnect()
     if (!ethereum) return
-    localStorage.setItem('metamask.injected', '1')
     this.updateProvider(await getChainId(ethereum))
     this.state = WalletState.CONNECTING
     try {
