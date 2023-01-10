@@ -28,11 +28,11 @@ export const reverseDOIDName = async (DOIDName = ''): Promise<Address> => {
         api,
         `{doids(where:{name:"${bareTLD(DOIDName)}"}){coinType address {id}}}`
       )
-      ethAddr = doids.length ? doids[0].address.id : ZERO
+      if (doids.length) ethAddr = doids[0].address.id
     } catch (err: any) {
       console.error(err.messages)
     }
   }
   if (ethAddr) storage.set(ethAddr)
-  return ethAddr
+  return ethAddr ?? ZERO
 }

@@ -79,7 +79,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
                   'bg-green-600': !!this.meta.sync,
                   'bg-gray-500': !this.meta.sync
                 })}"
-                >${this.meta.sync ? 'Synced' : 'Unsync'}</b
+                >${this.meta.sync ? 'Synced' : 'Unsynced'}</b
               >
               <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
                 >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i

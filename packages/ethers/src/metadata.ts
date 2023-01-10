@@ -4,15 +4,16 @@ import { useStorage } from './useStorage'
 import { getChainId } from './useBridge'
 import { getOpenseaUri } from './constants/opensea'
 import slugify from '@lit-web3/core/src/slugify'
-import { sleep } from './utils'
+import { sleep, nowTs } from './utils'
 import { safeEncodeURIComponent } from '@lit-web3/core/src/uri'
 
 export const normalize = (data: GraphRecord): Meta => {
-  const { background_color, name = '', owner = '', external_link } = data
+  const { background_color, owner = '', external_link, asset_contract, collection } = data
   const img = data.image_url || data.image || ''
+  const name = data.name || collection?.name
   const meta = {
     name,
-    description: data.collection?.description || data.asset_contract?.description || data.description,
+    description: data.description || collection?.description,
     slug: slugify(name),
     image: normalizeUri(data.image_preview_url || data.image_thumbnail_url || img),
     raw: normalizeUri(data.image_original_url || img),
@@ -26,22 +27,22 @@ export const normalize = (data: GraphRecord): Meta => {
 // meta cache (1d)
 const storageOptions = { store: sessionStorage, withoutEnv: true, ttl: 86400000 }
 
-let pending = false
+let pendingTs = 0
 // OpenSea only accept 1 req/sec.
 export const throttle = async (uri: string): Promise<Meta> => {
   let meta: Meta = {}
-  if (pending) {
+  if (pendingTs) {
     await sleep(50)
     return await throttle(uri)
   }
-  pending = true
+  pendingTs = nowTs()
   try {
     meta = await http.get(uri)
     setTimeout(() => {
-      pending = false
-    }, 1000)
+      pendingTs = 0
+    }, Math.max(nowTs() - pendingTs, 1024))
   } catch (err) {
-    pending = false
+    pendingTs = 0
   }
   return meta
 }
