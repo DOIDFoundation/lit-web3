@@ -1,14 +1,15 @@
 import { TailwindElement, html, customElement, property, when, classMap } from '../shared/TailwindElement'
+import { LazyElement } from '../shared/LazyElement'
 
 // Components
 import '../link'
 // Styles
 import style from './index.css?inline'
 @customElement('dui-pagination')
-export class DuiPagination extends TailwindElement(style) {
-  @property() pageSize = 5
+export class DuiPagination extends LazyElement(TailwindElement(style), { persistent: true }) {
+  @property() pageSize = 10
   @property() page = 1
-  @property() mode = 'auto' //scroll or click auto
+  @property() mode = 'scroll' //scroll or click auto
   @property() pending? = false
   @property() all = false // all loaded
   @property() class = ''
@@ -19,6 +20,9 @@ export class DuiPagination extends TailwindElement(style) {
   get enable() {
     return !this.pending && !this.nomore
   }
+  get scrollMode() {
+    return this.mode === 'scroll'
+  }
   loadmore() {
     if (!this.enable) return
     const { pageSize, page, mode } = this
@@ -26,6 +30,9 @@ export class DuiPagination extends TailwindElement(style) {
   }
   connectedCallback() {
     super.connectedCallback()
+  }
+  override onObserved = () => {
+    this.loadmore()
   }
   // nomore
   // loading
@@ -51,7 +58,7 @@ export class DuiPagination extends TailwindElement(style) {
             html`${when(
               this.pending,
               () => html` <slot name="loading"><i class="mdi mdi-loading ml-1"></i></slot>`,
-              () => html` <slot><dui-link>Load more</dui-link></slot>`
+              () => html`${when(this.scrollMode, () => html`<slot><dui-link>Load more</dui-link></slot>`)}`
             )}`
         )}
       </div>
