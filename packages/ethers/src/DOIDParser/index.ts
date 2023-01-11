@@ -12,7 +12,7 @@ const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Pr
   token.slugName = slugify(token.name ?? '')
   const val = stringify(cooked)
   const equal = decoded === val
-  if (equal) token.minter = await reverseDOIDName(name)
+  if (equal && name) token.minter = await reverseDOIDName(name)
   Object.assign(cooked, {
     val,
     equal,

@@ -4,13 +4,7 @@ import { subgraphQuery } from '@lit-web3/core/src/graph'
 //WIP: update graph query
 export const _subgraphQuery =
   (path = '') =>
-  async (query: string) => {
+  async (query: string): Promise<GraphRecord> => {
     const api = (await getGraph(path)) || ''
-    let res: GraphRecord = {}
-    try {
-      res = await subgraphQuery(api, query)
-    } catch (e) {
-      // throw e
-    }
-    return res
+    return await subgraphQuery(api, query)
   }

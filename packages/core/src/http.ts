@@ -21,11 +21,25 @@ const parseRes = function (response: any) {
     })
     .then(function (res: any) {
       const data = res.data ?? res.result ?? res
-      const code = res.error_code ?? data.error_code ?? data.code ?? data.error ?? res.code ?? response.status
+      const code =
+        res.error_code ??
+        data.error_code ??
+        data.code ??
+        data.error ??
+        res.code ??
+        (data.errors ? 'Errors' : undefined) ??
+        response.status
       if (code && ![200].includes(code)) {
         // Response error
         const message =
-          data.error_message || data.error_msg || data.message || data.msg || res.msg || res.message || res.data
+          data.error_message ||
+          data.error_msg ||
+          data.message ||
+          data.msg ||
+          res.msg ||
+          res.message ||
+          res.data ||
+          (data.errors ?? []).map((r: any) => r.message).join('\n\n')
         throw Object.assign(new Error(code), { code, message, raw: response })
       }
       return data
