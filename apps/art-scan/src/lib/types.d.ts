@@ -14,6 +14,7 @@ declare interface Coll extends NFTToken {
 declare type GraphRecord = Record<string, any>
 declare type CollOptions = {
   name?: string
+  doid?: string
   minter?: string
   slugName?: string
   tokenID?: string

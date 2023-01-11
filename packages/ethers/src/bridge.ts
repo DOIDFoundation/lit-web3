@@ -120,20 +120,22 @@ export class Bridge {
   get isConnected() {
     return this.state === WalletState.CONNECTED
   }
-  connecting = false
+  connecting: any = undefined
   connectedAccounts = []
   async tryConnect(auto = false) {
-    if (this.connecting) return
-    this.connecting = true
-    if (this.wallet?.inited) return
-    let { ethereum } = window
-    if (auto || ethereum) ethereum = await detectEthereum()
-    if (ethereum?.isMetaMask && localStorage.getItem('metamask.injected')) {
-      this.connectedAccounts = (await getAccounts(ethereum)) || []
-      if (this.connectedAccounts[0]) await this.select(0)
-    }
-    this.connecting = false
-    this.alreadyTried = true
+    if (!this.connecting)
+      this.connecting = (async () => {
+        if (this.wallet?.inited) return
+        let { ethereum } = window
+        if (auto || ethereum) ethereum = await detectEthereum()
+        if (ethereum?.isMetaMask && localStorage.getItem('metamask.injected')) {
+          this.connectedAccounts = (await getAccounts(ethereum)) || []
+          if (this.connectedAccounts[0]) await this.select(0)
+        }
+        this.connecting = undefined
+        this.alreadyTried = true
+      })()
+    return this.connecting
   }
   async connect() {
     return this.wallet?.connect()

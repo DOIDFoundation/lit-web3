@@ -74,5 +74,4 @@ export class Network {
     return this.current.name
   }
 }
-
 export default Network

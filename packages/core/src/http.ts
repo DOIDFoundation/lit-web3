@@ -13,7 +13,7 @@ const checkStatus = function (response: Response) {
 const parseRes = function (response: any) {
   const contentType = response.headers.get('content-type')
   if (/^image\//.test(contentType)) return response.blob()
-  if (/(markdown|plain)$/.test(contentType)) return response.text()
+  if (/^(text)\//.test(contentType)) return response.text()
   return response
     .json()
     .catch(function (err: Error) {

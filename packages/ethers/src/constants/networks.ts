@@ -11,7 +11,8 @@ export const AllNetworks = {
     scan: 'https://etherscan.io',
     icon: '',
     graph: 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.5',
-    opensea: 'https://opensea.io/assets/ethereum'
+    opensea: 'https://opensea.io/assets/ethereum',
+    openseaApi: 'https://api.opensea.io/api/v1/asset/'
   },
   '0xaa36a7': {
     chainId: '0xaa36a7',
@@ -24,7 +25,8 @@ export const AllNetworks = {
     scan: 'https://sepolia.etherscan.io',
     icon: '',
     graph: 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.5',
-    opensea: ''
+    opensea: 'https://testnets.opensea.io/assets/sepolia',
+    openseaApi: 'https://testnets-api.opensea.io/api/v1/assets'
   },
   '0x5': {
     chainId: '0x5',
@@ -37,7 +39,8 @@ export const AllNetworks = {
     scan: 'https://goerli.etherscan.io',
     icon: '',
     graph: 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.5',
-    opensea: 'https://testnets.opensea.io/assets/goerli'
+    opensea: 'https://testnets.opensea.io/assets/goerli',
+    openseaApi: 'https://testnets-api.opensea.io/api/v1/assets'
   }
 }
 export const EtherNetworks = ['0x1', '0xaa36a7', '0x5']

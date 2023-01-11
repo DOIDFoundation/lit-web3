@@ -36,10 +36,11 @@ export const getColls = async (
   options: CollOptions,
   pagination: Pagination = { pageSize: 5, page: 1 }
 ): Promise<Coll[]> => {
+  const { minter, doid } = options
   // exclude zero
-  if (options.minter == ZERO) return []
+  if (minter == ZERO) return []
   const { tokens = [] } = (await _subgraphQuery()(genCollectionsQuery(options, pagination))) || {}
-  return tokens.map(cookColl)
+  return tokens.map((token: NFTToken) => Object.assign(cookColl(token), { minter, doid }))
 }
 
 export const getColl = async (options: CollOptions): Promise<Coll | undefined> => {

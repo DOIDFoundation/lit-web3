@@ -1,4 +1,11 @@
-import { TailwindElement, html, customElement, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  property,
+  classMap,
+  state
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import { LazyElement } from '@lit-web3/dui/src/shared/LazyElement'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
@@ -34,27 +41,31 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
     return this.cooked?.parsed?.uri
   }
   get tokenName() {
-    return this.meta?.name ?? this.cooked?.parsed?.token?.name ?? this.DOID?.parsed?.token?.name
+    return this.cooked?.parsed?.val
   }
   get owner() {
     const { doids = [], id } = this.item.owner as CollOwner
-    return Object.assign({}, { name: doids[0].name || '' }, { address: id })
+    return Object.assign({}, { name: doids[0].name || '' }, { id })
   }
 
   cook = async () => {
-    this.meta = await getMetaData(this.item.tokenURI)
+    this.meta = await getMetaData(this.item)
+
     this.cooked = await DOIDParser({ DOIDName: this.doid, token: this.token })
   }
 
   override onObserved = () => {
     this.cook()
   }
+
   connectedCallback() {
     super.connectedCallback()
   }
+
   goto = () => {
     if (this.cookedUri) goto(`/collection/${this.cookedUri}`)
   }
+
   render() {
     return html`<div class="item p-4">
       <div class="font-medium">
@@ -65,10 +76,17 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
       <div class="flex gap-4 py-4">
         <img-loader class="shrink-0 w-24 h-24" .src=${this.meta?.image} loading="lazy"></img-loader>
         <div>
-          <loading-skeleton .expect=${this.tokenName} num="3">
+          <loading-skeleton .expect=${this.meta.name} num="3">
             <div>
+              <b
+                class="inline-block text-white rounded py-0.5 px-1 text-xs mr-1.5 ${classMap({
+                  'bg-green-600': !!this.meta.sync,
+                  'bg-gray-500': !this.meta.sync
+                })}"
+                >${this.meta.sync ? 'Synced' : 'Unsynced'}</b
+              >
               <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
-                >${this.tokenName}<i class="mdi mdi-ethereum ml-1"></i
+                >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
               ></dui-link>
             </div>
             <p class="break-words break-all text-xs lg_text-sm text-gray-500">
@@ -77,7 +95,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
           >
         </div>
       </div>
-      <div class="text-xs">Minted on ${this.createTime}, Owned by ${this.owner.name || this.owner.address}</div>
+      <div class="text-xs">Minted on ${this.createTime}, Owned by ${this.owner.name || this.owner.id}</div>
     </div>`
   }
 }

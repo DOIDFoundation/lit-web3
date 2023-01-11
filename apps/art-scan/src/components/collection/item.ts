@@ -1,4 +1,12 @@
-import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  property,
+  state,
+  when,
+  classMap
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import { getColl } from '@/lib/query'
 import { normalizeUri } from '@lit-web3/core/src/uri'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
@@ -8,9 +16,10 @@ import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/img/loader'
 import '@lit-web3/dui/src/loading/icon'
 import '@lit-web3/dui/src/loading/skeleton'
+import { getNetworkSync } from '@lit-web3/ethers/src/useBridge'
+import { getOpenseaUri } from '@lit-web3/ethers/src/constants/opensea'
 // Style
 import style from './item.css?inline'
-import { getNetwork, getOpensea } from '@lit-web3/ethers/src/useBridge'
 
 @customElement('doid-collection')
 export class CollectionDetail extends TailwindElement(style) {
@@ -43,18 +52,21 @@ export class CollectionDetail extends TailwindElement(style) {
   get slugName() {
     return this.token?.slugName ?? ''
   }
+  get address() {
+    return this.item.address
+  }
   get backgroundImage() {
     return normalizeUri(this.meta.image_url || this.meta.image)
   }
-  get owner() {
-    const { doids = [], id } = this.item.owner as CollOwner
-    return Object.assign({}, { name: doids[0].name || '' }, { address: id })
-  }
-  @state() openseaUrl = ''
-  @state() scanUrl = ''
-
   get empty() {
-    return !this.pending && !!this.ts && !this.item.slugName
+    return !this.pending && !!this.ts && !this.meta?.name
+  }
+  get opensea() {
+    const url = `${getOpenseaUri('url')}/${this.address}/${this.tokenID}`
+    return { url, origin: new URL(url).origin }
+  }
+  get scan() {
+    return `${getNetworkSync().scan}/address/${this.address}`
   }
 
   async getCollection() {
@@ -67,31 +79,23 @@ export class CollectionDetail extends TailwindElement(style) {
       // input: slug, tokenId, minter, seq
       const collections = (await getColl(this)) as Coll
       this.item = collections || {}
+      await this.getMeta()
     } catch (err: any) {
       this.err = err.message || err
-    } finally {
-      this.ts++
-      this.pending = false
     }
+    this.ts++
+    this.pending = false
   }
   getMeta = async () => {
-    this.meta = await getMetaData(this.item.tokenURI)
+    this.meta = await getMetaData(this.item)
   }
-  getOpenseaUrl = async () => {
-    const uri = await getOpensea()
-    this.openseaUrl = this.item.openseaUri && uri ? `${uri}${this.item.openseaUri}` : ''
+  get owner() {
+    const { doids = [], id } = this.item.owner as CollOwner
+    return Object.assign({}, { name: doids[0].name || '' }, { id })
   }
-  getScanUrl = async () => {
-    const uri = (await getNetwork()).scan
-    this.scanUrl = `${uri}/address/${this.item.address}`
-  }
-
   async connectedCallback() {
     super.connectedCallback()
     await this.getCollection()
-    await this.getMeta()
-    await this.getOpenseaUrl()
-    await this.getScanUrl()
   }
   render() {
     return html`<div class="comp-collection">
@@ -118,6 +122,13 @@ export class CollectionDetail extends TailwindElement(style) {
                     >
                   </div>
                   <div class="py-2 lg_mt-0 lg_col-span-3">
+                    <b
+                      class="inline-block text-white rounded py-0.5 px-1 text-xs mb-2 ${classMap({
+                        'bg-green-600': !!this.meta.sync,
+                        'bg-gray-500': !this.meta.sync
+                      })}"
+                      >${this.meta.sync ? 'Synced' : 'Unsynced'}</b
+                    >
                     <div class="flex lg_flex-col gap-2 mb-2">
                       <b>Created by:</b>
                       <span class="text-gray-500">${this.doid}</span>
@@ -128,9 +139,7 @@ export class CollectionDetail extends TailwindElement(style) {
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2">
                       <b>Marketplace:</b>
-                      <dui-link open href=${this.openseaUrl}
-                        >${this.openseaUrl && new URL(this.openseaUrl).origin}</dui-link
-                      >
+                      <dui-link open href=${this.opensea.url}>${this.opensea.origin}</dui-link>
                     </div>
 
                     <div class="mt-6 lg_mt-6">
@@ -139,7 +148,7 @@ export class CollectionDetail extends TailwindElement(style) {
                         <div class="flex gap-2 items-center">
                           <span>Contract:</span>
                           <dui-address
-                            href=${this.scanUrl}
+                            href=${this.scan}
                             class="lg_text-sm text-blue-500"
                             .address=${this.item.address}
                           ></dui-address>
