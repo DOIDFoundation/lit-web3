@@ -79,7 +79,7 @@ export class CollectionList extends TailwindElement(style) {
           html`<div class="grid gap-4">
             ${repeat(
               this.collections,
-              (item: any) =>
+              (item: Coll) =>
                 html`${keyed(
                   item,
                   html`<div class="bg-gray-100 mb-1 break-words break-all rounded-md">

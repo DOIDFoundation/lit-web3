@@ -4,7 +4,8 @@ import {
   customElement,
   property,
   classMap,
-  state
+  state,
+  when
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { LazyElement } from '@lit-web3/dui/src/shared/LazyElement'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
@@ -20,7 +21,7 @@ import style from './list-item.css?inline'
 @customElement('doid-coll-item')
 export class CollectionList extends LazyElement(TailwindElement(style)) {
   @property() DOID?: DOIDObject
-  @property({ type: Object }) item: any = {}
+  @property() item: Coll = {}
   @state() cooked?: DOIDObject
   @state() meta: Meta = {}
 
@@ -28,7 +29,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
     return this.DOID?.doid
   }
   get createTime() {
-    return new Date(this.item.ctime).toLocaleString()
+    return this.item.ctime ? new Date(this.item.ctime).toLocaleString() : ''
   }
   get token() {
     const { tokenID, sequence } = this.item
@@ -42,10 +43,6 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
   }
   get tokenName() {
     return this.cooked?.parsed?.val
-  }
-  get owner() {
-    const { doids = [], id } = this.item.owner as CollOwner
-    return Object.assign({}, { name: doids[0].name || '' }, { id })
   }
 
   cook = async () => {
@@ -95,7 +92,14 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
           >
         </div>
       </div>
-      <div class="text-xs">Minted on ${this.createTime}, Owned by ${this.owner.name || this.owner.id}</div>
+      <div class="text-xs">
+        Minted on ${this.createTime}, Owned by
+        ${when(
+          this.item.doids?.length,
+          () => html`${this.item.doids}`,
+          () => html`<dui-address .address=${this.item.owner}></dui-address>`
+        )}
+      </div>
     </div>`
   }
 }

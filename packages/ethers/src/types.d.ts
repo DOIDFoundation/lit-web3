@@ -30,6 +30,7 @@ declare interface NFTToken {
   meta?: Meta
   // Details
   owner?: Address
+  doids?: string[]
   value?: number
   total?: string
   txHash?: Address

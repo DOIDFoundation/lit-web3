@@ -1,7 +1,10 @@
+declare type WrappedDOID = `${string}.doid`
+declare type BaredDOID = string
+
 declare interface DOIDObject extends CheckedName {
   DOID?: CheckedName
-  name?: string
-  doid?: string
+  name?: BaredDOID
+  doid?: WrappedDOID
   address?: string
   token?: NFTToken
   tokenID?: string
