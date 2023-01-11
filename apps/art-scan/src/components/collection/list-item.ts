@@ -1,10 +1,9 @@
-import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { LazyElement } from '@lit-web3/dui/src/shared/LazyElement'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
-import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/img/loader'
 import '@lit-web3/dui/src/loading/skeleton'
@@ -37,6 +36,10 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
   get tokenName() {
     return this.meta?.name ?? this.cooked?.parsed?.token?.name ?? this.DOID?.parsed?.token?.name
   }
+  get owner() {
+    const { doids = [], id } = this.item.owner as CollOwner
+    return Object.assign({}, { name: doids[0].name || '' }, { address: id })
+  }
 
   cook = async () => {
     this.meta = await getMetaData(this.item.tokenURI)
@@ -46,15 +49,12 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
   override onObserved = () => {
     this.cook()
   }
-
   connectedCallback() {
     super.connectedCallback()
   }
-
   goto = () => {
     if (this.cookedUri) goto(`/collection/${this.cookedUri}`)
   }
-
   render() {
     return html`<div class="item p-4">
       <div class="font-medium">
@@ -77,9 +77,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
           >
         </div>
       </div>
-      <div class="text-xs">
-        Minted on ${this.createTime}, Owned by <dui-address class="ml-1" .address=${this.item.owner}></dui-address>
-      </div>
+      <div class="text-xs">Minted on ${this.createTime}, Owned by ${this.owner.name || this.owner.address}</div>
     </div>`
   }
 }
