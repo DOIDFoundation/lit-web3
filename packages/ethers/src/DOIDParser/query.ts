@@ -1,8 +1,8 @@
 import { ZERO } from '../utils'
 import { nameInfo } from '../nsResolver'
-import { getAccount, getGraph } from '../useBridge'
+import { getAccount } from '../useBridge'
 import { useStorage } from '../useStorage'
-import { subgraphQuery } from '@lit-web3/core/src/graph'
+import { graphQuery } from '../constants/graph'
 import { bareTLD } from '../nsResolver/checker'
 
 export const reverseDOIDName = async (DOIDName = ''): Promise<Address> => {
@@ -23,9 +23,8 @@ export const reverseDOIDName = async (DOIDName = ''): Promise<Address> => {
   // 3. from graph
   if (!ethAddr) {
     try {
-      const api = await getGraph()
-      const { doids = [] } = await subgraphQuery(
-        api,
+      const { doids = [] } = await graphQuery(
+        'scan',
         `{doids(where:{name:"${bareTLD(DOIDName)}"}){coinType address {id}}}`
       )
       if (doids.length) ethAddr = doids[0].address.id

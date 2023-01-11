@@ -7,7 +7,7 @@ import slugify from '@lit-web3/core/src/slugify'
 import { sleep, nowTs } from './utils'
 import { safeEncodeURIComponent } from '@lit-web3/core/src/uri'
 
-export const normalize = (data: GraphRecord): Meta => {
+export const normalize = (data: Record<string, any>): Meta => {
   const { background_color, owner = '', external_link, asset_contract, collection } = data
   const img = data.image_url || data.image || ''
   const name = data.name || collection?.name

@@ -1,6 +1,5 @@
 import { ZERO } from '@lit-web3/ethers/src/utils'
-import { genWhere, genPaging } from '@lit-web3/core/src/graph'
-import { _subgraphQuery } from './graph'
+import { graphQuery, genWhere, genPaging } from '@lit-web3/ethers/src/constants/graph'
 import { cookColl } from './collection'
 
 // artist hodls
@@ -9,7 +8,8 @@ export const queryHoldlNums = async (account: string) => {
   let ownNum = 0,
     mintNum = 0
   if (account != ZERO) {
-    const res = await _subgraphQuery()(
+    const res = await graphQuery(
+      'scan',
       `{
         owns:tokens(orderBy:createdAt orderDirection:desc where:{owner:"${acc}"}) {id}
         mints:tokens(orderBy:createdAt orderDirection:desc where:{minter:"${acc}"}) {id}
@@ -22,24 +22,21 @@ export const queryHoldlNums = async (account: string) => {
   return { ownNum, mintNum }
 }
 
-export const genCollectionsQuery = ({ minter = '', tokenID = '' } = <CollOptions>{}, pagination?: Pagination) => {
-  minter = minter.toLowerCase()
-  const conditions = { minter, tokenID }
-  return `{
-    tokens(${genPaging(pagination)} where:{${genWhere(conditions)}} orderBy:createdAt orderDirection:desc){
-      id tokenURI createdAt owner { id doids { name } }
-    }
-  }`
-}
-
 export const getColls = async (
   options: CollOptions,
   pagination: Pagination = { pageSize: 5, page: 1 }
 ): Promise<Coll[]> => {
-  const { minter, doid } = options
+  let { minter, doid, tokenID } = options
   // exclude zero
-  if (minter == ZERO) return []
-  const { tokens = [] } = (await _subgraphQuery()(genCollectionsQuery(options, pagination))) || {}
+  if (!minter || minter == ZERO) return []
+  minter = minter.toLowerCase()
+  const { tokens = [] } =
+    (await graphQuery(
+      'scan',
+      `{tokens(${genPaging(pagination)} where:{${genWhere({ minter, tokenID })}} orderBy:createdAt orderDirection:desc){
+        id tokenURI createdAt owner { id doids { name }
+      }}}`
+    )) || {}
   return tokens.map((token: NFTToken) => Object.assign(cookColl(token), { minter, doid }))
 }
 
