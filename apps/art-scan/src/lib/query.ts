@@ -27,7 +27,7 @@ export const genCollectionsQuery = ({ minter = '', tokenID = '' } = <CollOptions
   const conditions = { minter, tokenID }
   return `{
     tokens(${genPaging(pagination)} where:{${genWhere(conditions)}} orderBy:createdAt orderDirection:desc){
-      id tokenURI createdAt owner { id }
+      id tokenURI createdAt owner { id doids { id name } }
     }
   }`
 }

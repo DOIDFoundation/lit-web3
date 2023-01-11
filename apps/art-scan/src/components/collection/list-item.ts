@@ -11,7 +11,6 @@ import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
-import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/img/loader'
 import '@lit-web3/dui/src/loading/skeleton'
@@ -44,9 +43,14 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
   get tokenName() {
     return this.cooked?.parsed?.val
   }
+  get owner() {
+    const { doids = [], id } = this.item.owner as CollOwner
+    return Object.assign({}, { name: doids[0].name || '' }, { id })
+  }
 
   cook = async () => {
     this.meta = await getMetaData(this.item)
+
     this.cooked = await DOIDParser({ DOIDName: this.doid, token: this.token })
   }
 
@@ -91,9 +95,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
           >
         </div>
       </div>
-      <div class="text-xs">
-        Minted on ${this.createTime}, Owned by <dui-address class="ml-1" .address=${this.item.owner}></dui-address>
-      </div>
+      <div class="text-xs">Minted on ${this.createTime}, Owned by ${this.owner.name || this.owner.id}</div>
     </div>`
   }
 }

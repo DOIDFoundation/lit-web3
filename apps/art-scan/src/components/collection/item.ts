@@ -89,7 +89,10 @@ export class CollectionDetail extends TailwindElement(style) {
   getMeta = async () => {
     this.meta = await getMetaData(this.item)
   }
-
+  get owner() {
+    const { doids = [], id } = this.item.owner as CollOwner
+    return Object.assign({}, { name: doids[0].name || '' }, { id })
+  }
   async connectedCallback() {
     super.connectedCallback()
     await this.getCollection()
@@ -132,7 +135,7 @@ export class CollectionDetail extends TailwindElement(style) {
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2">
                       <b>Owned by:</b>
-                      <span class="text-gray-500">${this.item.owner}</span>
+                      <span class="text-gray-500">${this.owner.name || this.owner.id}</span>
                     </div>
                     <div class="flex lg_flex-col gap-2 mb-2">
                       <b>Marketplace:</b>
