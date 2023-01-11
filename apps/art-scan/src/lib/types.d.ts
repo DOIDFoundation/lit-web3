@@ -3,7 +3,7 @@ declare interface Coll extends NFTToken {
   slugID?: string
   openseaUri?: string
   owner?: Address
-  doids?: BaredDOID[]
+  doids?: DOIDObject[]
 }
 declare type GraphRecord = Record<string, any>
 declare type CollOptions = {

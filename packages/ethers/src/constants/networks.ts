@@ -38,7 +38,7 @@ export const AllNetworks = {
     providerWs: 'wss://goerli.infura.io/ws/v3/50e9845f779f4770a64fa6f47e238d10',
     scan: 'https://goerli.etherscan.io',
     icon: '',
-    graph: 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.5',
+    graph: 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.17',
     opensea: 'https://testnets.opensea.io/assets/goerli',
     openseaApi: 'https://testnets-api.opensea.io/api/v1/assets'
   }

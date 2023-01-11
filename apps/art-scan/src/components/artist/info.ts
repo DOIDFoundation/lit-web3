@@ -41,8 +41,8 @@ export class ArtistInfo extends TailwindElement(style) {
           <div><dui-address .address=${this.info?.owner} avatar short copy class="text-xs"></dui-address></div>
         </div>
         <div class="w-full flex gap-2 text-xs mt-3">
-          <div>${this.hodls?.mintNum ?? 0} <span class="text-gray-500">artworks</span>,</div>
-          <span>${this.hodls?.ownNum ?? 0} <span class="text-gray-500">owns</span></span>
+          <div>${this.hodls?.mintNum ?? '-'} <span class="text-gray-500">artworks</span>,</div>
+          <span>${this.hodls?.ownerNum ?? '-'} <span class="text-gray-500">owners</span></span>
         </div>
       </div>`
     )}`
