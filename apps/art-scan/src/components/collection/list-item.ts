@@ -73,15 +73,15 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
         <img-loader class="shrink-0 w-24 h-24" .src=${this.meta?.image} loading="lazy"></img-loader>
         <div>
           <loading-skeleton .expect=${this.meta.name} num="3">
-            <div>
+            <div class="mb-2 flex items-center">
               <b
                 class="inline-block text-white rounded py-0.5 px-1 text-xs mr-1.5 ${classMap({
                   'bg-green-600': !!this.meta.sync,
                   'bg-gray-500': !this.meta.sync
                 })}"
-                >${this.meta.sync ? 'Synced' : 'Unsynced'}</b
+                >${this.meta.sync ? 'Verified' : 'Unverified'}</b
               >
-              <dui-link class="text-base mb-2" href=${`/collection/${this.cookedUri}`}
+              <dui-link class="text-base" href=${`/collection/${this.cookedUri}`}
                 >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
               ></dui-link>
             </div>

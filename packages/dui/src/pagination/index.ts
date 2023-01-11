@@ -2,29 +2,29 @@ import { TailwindElement, html, customElement, property, when, classMap } from '
 import { LazyElement } from '../shared/LazyElement'
 
 // Components
+import '../loading/icon'
 import '../link'
 // Styles
 import style from './index.css?inline'
 @customElement('dui-pagination')
 export class DuiPagination extends LazyElement(TailwindElement(style), { persistent: true }) {
-  @property() pageSize = 10
-  @property() page = 1
+  @property({ type: Number }) pageSize = 5
+  @property({ type: Number }) page = 1
   @property() mode = 'scroll' //scroll or click auto
   @property() pending? = false
-  @property() all = false // all loaded
+  @property({ type: Boolean }) firstLoad = true
+  @property({ type: Boolean }) empty = false
+  @property({ type: Boolean }) nomore = false // all loaded
   @property() class = ''
 
-  get nomore() {
-    return this.all === true
-  }
-  get enable() {
-    return !this.pending && !this.nomore
+  get canLoad() {
+    return !this.pending && !this.nomore && !this.empty && !this.firstLoad
   }
   get scrollMode() {
     return this.mode === 'scroll'
   }
   loadmore() {
-    if (!this.enable) return
+    if (!this.canLoad) return
     const { pageSize, page, mode } = this
     this.emit('loadmore', { pageSize, page, mode })
   }
@@ -32,33 +32,34 @@ export class DuiPagination extends LazyElement(TailwindElement(style), { persist
     super.connectedCallback()
   }
   override onObserved = () => {
-    this.loadmore()
+    if (this.scrollMode) this.loadmore()
   }
   // nomore
   // loading
   render() {
     return html`<div
       class="dui-pagination w-full flex justify-center items-center mt-4 ${classMap(
-        this.$c([{ nomore: this.nomore }, this.class])
+        this.$c([{ nomore: this.nomore, 'pointer-events-none': !this.canLoad }, this.class])
       )}"
     >
-      <div
-        part="inner"
-        @click="${this.loadmore}"
-        class=${classMap({
-          'cursor-not-allowed': this.nomore,
-          'cursor-wait': !!this.pending,
-          'cursor-pointer': this.enable
-        })}
-      >
+      <div part="inner" @click="${this.loadmore}">
         ${when(
-          this.nomore,
-          () => html` <slot name="nomore"><span class="text-gray-400">No more</span></slot>`,
+          this.empty,
+          () => html`<slot name="empty"></slot>`,
           () =>
             html`${when(
-              this.pending,
-              () => html` <slot name="loading"><i class="mdi mdi-loading ml-1"></i></slot>`,
-              () => html`${when(this.scrollMode, () => html`<slot><dui-link>Load more</dui-link></slot>`)}`
+              this.nomore,
+              () => html`<slot name="nomore"></slot>`,
+              () =>
+                html`${when(
+                  this.pending,
+                  () => html`<slot name="loading"><loading-icon type="block"></loading-icon></slot>`,
+                  () =>
+                    html`${when(
+                      !this.scrollMode && !this.firstLoad,
+                      () => html`<slot><dui-link>Load more</dui-link></slot>`
+                    )}`
+                )}`
             )}`
         )}
       </div>

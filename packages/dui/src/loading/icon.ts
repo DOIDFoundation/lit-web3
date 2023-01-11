@@ -7,7 +7,7 @@ export class LoadingIcon extends TailwindElement('') {
   render() {
     switch (this.type) {
       case 'block':
-        return html`<div class="block mx-auto my-8 text-center"><i class="mdi mdi-loading mx-1"></i> Loading...</div>`
+        return html`<div class="block mx-auto my-8 text-center text-base"><i class="mdi mdi-loading mx-1"></i></div>`
       default:
         return html`<i class="mdi mdi-loading mr-1"></i> Loading...`
     }

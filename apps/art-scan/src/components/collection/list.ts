@@ -26,35 +26,32 @@ export class CollectionList extends TailwindElement(style) {
   @state() err = ''
   @state() ts = 0
   @state() collections: any[] = []
-  @state() nomore = true
+  @state() nomore = false
   // pagination
   @state() page = 1
+  @state() pageSize = 5
 
   get doid() {
     return this.DOID?.doid
   }
   get empty() {
-    return this.doid && !this.pending && this.ts && !this.collections.length
+    return !this.err && !!this.doid && !!this.ts && !this.collections.length
   }
   get pagination(): Pagination {
-    return { page: this.page, pageSize: 5 }
+    return { page: this.page, pageSize: this.pageSize }
   }
 
   async getCollections() {
+    if (this.pending) return
     // get name
-    const { owner = '' } = await nameInfo(this.doid)
-    const minter = owner.toLowerCase()
-    if (this.pending || !minter) return
+    const { owner: minter = '' } = await nameInfo(this.doid)
+    if (!minter) return
     this.pending = true
     this.err = ''
     try {
       const collections = await getColls({ minter, doid: this.doid }, this.pagination)
-      if (this.page) {
-        this.collections.push(...collections)
-        this.nomore = collections.length < (this.pagination.pageSize || 1) ? true : false
-      } else {
-        this.collections = collections
-      }
+      this.collections.push(...collections)
+      this.nomore = collections.length < this.pageSize ? true : false
     } catch (err: any) {
       this.err = err.message || err
     } finally {
@@ -74,39 +71,37 @@ export class CollectionList extends TailwindElement(style) {
   }
   render() {
     return html`<div class="doid-collections">
+      ${when(this.err, () => html`${this.err}`)}
+      <!-- List -->
       ${when(
-        this.empty,
-        // Empty
-        () => html`No collection yet.`,
+        this.collections.length,
         () =>
-          html` ${when(
-            this.pending && !this.ts,
-            // Loading
-            () => html`<loading-icon></loading-icon>`,
-            // List
-            () => html`<div class="grid gap-4">
-                ${repeat(
-                  this.collections,
-                  (item: any) =>
-                    html`${keyed(
-                      item,
-                      html`<div class="bg-gray-100 mb-1 break-words break-all rounded-md">
-                        <doid-coll-item .DOID=${this.DOID} .item=${item}></doid-coll-item>
-                      </div>`
-                    )}`
-                )}
-              </div>
-              ${when(
-                this.ts,
-                () => html`<dui-pagination
-                  .pending=${this.pending}
-                  .all=${this.nomore}
-                  page-size="1"
-                  page=${this.page}
-                  @loadmore=${this.loadmore}
-                ></dui-pagination>`
-              )} `
-          )}`
+          html`<div class="grid gap-4">
+            ${repeat(
+              this.collections,
+              (item: any) =>
+                html`${keyed(
+                  item,
+                  html`<div class="bg-gray-100 mb-1 break-words break-all rounded-md">
+                    <doid-coll-item .DOID=${this.DOID} .item=${item}></doid-coll-item>
+                  </div>`
+                )}`
+            )}
+          </div>`
+      )}
+      <!-- Pagination -->
+      ${when(
+        !this.err,
+        () => html`<dui-pagination
+          .pending=${this.pending}
+          .nomore=${this.nomore}
+          .firstLoad=${!this.ts}
+          .empty=${this.empty}
+          .pageSize=${this.pageSize}
+          .page=${this.page}
+          @loadmore=${this.loadmore}
+          ><span slot="empty">No collection yet.</span></dui-pagination
+        >`
       )}
     </div>`
   }

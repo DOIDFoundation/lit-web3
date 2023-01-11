@@ -124,7 +124,7 @@ export class CollectionDetail extends TailwindElement(style) {
                         'bg-green-600': !!this.meta.sync,
                         'bg-gray-500': !this.meta.sync
                       })}"
-                      >${this.meta.sync ? 'Synced' : 'Unsynced'}</b
+                      >${this.meta.sync ? 'Verified' : 'Unverified'}</b
                     >
                     <div class="flex lg_flex-col gap-2 mb-2">
                       <b>Created by:</b>
