@@ -97,7 +97,7 @@ export const getMetaData = async (token: NFTToken): Promise<Meta> => {
     try {
       const chainId = await getChainId()
       const addersses = await http.get(
-        `https://raw.githubusercontent.com/DOIDFoundation/doid-slugs/main/${chainId}/${safeEncodeURIComponent(doid)}/${
+        `https://raw.githubusercontent.com/DOIDFoundation/artscan-slugs/main/${chainId}/${safeEncodeURIComponent(doid)}/${
           meta.slug
         }.txt`
       )
