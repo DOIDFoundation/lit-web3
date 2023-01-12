@@ -73,7 +73,7 @@ export const getNameByHash = async (hash: string) => {
   const contract = await getLockerContract()
   try {
     name = await contract.getNameByHash(arrayify(hash))
-  } catch (e) {}
+  } catch {}
   return name
 }
 
@@ -85,7 +85,7 @@ export const getPassInfo = async (passId: string, account?: string) => {
     const [id, cate, hash] = await contract.getUserPassInfo(passId)
     const passcate = passCate[cate] ?? Object.values(info)
     info = { id, cate: passcate[0], hash, len: passcate[1], name: await getNameByHash(hash) }
-  } catch (e) {}
+  } catch {}
   return info
 }
 

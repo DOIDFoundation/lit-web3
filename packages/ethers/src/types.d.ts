@@ -10,7 +10,6 @@ declare interface Meta {
   publisher?: string
   external_url?: string
   properties?: Record<string, any>
-  origin?: string
   slug?: string
   sync?: boolean
 }

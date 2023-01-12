@@ -9,3 +9,5 @@ export const normalizeUri = (uri = '') => {
   // /^(https?|base64):/
   return uri
 }
+
+export const isInstantUri = (uri = ''): boolean => /^(data|blob):/.test(uri)

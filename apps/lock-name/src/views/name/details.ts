@@ -55,7 +55,7 @@ export class ViewNameDetails extends TailwindElement(style) {
     this.pending = true
     try {
       this.records = await ownerRecords(this.info.name)
-    } catch (err) {}
+    } catch {}
     this.pending = false
     this.ts++
   }

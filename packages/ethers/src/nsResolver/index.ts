@@ -42,7 +42,7 @@ export const nameInfo = async <T>(req: T, account?: string): Promise<NameInfoPar
     try {
       const res = await contract.statusOfName(bareTLD(name))
       Object.assign(nameInfo, cookNameInfo(res, nameInfo))
-    } catch (e) {}
+    } catch {}
     return nameInfo
   }
   if (Array.isArray(req)) return <any>await Promise.all(req.map(get))
@@ -55,7 +55,7 @@ export const ownerNames = async (owner: string, account?: string) => {
   try {
     const res = await contract.namesOfOwner(owner)
     names.push(...res.map((ref: any) => cookNameInfo(ref, { owner, account, status: 'registered' })))
-  } catch (err) {}
+  } catch {}
   return names
 }
 export const ownerTokens = async (address: string) => {

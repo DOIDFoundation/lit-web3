@@ -32,7 +32,7 @@
 }
 
 .nav-menu-btn {
-  @apply w-8 h-8 left-2;
+  @apply w-8 h-8 left-2 cursor-pointer;
   margin-top: -3px;
 }
 .nav-menu-btn {

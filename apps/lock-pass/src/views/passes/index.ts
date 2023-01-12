@@ -46,7 +46,7 @@ export class ViewPasses extends TailwindElement(style) {
           // Meta
           try {
             cooked.meta = await (await fetch(res[1])).json()
-          } catch (e) {}
+          } catch {}
           return cooked
         })
       )

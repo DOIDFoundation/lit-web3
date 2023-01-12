@@ -10,16 +10,14 @@ export const ErrorCodeMap: Record<string, string> = {
 export const parseRevertReason = async (err: any): Promise<string> => {
   let { reason = '', transaction } = err
   if (reason) {
-    // reason already parsed if from estimateGas
     err.message = reason
-    // 如果有transaction却没有具体的reason，需要parse下
     if (!reason.includes(': ') && transaction) {
       const bridgeStore = await useBridgeAsync()
       try {
         const code = await bridgeStore.bridge.provider.call(transaction)
         reason = toUtf8String(code)
         err.message = reason
-      } catch (_e) {}
+      } catch {}
     }
   }
   return reason

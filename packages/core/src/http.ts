@@ -81,15 +81,16 @@ export class Http {
   constructor() {
     this.fetch = http
   }
-  get(uri: string, json: Jsonish = {}) {
-    return http(mergeSearch(uri, json))
+  get(uri: string, json: Jsonish = {}, options?: {}) {
+    return http(mergeSearch(uri, json), options)
   }
-  post(uri: string, json = {}, { method = 'POST', form = false, search = false } = {}) {
+  post(uri: string, json = {}, { method = 'POST', form = false, search = false, headers = {} } = {}) {
     const body = form ? new URLSearchParams(json).toString() : JSON.stringify(json)
     return http(search ? mergeSearch(uri, json) : uri, {
       method,
       headers: {
-        'Content-Type': form ? 'application/x-www-form-urlencoded' : 'application/json'
+        'Content-Type': form ? 'application/x-www-form-urlencoded' : 'application/json',
+        ...headers
       },
       body
     })

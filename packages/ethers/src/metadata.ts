@@ -1,5 +1,5 @@
 import http from '@lit-web3/core/src/http'
-import { normalizeUri } from '@lit-web3/core/src/uri'
+import { normalizeUri, isInstantUri } from '@lit-web3/core/src/uri'
 import { useStorage } from './useStorage'
 import { getChainId } from './useBridge'
 import { getOpenseaUri } from './constants/opensea'
@@ -25,11 +25,11 @@ export const normalize = (data: Record<string, any>): Meta => {
   return meta
 }
 // meta cache (1d)
-const storageOptions = { store: sessionStorage, withoutEnv: true, ttl: 86400000 }
+const storageOpt = { store: sessionStorage, withoutEnv: true, ttl: 86400000 }
 
 let pendingTs = 0
 // OpenSea only accept 1 req/sec.
-export const throttle = async (uri: string): Promise<Meta> => {
+export const throttle = async (uri: string, interval = 1024): Promise<Meta> => {
   let meta: Meta = {}
   if (pendingTs) {
     await sleep(50)
@@ -40,60 +40,62 @@ export const throttle = async (uri: string): Promise<Meta> => {
     meta = await http.get(uri)
     setTimeout(() => {
       pendingTs = 0
-    }, Math.max(nowTs() - pendingTs, 1024))
+    }, Math.max(nowTs() - pendingTs, interval))
   } catch (err) {
     pendingTs = 0
   }
   return meta
 }
+
 export const getMetaDataByOpenSea = async ({ address = '', tokenID = '' } = <NFTToken>{}): Promise<Meta> => {
-  let meta: Meta = {}
+  let meta: Meta | undefined = undefined
   // 1. from cache
-  const storage = await useStorage(`meta.${address}.${tokenID}`, storageOptions)
+  const storage = await useStorage(`meta.${address}.${tokenID}`, storageOpt)
   meta = await storage.get()
-  if (meta) return meta
   // 2. from api
-  try {
-    meta = normalize(await throttle(`${getOpenseaUri('api')}/${address}/${tokenID}/`))
-    meta.origin = 'opensea'
-    if (meta) storage.set(meta)
-  } catch (e) {}
-  return meta
+  if (!meta) {
+    try {
+      meta = normalize(await throttle(`${getOpenseaUri('api')}/${address}/${tokenID}/`))
+      if (meta) storage.set(meta)
+    } catch {}
+  }
+  return meta ?? {}
 }
 
 export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
-  let meta: Meta = {}
-  if (!tokenURI) return meta
+  let meta: Meta | undefined = undefined
+  if (!tokenURI) return {}
+  // 0. instant data
+  if (isInstantUri(tokenURI)) meta = normalize(await http.get(tokenURI))
   // 1. from cache
-  const storage = await useStorage(`meta.${tokenURI}`, storageOptions)
-  meta = await storage.get()
-  if (meta) return meta
+  const storage = await useStorage(`meta.${tokenURI}`, storageOpt)
+  if (!meta) meta = await storage.get()
   // 2. from tokenURI
-  try {
-    const uri = normalizeUri(tokenURI)
-    meta = normalize(await http.get(uri))
-    meta.origin = 'ipfs'
-    if (meta) storage.set(meta)
-  } catch (e) {}
-  return meta
+  if (!meta) {
+    try {
+      meta = normalize(await http.get(normalizeUri(tokenURI)))
+      if (meta) storage.set(meta)
+    } catch {}
+  }
+  return meta ?? {}
 }
 
 export const getMetaData = async (token: NFTToken): Promise<Meta> => {
   let meta: Meta | undefined = undefined
   const { tokenURI, address, tokenID, doid, minter } = token
+  // 0. instant data
+  if (isInstantUri(tokenURI)) meta = await getMetaDataByTokenURI(tokenURI)
   // 1. by cache
-  if (tokenURI) {
-    meta = await (await useStorage(`meta.${tokenURI}`, storageOptions)).get()
-  }
-  if (!meta) meta = await (await useStorage(`meta.${address}.${tokenID}`, storageOptions)).get()
+  if (!meta && tokenURI) meta = await (await useStorage(`meta.${tokenURI}`, storageOpt)).get()
+  if (!meta) meta = await (await useStorage(`meta.${address}.${tokenID}`, storageOpt)).get()
   // 2. by OpenSea
   if (!meta && address && tokenID) {
     meta = await getMetaDataByOpenSea(token)
   }
   // 3. by tokenURI
-  if (!meta) meta = await getMetaDataByTokenURI(tokenURI)
-  // Validate slug
-  if (doid) {
+  if (!meta && tokenURI) meta = await getMetaDataByTokenURI(tokenURI)
+  // Validate meta by slug
+  if (meta && doid) {
     try {
       const chainId = await getChainId()
       const addersses = await http.get(
@@ -102,7 +104,7 @@ export const getMetaData = async (token: NFTToken): Promise<Meta> => {
         }.txt`
       )
       meta.sync = addersses.includes(minter)
-    } catch (err) {}
+    } catch {}
   }
   return meta ?? {}
 }
