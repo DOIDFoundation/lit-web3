@@ -46,11 +46,11 @@ export class CollectionDetail extends TailwindElement(style) {
   get tokenID() {
     return this.token?.tokenID ?? ''
   }
-  get sequence() {
-    return this.token?.sequence ?? ''
-  }
   get slugName() {
     return this.token?.slugName ?? ''
+  }
+  get slugID() {
+    return this.token?.slugID ?? ''
   }
   get address() {
     return this.item.address

@@ -11,5 +11,4 @@ declare type CollOptions = {
   minter?: string
   slugName?: string
   tokenID?: string
-  sequence?: string
 }

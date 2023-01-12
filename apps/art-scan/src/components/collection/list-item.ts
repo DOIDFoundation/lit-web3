@@ -32,8 +32,8 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
     return this.item.ctime ? new Date(this.item.ctime).toLocaleString() : ''
   }
   get token() {
-    const { tokenID, sequence } = this.item
-    return { name: this.meta?.name, tokenID, sequence }
+    const { tokenID, slugID } = this.item
+    return { name: this.meta?.name, tokenID, slugID }
   }
   get cookedName() {
     return this.cooked?.parsed?.val
@@ -67,7 +67,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
     return html`<div class="item p-4">
       <div class="font-medium">
         <loading-skeleton .expect=${this.tokenName}
-          ><dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.tokenName}</dui-link></loading-skeleton
+          ><dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.cookedUri}</dui-link></loading-skeleton
         >
       </div>
       <div class="flex gap-4 py-4">

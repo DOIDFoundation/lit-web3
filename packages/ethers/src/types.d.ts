@@ -22,6 +22,7 @@ declare interface NFTToken {
   tokenID?: TokenID
   name?: string
   slugName?: string
+  slugID?: string
   uri?: string // ERC1155 asis ERC721 tokenURI
   tokenURI?: string
   block?: number
@@ -36,7 +37,6 @@ declare interface NFTToken {
   txHash?: Address
   txs?: NFTTokenTxs
   seq?: string
-  sequence?: string
   approved?: boolean
 }
 declare interface Token {

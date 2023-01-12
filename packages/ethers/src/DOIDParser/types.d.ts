@@ -8,7 +8,6 @@ declare interface DOIDObject extends CheckedName {
   address?: string
   token?: NFTToken
   tokenID?: string
-  sequence?: string
   error?: boolean
   msg?: string
   equal?: boolean
