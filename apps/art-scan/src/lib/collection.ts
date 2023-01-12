@@ -6,6 +6,7 @@ export const cookToken = (token: Record<string, any>): NFTToken => {
   return {
     address,
     tokenID,
+    slugID: tokenID,
     ctime: token.createdAt * 1000,
     tokenURI
   }
