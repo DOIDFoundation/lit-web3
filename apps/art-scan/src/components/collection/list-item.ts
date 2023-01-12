@@ -96,7 +96,7 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
         Minted on ${this.createTime}, Owned by
         ${when(
           this.item.doids?.length,
-          () => html`${this.item.doids?.at(0)?.name}.doid`,
+          () => html`${this.item.doids?.at(0)?.name}`,
           () => html`<dui-address .address=${this.item.owner}></dui-address>`
         )}
       </div>
