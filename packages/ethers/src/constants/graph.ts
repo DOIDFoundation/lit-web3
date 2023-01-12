@@ -4,9 +4,9 @@ import http, { Jsonish } from '@lit-web3/core/src/http'
 
 export const SubGraph: ChainConf = {
   scan: {
-    '0x1': 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.5',
-    '0xaa36a7': 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.5',
-    '0x5': 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.5'
+    '0x1': 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.17',
+    '0xaa36a7': 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.17',
+    '0x5': 'https://api.studio.thegraph.com/query/38900/artscan/v2.0.17'
   }
 }
 

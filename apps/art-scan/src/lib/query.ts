@@ -5,21 +5,20 @@ import { cookColl } from './collection'
 // artist hodls
 export const queryHoldlNums = async (account: string) => {
   const acc = account.toLowerCase()
-  let ownNum = 0,
+  let ownerNum = 0,
     mintNum = 0
   if (account != ZERO) {
     const res = await graphQuery(
       'scan',
       `{
-        owns:tokens(orderBy:createdAt orderDirection:desc where:{owner:"${acc}"}) {id}
-        mints:tokens(orderBy:createdAt orderDirection:desc where:{minter:"${acc}"}) {id}
+        owner(id:"${acc}") {mints:totalTokensMinted,holders:totalTokenHolders}
       }`
     )
-    const { owns = [], mints = [] } = res
-    ownNum = owns.length
-    mintNum = mints.length
+    const { holders = [], mints = [] } = res.owner
+    ownerNum = holders
+    mintNum = mints
   }
-  return { ownNum, mintNum }
+  return { ownerNum, mintNum }
 }
 
 export const getColls = async (
