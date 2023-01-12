@@ -47,7 +47,7 @@ export const throttle = async (uri: string, interval = 1024): Promise<Meta> => {
   return meta
 }
 
-export const getMetaDataByOpenSea = async ({ address = '', tokenID = '' } = <NFTToken>{}): Promise<Meta> => {
+export const getMetaDataByOpenSea = async ({ address = '', tokenID = '' } = <NFTToken | Coll>{}): Promise<Meta> => {
   let meta: Meta | undefined = undefined
   // 1. from cache
   const storage = await useStorage(`meta.${address}.${tokenID}`, storageOpt)
@@ -80,7 +80,7 @@ export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
   return meta ?? {}
 }
 
-export const getMetaData = async (token: NFTToken): Promise<Meta> => {
+export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   let meta: Meta | undefined = undefined
   const { tokenURI, address, tokenID, doid, minter } = token
   // 0. instant data

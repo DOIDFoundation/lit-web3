@@ -1,4 +1,4 @@
-declare type WrappedDOID = `${string}.doid`
+declare type WrappedDOID = `${string}.doid` | string
 declare type BaredDOID = string
 
 declare interface DOIDObject extends CheckedName {

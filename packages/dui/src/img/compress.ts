@@ -1,5 +1,8 @@
-export const comporess = async (src: string, { maxW = 380 } = {}): Promise<string> => {
+export const comporess = async (src: string, { maxW = 400 } = {}): Promise<string> => {
   return new Promise((resolve) => {
+    if (!src) return resolve('')
+    const cachedBlob = sessionStorage.getItem(`blob.${src}`)
+    if (cachedBlob) return resolve(cachedBlob)
     const img = new Image()
     img.src = src
     img.crossOrigin = 'anonymous'
@@ -26,6 +29,7 @@ export const comporess = async (src: string, { maxW = 380 } = {}): Promise<strin
       canvas$.toBlob(
         (blob: any) => {
           const blobSrc = URL.createObjectURL(blob)
+          sessionStorage.setItem(`blob.${src}`, blobSrc)
           resolve(blobSrc)
         },
         'image/png',

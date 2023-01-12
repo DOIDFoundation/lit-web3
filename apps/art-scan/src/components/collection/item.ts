@@ -8,7 +8,6 @@ import {
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { getColl } from '@/lib/query'
-import { normalizeUri } from '@lit-web3/core/src/uri'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'
@@ -29,7 +28,7 @@ export class CollectionDetail extends TailwindElement(style) {
   @state() pending = false
   @state() err = ''
   @state() ts = 0
-  @state() meta: any = {}
+  @state() meta: Meta = {}
 
   get doid() {
     return this.DOID?.doid
@@ -54,9 +53,6 @@ export class CollectionDetail extends TailwindElement(style) {
   }
   get address() {
     return this.item.address
-  }
-  get backgroundImage() {
-    return normalizeUri(this.meta.image_url || this.meta.image)
   }
   get empty() {
     return !this.pending && !!this.ts && !this.meta?.name
@@ -107,11 +103,7 @@ export class CollectionDetail extends TailwindElement(style) {
                 !this.err,
                 () => html`<div class="my-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
                   <div class="lg_col-span-2 flex flex-col gap-2 items-center p-4 lg_px-6 bg-gray-100 rounded-md">
-                    <img-loader
-                      class="w-80 h-80 lg_w-60 lg_h-60"
-                      src=${this.backgroundImage}
-                      loading="lazy"
-                    ></img-loader>
+                    <img-loader class="w-80 h-80 lg_w-60 lg_h-60" src=${this.meta.image} loading="lazy"></img-loader>
                     <loading-skeleton class="flex flex-col items-center" .expect=${this.meta?.name} num="3"
                       ><div class="text-base mb-2">${this.meta?.name}</div>
                       <div class="break-words break-all text-gray-500">${this.meta?.description}</div></loading-skeleton
