@@ -84,6 +84,7 @@ export class ConnectWalletBtn extends TailwindElement(style) {
               ></dui-button>
             </div>
           </div>
+          <slot name="submenu"></slot>
         </dui-drop>`
       )}
       <!-- Dialog -->

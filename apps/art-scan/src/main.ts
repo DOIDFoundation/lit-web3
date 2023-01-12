@@ -18,6 +18,9 @@ export class AppMain extends TailwindElement('') {
           <dui-link href="/artist" nav>Artist</dui-link>
           <dui-link href="/collection" nav>Collection</dui-link>
         </dui-nav>
+        <div class="flex flex-col p-4 pt-0" slot="submenu">
+          <dui-link class="w-full" href="/collection" nav>My Collections</dui-link>
+        </div>
       </dui-header>
       <main class="dui-app-main">
         <slot></slot>

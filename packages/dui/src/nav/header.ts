@@ -57,7 +57,11 @@ export class DuiHeader extends TailwindElement(style) {
           </div>
           <div class="flex justify-end items-center lg_w-40">
             <slot name="right"></slot>
-            <slot name="wallet"><connect-wallet-btn dropable></connect-wallet-btn></slot>
+            <slot name="wallet"
+              ><connect-wallet-btn dropable>
+                <div slot="submenu">
+                  <slot name="submenu"></slot></div></connect-wallet-btn
+            ></slot>
             ${when(
               this.asMenu,
               () => html`<div
