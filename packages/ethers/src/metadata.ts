@@ -1,11 +1,9 @@
 import http from '@lit-web3/core/src/http'
-import { normalizeUri, isInstantUri } from '@lit-web3/core/src/uri'
+import { normalizeUri, isInstantUri, slugify } from '@lit-web3/core/src/uri'
 import { useStorage } from './useStorage'
 import { getChainId } from './useBridge'
 import { getOpenseaUri } from './constants/opensea'
-import slugify from '@lit-web3/core/src/slugify'
 import { sleep, nowTs } from './utils'
-import { safeEncodeURIComponent } from '@lit-web3/core/src/uri'
 
 export const normalize = (data: Record<string, any>): Meta => {
   const { background_color, owner = '', external_link, asset_contract, collection } = data
@@ -99,9 +97,7 @@ export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
     try {
       const chainId = await getChainId()
       const addersses = await http.get(
-        `https://raw.githubusercontent.com/DOIDFoundation/artscan-slugs/main/${chainId}/${safeEncodeURIComponent(doid)}/${
-          meta.slug
-        }.txt`
+        `https://raw.githubusercontent.com/DOIDFoundation/artscan-slugs/main/${chainId}/${doid}/${meta.slug}.txt`
       )
       meta.sync = addersses.includes(minter)
     } catch {}

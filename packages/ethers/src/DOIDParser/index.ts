@@ -1,6 +1,5 @@
 import { checkDOIDName, wrapTLD } from '../nsResolver/checker'
-import { safeDecodeURIComponent, safeEncodeURIComponent } from '@lit-web3/core/src/uri'
-import slugify from '@lit-web3/core/src/slugify'
+import { safeDecodeURIComponent, slugify } from '@lit-web3/core/src/uri'
 import { reverseDOIDName } from './query'
 
 const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Promise<DOIDObject> => {
@@ -9,20 +8,30 @@ const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Pr
   let { error, msg, name, doid } = DOID
   // Cook
   const cooked: DOIDObject = { DOID, name, doid, token, error, msg }
-  let result = /^(.*?)[ #](\d*)$/.exec(token.name ?? '')
-  if (result) {
-    token.slugName = safeEncodeURIComponent(result[1])
-    if (result[2] != token.tokenID) {
-      token.slugID = result[2].replace(/^0*/, '')
+  // Generate slugName
+  const { name: tokenName } = token
+  let { tokenID, slugID } = token
+  if (tokenName && !token.slugName) {
+    let slugName = slugify(tokenName)
+    let [, nameWithoutSuffixID, , , suffixID] = tokenName.match(/^(.+?)(( |#| #)(\d+?))?$/) ?? []
+    if (!tokenID && !slugID) {
+      // keep as-is, eg. Cyberpunk 2077 >> cyberpunk-2077
+    } else {
+      if (slugID) {
+        if (!tokenID) token.tokenID = slugID
+      } else if (tokenID && suffixID === tokenID) {
+        // eg. { name: 'Cyberpunk 2077', tokenID: '1' } >> cyberpunk#2077-1
+        slugName = slugify(nameWithoutSuffixID)
+      }
     }
-  } else {
-    token.slugName = safeEncodeURIComponent(token.name ?? '')
+    token.slugName = slugName
   }
-  const val = stringify(cooked)
+  //
+  const val = stringify(cooked) // This will be deprecated soon
   const equal = decoded === val
   if (equal && name) token.minter = await reverseDOIDName(name)
   Object.assign(cooked, {
-    val,
+    val, // This will be deprecated soon
     equal,
     uri: stringify(cooked, { encode: true })
   })
@@ -33,12 +42,12 @@ const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Pr
 export const parseFromString = async (src = ''): Promise<DOIDObject> => {
   const decoded = safeDecodeURIComponent(src)
   const [, DOIDName, , tokenish = ''] = decoded.match(/^([^\/]+?)(\/(.+)?)?$/) ?? []
-  // Token
-  const [, tokenName = '', , slugID = '', , tokenID = ''] = tokenish.match(/^(.+?)(#(\d+?)(-(\d+)?)?)?$/) ?? []
+  // Generate token
+  const [, name = '', , slugID = '', , tokenID = ''] = tokenish.match(/^(.+?)(#(\d+?)(-(\d+)?)?)?$/) ?? []
   const token: NFTToken = {
-    name: tokenName,
+    name,
     slugID,
-    tokenID: tokenID.length == 0 ? slugID : tokenID
+    tokenID: tokenID || slugID
   }
   return await cookeDOID(DOIDName, token, decoded)
 }
@@ -49,25 +58,34 @@ export const parseDOIDFromRouter = async (...args: string[]): Promise<[DOIDObjec
   const key = getKeyFromRouter(...args)
   return [await parseFromString(key), key]
 }
-//
+// DOIDObject to string
 export const stringify = (doidObject: DOIDObject, { keepIdentifier = false, encode = false } = {}) => {
-  let { name, token } = doidObject
-  if (!name) return ''
-  name = wrapTLD(name)
+  let { name: DOIDName, token } = doidObject
+  if (!DOIDName) return ''
+  DOIDName = wrapTLD(DOIDName)
   let { slugName: tokenName = '', tokenID = '', slugID = '' } = token ?? {}
-  if (encode) {
-    tokenName = safeEncodeURIComponent(tokenName)
+  if (encode) tokenName = slugify(tokenName)
+  // collapse tokenID to slugID
+  if ((tokenID && !slugID) || tokenID === slugID) {
+    slugID = tokenID
+    tokenID = ''
   }
-  tokenID = tokenID && tokenID != slugID ? `-${tokenID}` : tokenID && keepIdentifier ? '-' : ''
-  slugID = slugID ? `#${slugID}` : tokenName && keepIdentifier ? '#' : ''
-  tokenName = tokenName ? `/${tokenName}` : name && keepIdentifier ? '/' : ''
-  return `${name}${tokenName}${slugID}${tokenID}`
+  // tokenID
+  if (tokenID && slugID && tokenID != slugID) tokenID = `-${tokenID}`
+  else if (keepIdentifier) tokenID = '-'
+  // slugID
+  if (slugID) slugID = `#${slugID}`
+  else if (keepIdentifier && tokenName) slugID = '#'
+  // tokenName
+  if (tokenName) tokenName = `/${tokenName}`
+  else if (keepIdentifier && DOIDName) tokenName = '/'
+  return `${DOIDName}${tokenName}${slugID}${tokenID}`
 }
 
 export const parseFromColl = async (coll: any): Promise<DOIDObject> => {
   const DOIDName = coll.name ?? coll.DOIDName
   const decoded = safeDecodeURIComponent(DOIDName)
-  const token = coll.token ?? { name: coll.tokenName, tokenID: coll.tokenID, slugID: coll.slugID }
+  const token = coll.token ?? { name: coll.tokenName, tokenID: coll.tokenID }
   return await cookeDOID(DOIDName, token, decoded)
 }
 

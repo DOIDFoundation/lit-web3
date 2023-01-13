@@ -32,8 +32,8 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
     return this.item.ctime ? new Date(this.item.ctime).toLocaleString() : ''
   }
   get token() {
-    const { tokenID, slugID } = this.item
-    return { name: this.meta?.name, tokenID, slugID }
+    const { tokenID } = this.item
+    return { name: this.meta?.name, tokenID }
   }
   get cookedName() {
     return this.cooked?.parsed?.val

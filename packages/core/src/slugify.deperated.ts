@@ -1,4 +1,4 @@
-// Only accepts Ascii characters now
+// Only accepts Ascii characters for now
 
 export default (input: string) => {
   // Replace special characters with space

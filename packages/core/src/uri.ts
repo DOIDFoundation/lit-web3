@@ -2,7 +2,9 @@ import safeDecodeURIComponent from 'safe-decode-uri-component'
 export { safeDecodeURIComponent }
 
 // Just encode reserved characters
-export const safeEncodeURIComponent = (s: string) =>
+export const safeEncodeURIComponent = (s: string) => s.replaceAll(/[;/?:@&=+$,#]/g, (r) => encodeURIComponent(r))
+
+export const slugify = (s: string) =>
   s
     .toLowerCase()
     .replace(/<(?:.|\n)*?>/gm, '') // Drop HTML tags

@@ -1,6 +1,5 @@
 declare interface Coll extends NFTToken {
   slugName?: string
-  slugID?: string
   openseaUri?: string
   owner?: Address
   doids?: DOIDObject[]
