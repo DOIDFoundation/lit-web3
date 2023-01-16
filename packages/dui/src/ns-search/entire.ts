@@ -13,6 +13,7 @@ export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
   @property() placeholder = ''
   @property() default?: string
   @property({ type: Boolean }) entire = false
+  @property({ type: Boolean }) sm = false
   @state() keyword = ''
   @state() err = ''
   @state() pending = false
@@ -41,6 +42,7 @@ export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
   render() {
     return html`
       <dui-input-text
+        .sm=${this.sm}
         ${ref(this.input$)}
         @input=${this.onInput}
         @submit=${this.doSearch}

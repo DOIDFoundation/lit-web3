@@ -110,7 +110,7 @@ describe('DOIDParser', async () => {
 
   it(`name's suffix contain number from coll 3`, async () => {
     const parser = await DOIDParser({ name: 'lucy.doid', token: { name: 'Cyberpunk 2077', tokenID: '3' } })
-    expect(parser.parsed.uri).to.equal('lucy.doid/cyberpunk-2077#3')
+    expect(parser.parsed.uri).to.equal('lucy.doid/cyberpunk#2077-3')
   })
 
   it(`name's suffix contain number from coll 4`, async () => {

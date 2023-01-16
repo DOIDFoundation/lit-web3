@@ -19,9 +19,10 @@ const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Pr
     } else {
       if (slugID) {
         if (!tokenID) token.tokenID = slugID
-      } else if (tokenID && suffixID === tokenID) {
+      } else if (tokenID && suffixID) {
         // eg. { name: 'Cyberpunk 2077', tokenID: '2077' } >> cyberpunk#2077
         slugName = slugify(nameWithoutSuffixID)
+        token.slugID = suffixID
       }
     }
     token.slugName = slugName

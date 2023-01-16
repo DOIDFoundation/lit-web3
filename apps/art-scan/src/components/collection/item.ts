@@ -94,7 +94,7 @@ export class CollectionDetail extends TailwindElement(style) {
         () =>
           html` ${when(
             this.pending,
-            () => html`<loading-icon></loading-icon>`,
+            () => html`<loading-icon type="block"></loading-icon>`,
             () =>
               html`${when(
                 !this.err,

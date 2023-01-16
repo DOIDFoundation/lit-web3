@@ -1,5 +1,5 @@
 import { customElement, property, state } from 'lit/decorators.js'
-import { TailwindElement, html } from '../shared/TailwindElement'
+import { TailwindElement, html, classMap } from '../shared/TailwindElement'
 
 const converter = (val: string | null, type: unknown, { lower = false, upper = false } = {}) => {
   if (val) {
@@ -16,6 +16,7 @@ export class DuiInputText extends TailwindElement(style) {
   @property({ type: String }) placeholder = ''
   @property({ type: String }) type = 'text'
   @property({ type: String }) class = ''
+  @property({ type: Boolean }) sm = false
   @property({ type: Boolean }) disabled = false
   @property({ type: Boolean }) autoforce = false
   @property({ type: Boolean }) required = false
@@ -79,7 +80,7 @@ export class DuiInputText extends TailwindElement(style) {
 
   render() {
     return html`<div
-      class="dui-input-text ${this.class}"
+      class="dui-input-text ${classMap(this.$c([this.class, { sm: this.sm }]))}"
       ?required=${this.required}
       ?rightSlotted=${this.rightSlotted}
       ?leftSlotted=${this.leftSlotted}

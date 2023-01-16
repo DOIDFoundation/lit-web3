@@ -68,12 +68,12 @@ export class DuiLink extends TailwindElement(style) {
   }
 
   connectedCallback() {
-    emitter.on('router-change', this.updatePathName)
     super.connectedCallback()
+    if (this.nav) emitter.on('router-change', this.updatePathName)
   }
   disconnectedCallback() {
-    emitter.off('router-change', this.updatePathName)
     super.disconnectedCallback()
+    if (this.nav) emitter.off('router-change', this.updatePathName)
   }
 
   render() {

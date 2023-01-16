@@ -1,7 +1,5 @@
 import { TailwindElement, html, customElement, property, when, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
-import '@/components/search-bar'
 import '@/components/collection/list'
 import '@/components/artist/info'
 // Styles
@@ -15,30 +13,19 @@ export class CollectionList extends TailwindElement(style) {
     return this.DOID?.doid
   }
 
-  onSearch = (e: CustomEvent) => {
-    const { token, uri, name } = e.detail
-    if (token.name) goto(`/collection/${uri}`)
-    else goto(`/artist/${name}`)
-  }
-
-  connectedCallback() {
-    super.connectedCallback()
-  }
-
   render() {
     return html`<div class="view-artist">
       <div class="dui-container">
-        <search-bar lite .default=${this.DOID?.uri} label="DOID of artist or artwork"></search-bar>
         ${when(
           this.doid,
           () =>
             html`${keyed(
               this.doid,
-              html`<div class="grid grid-cols-1 lg_grid-cols-5 gap-4">
-                <div class="order-2 lg_order-none lg_col-span-3">
+              html`<div class="grid-cols-1 lg_grid-cols-6 grid gap-4 lg_gap-8">
+                <div class="lg_col-span-4 order-2 lg_order-none">
                   <doid-collections .DOID=${this.DOID}></doid-collections>
                 </div>
-                <div class="order-1 lg_order-none lg_col-start-5 lg_col-span-1 bg-gray-100 h-32 p-4">
+                <div class="lg_col-span-2 bg-gray-100 h-32 p-4 order-1 lg_order-none rounded-md lg_sticky top-4">
                   <artist-info .DOID=${this.DOID}></artist-info>
                 </div>
               </div>`
