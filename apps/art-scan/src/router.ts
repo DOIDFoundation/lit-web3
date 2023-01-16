@@ -19,8 +19,9 @@ export const routes = [
     name: 'artist',
     path: '/artist/:name?',
     render: ({ name = '' }) => {
-      const DOID = cached.get(getKeyFromRouter(name))
-      return html`${keyed(name, html`<view-artist .DOID=${DOID}></view-artist>`)}`
+      const key = getKeyFromRouter(name)
+      const DOID = cached.get(key)
+      return html`${keyed(key, html`<view-artist .DOID=${DOID}></view-artist>`)}`
     },
     enter: async ({ name = '' }) => {
       const [DOID, key] = await parseDOIDFromRouter(name)
@@ -42,8 +43,9 @@ export const routes = [
     name: 'collection',
     path: '/collection/:name/:tokenName?',
     render: ({ name = '', tokenName = '' }) => {
-      const DOID = cached.get(getKeyFromRouter(name, tokenName))
-      return html`${keyed(name + tokenName, html`<view-collection .DOID=${DOID}></view-collection>`)}`
+      const key = getKeyFromRouter(name, tokenName)
+      const DOID = cached.get(key)
+      return html`${keyed(key, html`<view-collection .DOID=${DOID}></view-collection>`)}`
     },
     enter: async ({ name = '', tokenName = '' }) => {
       if (name && !tokenName) {

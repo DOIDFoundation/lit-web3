@@ -1,12 +1,4 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { getColl } from '@/lib/query'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
@@ -24,11 +16,11 @@ import style from './item.css?inline'
 export class CollectionDetail extends TailwindElement(style) {
   @property() DOID?: DOIDObject
   @state() cooked?: DOIDObject
-  @state() item: Coll = {}
+  @state() item?: Coll
   @state() pending = false
   @state() err = ''
   @state() ts = 0
-  @state() meta: Meta = {}
+  @state() meta?: Meta
 
   get doid() {
     return this.DOID?.doid
@@ -49,10 +41,10 @@ export class CollectionDetail extends TailwindElement(style) {
     return this.token?.slugName ?? ''
   }
   get address() {
-    return this.item.address
+    return this.item?.address
   }
   get empty() {
-    return !this.pending && !!this.ts && !this.meta?.name
+    return !this.pending && !!this.ts && !this.item
   }
   get opensea() {
     const url = `${getOpenseaUri('url')}/${this.address}/${this.tokenID}`
@@ -64,15 +56,13 @@ export class CollectionDetail extends TailwindElement(style) {
 
   async getCollection() {
     if (this.pending) return
-
     if (!(this.slugName || this.tokenID || this.minter)) return
     this.pending = true
     this.err = ''
     try {
       // input: slug, tokenId, minter, seq
-      const collections = (await getColl(this)) as Coll
-      this.item = collections || {}
-      await this.getMeta()
+      this.item = await getColl(this)
+      this.getMeta()
     } catch (err: any) {
       this.err = err.message || err
     }
@@ -80,17 +70,18 @@ export class CollectionDetail extends TailwindElement(style) {
     this.pending = false
   }
   getMeta = async () => {
-    this.meta = await getMetaData(this.item)
+    if (this.item) this.meta = await getMetaData(this.item)
   }
   async connectedCallback() {
     super.connectedCallback()
-    await this.getCollection()
+    this.getCollection()
   }
+
   render() {
     return html`<div class="comp-collection">
       ${when(
         this.empty,
-        () => html``,
+        () => html`<p class="text-center">No data yet.</p>`,
         () =>
           html` ${when(
             this.pending,
@@ -100,7 +91,7 @@ export class CollectionDetail extends TailwindElement(style) {
                 !this.err,
                 () => html`<div class="my-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
                   <div class="lg_col-span-2 flex flex-col gap-2 items-center p-4 lg_px-6 bg-gray-100 rounded-md">
-                    <img-loader class="w-80 h-80 lg_w-60 lg_h-60" src=${this.meta.image} loading="lazy"></img-loader>
+                    <img-loader class="w-80 h-80 lg_w-60 lg_h-60" src=${this.meta?.image} loading="lazy"></img-loader>
                     <loading-skeleton class="flex flex-col items-center" .expect=${this.meta?.name} num="3"
                       ><div class="text-base mb-2">${this.meta?.name}</div>
                       <div class="break-words break-all text-gray-500">${this.meta?.description}</div></loading-skeleton
@@ -115,9 +106,9 @@ export class CollectionDetail extends TailwindElement(style) {
                       <b>Owned by:</b>
                       <span class="text-gray-500"
                         >${when(
-                          this.item.doids?.length,
-                          () => html`${this.item.doids?.at(0)?.name}`,
-                          () => html`<dui-address .address=${this.item.owner}></dui-address>`
+                          this.item?.doids?.length,
+                          () => html`${this.item?.doids?.at(0)?.name}`,
+                          () => html`<dui-address .address=${this.item?.owner}></dui-address>`
                         )}</span
                       >
                     </div>
@@ -134,12 +125,12 @@ export class CollectionDetail extends TailwindElement(style) {
                           <dui-address
                             href=${this.scan}
                             class="lg_text-sm text-blue-500"
-                            .address=${this.item.address}
+                            .address=${this.item?.address}
                           ></dui-address>
                         </div>
                         <div class="flex gap-2  text-xs lg_text-sm">
                           <span>Token ID:</span>
-                          <span class="text-gray-500">${this.item.tokenID}</span>
+                          <span class="text-gray-500">${this.item?.tokenID}</span>
                         </div>
                         <div class="flex gap-2 items-center  text-xs lg_text-sm">
                           <span>Chain:</span>
