@@ -6,7 +6,7 @@ import '@lit-web3/dui/src/link'
 import style from './breadcrumb.css?inline'
 
 @customElement('coll-breadcrumb')
-export class CollectionBreadcrumb extends TailwindElement(style) {
+export class CollBreadcrumb extends TailwindElement(style) {
   @property() items: any[] = []
   @property() class = ''
 

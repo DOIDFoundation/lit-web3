@@ -1,11 +1,13 @@
 // Todo: ShadowRoot should be created as childNodes of document.body
 import { customElement, TailwindElement, html, state, property } from '../shared/TailwindElement'
+import type { TAILWINDELEMENT } from '../shared/TailwindElement'
 import { sleep } from '@lit-web3/ethers/src/utils'
 import { animate } from '@lit-labs/motion'
 
 import style from './dialog.css?inline'
+
 @customElement('dui-dialog')
-export class DuiDialog extends TailwindElement(style) {
+export class DuiDialog extends TailwindElement(style) implements TAILWINDELEMENT {
   @property({ type: Boolean }) persistent = false
   @state() model = false
 

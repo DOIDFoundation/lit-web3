@@ -19,7 +19,7 @@ import '@lit-web3/dui/src/dialog/prompt'
 import style from './set.css?inline'
 
 @customElement('doid-set-record-wallet')
-export class SetRecordWallet extends TailwindElement(style) {
+export class DoidSetRecordWallet extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean }) owner = false
   @property({ type: Object }) coin: any = {}

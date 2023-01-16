@@ -6,7 +6,7 @@ import '@/components/artist/info'
 import style from './index.css?inline'
 
 @customElement('view-artist')
-export class CollectionList extends TailwindElement(style) {
+export class ViewArtist extends TailwindElement(style) {
   @property() DOID?: DOIDObject
 
   get doid() {

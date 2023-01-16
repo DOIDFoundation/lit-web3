@@ -13,7 +13,7 @@ import { getOpenseaUri } from '@lit-web3/ethers/src/constants/opensea'
 import style from './item.css?inline'
 
 @customElement('doid-collection')
-export class CollectionDetail extends TailwindElement(style) {
+export class DoidCollection extends TailwindElement(style) {
   @property() DOID?: DOIDObject
   @state() cooked?: DOIDObject
   @state() item?: Coll

@@ -3,7 +3,7 @@ import { TailwindElement, html, customElement, property } from '@lit-web3/dui/sr
 import '@lit-web3/dui/src/link'
 
 @customElement('coll-marker')
-export class CollectionBreadcrumb extends TailwindElement('') {
+export class CollMarker extends TailwindElement('') {
   @property() DOID?: DOIDObject
 
   get doid() {

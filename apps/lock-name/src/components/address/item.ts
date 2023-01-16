@@ -23,7 +23,7 @@ import './set'
 import style from './item.css?inline'
 
 @customElement('doid-addr-item')
-export class EditInline extends TailwindElement(style) {
+export class DoidAddrItem extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) item: any = {}
   @property({ type: Boolean }) owner = false

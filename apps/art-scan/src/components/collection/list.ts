@@ -19,7 +19,7 @@ import '@lit-web3/dui/src/pagination'
 import style from './list.css?inline'
 
 @customElement('doid-collections')
-export class CollectionList extends TailwindElement(style) {
+export class DoidCollections extends TailwindElement(style) {
   @property() DOID?: DOIDObject
 
   @state() pending = false

@@ -4,7 +4,6 @@ import '../dialog/prompt'
 import '../button'
 
 @customElement('dui-tip')
-// @ts-ignore
 export class DuiTip extends TailwindElement('') {
   @state() model = false
 

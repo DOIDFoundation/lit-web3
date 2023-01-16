@@ -4,7 +4,7 @@ import './index'
 
 import style from './icon.css?inline'
 @customElement('dui-copy-icon')
-export class DuiAddressAvatar extends TailwindElement(style) {
+export class DuiCopyIcon extends TailwindElement(style) {
   @property({ type: String }) value = ''
 
   override render() {
