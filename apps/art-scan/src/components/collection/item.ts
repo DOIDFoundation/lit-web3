@@ -23,7 +23,7 @@ import style from './item.css?inline'
 @customElement('doid-collection')
 export class CollectionDetail extends TailwindElement(style) {
   @property() DOID?: DOIDObject
-  @state() cooked: DOIDObject | undefined
+  @state() cooked?: DOIDObject
   @state() item: Coll = {}
   @state() pending = false
   @state() err = ''

@@ -1,7 +1,7 @@
 import { TailwindElement, html, customElement, property, when, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
-import '@lit-web3/dui/src/ns-search/entire'
+import '@/components/search-bar'
 import '@/components/collection/list'
 import '@/components/artist/info'
 // Styles
@@ -28,10 +28,7 @@ export class CollectionList extends TailwindElement(style) {
   render() {
     return html`<div class="view-artist">
       <div class="dui-container">
-        <doid-search-entire .default=${this.DOID?.val} @search=${this.onSearch} placeholder="DOID of artist or artwork">
-          <span slot="label"></span>
-          <span slot="msg"></span>
-        </doid-search-entire>
+        <search-bar lite .default=${this.DOID?.uri} label="DOID of artist or artwork"></search-bar>
         ${when(
           this.doid,
           () =>

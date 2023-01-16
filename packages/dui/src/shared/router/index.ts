@@ -29,6 +29,7 @@ export const routerGuard = {
       replaceState.apply(history, [state, key, url])
       emitRouterChange(url)
     }
+    window.addEventListener('popstate', () => emitRouterChange(location.href))
     // Listener
     emitter.on('router-goto', (e: Event) => {
       setTimeout(() => routerGuard.goto((e as CustomEvent).detail))

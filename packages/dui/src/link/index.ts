@@ -18,7 +18,7 @@ import style from './link.css?inline'
 export class DuiLink extends TailwindElement(style) {
   @property({ type: String }) target = ''
   @property({ type: String }) class = ''
-  @property() href: string | undefined
+  @property() href?: string
   @property({ type: String }) alias = ''
   @property({ type: Boolean }) exact = false
   @property({ type: Boolean }) disabled = false
