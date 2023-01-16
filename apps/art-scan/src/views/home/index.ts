@@ -6,7 +6,7 @@ import '@lit-web3/dui/src/doid-symbol'
 
 // Style
 import style from './index.css?inline'
-
+import logo from '@/assets/logo.svg'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
   goto = (e: CustomEvent) => {
@@ -17,7 +17,7 @@ export class ViewHome extends TailwindElement(style) {
   render() {
     return html`<div class="home">
       <div class="dui-container">
-        <doid-symbol
+        <doid-symbol icon=${logo}
           ><span slot="h1">ARTSCAN</span>
           <p slot="msg">Authentic art, with Web3 artist signature</p></doid-symbol
         >
