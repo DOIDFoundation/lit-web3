@@ -75,13 +75,6 @@ export class CollectionList extends LazyElement(TailwindElement(style)) {
         <div>
           <loading-skeleton .expect=${this.meta.name} num="3">
             <div class="mb-2 flex items-center">
-              <b
-                class="inline-block text-white rounded py-0.5 px-1 text-xs mr-1.5 ${classMap({
-                  'bg-green-600': !!this.meta.sync,
-                  'bg-gray-500': !this.meta.sync
-                })}"
-                >${this.meta.sync ? 'Verified' : 'Unverified'}</b
-              >
               <dui-link class="text-base" href=${`/collection/${this.cookedUri}`}
                 >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
               ></dui-link>
