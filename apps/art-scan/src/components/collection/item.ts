@@ -107,13 +107,6 @@ export class CollectionDetail extends TailwindElement(style) {
                     >
                   </div>
                   <div class="py-2 lg_mt-0 lg_col-span-3">
-                    <b
-                      class="inline-block text-white rounded py-0.5 px-1 text-xs mb-2 ${classMap({
-                        'bg-green-600': !!this.meta.sync,
-                        'bg-gray-500': !this.meta.sync
-                      })}"
-                      >${this.meta.sync ? 'Verified' : 'Unverified'}</b
-                    >
                     <div class="flex lg_flex-col gap-2 mb-2">
                       <b>Created by:</b>
                       <span class="text-gray-500">${this.doid}</span>

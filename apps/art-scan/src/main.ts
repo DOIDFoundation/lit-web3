@@ -6,18 +6,14 @@ import '@lit-web3/dui/src/network-warning'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/nav/footer'
 import '@lit-web3/dui/src/nav/nav'
+import '@lit-web3/dui/src/link'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
   render() {
     return html`<network-warning></network-warning>
       <dui-header menuable>
-        <div slot="sublogo" class="flex items-center"></div>
-        <dui-nav slot="center" menuable>
-          <dui-link href="/" nav alias="/search">Home</dui-link>
-          <dui-link href="/artist" nav>Artist</dui-link>
-          <dui-link href="/collection" nav>Collection</dui-link>
-        </dui-nav>
+        <div slot="logo"><a class="text-base lg_text-lg font-semibold" href="/">ARTSCAN</a></div>
         <div class="flex flex-col p-4 pt-0" slot="submenu">
           <dui-link class="w-full" href="/collection" nav>My Collections</dui-link>
         </div>
@@ -26,6 +22,9 @@ export class AppMain extends TailwindElement('') {
         <slot></slot>
       </main>
       <dui-footer>
+        <div slot="center">
+          Powered by<dui-link class="ml-0.5 underline underline-offset-2" href="https://doid.tech">DOID</dui-link>
+        </div>
         <div slot="right"></div>
       </dui-footer>`
   }
