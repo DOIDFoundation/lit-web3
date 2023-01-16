@@ -14,7 +14,7 @@ declare class LazyElementClass {
 }
 export const LazyElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
   superClass: T,
-  { persistent = false } = {}
+  { persistent = false, rootMargin = '0px' } = {}
 ) => {
   return class extends superClass {
     observe$?: HTMLElement
@@ -24,11 +24,14 @@ export const LazyElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
     observe = () => {
       if (this.observer) return
       if (!(this.observe$ || (this.observe$ = this.$(':first-child')))) return
-      this.observer = new IntersectionObserver((entries) => {
-        if (entries[0].intersectionRatio <= 0) return
-        this.onObserved()
-        if (!persistent) this.unobserve()
-      })
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].intersectionRatio <= 0) return
+          this.onObserved()
+          if (!persistent) this.unobserve()
+        },
+        { rootMargin }
+      )
       this.observer.observe(this.observe$)
     }
     firstUpdated() {

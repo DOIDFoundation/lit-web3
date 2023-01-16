@@ -82,7 +82,7 @@ export class CollectionList extends TailwindElement(style) {
               (item: Coll) =>
                 html`${keyed(
                   item,
-                  html`<div class="bg-gray-100 mb-1 break-words break-all rounded-md">
+                  html`<div class="bg-gray-100 break-words break-all rounded-md">
                     <doid-coll-item .DOID=${this.DOID} .item=${item}></doid-coll-item>
                   </div>`
                 )}`

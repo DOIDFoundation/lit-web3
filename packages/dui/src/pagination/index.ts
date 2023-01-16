@@ -7,7 +7,7 @@ import '../link'
 // Styles
 import style from './index.css?inline'
 @customElement('dui-pagination')
-export class DuiPagination extends LazyElement(TailwindElement(style), { persistent: true }) {
+export class DuiPagination extends LazyElement(TailwindElement(style), { persistent: true, rootMargin: '30px' }) {
   @property({ type: Number }) pageSize = 5
   @property({ type: Number }) page = 1
   @property() mode = 'scroll' //scroll or click auto

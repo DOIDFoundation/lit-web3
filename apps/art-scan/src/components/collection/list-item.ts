@@ -19,7 +19,7 @@ import '@lit-web3/dui/src/loading/skeleton'
 import style from './list-item.css?inline'
 
 @customElement('doid-coll-item')
-export class CollectionList extends LazyElement(TailwindElement(style)) {
+export class CollectionListItem extends LazyElement(TailwindElement(style)) {
   @property() DOID?: DOIDObject
   @property() item: Coll = {}
   @state() cooked?: DOIDObject
