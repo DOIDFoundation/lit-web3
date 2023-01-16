@@ -2,22 +2,20 @@
   @apply flex w-full mx-auto relative py-5;
   & input[type] {
     font-family: var(--fontFamily);
-    @apply relative inline-flex w-full p-6 px-3 rounded-md text-base bg-white;
+    @apply h-8 relative inline-flex w-full p-6 px-3 rounded-md text-base bg-white;
     border: 1px solid #ccc;
-    height: 2rem;
   }
   &[disabled] {
     @apply opacity-60;
   }
   &.sm {
+    @apply py-0;
     & input[type] {
-      @apply text-sm py-4;
-      height: 1.5rem;
+      @apply h-6 text-sm py-4;
     }
     & .dui-input-right,
     & .dui-input-left {
-      line-height: 1rem;
-      @apply py-4;
+      @apply leading-4 py-4;
     }
   }
   & .dui-input-msg,
@@ -36,12 +34,11 @@
   }
   & .dui-input-right,
   & .dui-input-left {
-    @apply absolute flex justify-center items-center p-6 pr-2 pl-2 rounded-r-md pointer-events-none;
+    @apply h-6 absolute flex justify-center items-center p-6 pr-2 pl-2 rounded-r-md pointer-events-none;
+    min-width: 1.5rem;
     z-index: 1;
     right: 1px;
-    min-width: 1.5rem;
     margin-top: 1px;
-    height: 1.5rem;
     font-size: 1em;
     line-height: 1em;
     &:empty {
@@ -69,10 +66,16 @@
     & input[type] {
       @apply pr-20;
     }
+    &.sm input[type] {
+      @apply pr-10;
+    }
   }
   &[leftSlotted] {
     & input[type] {
       @apply pl-11;
+    }
+    &.sm input[type] {
+      @apply pl-8;
     }
   }
 }

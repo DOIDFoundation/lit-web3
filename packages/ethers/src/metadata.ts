@@ -46,7 +46,7 @@ export const throttle = async (uri: string, interval = 1024): Promise<Meta> => {
 }
 
 export const getMetaDataByOpenSea = async ({ address = '', tokenID = '' } = <NFTToken | Coll>{}): Promise<Meta> => {
-  let meta: Meta | undefined = undefined
+  let meta: Meta | undefined
   // 1. from cache
   const storage = await useStorage(`meta.${address}.${tokenID}`, storageOpt)
   meta = await storage.get()
@@ -61,7 +61,7 @@ export const getMetaDataByOpenSea = async ({ address = '', tokenID = '' } = <NFT
 }
 
 export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
-  let meta: Meta | undefined = undefined
+  let meta: Meta | undefined
   if (!tokenURI) return {}
   // 0. instant data
   if (isInstantUri(tokenURI)) meta = normalize(await http.get(tokenURI))
@@ -79,7 +79,7 @@ export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
 }
 
 export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
-  let meta: Meta | undefined = undefined
+  let meta: Meta | undefined
   const { tokenURI, address, tokenID, doid, minter } = token
   // 0. instant data
   if (isInstantUri(tokenURI)) meta = await getMetaDataByTokenURI(tokenURI)
@@ -93,14 +93,14 @@ export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   // 3. by tokenURI
   if (!meta && tokenURI) meta = await getMetaDataByTokenURI(tokenURI)
   // Validate meta by slug
-  if (meta && doid) {
-    try {
-      const chainId = await getChainId()
-      const addersses = await http.get(
-        `https://raw.githubusercontent.com/DOIDFoundation/artscan-slugs/main/${chainId}/${doid}/${meta.slug}.txt`
-      )
-      meta.sync = addersses.includes(minter)
-    } catch {}
-  }
+  // if (meta && doid) {
+  //   try {
+  //     const chainId = await getChainId()
+  //     const addersses = await http.get(
+  //       `https://raw.githubusercontent.com/DOIDFoundation/artscan-slugs/main/${chainId}/${doid}/${meta.slug}.txt`
+  //     )
+  //     meta.sync = addersses.includes(minter)
+  //   } catch {}
+  // }
   return meta ?? {}
 }

@@ -3,7 +3,7 @@ import { TailwindElement, customElement, html, property } from './shared/Tailwin
 import icon from './i/doid.svg'
 
 @customElement('doid-symbol')
-export class SharePass extends TailwindElement('') {
+export class DoidSymbol extends TailwindElement('') {
   @property() icon = ''
   render() {
     return html`<strong class="block w-24 h-24 m-12 mx-auto" href="/"

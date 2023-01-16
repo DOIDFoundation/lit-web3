@@ -19,9 +19,10 @@ const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Pr
     } else {
       if (slugID) {
         if (!tokenID) token.tokenID = slugID
-      } else if (tokenID && suffixID === tokenID) {
-        // eg. { name: 'Cyberpunk 2077', tokenID: '1' } >> cyberpunk#2077-1
+      } else if (tokenID && suffixID) {
+        // eg. { name: 'Cyberpunk 2077', tokenID: '2077' } >> cyberpunk#2077
         slugName = slugify(nameWithoutSuffixID)
+        token.slugID = suffixID
       }
     }
     token.slugName = slugName
@@ -41,7 +42,7 @@ const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Pr
 // eg. packages/tests/test/ethers/nameParser.test.ts
 export const parseFromString = async (src = ''): Promise<DOIDObject> => {
   const decoded = safeDecodeURIComponent(src)
-  const [, DOIDName, , tokenish = ''] = decoded.match(/^([^\/]+?)(\/(.+)?)?$/) ?? []
+  const [, DOIDName = '', , tokenish = ''] = decoded.match(/^([^\/]+?)(\/(.+)?)?$/) ?? []
   // Generate token
   const [, name = '', , slugID = '', , tokenID = ''] = tokenish.match(/^(.+?)(#(\d+?)(-(\d+)?)?)?$/) ?? []
   const token: NFTToken = {
@@ -52,8 +53,11 @@ export const parseFromString = async (src = ''): Promise<DOIDObject> => {
   return await cookeDOID(DOIDName, token, decoded)
 }
 
-export const getKeyFromRouter = (name = '', tokenName = '', hash = '') =>
-  `${name}${tokenName ? `/${tokenName}${hash || location.hash}` : ''}`
+// @lit-labs/router maybe buggy here, if use it's goto('ab#1'), # will be encoded to %23
+export const getKeyFromRouter = (name = '', tokenName = '', hash = '') => {
+  ;[, tokenName] = location.href.split(name) ?? []
+  return `${name}${tokenName ? `/${tokenName.replace(/^\//, '')}` : ''}`
+}
 export const parseDOIDFromRouter = async (...args: string[]): Promise<[DOIDObject, string]> => {
   const key = getKeyFromRouter(...args)
   return [await parseFromString(key), key]

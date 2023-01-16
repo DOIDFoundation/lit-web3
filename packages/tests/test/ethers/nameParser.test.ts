@@ -44,16 +44,22 @@ describe('DOIDParser', async () => {
     expect(parser.parsed.token?.name).to.equal('crypto-name/eth#abc###')
   })
 
-  it('token', async () => {
-    var parser = await DOIDParser('banana.doid/crypto-name#1')
+  it('token with slugID', async () => {
+    const parser = await DOIDParser('banana.doid/crypto-name#1')
     expect(parser.parsed.token?.slugID).to.equal('1')
     expect(parser.parsed.token?.tokenID).to.equal('1')
     expect(parser.parsed.uri).to.equal('banana.doid/crypto-name#1')
-    var parser = await DOIDParser('banana.doid/crypto-name#1-2')
+  })
+
+  it('token with slugID & tokenID', async () => {
+    const parser = await DOIDParser('banana.doid/crypto-name#1-2')
     expect(parser.parsed.token?.slugID).to.equal('1')
     expect(parser.parsed.token?.tokenID).to.equal('2')
     expect(parser.parsed.uri).to.equal('banana.doid/crypto-name#1-2')
-    var parser = await DOIDParser('banana.doid/crypto-name##')
+  })
+
+  it('invalid hash', async () => {
+    const parser = await DOIDParser('banana.doid/crypto-name##')
     expect(parser.parsed.token?.tokenID).to.equal('')
   })
 
@@ -104,7 +110,7 @@ describe('DOIDParser', async () => {
 
   it(`name's suffix contain number from coll 3`, async () => {
     const parser = await DOIDParser({ name: 'lucy.doid', token: { name: 'Cyberpunk 2077', tokenID: '3' } })
-    expect(parser.parsed.uri).to.equal('lucy.doid/cyberpunk-2077#3')
+    expect(parser.parsed.uri).to.equal('lucy.doid/cyberpunk#2077-3')
   })
 
   it(`name's suffix contain number from coll 4`, async () => {

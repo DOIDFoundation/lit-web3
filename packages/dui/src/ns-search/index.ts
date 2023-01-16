@@ -16,7 +16,7 @@ export class duiNsSearch extends ValidateDOIDName(TailwindElement(style), { allo
   bindStore: any = new StateController(this, searchStore)
   bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = 'Search names or addresses'
-  @property() default: string | undefined
+  @property() default?: string
   @property({ type: Boolean }) entire = false
   @state() keyword = ''
   @state() err = ''

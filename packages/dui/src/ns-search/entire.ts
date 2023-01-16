@@ -1,7 +1,5 @@
 import { TailwindElement, html, when, customElement, ref } from '../shared/TailwindElement'
 import { property, state } from 'lit/decorators.js'
-import { searchStore, StateController } from './store'
-import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { ValidateDOID } from '../validator/doid'
 // Components
@@ -12,20 +10,18 @@ import '../button'
 import style from './index.css?inline'
 @customElement('doid-search-entire')
 export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
-  bindStore: any = new StateController(this, searchStore)
-  bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = ''
-  @property() default: string | undefined
+  @property() default?: string
   @property({ type: Boolean }) entire = false
+  @property({ type: Boolean }) sm = false
   @state() keyword = ''
   @state() err = ''
   @state() pending = false
 
   onInput = async (e?: CustomEvent) => {
     await this.validateDOID(e ?? this.keyword)
-    const { error, val, msg = '' } = this.DOID
+    const { msg = '', val } = this.DOID
     this.err = msg
-    if (error) return
     if (val) this.keyword = val
   }
 
@@ -38,14 +34,15 @@ export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
     super.connectedCallback()
     if (typeof this.default === 'undefined') return
     const {
-      parsed: { error, val = '' }
+      parsed: { error, uri = '' }
     } = await DOIDParser(this.default)
-    if (!error) this.keyword = val
+    if (!error) this.keyword = uri
   }
 
   render() {
     return html`
       <dui-input-text
+        .sm=${this.sm}
         ${ref(this.input$)}
         @input=${this.onInput}
         @submit=${this.doSearch}

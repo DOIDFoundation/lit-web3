@@ -9,13 +9,8 @@ export const validateDOID = function (this: any, opts = {}) {
     this.DOID = {}
     const parser = await DOIDParser(inputVal)
     const { parsed } = parser
-    const { val, error, msg } = parsed
+    const { error, msg } = parsed
     if (error) return { error, msg }
-    // const valWithIdentifier = parser.stringify({ keepIdentifier: true })
-    // if (val && inputVal !== valWithIdentifier) {
-    //   if (this.input$) this.input$.value.$('input').value = val
-    //   else console.warn('Please use ref(this.input$) on inputElement first')
-    // }
     this.DOID = parser.parsed
     return parser.parsed
   })

@@ -9,7 +9,7 @@ import '../copy/icon'
 
 import style from './address.css?inline'
 @customElement('dui-address')
-export class DuiAvatar extends TailwindElement(style) {
+export class DuiAddress extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   bindScreen: any = new StateController(this, screenStore)
   @property() address?: string // !!! if not defined, use current wallet address

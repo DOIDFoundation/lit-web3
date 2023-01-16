@@ -1,7 +1,7 @@
 import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
-import '@lit-web3/dui/src/ns-search/entire'
+import '@/components/search-bar'
 import '@lit-web3/dui/src/doid-symbol'
 
 // Style
@@ -22,9 +22,10 @@ export class ViewHome extends TailwindElement(style) {
           <p slot="msg">Authentic art, with Web3 artist signature</p></doid-symbol
         >
         <div class="max-w-2xl mx-auto">
-          <doid-search-entire @search=${this.goto} placeholder="Search by DOID artist signature/artwork">
-            <span slot="label">DOID of artist or artwork</span>
-          </doid-search-entire>
+          <search-bar
+            placeholder="Search by DOID artist signature/artwork"
+            label="DOID of artist or artwork"
+          ></search-bar>
         </div>
       </div>
     </div>`

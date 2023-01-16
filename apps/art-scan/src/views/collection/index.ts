@@ -1,8 +1,6 @@
 import { TailwindElement, html, customElement, property, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
-import '@lit-web3/dui/src/ns-search/entire'
-import '@/components/collection/breadscrumb'
+import '@/components/collection/marker'
 import '@/components/collection/list'
 import '@/components/collection/item'
 // Style
@@ -12,21 +10,8 @@ import style from './index.css?inline'
 export class ViewCollection extends TailwindElement(style) {
   @property() DOID?: DOIDObject
 
-  get doid() {
-    return this.DOID?.doid
-  }
   get tokenName() {
     return this.DOID?.token?.name
-  }
-  get items() {
-    const routes = []
-    if (this.tokenName) routes.push({ name: this.doid, url: `/collection/${this.doid}` })
-    if (routes.length) routes.push({ name: 'Collection' })
-    return routes
-  }
-
-  onSearch = (e: CustomEvent) => {
-    goto(`/collection/${e.detail.uri}`)
   }
 
   connectedCallback() {
@@ -36,11 +21,7 @@ export class ViewCollection extends TailwindElement(style) {
   render() {
     return html`<div class="view-collection">
       <div class="dui-container">
-        <doid-search-entire .default=${this.DOID?.val} @search=${this.onSearch} placeholder="DOID of artist or artwork">
-          <span slot="label"></span>
-          <span slot="msg"></span>
-        </doid-search-entire>
-        <coll-breadcrumb .items=${this.items} class="mb-2"></coll-breadcrumb>
+        <coll-marker .DOID=${this.DOID} class="block mb-6"></coll-marker>
         ${when(
           this.tokenName,
           () => html`<!-- collection -->

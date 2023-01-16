@@ -1,12 +1,4 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  classMap,
-  state,
-  when
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { LazyElement } from '@lit-web3/dui/src/shared/LazyElement'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { goto } from '@lit-web3/dui/src/shared/router'
@@ -19,7 +11,7 @@ import '@lit-web3/dui/src/loading/skeleton'
 import style from './list-item.css?inline'
 
 @customElement('doid-coll-item')
-export class CollectionListItem extends LazyElement(TailwindElement(style)) {
+export class DoidCollItem extends LazyElement(TailwindElement(style)) {
   @property() DOID?: DOIDObject
   @property() item: Coll = {}
   @state() cooked?: DOIDObject

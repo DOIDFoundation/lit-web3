@@ -9,7 +9,7 @@ import '@/components/names/list'
 
 import style from './list.css?inline'
 @customElement('doid-favorites')
-export class ViewFavorites extends TailwindElement(style) {
+export class DoidFavorites extends TailwindElement(style) {
   @state() favorites = getFavorites()
   @state() names: NameInfo[] = []
   @state() pending = false
