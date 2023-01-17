@@ -2,7 +2,7 @@ import MetaMaskOnboarding from './metamask-onboarding'
 import { getAddress } from '@ethersproject/address'
 import { emitErr } from '@lit-web3/core/src/emitter'
 import { WalletState, forceRequestUpdate } from '../../wallet'
-import detectEthereum, { getChainId, getAccounts } from '../../detectEthereum'
+import detectEthereum, { getChainId, getChainIdSync, getAccounts } from '../../detectEthereum'
 import screen from '@lit-web3/core/src/screen'
 
 class MetaMask implements Wallet {
@@ -32,11 +32,10 @@ class MetaMask implements Wallet {
     return account
   }
   updateAccounts(accounts = []) {
-    this.accounts.length = 0
-    this.accounts.push(...accounts.map((r) => getAddress(r)))
+    this.accounts = accounts.map((r) => getAddress(r))
     forceRequestUpdate()
   }
-  updateProvider(chainId: string) {
+  updateProvider(chainId?: string) {
     this.provider.update(chainId)
     forceRequestUpdate()
   }
@@ -60,7 +59,7 @@ class MetaMask implements Wallet {
     this.listeners.set('message', this.onMessage.bind(this))
     this.listeners.forEach((fn: Function, evt: string) => ethereum.addListener(evt, fn))
     // Get
-    const [chainId, accounts] = (await Promise.all([getChainId(ethereum), getAccounts(ethereum)])) || []
+    const [chainId, accounts] = (await Promise.all([getChainId(), getAccounts(ethereum)])) || []
     if (chainId) this.updateProvider(chainId)
     if (accounts) this.updateAccounts(accounts)
   }
@@ -68,8 +67,9 @@ class MetaMask implements Wallet {
     this.unlisten()
     this.onboarding.stopOnboarding()
     if ([WalletState.CONNECTING, WalletState.INSTALLING].includes(this.state)) this.updateState()
-    this.updateAccounts([])
     localStorage.removeItem('metamask.injected')
+    this.updateAccounts([])
+    this.updateProvider()
   }
   get installText() {
     return `${screen.isMobi ? 'Open in' : 'Install'} MetaMask`
@@ -94,7 +94,7 @@ class MetaMask implements Wallet {
     }
     this.disconnect()
     if (!ethereum) return
-    this.updateProvider(await getChainId(ethereum))
+    localStorage.setItem('metamask.injected', '1')
     this.state = WalletState.CONNECTING
     try {
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
@@ -105,6 +105,8 @@ class MetaMask implements Wallet {
       emitErr(err)
       this.state = WalletState.DISCONNECTED
       throw err
+    } finally {
+      this.updateProvider(await getChainId())
     }
   }
 }
