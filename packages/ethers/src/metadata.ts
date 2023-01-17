@@ -1,9 +1,9 @@
 import http from '@lit-web3/core/src/http'
-import { normalizeUri, isInstantUri, slugify } from '@lit-web3/core/src/uri'
+import { normalizeUri, isInstantUri } from '@lit-web3/core/src/uri'
 import { useStorage } from './useStorage'
-import { getChainId } from './useBridge'
 import { getOpenseaUri } from './constants/opensea'
 import { sleep, nowTs } from './utils'
+import { attachSlug, cookDOID } from './DOIDParser'
 
 export const normalize = (data: Record<string, any>): Meta => {
   const { background_color, owner = '', external_link, asset_contract, collection } = data
@@ -12,7 +12,6 @@ export const normalize = (data: Record<string, any>): Meta => {
   const meta = {
     name,
     description: data.description || collection?.description,
-    slug: slugify(name),
     image: normalizeUri(data.image_preview_url || data.image_thumbnail_url || img),
     raw: normalizeUri(data.image_original_url || img),
     creator: data.creator?.address,
@@ -80,7 +79,7 @@ export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
 
 export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   let meta: Meta | undefined
-  const { tokenURI, address, tokenID, doid, minter } = token
+  const { tokenURI, address, tokenID } = token
   // 0. instant data
   if (isInstantUri(tokenURI)) meta = await getMetaDataByTokenURI(tokenURI)
   // 1. by cache
@@ -92,15 +91,7 @@ export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   }
   // 3. by tokenURI
   if (!meta && tokenURI) meta = await getMetaDataByTokenURI(tokenURI)
-  // Validate meta by slug
-  // if (meta && doid) {
-  //   try {
-  //     const chainId = await getChainId()
-  //     const addersses = await http.get(
-  //       `https://raw.githubusercontent.com/DOIDFoundation/artscan-slugs/main/${chainId}/${doid}/${meta.slug}.txt`
-  //     )
-  //     meta.sync = addersses.includes(minter)
-  //   } catch {}
-  // }
+  // Attach slug
+  if (meta) attachSlug((token.meta = meta as NFTToken))
   return meta ?? {}
 }

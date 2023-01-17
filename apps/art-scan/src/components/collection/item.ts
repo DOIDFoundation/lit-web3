@@ -44,7 +44,7 @@ export class DoidCollection extends TailwindElement(style) {
     return this.item?.address
   }
   get empty() {
-    return !this.pending && !!this.ts && !this.item
+    return !this.pending && !!this.ts && (!this.item || !this.sameURI)
   }
   get opensea() {
     const url = `${getOpenseaUri('url')}/${this.address}/${this.tokenID}`
@@ -52,6 +52,10 @@ export class DoidCollection extends TailwindElement(style) {
   }
   get scan() {
     return `${getNetworkSync().scan}/address/${this.address}`
+  }
+  get sameURI() {
+    const { slugURI } = this.item ?? {}
+    return slugURI && this.DOID?.uri?.endsWith(slugURI)
   }
 
   async getCollection() {
@@ -71,6 +75,7 @@ export class DoidCollection extends TailwindElement(style) {
   }
   getMeta = async () => {
     if (this.item) this.meta = await getMetaData(this.item)
+    console.log(this.item, this.DOID)
   }
   async connectedCallback() {
     super.connectedCallback()

@@ -2,18 +2,13 @@ import { checkDOIDName, wrapTLD } from '../nsResolver/checker'
 import { safeDecodeURIComponent, slugify } from '@lit-web3/core/src/uri'
 import { reverseDOIDName } from './query'
 
-const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Promise<DOIDObject> => {
-  // DOIDName
-  const DOID = await checkDOIDName(DOIDName)
-  let { error, msg, name, doid } = DOID
-  // Cook
-  const cooked: DOIDObject = { DOID, name, doid, token, error, msg }
+export const attachSlug = (token: NFTToken): NFTToken => {
   // Generate slugName
-  const { name: tokenName } = token
+  const name = token.name || token.meta?.name
   let { tokenID, slugID } = token
-  if (tokenName && !token.slugName) {
-    let slugName = slugify(tokenName)
-    let [, nameWithoutSuffixID, , , suffixID] = tokenName.match(/^(.+?)(( |#| #)(\d+?))?$/) ?? []
+  if (name && !token.slugName) {
+    let slugName = slugify(name)
+    let [, nameWithoutSuffixID, , , suffixID] = name.match(/^(.+?)(( |#| #)(\d+?))?$/) ?? []
     if (!tokenID && !slugID) {
       // keep as-is, eg. Cyberpunk 2077 >> cyberpunk-2077
     } else {
@@ -27,6 +22,18 @@ const cookeDOID = async (DOIDName: string, token: NFTToken, decoded: string): Pr
     }
     token.slugName = slugName
   }
+  token.slugURI = stringify({ token })
+  return token
+}
+
+const cookDOID = async (DOIDName: string, token: NFTToken, decoded: string): Promise<DOIDObject> => {
+  // DOIDName
+  const DOID = await checkDOIDName(DOIDName)
+  let { error, msg, name, doid } = DOID
+  if (!name) name = token.meta?.name
+  // Cook
+  const cooked: DOIDObject = { DOID, name, doid, token, error, msg }
+  attachSlug(token)
   //
   const val = stringify(cooked) // This will be deprecated soon
   const equal = decoded === val
@@ -50,7 +57,7 @@ export const parseFromString = async (src = ''): Promise<DOIDObject> => {
     slugID,
     tokenID: tokenID || slugID
   }
-  return await cookeDOID(DOIDName, token, decoded)
+  return await cookDOID(DOIDName, token, decoded)
 }
 
 // @lit-labs/router maybe buggy here, if use it's goto('ab#1'), # will be encoded to %23
@@ -64,11 +71,10 @@ export const parseDOIDFromRouter = async (...args: string[]): Promise<[DOIDObjec
 }
 // DOIDObject to string
 export const stringify = (doidObject: DOIDObject, { keepIdentifier = false, encode = false } = {}) => {
-  let { name: DOIDName, token } = doidObject
-  if (!DOIDName) return ''
-  DOIDName = wrapTLD(DOIDName)
-  let { slugName: tokenName = '', tokenID = '', slugID = '' } = token ?? {}
-  if (encode) tokenName = slugify(tokenName)
+  let { name: DOIDName = '', token } = doidObject
+  if (DOIDName) DOIDName = wrapTLD(DOIDName)
+  let { slugName = '', tokenID = '', slugID = '' } = token ?? {}
+  if (encode) slugName = slugify(slugName)
   // collapse tokenID to slugID
   if ((tokenID && !slugID) || tokenID === slugID) {
     slugID = tokenID
@@ -79,18 +85,18 @@ export const stringify = (doidObject: DOIDObject, { keepIdentifier = false, enco
   else if (keepIdentifier) tokenID = '-'
   // slugID
   if (slugID) slugID = `#${slugID}`
-  else if (keepIdentifier && tokenName) slugID = '#'
-  // tokenName
-  if (tokenName) tokenName = `/${tokenName}`
-  else if (keepIdentifier && DOIDName) tokenName = '/'
-  return `${DOIDName}${tokenName}${slugID}${tokenID}`
+  else if (keepIdentifier && slugName) slugID = '#'
+  // slugName
+  if (slugName && DOIDName) slugName = `/${slugName}`
+  else if (keepIdentifier && DOIDName) slugName = '/'
+  return `${DOIDName}${slugName}${slugID}${tokenID}`
 }
 
 export const parseFromColl = async (coll: any): Promise<DOIDObject> => {
   const DOIDName = coll.name ?? coll.DOIDName
   const decoded = safeDecodeURIComponent(DOIDName)
   const token = coll.token ?? { name: coll.tokenName, tokenID: coll.tokenID }
-  return await cookeDOID(DOIDName, token, decoded)
+  return await cookDOID(DOIDName, token, decoded)
 }
 
 export const parse = async <T>(src: T): Promise<DOIDObject> => {
