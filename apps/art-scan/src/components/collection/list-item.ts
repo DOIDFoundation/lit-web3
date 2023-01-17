@@ -58,7 +58,7 @@ export class DoidCollItem extends LazyElement(TailwindElement(style)) {
   render() {
     return html`<div class="item p-4">
       <div class="font-medium">
-        <loading-skeleton .expect=${this.tokenName}
+        <loading-skeleton .expect=${this.meta.name}
           ><dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.cookedUri}</dui-link></loading-skeleton
         >
       </div>

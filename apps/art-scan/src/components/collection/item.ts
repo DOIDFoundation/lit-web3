@@ -18,6 +18,7 @@ export class DoidCollection extends TailwindElement(style) {
   @state() cooked?: DOIDObject
   @state() item?: Coll
   @state() pending = false
+  @state() metaPending = false
   @state() err = ''
   @state() ts = 0
   @state() meta?: Meta
@@ -44,7 +45,7 @@ export class DoidCollection extends TailwindElement(style) {
     return this.item?.address
   }
   get empty() {
-    return !this.pending && !!this.ts && (!this.item || !this.sameURI)
+    return !this.pending && !!this.ts && !this.metaPending && (!this.item || !this.sameURI)
   }
   get opensea() {
     const url = `${getOpenseaUri('url')}/${this.address}/${this.tokenID}`
@@ -74,8 +75,16 @@ export class DoidCollection extends TailwindElement(style) {
     this.pending = false
   }
   getMeta = async () => {
-    if (this.item) this.meta = await getMetaData(this.item)
-    console.log(this.item, this.DOID)
+    if (this.metaPending) return
+    this.metaPending = true
+    if (this.item) {
+      try {
+        this.meta = await getMetaData(this.item)
+      } catch {
+      } finally {
+        this.metaPending = false
+      }
+    }
   }
   async connectedCallback() {
     super.connectedCallback()

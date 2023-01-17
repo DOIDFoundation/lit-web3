@@ -92,6 +92,9 @@ export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   // 3. by tokenURI
   if (!meta && tokenURI) meta = await getMetaDataByTokenURI(tokenURI)
   // Attach slug
-  if (meta) attachSlug((token.meta = meta as NFTToken))
+  if (meta) {
+    token.meta = meta
+    attachSlug(token as NFTToken)
+  }
   return meta ?? {}
 }

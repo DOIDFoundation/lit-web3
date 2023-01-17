@@ -129,6 +129,12 @@ describe('DOIDParser', async () => {
     expect(parser.parsed.uri).to.equal('lucy.doid/cyberpunk-2077#2077')
   })
 
+  it(`name's suffix contain number from coll 6`, async () => {
+    const parser = await DOIDParser({ name: 'lucy.doid', token: { name: 'Cyberpunk 2077 #2077', tokenID: '2077' } })
+    expect(parser.parsed.token?.tokenID).to.equal('2077')
+    expect(parser.parsed.uri).to.equal('lucy.doid/cyberpunk-2077#2077')
+  })
+
   it(`name from coll`, async () => {
     const parser = await DOIDParser({ name: 'vincent', token: { name: 'The Starry Night', tokenID: '3' } })
     expect(parser.parsed.uri).to.equal('vincent.doid/the-starry-night#3')
