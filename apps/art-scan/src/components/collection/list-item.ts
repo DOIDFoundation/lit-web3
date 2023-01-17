@@ -66,10 +66,9 @@ export class DoidCollItem extends LazyElement(TailwindElement(style)) {
         <img-loader class="shrink-0 w-24 h-24" .src=${this.meta?.image} loading="lazy"></img-loader>
         <div>
           <loading-skeleton .expect=${this.meta.name} num="3">
-            <div class="mb-2 flex items-center">
-              <dui-link class="text-base" href=${`/collection/${this.cookedUri}`}
-                >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
-              ></dui-link>
+            <div class="mb-2 flex items-center justify-between">
+              <dui-link class="text-base" href=${`/collection/${this.cookedUri}`}>${this.meta.name}</dui-link>
+              <i class="mdi mdi-ethereum ml-1"></i>
             </div>
             <p class="break-words break-all text-xs lg_text-sm text-gray-500">
               ${this.meta?.description}
@@ -77,13 +76,16 @@ export class DoidCollItem extends LazyElement(TailwindElement(style)) {
           >
         </div>
       </div>
-      <div class="text-xs">
-        Minted on ${this.createTime}, Owned by
-        ${when(
-          this.item.doids?.length,
-          () => html`${this.item.doids?.at(0)?.name}`,
-          () => html`<dui-address .address=${this.item.owner}></dui-address>`
-        )}
+      <div class="flex justify-between">
+        <div class="text-xs">Minted on ${this.createTime}</div>
+        <div class="text-xs">
+          Owned by
+          ${when(
+            this.item.doids?.length,
+            () => html`${this.item.doids?.at(0)?.name}`,
+            () => html`<dui-address .address=${this.item.owner}></dui-address>`
+          )}
+        </div>
       </div>
     </div>`
   }
