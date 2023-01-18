@@ -4,7 +4,7 @@ import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/img/loader'
+import '@lit-web3/dui/src/media-player'
 import '@lit-web3/dui/src/loading/icon'
 import '@lit-web3/dui/src/loading/skeleton'
 import { getNetworkSync } from '@lit-web3/ethers/src/useBridge'
@@ -104,8 +104,8 @@ export class DoidCollection extends TailwindElement(style) {
               html`${when(
                 !this.err,
                 () => html`<div class="my-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
-                  <div class="lg_col-span-2 flex flex-col gap-2 items-center p-4 lg_px-6 bg-gray-100 rounded-md">
-                    <img-loader class="w-80 h-80 lg_w-60 lg_h-60" src=${this.meta?.image} loading="lazy"></img-loader>
+                  <div class="media lg_col-span-2 flex flex-col gap-2 items-center p-4 lg_px-6 bg-gray-100 rounded-md">
+                    <dui-media-player autoplay class="w-full h-full" .meta=${this.meta}></dui-media-player>
                     <loading-skeleton class="flex flex-col items-center" .expect=${this.meta?.name} num="3"
                       ><div class="text-base mb-2">${this.meta?.name}</div>
                       <div class="break-words break-all text-gray-500">${this.meta?.description}</div></loading-skeleton

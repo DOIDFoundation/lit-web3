@@ -7,14 +7,15 @@ import { attachSlug } from './DOIDParser'
 
 export const normalize = (data: Record<string, any>): Meta => {
   const { background_color, owner = '', external_link, asset_contract, collection } = data
-  const img = data.image_url || data.image || ''
   const name = data.name || collection?.name
-  const image = normalizeUri(data.image_preview_url || data.image_thumbnail_url || img)
+  const poster =
+    data.image_preview_url || data.image_thumbnail_url || data.image_url || data.image || data.image_original_url || ''
+  const raw = data.animation_url || data.animation_original_url || poster
   const meta = {
     name,
     description: data.description || collection?.description,
-    image,
-    raw: normalizeUri(data.image_original_url || img),
+    image: normalizeUri(poster),
+    raw: normalizeUri(raw),
     creator: data.creator?.address,
     owner,
     external_link,
@@ -56,10 +57,12 @@ export const getMetaDataByOpenSea = async (
   // 2. from api
   if (!meta) {
     try {
-      meta = normalize(await throttle(`${getOpenseaUri('api')}/${address}/${tokenID}/`))
+      const openseaUrl = `${getOpenseaUri('api')}/${address}/${tokenID}/`
+      meta = normalize(await throttle(openseaUrl))
       if (meta.name && meta.image) storage.set(meta)
       else if (!meta.image) {
-        await throttle(`${getOpenseaUri('api')}/${address}/${tokenID}/?force_update=true`)
+        // Send a purge request to opensea
+        await throttle(`${openseaUrl}?force_update=true`)
         if (retry) {
           await sleep(10000)
           meta = await getMetaDataByOpenSea({ address, tokenID }, false)
