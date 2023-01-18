@@ -1,0 +1,5 @@
+.play-btn {
+  @apply text-white;
+  background: rgba(159, 159, 159, 0.4);
+  backdrop-filter: blur(10px);
+}

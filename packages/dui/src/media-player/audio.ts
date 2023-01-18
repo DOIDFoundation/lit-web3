@@ -1,9 +1,8 @@
-import { TailwindElement, customElement, html, state, property } from '../shared/TailwindElement'
-// Components
-import '../img/loader'
+import { TailwindElement, customElement, html, state, property, ref, Ref, createRef } from '../shared/TailwindElement'
 
 @customElement('dui-audio')
-export class DuiAudeo extends TailwindElement('') {
+export class DuiAudio extends TailwindElement('') {
+  el$: Ref<HTMLAudioElement> = createRef()
   @property({ type: String }) poster?: string
   @property({ type: String }) src?: string
   @property({ type: Boolean }) autoplay = false
@@ -19,6 +18,14 @@ export class DuiAudeo extends TailwindElement('') {
   onpause = (e: Event) => {
     console.log('pause')
   }
+  play = async () => {
+    await 0
+    this.el$.value?.play()
+  }
+  stop = async () => {
+    await 0
+    this.el$.value?.pause()
+  }
 
   connectedCallback() {
     super.connectedCallback()
@@ -26,6 +33,7 @@ export class DuiAudeo extends TailwindElement('') {
 
   render() {
     return html`<audio
+      ${ref(this.el$)}
       class="w-full h-full"
       src=${this.src}
       @play=${this.onplay}

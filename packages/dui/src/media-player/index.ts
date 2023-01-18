@@ -6,9 +6,11 @@ import {
   classMap,
   choose,
   property,
-  when
+  when,
+  ref,
+  createRef
 } from '../shared/TailwindElement'
-import { MediaType, fetchMediaType } from '@lit-web3/core/src/MIMETypes'
+import { NFTType, MediaType, fetchMediaType } from '@lit-web3/core/src/MIMETypes'
 // Components
 import '../img/loader'
 import './video'
@@ -18,7 +20,7 @@ import style from './media-player.css?inline'
 
 @customElement('dui-media-player')
 export class DuiMediaPlayer extends TailwindElement(style) {
-  // el$: Ref<HTMLElement> = createRef()
+  el$: any = createRef()
   @property({ type: String }) class = ''
   @property({ type: Object }) meta?: Meta
   @property({ type: String }) src?: string
@@ -32,15 +34,27 @@ export class DuiMediaPlayer extends TailwindElement(style) {
   get raw() {
     return this.meta?.raw || this.src
   }
-  // get mediaType() {
-  //   return this.meta?.mediaType ?? getNFTType(this.raw) ?? 'image'
-  // }
   get showPoster() {
-    return !this.autoplay || ['image', 'audio'].includes(this.mediaType as string)
+    return (
+      (!this.autoplay && (this.mediaType !== NFTType.video || !this.playing)) ||
+      [NFTType.image, NFTType.audio].includes(this.mediaType as NFTType)
+    )
+  }
+  get showPlay() {
+    return !this.autoplay || [NFTType.image, NFTType.audio].includes(this.mediaType as NFTType)
+  }
+  get showRaw() {
+    return this.autoplay || this.playing
   }
 
   updateMediaType = async () => {
     if (!this.mediaType && this.raw) this.mediaType = this.meta?.mediaType ?? (await fetchMediaType(this.raw))
+  }
+  play = async () => {
+    const method = this.playing ? 'stop' : 'play'
+    this.playing = !this.playing
+    await 0
+    this.el$.value?.[method]()
   }
 
   protected shouldUpdate(props: Map<PropertyKey, unknown>): boolean {
@@ -62,19 +76,26 @@ export class DuiMediaPlayer extends TailwindElement(style) {
         this.showPoster,
         () => html`<img-loader class="poster w-full h-full" src=${this.poster} loading="lazy"></img-loader>`
       )}
+      <!-- Raw of nft -->
       ${when(
-        this.autoplay,
-        () => html`<!-- Raw of nft -->
-          ${choose(this.mediaType, [
-            ['audio', () => html`<dui-audio src=${this.raw} autoplay></dui-audio>`],
+        this.showRaw,
+        () =>
+          html`${choose(this.mediaType, [
+            ['audio', () => html`<dui-audio ${ref(this.el$)} src=${this.raw} ?autoplay=${this.autoplay}></dui-audio>`],
             ['image', () => html``],
             ['threed', () => html``],
-            ['video', () => html`<dui-video src=${this.raw} autoplay></dui-video>`]
-          ])}`,
-        () => html`<!-- Play button -->
-          <div class="right-4 bottom-4 absolute z-10 bg-black">
-            <i class="mdi ${classMap({ 'mdi-play': this.playing })}"></i>
-          </div>`
+            ['video', () => html`<dui-video ${ref(this.el$)} src=${this.raw} ?autoplay=${this.autoplay}></dui-video>`]
+          ])}`
+      )}
+      <!-- Play button -->
+      ${when(
+        this.showPlay,
+        () => html`<div
+          class="play-btn flex justify-center items-center w-8 h-8 right-2 bottom-2 absolute z-10 bg-black text-2xl rounded-full"
+          @click=${this.play}
+        >
+          <i class="mdi ${classMap(this.$c([this.playing ? 'mdi-pause' : 'mdi-play']))}"></i>
+        </div>`
       )}
     </div>`
   }

@@ -34,7 +34,7 @@ export const LazyElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
       )
       this.observer.observe(this.observe$)
     }
-    firstUpdated() {
+    protected firstUpdated() {
       this.observe()
     }
     connectedCallback() {
