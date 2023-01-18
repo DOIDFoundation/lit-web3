@@ -6,12 +6,11 @@ declare interface Meta {
   name?: string
   description?: string
   image?: string
+  raw?: string
   creator?: string
   publisher?: string
   external_url?: string
   properties?: Record<string, any>
-  slug?: string
-  sync?: boolean
 }
 
 declare interface NFTToken {
