@@ -8,9 +8,12 @@ declare interface Meta {
   image?: string
   raw?: string
   creator?: string
+  owner?: string
   publisher?: string
-  external_url?: string
+  external_link?: string
+  background_color?: string
   properties?: Record<string, any>
+  mediaType?: string
 }
 
 declare interface NFTToken {

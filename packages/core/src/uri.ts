@@ -26,4 +26,4 @@ export const getExt = (uri: string) => {
   return ext
 }
 
-export const getDataMimeType = (uri = ''): string => (uri.match(/^data:(.+);/) || [])[1]
+export const instantMimeType = (uri = ''): string => (uri.match(/^data:(.+);/) || [])[1]

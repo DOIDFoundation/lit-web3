@@ -1,25 +1,28 @@
 import http from '@lit-web3/core/src/http'
+import { fetchNFTType } from '@lit-web3/core/src/MIMETypes'
 import { normalizeUri, isInstantUri } from '@lit-web3/core/src/uri'
 import { useStorage } from './useStorage'
 import { getOpenseaUri } from './constants/opensea'
 import { sleep, nowTs } from './utils'
 import { attachSlug } from './DOIDParser'
 
-export const normalize = (data: Record<string, any>): Meta => {
-  const { background_color, owner = '', external_link, asset_contract, collection } = data
-  const name = data.name || collection?.name
-  const poster =
+export const normalize = async (data: Record<string, any>): Promise<Meta> => {
+  const { background_color, owner = '', external_link = '', asset_contract, collection } = data
+  const name: string = data.name || collection?.name
+  const poster: string =
     data.image_preview_url || data.image_thumbnail_url || data.image_url || data.image || data.image_original_url || ''
-  const raw = data.animation_url || data.animation_original_url || poster
-  const meta = {
+  const raw: string = data.animation_url || data.animation_original_url || poster
+  let mediaType = await fetchNFTType(raw)
+  const meta: Meta = {
     name,
-    description: data.description || collection?.description,
+    description: (data.description || collection?.description) as string,
     image: normalizeUri(poster),
     raw: normalizeUri(raw),
     creator: data.creator?.address,
     owner,
     external_link,
-    background_color
+    background_color,
+    mediaType
   }
   return meta
 }
@@ -58,7 +61,7 @@ export const getMetaDataByOpenSea = async (
   if (!meta) {
     try {
       const openseaUrl = `${getOpenseaUri('api')}/${address}/${tokenID}/`
-      meta = normalize(await throttle(openseaUrl))
+      meta = await normalize(await throttle(openseaUrl))
       if (meta.name && meta.image) storage.set(meta)
       else if (!meta.image) {
         // Send a purge request to opensea
@@ -77,14 +80,14 @@ export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
   let meta: Meta | undefined
   if (!tokenURI) return {}
   // 0. instant data
-  if (isInstantUri(tokenURI)) meta = normalize(await http.get(tokenURI))
+  if (isInstantUri(tokenURI)) meta = await normalize(await http.get(tokenURI))
   // 1. from cache
   const storage = await useStorage(`meta.${tokenURI}`, storageOpt)
   if (!meta) meta = await storage.get()
   // 2. from tokenURI
   if (!meta) {
     try {
-      meta = normalize(await http.get(normalizeUri(tokenURI)))
+      meta = await normalize(await http.get(normalizeUri(tokenURI)))
       if (meta.name && meta.image) storage.set(meta)
     } catch {}
   }
