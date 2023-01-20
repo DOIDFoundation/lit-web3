@@ -13,7 +13,9 @@ export class ViewHome extends TailwindElement(style) {
   render() {
     return html`<div class="home">
       <p class="my-4 text-center">
-        <dui-link class="ml-1" href="https://lockpass.doid.tech/passes">Click here to claim your locked names</dui-link>
+        If you have locked a name with lockpass before, click&nbsp;<dui-link href="https://lockpass.doid.tech/passes"
+          >here</dui-link
+        >&nbsp;to redeem your DOID.
       </p>
       <div class="dui-container">
         <doid-symbol>
