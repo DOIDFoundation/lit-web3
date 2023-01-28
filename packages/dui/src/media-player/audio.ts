@@ -1,54 +1,5 @@
-import { TailwindElement, customElement, html, state, property, ref, Ref, createRef } from '../shared/TailwindElement'
+import { TailwindElement, customElement } from '../shared/TailwindElement'
+import { PlayPauseAbleElement } from './audioish'
 
 @customElement('dui-audio')
-export class DuiAudio extends TailwindElement('') {
-  el$: Ref<HTMLAudioElement> = createRef()
-  @property({ type: String }) poster?: string
-  @property({ type: String }) src?: string
-  @property({ type: Boolean }) autoplay = false
-  @state() playing: boolean = false
-
-  oncontextmenu = (e: Event) => {
-    e.preventDefault()
-    e.stopImmediatePropagation()
-  }
-  onplay = (e: Event) => {
-    console.log('play')
-  }
-  onpause = (e: Event) => {
-    console.log('pause')
-  }
-  play = async () => {
-    await 0
-    this.el$.value?.play()
-  }
-  stop = async () => {
-    await 0
-    this.el$.value?.pause()
-  }
-
-  connectedCallback() {
-    super.connectedCallback()
-  }
-
-  render() {
-    return html`<audio
-      ${ref(this.el$)}
-      class="w-full h-full"
-      src=${this.src}
-      @play=${this.onplay}
-      @pause=${this.onpause}
-      @contextmenu=${this.oncontextmenu}
-      muted
-      ?autoplay=${this.autoplay}
-      ?controls=${this.autoplay}
-      ?poster=${this.poster}
-      loop
-      webkit-playsinline
-      playsinline
-      controlslist="nodownload"
-      preload="metadata"
-      disablepictureinpicture
-    ></audio>`
-  }
-}
+export class DuiAudeo extends PlayPauseAbleElement(TailwindElement(''), { tag: 'audio' }) {}

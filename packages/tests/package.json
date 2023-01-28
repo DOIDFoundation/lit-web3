@@ -14,11 +14,11 @@
     "@lit-web3/ethers": "workspace:latest"
   },
   "devDependencies": {
-    "@vitest/ui": "latest",
-    "cross-fetch": "latest",
-    "msw": "^0.49.2",
-    "jsdom": "latest",
-    "vitest": "latest"
+    "@vitest/ui": "^0.28.3",
+    "cross-fetch": "^3.1.5",
+    "jsdom": "^21.1.0",
+    "msw": "^1.0.0",
+    "vitest": "^0.28.3"
   },
   "stackblitz": {
     "startCommand": "npm run test:ui"
