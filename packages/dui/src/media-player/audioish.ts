@@ -15,6 +15,7 @@ export const PlayPauseAbleElement = <T extends PublicConstructor<TAILWINDELEMENT
     @state() playing: boolean = false
 
     tag = unsafeStatic(tag)
+    played = false
 
     oncontextmenu = (e: Event) => {
       e.preventDefault()
@@ -24,6 +25,7 @@ export const PlayPauseAbleElement = <T extends PublicConstructor<TAILWINDELEMENT
     onpause = (e: Event) => {}
     play = async () => {
       await 0
+      this.played = true
       this.el$.value?.play()
     }
     stop = async () => {
@@ -31,7 +33,7 @@ export const PlayPauseAbleElement = <T extends PublicConstructor<TAILWINDELEMENT
       this.el$.value?.pause()
     }
     _autoplay = () => {
-      if (!this.autoplay) return
+      if (this.played || !this.autoplay) return
       if (this.el$.value) this.el$.value.muted = !screen.interacted
       this.play()
     }
