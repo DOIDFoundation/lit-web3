@@ -7,15 +7,21 @@ import { sleep, nowTs } from './utils'
 import { attachSlug } from './DOIDParser'
 
 export const normalize = async (data: Record<string, any>): Promise<Meta> => {
-  const { background_color, owner = '', external_link = '', asset_contract, collection } = data
-  const name: string = data.name || collection?.name
+  const { background_color, owner = '', external_link = '', asset_contract, collection = {} } = data
+  const name: string = data.name || collection.name
   const poster: string =
-    data.image_preview_url || data.image_thumbnail_url || data.image_url || data.image || data.image_original_url || ''
-  const raw: string = data.animation_url || data.animation_original_url || poster
+    data.image_preview_url ||
+    data.image_thumbnail_url ||
+    data.image_url ||
+    data.image ||
+    data.image_original_url ||
+    collection.image_url ||
+    ''
+  const raw: string = data.animation_url || data.animation_original_url || collection.large_image_url || poster
   let mediaType = await fetchNFTType(raw)
   const meta: Meta = {
     name,
-    description: (data.description || collection?.description) as string,
+    description: (data.description || collection.description) as string,
     image: normalizeUri(poster),
     raw: normalizeUri(raw),
     creator: data.creator?.address,

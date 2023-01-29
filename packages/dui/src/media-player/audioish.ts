@@ -22,15 +22,15 @@ export const PlayPauseAbleElement = <T extends PublicConstructor<TAILWINDELEMENT
       e.stopImmediatePropagation()
     }
     onplay = (e: Event) => {}
-    onpause = (e: Event) => {}
     play = async () => {
       await 0
       this.played = true
-      this.el$.value?.play()
+      this.el$?.value?.play()
+      this.emit('play')
     }
-    stop = async () => {
-      await 0
-      this.el$.value?.pause()
+    stop = () => {
+      this.el$?.value?.pause()
+      this.emit('stop')
     }
     _autoplay = () => {
       if (this.played || !this.autoplay) return
@@ -38,16 +38,12 @@ export const PlayPauseAbleElement = <T extends PublicConstructor<TAILWINDELEMENT
       this.play()
     }
 
-    connectedCallback() {
-      super.connectedCallback()
-    }
     render() {
       return html`<${this.tag}
         ${ref(this.el$)}
         class="w-full h-full"
         src=${this.src}
-        @play=${this.onplay}
-        @pause=${this.onpause}
+        @error=${this.stop}
         @contextmenu=${this.oncontextmenu}
         ?autoplay=${this.autoplay}
         ?controls=${this.autoplay}

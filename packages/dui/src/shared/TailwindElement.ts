@@ -4,6 +4,7 @@ import { sleep } from '@lit-web3/ethers/src/utils'
 export declare class TAILWINDELEMENT extends LitElement {
   static styles: any
   static disabled: boolean
+  elId: string
   emit: Function
   on: any
   $: Function
@@ -23,6 +24,7 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
       // Trick for external link, todo: use import svg instead
       this.attachShadow({ mode: 'open' }).innerHTML = import.meta.env.VITE_APP_MDI
     }
+    elId = Math.random().toString()
     // classMap from arrayify
     $c(req: [] | Record<string, unknown>) {
       if (!Array.isArray(req)) return req
