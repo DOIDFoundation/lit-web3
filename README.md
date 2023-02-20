@@ -1,5 +1,16 @@
 # @lit-web3
 
-## VSCode Settings
+## Requirements development
 
-Plugins: `lit-html`, `Prettier`
+### Environments
+
+```sh
+npm i -g pnpm
+pnpm i
+```
+
+### VSCode Settings
+
+Required Plugins: `lit-html`, `Prettier`
+
+Open Workspace from File: `./lit-web3.code-workspace`

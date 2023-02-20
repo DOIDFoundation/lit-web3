@@ -37,15 +37,16 @@ export class Provider {
 }
 
 const multicallAddresses: Record<string, string> = {
-  '0x1': '0xeefba1e63905ef1d7acba5a8513c70307c1ce441',
-  '0xaa36a7': '0x53c43764255c17bd724f74c4ef150724ac50a3ed'
+  1: '0xeefba1e63905ef1d7acba5a8513c70307c1ce441',
+  5: '0x77dca2c955b15e9de4dbbcf1246b4b85b651e50e',
+  11155111: '0x53c43764255c17bd724f74c4ef150724ac50a3ed'
 }
 
 export function setMulticallAddress(chainId: number, address: string) {
   multicallAddresses[chainId] = address
 }
 
-function getAddressForChainId(chainId: number = 80) {
+function getAddressForChainId(chainId: number = 1) {
   return multicallAddresses[chainId]
 }
 

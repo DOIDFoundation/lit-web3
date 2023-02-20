@@ -1,6 +1,7 @@
 const { resolve } = require('path')
 // const glob = require('glob')
 const { defineConfig, splitVendorChunkPlugin, normalizePath } = require('vite')
+//
 const { VitePWA } = require('vite-plugin-pwa')
 const { createHtmlPlugin } = require('vite-plugin-html')
 const { viteStaticCopy } = require('vite-plugin-static-copy')
@@ -20,10 +21,12 @@ const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font
 const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
   'import.meta.env.VITE_APP_MDI': JSON.stringify(mdi),
-  globl: 'globalThis'
+  global: 'globalThis',
+  'process.env': JSON.stringify(env)
 }
 
 const viteConfig = (options = {}) => {
+  const { server: { https = true } = {}, viteConfigOptions = {} } = options
   return ({ mode = '' }) => {
     const isDev = mode === 'development'
     if (isDev) env.TAILWIND_MODE = 'watch'
@@ -36,11 +39,12 @@ const viteConfig = (options = {}) => {
         proxy: {},
         fs: { strict: false },
         host: true,
-        https: true
+        https
       },
       resolve: {
         alias: {
           '@': resolve(process.cwd(), './src'),
+          '~': resolve(process.cwd(), './src'),
           // bugfix: crypto-addr-codec@0.1.7
           'crypto-addr-codec': 'crypto-addr-codec/dist/index.js'
         }
@@ -58,7 +62,7 @@ const viteConfig = (options = {}) => {
         modules: { generateScopedName: '[hash:base64:6]' }
       },
       plugins: [
-        mkcert(),
+        ...(https ? [mkcert()] : []),
         minifyHTMLLiterals(),
         splitVendorChunkPlugin(),
         createHtmlPlugin({
@@ -99,17 +103,13 @@ const viteConfig = (options = {}) => {
           ? []
           : [
               viteStaticCopy({
-                targets: [
+                targets: viteConfigOptions.copies ?? [
+                  // Github Pages
                   {
                     src: 'dist/index.html',
                     dest: './',
                     rename: '404.html'
                   },
-                  // Maybe .nojekyll already disalbed cache
-                  // ...glob
-                  //   .sync('./src/views/*/**/')
-                  //   .map((r) => r.replace(/^\.\/src\/views/, '.'))
-                  //   .map((dest) => ({ src: 'dist/index.html', dest })),
                   {
                     src: normalizePath(resolve(__dirname, './.nojekyll')),
                     dest: './'
@@ -117,16 +117,20 @@ const viteConfig = (options = {}) => {
                 ]
               })
             ]),
-        VitePWA({
-          // selfDestroying: true,
-          registerType: 'autoUpdate',
-          manifest: {
-            name: env.VITE_APP_TITLE,
-            short_name: env.VITE_APP_NAME,
-            lang: 'en',
-            background_color: env.VITE_APP_BG
-          }
-        }),
+        ...(viteConfigOptions.pwa === false
+          ? []
+          : [
+              VitePWA({
+                // selfDestroying: true,
+                registerType: 'autoUpdate',
+                manifest: {
+                  name: env.VITE_APP_TITLE || env.npm_package_displayName,
+                  short_name: env.VITE_APP_NAME,
+                  lang: 'en',
+                  background_color: env.VITE_APP_BG
+                }
+              })
+            ]),
         legacy({
           polyfills: ['web.url', 'es.object.from-entries']
         })
@@ -135,8 +139,14 @@ const viteConfig = (options = {}) => {
     // options (shallow merge)
     const merge = (src, dest) => {
       for (var key in dest) {
+        if (key === 'viteConfigOptions') continue
         let [vSrc, vDest] = [src[key], dest[key]]
-        if (vSrc && !Array.isArray(vSrc) && typeof vSrc === 'object') merge(vSrc, vDest)
+        if (vSrc && Array.isArray(vSrc)) {
+          vDest.forEach((dest) => {
+            const found = vSrc.some((r) => r == dest)
+            if (!found) vSrc.push(dest)
+          })
+        } else if (vSrc && typeof vSrc === 'object') merge(vSrc, vDest)
         else src[key] = vDest
       }
     }
