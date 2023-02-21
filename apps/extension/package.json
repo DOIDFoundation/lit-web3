@@ -16,12 +16,15 @@
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
     "@metamask/browser-passworder": "^4.0.2",
-    "@metamask/eth-keyring-controller": "^10.0.0"
+    "@metamask/eth-keyring-controller": "^10.0.0",
+    "ethereum-cryptography": "^1.2.0",
+    "ethereumjs-util": "^7.1.5",
+    "ipfs-http-client": "^60.0.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
     "@crxjs/vite-plugin": "2.0.0-beta.12",
     "@types/chrome": "latest",
+    "@types/fs-extra": "^9.0.13",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
     "crx": "^5.0.1",
