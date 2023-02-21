@@ -27,7 +27,7 @@ export const Wallets: WalletList = [
     app: undefined,
     import: async () => {
       // const MetaMask = (await import(`./wallet/metamask`)).default
-      return new MetaMask(Provider)
+      return new MetaMask(Provider())
     }
   }
 ]
@@ -49,7 +49,7 @@ export class Bridge {
   public store: any
   constructor() {
     this.wallets = Wallets
-    this.Provider = Provider
+    this.Provider = Provider()
     this.wallet = walletStore.wallet
     this.selected = undefined
     this.promise = undefined

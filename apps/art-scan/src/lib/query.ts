@@ -14,9 +14,7 @@ export const queryHoldlNums = async (account: string) => {
         doids(where:{address:"${acc}"}){address {id totalTokensMinted totalTokenHolders}}
       }`
     )
-    const {
-      address: { totalTokenHolders: holders, totalTokensMinted: minted }
-    } = res.doids[0] || {}
+    const { address: { totalTokenHolders: holders = '', totalTokensMinted: minted = '' } = {} } = res.doids[0] || {}
     ownerNum = holders
     mintNum = minted
   }

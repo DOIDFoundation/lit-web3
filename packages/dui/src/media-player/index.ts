@@ -29,6 +29,8 @@ export class DuiMediaPlayer extends TailwindElement(style) {
   @state() playing: boolean = false
   @state() mediaType?: MediaType
 
+  elId = Math.random().toString()
+
   get poster() {
     return this.meta?.image || this.src
   }

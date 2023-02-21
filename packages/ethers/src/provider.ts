@@ -43,6 +43,8 @@ class Provider {
   }
 }
 
-const provider = new Provider()
+let provider: any
 
-export default provider
+export default function () {
+  return provider ?? (provider = new Provider())
+}

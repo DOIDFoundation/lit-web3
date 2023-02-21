@@ -19,6 +19,13 @@
       text-decoration: underline;
     }
   }
+  &.link {
+    color: var(--colorSecondary);
+    &:hover {
+      color: var(--colorSecondary);
+      text-decoration: underline;
+    }
+  }
   &.router-active {
   }
   &[nav] {

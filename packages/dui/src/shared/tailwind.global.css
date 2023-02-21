@@ -10,6 +10,9 @@
   }
   .dui-container {
     @apply clear-both lg_max-w-5xl min-h-full mx-auto px-3 lg_px-4;
+    &.sparse {
+      @apply px-4;
+    }
   }
   .doid-logo {
     @apply inline-block;

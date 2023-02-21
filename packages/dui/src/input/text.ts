@@ -17,6 +17,7 @@ export class DuiInputText extends TailwindElement(style) {
   @property({ type: String }) type = 'text'
   @property({ type: String }) class = ''
   @property({ type: Boolean }) sm = false
+  @property({ type: Boolean }) dense = false
   @property({ type: Boolean }) disabled = false
   @property({ type: Boolean }) autoforce = false
   @property({ type: Boolean }) required = false
@@ -80,7 +81,7 @@ export class DuiInputText extends TailwindElement(style) {
 
   render() {
     return html`<div
-      class="dui-input-text ${classMap(this.$c([this.class, { sm: this.sm }]))}"
+      class="dui-input-text ${classMap(this.$c([this.class, { sm: this.sm, dense: this.dense }]))}"
       ?required=${this.required}
       ?rightSlotted=${this.rightSlotted}
       ?leftSlotted=${this.leftSlotted}

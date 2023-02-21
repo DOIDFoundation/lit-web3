@@ -17,13 +17,13 @@ export class ConnectWalletBtn extends TailwindElement(style) {
   @state() menu = false
 
   get account() {
-    return bridgeStore.bridge.account
+    return bridgeStore.bridge?.account
   }
   get addr() {
-    return bridgeStore.bridge.shortAccount
+    return bridgeStore.bridge?.shortAccount
   }
   get scan() {
-    return `${bridgeStore.bridge.network.current.scan}/address/${bridgeStore.bridge.account}`
+    return `${bridgeStore.bridge?.network.current.scan}/address/${bridgeStore.bridge?.account}`
   }
 
   show = () => {
