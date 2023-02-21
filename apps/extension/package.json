@@ -1,0 +1,33 @@
+{
+  "name": "@lit-web3/extension",
+  "displayName": "DOID Extension",
+  "version": "0.0.1",
+  "description": "DOID Extension",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host --mode development",
+    "build": "vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest",
+    "@metamask/browser-passworder": "^4.0.2",
+    "@metamask/eth-keyring-controller": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@crxjs/vite-plugin": "2.0.0-beta.12",
+    "@types/chrome": "latest",
+    "chokidar": "^3.5.3",
+    "cross-env": "^7.0.3",
+    "crx": "^5.0.1",
+    "kolorist": "^1.6.0",
+    "web-ext": "^7.3.1",
+    "webext-bridge": "^5.0.5"
+  },
+  "license": "MIT"
+}

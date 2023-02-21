@@ -1,3 +1,4 @@
+*.crx
 *.rdb
 
 node_modules
