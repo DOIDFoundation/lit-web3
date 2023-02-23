@@ -19,6 +19,7 @@
     "@metamask/browser-passworder": "^4.0.2",
     "@metamask/eth-keyring-controller": "^10.0.0",
     "ethereum-cryptography": "^1.2.0",
+    "ethereumjs-util": "^7.1.5",
     "w3name": "^1.0.8",
     "web3.storage": "^4.4.0"
   },
