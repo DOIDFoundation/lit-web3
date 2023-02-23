@@ -16,7 +16,9 @@
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
     "@metamask/browser-passworder": "^4.0.2",
-    "@metamask/eth-keyring-controller": "^10.0.0"
+    "@metamask/eth-keyring-controller": "^10.0.0",
+    "ethereum-cryptography": "^1.2.0",
+    "ethereumjs-util": "^7.1.5"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
