@@ -43,7 +43,9 @@ export class ViewIPFS extends TailwindElement(style) {
     console.log('ipns: ', this.ipnsCID)
 
     try {
-      this.ipnsValue = (await w3name.resolve(name)).value
+      let revision = await w3name.resolve(name)
+      console.debug(revision)
+      this.ipnsValue = revision.value
     } catch (e) {
       this.ipnsValue = 'not found'
       return
@@ -66,7 +68,7 @@ export class ViewIPFS extends TailwindElement(style) {
     const files = [new File([this.ipfsFile], 'doid.json')]
 
     let storage = new Web3Storage({ token: process.env.WEB3STORAGE_TOKEN })
-    let cid = await storage.put(files)
+    let cid = await storage.put(files, { name: `testing files for ${this.ipnsCID}` })
     this.ipfsCID = cid.toString()
     console.log('stored files with cid:', this.ipfsCID)
 
@@ -77,7 +79,6 @@ export class ViewIPFS extends TailwindElement(style) {
     const revision = await w3name.resolve(name)
     const nextRevision = await w3name.increment(revision, cid.toString())
     await w3name.publish(nextRevision, name.key)
-    this.ipnsValue = nextRevision.value
   }
 
   render() {
