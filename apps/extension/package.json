@@ -25,7 +25,9 @@
     "@metamask/providers": "^10.2.1",
     "json-rpc-engine": "^6.1.0",
     "process-nextick-args": "^2.0.1",
-    "webextension-polyfill": "^0.10.0"
+    "webextension-polyfill": "^0.10.0",
+    "ethereum-cryptography": "^1.2.0",
+    "ethereumjs-util": "^7.1.5"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
