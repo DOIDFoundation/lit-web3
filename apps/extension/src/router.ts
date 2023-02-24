@@ -1,4 +1,5 @@
 import { html } from 'lit'
+import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 
 const homeView = {
   name: 'home',
@@ -24,9 +25,18 @@ export const routes = [
     }
   },
   {
+    name: 'create',
+    path: '/create/:doid?',
+    render: ({ doid = '' }) => html`<view-create .doid=${safeDecodeURIComponent(doid)}></view-create>`,
+    enter: async () => {
+      await import('~/views/create')
+      return true
+    }
+  },
+  {
     name: 'restore',
-    path: '/restore',
-    render: () => html`<view-restore></view-restore>`,
+    path: '/restore/:doid?',
+    render: ({ doid = '' }) => html`<view-restore .name=${safeDecodeURIComponent(doid)}></view-restore>`,
     enter: async () => {
       await import('~/views/restore')
       return true
