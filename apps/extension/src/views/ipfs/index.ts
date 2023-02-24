@@ -78,7 +78,15 @@ export class ViewIPFS extends TailwindElement(style) {
     const name = await w3name.from(ipfsKey.bytes)
     const revision = await w3name.resolve(name)
     const nextRevision = await w3name.increment(revision, cid.toString())
-    await w3name.publish(nextRevision, name.key)
+    await w3name.publish(
+      new w3name.Revision(
+        nextRevision.name,
+        nextRevision.value,
+        nextRevision.sequence,
+        new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 10).toISOString() // 10 years
+      ),
+      name.key
+    )
   }
 
   render() {
