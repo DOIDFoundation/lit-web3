@@ -8,7 +8,6 @@
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.20",
     "@lit-web3/core": "workspace:latest",
-    "buffer": "^6.0.3",
     "tr46": "^4.1.0"
   },
   "devDependencies": {

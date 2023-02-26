@@ -1,3 +1,4 @@
+import '@lit-web3/core/src/shims/node'
 import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
@@ -27,7 +28,7 @@ export class AppMain extends TailwindElement('') {
     return html`${when(
         this.showHeader,
         () =>
-          html`<dui-header
+          html`<dui-header logoHref="/"
             ><div slot="wallet"><dui-address-avatar></dui-address-avatar></div
           ></dui-header>`
       )}
