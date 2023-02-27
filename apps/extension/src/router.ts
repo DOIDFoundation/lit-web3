@@ -40,6 +40,15 @@ export const routes = [
       await import('~/views/restore')
       return true
     }
+  },
+  {
+    name: 'keyring',
+    path: '/keyring',
+    render: () => html`<view-keyring></view-keyring>`,
+    enter: async () => {
+      await import('~/views/keyring')
+      return true
+    }
   }
 ]
 

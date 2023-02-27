@@ -32,6 +32,7 @@ export class ViewIPFS extends TailwindElement(style) {
     let key = HDKey.fromMasterSeed(seed)
     // let pubKey = key.derive(`m/44'/60'/0'/0`).publicKey
     // this.ethAddress = bufferToHex(publicToAddress(arrToBufArr(pubKey!), true)).toLowerCase()
+    console.log("11111111111111111111")
     console.log(
       this.pwd,
       this.seed,
