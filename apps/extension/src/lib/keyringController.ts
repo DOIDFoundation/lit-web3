@@ -1,12 +1,19 @@
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
+import {
+  PermissionController,
+  PermissionsRequestNotFoundError,
+} from '@metamask/permission-controller';
+import accountImporter from "./account-importer"
+import seedPhraseVerifier from "./seed-phrase-verifier"
+import {preferencesController} from "./preferences"
 import bufferPolyfill from '@lit-web3/ethers/src/node.polyfill'
 //import { Mutex } from 'await-semaphore';
-
 export let keyringController = new KeyringController({
   keyringBuilders: defaultKeyringBuilders,
   //initState: initState.KeyringController,
   //encryptor: {},
 });
+let permissionController = new PermissionController({})
 //keyringController.createVaultMutex = new Mutex()
 console.log(keyringController)
 
@@ -35,8 +42,8 @@ export async function createNewVaultAndKeychain(password: string){
       vault = await keyringController.createNewVaultAndKeychain(password)
       const addresses = await keyringController.getAccounts()
       console.log("new accounts", addresses)
-  //      this.preferencesController.setAddresses(addresses);
-  //      this.selectFirstIdentity();
+      preferencesController.setAddresses(addresses);
+      //selectFirstIdentity();
     }
     return vault
   }finally{
@@ -95,7 +102,7 @@ async function verifySeedPhrase() {
   }
 
   try {
-    //await seedPhraseVerifier.verifyAccounts(accounts, seedPhraseAsBuffer);
+    await seedPhraseVerifier.verifyAccounts(accounts, seedPhraseAsBuffer);
     return Array.from(seedPhraseAsBuffer.values());
   } catch (err) {
     //log.error(err.message);
@@ -105,11 +112,11 @@ async function verifySeedPhrase() {
 }
 
 async function resetAccount() {
-  //const selectedAddress = this.preferencesController.getSelectedAddress();
+  const selectedAddress = preferencesController.getSelectedAddress();
   //this.txController.wipeTransactions(selectedAddress);
   //this.networkController.resetConnection();
 
-  //return selectedAddress;
+  return selectedAddress;
 }
 
 ///**
@@ -140,7 +147,7 @@ async function resetAccount() {
 //    throw error;
 //  }
 //}
-//
+
 ///**
 // * Stops exposing the account with the specified address to all third parties.
 // * Exposed accounts are stored in caveats of the eth_accounts permission. This
@@ -151,61 +158,61 @@ async function resetAccount() {
 // * @param {string} targetAccount - The address of the account to stop exposing
 // * to third parties.
 // */
-//function removeAllAccountPermissions(targetAccount) {
-//  this.permissionController.updatePermissionsByCaveat(
+function removeAllAccountPermissions(targetAccount: string) {
+//  permissionController.updatePermissionsByCaveat(
 //    CaveatTypes.restrictReturnedAccounts,
 //    (existingAccounts) =>
 //      CaveatMutatorFactories[
 //        CaveatTypes.restrictReturnedAccounts
 //      ].removeAccount(targetAccount, existingAccounts),
 //  );
-//}
-//
-///**
-// * Removes an account from state / storage.
-// *
-// * @param {string[]} address - A hex address
-// */
-//async function removeAccount(address) {
-//  // Remove all associated permissions
-//  this.removeAllAccountPermissions(address);
-//  // Remove account from the preferences controller
-//  this.preferencesController.removeAddress(address);
-//  // Remove account from the account tracker controller
-//  this.accountTracker.removeAccount([address]);
-//
-//  const keyring = await this.keyringController.getKeyringForAccount(address);
-//  // Remove account from the keyring
-//  await this.keyringController.removeAccount(address);
-//  const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {};
-//  if (updatedKeyringAccounts?.length === 0) {
-//    keyring.destroy?.();
-//  }
-//
-//  return address;
-//}
-//
-///**
-// * Imports an account with the specified import strategy.
-// * These are defined in app/scripts/account-import-strategies
-// * Each strategy represents a different way of serializing an Ethereum key pair.
-// *
-// * @param {string} strategy - A unique identifier for an account import strategy.
-// * @param {any} args - The data required by that strategy to import an account.
-// */
-//async function importAccountWithStrategy(strategy, args) {
-//  const privateKey = await accountImporter.importAccount(strategy, args);
-//  const keyring = await this.keyringController.addNewKeyring(
-//    HardwareKeyringTypes.imported,
-//    [privateKey],
-//  );
-//  const [firstAccount] = await keyring.getAccounts();
-//  // update accounts in preferences controller
-//  const allAccounts = await this.keyringController.getAccounts();
-//  this.preferencesController.setAddresses(allAccounts);
-//  // set new account as selected
-//  this.preferencesController.setSelectedAddress(firstAccount);
-//}
+}
+
+/**
+ * Removes an account from state / storage.
+ *
+ * @param {string[]} address - A hex address
+ */
+async function removeAccount(address: string) {
+  // Remove all associated permissions
+  removeAllAccountPermissions(address);
+  // Remove account from the preferences controller
+  preferencesController.removeAddress(address);
+  // Remove account from the account tracker controller
+  //accountTracker.removeAccount([address]);
+
+  const keyring = await keyringController.getKeyringForAccount(address);
+  // Remove account from the keyring
+  await keyringController.removeAccount(address);
+  const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {};
+  if (updatedKeyringAccounts?.length === 0) {
+    keyring.destroy?.();
+  }
+
+  return address;
+}
+
+/**
+ * Imports an account with the specified import strategy.
+ * These are defined in app/scripts/account-import-strategies
+ * Each strategy represents a different way of serializing an Ethereum key pair.
+ *
+ * @param {string} strategy - A unique identifier for an account import strategy.
+ * @param {any} args - The data required by that strategy to import an account.
+ */
+async function importAccountWithStrategy(strategy: string, args: any) {
+  const privateKey = await accountImporter.importAccount(strategy, args);
+  const keyring = await keyringController.addNewKeyring(
+    HardwareKeyringTypes.imported,
+    [privateKey],
+  );
+  const [firstAccount] = await keyring.getAccounts();
+  // update accounts in preferences controller
+  const allAccounts = await keyringController.getAccounts();
+  preferencesController.setAddresses(allAccounts);
+  // set new account as selected
+  preferencesController.setSelectedAddress(firstAccount);
+}
 
 async function submitPassword(password: string) {
   await keyringController.submitPassword(password);
@@ -251,7 +258,7 @@ function getPrimaryKeyringMnemonic() {
  * Allows a user to begin the seed phrase recovery process.
  */
 function markPasswordForgotten() {
-  //preferencesController.setPasswordForgotten(true);
+  preferencesController.setPasswordForgotten(true);
   //sendUpdate();
 }
 
@@ -259,7 +266,7 @@ function markPasswordForgotten() {
  * Allows a user to end the seed phrase recovery process.
  */
 function unMarkPasswordForgotten() {
-  //preferencesController.setPasswordForgotten(false);
+  preferencesController.setPasswordForgotten(false);
   //sendUpdate();
 }
 

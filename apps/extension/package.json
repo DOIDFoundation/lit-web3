@@ -17,6 +17,7 @@
     "@lit-web3/ethers": "workspace:latest",
     "@metamask/browser-passworder": "^4.0.2",
     "@metamask/eth-keyring-controller": "^10.0.0",
+    "@metamask/permission-controller": "^1.0.0",
     "ethereum-cryptography": "^1.2.0",
     "ethereumjs-util": "^7.1.5",
     "ipfs-http-client": "^60.0.0"
