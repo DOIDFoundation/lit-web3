@@ -8,3 +8,7 @@ declare module '*.cjs'
 declare module '*.wasm'
 //
 declare module 'safe-decode-uri-component'
+//
+interface ImportMeta {
+  env: Record<string, string>
+}

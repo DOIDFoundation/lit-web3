@@ -1,9 +1,12 @@
-import { defineManifest } from '@crxjs/vite-plugin'
+import { defineManifest, defineDynamicResource } from '@crxjs/vite-plugin'
 import pkg from './package.json'
 
 const { version } = pkg
+const isDev = process.env.NODE_ENV !== 'production'
 
 const [major, minor, patch, label = '0'] = version.replace(/[^\d.-]+/g, '').split(/[.-]/)
+
+export const matches = ['file://*/*', 'http://*/*', 'https://*/*']
 
 export default defineManifest({
   manifest_version: 3,
@@ -23,11 +26,15 @@ export default defineManifest({
     'scripting',
     'storage',
     'unlimitedStorage',
-    'webRequest'
+    'webRequest',
+    ...(isDev ? ['webNavigation'] : [])
   ],
-  host_permissions: ['http://localhost:4813/', 'file://*/*', 'http://*/*', 'https://*/*'],
+  host_permissions: [...matches, 'http://localhost:4813/'],
   background: {
-    service_worker: 'src/background.ts',
+    service_worker: 'src/ext.scripts/app-init.ts',
     type: 'module'
-  }
+  },
+  content_scripts: [{ js: ['src/ext.scripts/contentscript.ts'], matches, run_at: 'document_start' }],
+  // web_accessible_resources: [{ resources: ['public/inpage.js'], matches }, defineDynamicResource({ matches })],
+  web_accessible_resources: [defineDynamicResource({ matches })]
 })
