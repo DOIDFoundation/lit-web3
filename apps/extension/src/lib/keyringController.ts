@@ -1,14 +1,115 @@
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
 // import bufferPolyfill from '@lit-web3/ethers/src/node.polyfill'
-//import { Mutex } from 'await-semaphore';
+import { Mutex } from 'await-semaphore';
+
+export class Keyring extends KeyringController(){
+  createVaultMutex: Mutex
+  constructor(){
+    super()
+    this.createVaultMutex = new Mutex()
+  }
+
+}
+
 
 export let keyringController = new KeyringController({
   keyringBuilders: defaultKeyringBuilders
   //initState: initState.KeyringController,
   //encryptor: {},
 })
-//keyringController.createVaultMutex = new Mutex()
+keyringController.createVaultMutex = new Mutex()
 console.log(keyringController)
+
+  /**
+   * Create a new Vault and restore an existent keyring.
+   *
+   * @param {string} password
+   * @param {number[]} encodedSeedPhrase - The seed phrase, encoded as an array
+   * of UTF-8 bytes.
+   */
+  export async function createNewVaultAndRestore(password: string, encodedSeedPhrase: number[]) {
+    //const releaseLock = await createVaultMutex.acquire();
+    try {
+      let accounts, lastBalance;
+
+      const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase);
+
+      //const { keyringController } = this;
+
+      // clear known identities
+      //this.preferencesController.setAddresses([]);
+
+      // clear permissions
+      //this.permissionController.clearState();
+
+      ///: BEGIN:ONLY_INCLUDE_IN(flask)
+      // Clear snap state
+      //this.snapController.clearState();
+      // Clear notification state
+      //this.notificationController.clear();
+      ///: END:ONLY_INCLUDE_IN
+
+      // clear accounts in accountTracker
+      //this.accountTracker.clearAccounts();
+
+      // clear cachedBalances
+      //this.cachedBalancesController.clearCachedBalances();
+
+      // clear unapproved transactions
+      //this.txController.txStateManager.clearUnapprovedTxs();
+
+      // create new vault
+      const vault = await keyringController.createNewVaultAndRestore(
+        password,
+        seedPhraseAsBuffer,
+      );
+
+      //const ethQuery = new EthQuery(this.provider);
+      //accounts = await keyringController.getAccounts();
+      //lastBalance = await this.getBalance(
+      //  accounts[accounts.length - 1],
+      //  ethQuery,
+      //);
+
+      const [primaryKeyring] = keyringController.getKeyringsByType(
+        HardwareKeyringTypes.hdKeyTree,
+      );
+      if (!primaryKeyring) {
+        throw new Error('MetamaskController - No HD Key Tree found');
+      }
+
+      // seek out the first zero balance
+      //while (lastBalance !== '0x0') {
+      //  await keyringController.addNewAccount(primaryKeyring);
+      //  accounts = await keyringController.getAccounts();
+      //  lastBalance = await this.getBalance(
+      //    accounts[accounts.length - 1],
+      //    ethQuery,
+      //  );
+      //}
+
+      // remove extra zero balance account potentially created from seeking ahead
+      //if (accounts.length > 1 && lastBalance === '0x0') {
+      //  await this.removeAccount(accounts[accounts.length - 1]);
+      //  accounts = await keyringController.getAccounts();
+      //}
+
+      //// This must be set as soon as possible to communicate to the
+      //// keyring's iframe and have the setting initialized properly
+      //// Optimistically called to not block MetaMask login due to
+      //// Ledger Keyring GitHub downtime
+      //const transportPreference =
+      //  this.preferencesController.getLedgerTransportPreference();
+      //this.setLedgerTransportPreference(transportPreference);
+
+      //// set new identities
+      //this.preferencesController.setAddresses(accounts);
+      //this.selectFirstIdentity();
+      return vault;
+    } finally {
+      //releaseLock();
+    }
+  }
 
 enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
@@ -43,6 +144,9 @@ export async function createNewVaultAndKeychain(password: string) {
     // release lock
   }
 }
+
+
+
 
 async function addNewAccount(accountCount: number) {
   const [primaryKeyring] = keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
