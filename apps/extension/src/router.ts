@@ -31,6 +31,15 @@ export const routes = [
       await import('~/views/restore')
       return true
     }
+  },
+  {
+    name: 'main',
+    path: '/main',
+    render: () => html`<view-main></view-main>`,
+    enter: async () => {
+      await import('~/views/main')
+      return true
+    }
   }
 ]
 

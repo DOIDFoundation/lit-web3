@@ -16,8 +16,10 @@ import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
 import { PHRASE_LEN_MAP, getKey } from '@/lib/phrase'
 import { chkPwdValid } from '@/lib/utils'
+import { keyringController } from '@/lib/keyringController'
 
 import style from './restore.css?inline'
+import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-restore')
 export class ViewRestore extends TailwindElement(style) {
   @property() placeholder = ''
@@ -28,7 +30,7 @@ export class ViewRestore extends TailwindElement(style) {
   @state() pwdconfirm = ''
   @state() toggle = { pwd: true, confirm: true }
   @state() err = ''
-  @state() invalid: Record<string, string> = { pwd: '', pwdconfirm: '' }
+  @state() invalid: Record<string, string> = { pwd: '', pwdconfirm: '', phrase: '' }
   @state() pending = false
   @state() phrases = Array(this.phraseLen).fill('')
   @state() seed = ''
@@ -46,6 +48,7 @@ export class ViewRestore extends TailwindElement(style) {
     return Object.values(this.invalid).some((r) => r)
   }
   onInput = async (e: CustomEvent, idx: number) => {
+    this.invalid = { ...this.invalid, phrase: '' }
     this.phrases[idx] = e.detail
     this.phrases = [...this.phrases]
   }
@@ -83,6 +86,13 @@ export class ViewRestore extends TailwindElement(style) {
   restore = async () => {
     this.pair = await getKey(this.phrases.join(' '))
     console.table({ name: this.wrapName, pwd: this.pwd, seed: this.pair.seed })
+    try {
+      await keyringController.createNewVaultAndRestore(this.pwd, this.phrases.join(' '))
+      goto('/main')
+    } catch (err: any) {
+      this.invalid.phrase = err.message || err
+      console.error(err)
+    }
   }
 
   submit() {}
@@ -128,6 +138,9 @@ export class ViewRestore extends TailwindElement(style) {
               </dui-input-pwd>
             </div>`
           )}
+          <span slot="msg">
+            ${when(this.invalid.phrase, () => html`<span class="text-red-500">${this.invalid.phrase}</span>`)}
+          </span>
         </div>
         <div class="mt-8">
           <dui-input-pwd
