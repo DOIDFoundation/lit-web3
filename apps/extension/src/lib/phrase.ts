@@ -5,7 +5,7 @@ import { HDKey } from 'ethereum-cryptography/hdkey'
 
 export const PHRASE_LEN_MAP = [12, 15, 18, 21, 24]
 
-export const chkPhraseValid = (phrase = '') => {
+export const validatePhrase = (phrase = '') => {
   return validateMnemonic(phrase, wordlist)
 }
 
@@ -16,5 +16,3 @@ export const getKey = async (phrase: string) => {
   const pbK = toHex(key.derive(`m/44'/60'/0'/0`).publicKey!)
   return { seed, pbK }
 }
-
-export const restore = (name: string, pwd: string, seed: string) => {}
