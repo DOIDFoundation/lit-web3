@@ -1,12 +1,4 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  repeat,
-  when
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -14,87 +6,54 @@ import '@lit-web3/dui/src/input/pwd'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
-import { PHRASE_LEN_MAP, getKey } from '@/lib/phrase'
-import { chkPwdValid } from '@/lib/utils'
+import '@/components/phrase'
+import '@/components/pwd_equal'
+import { getKey } from '@/lib/phrase'
 import { keyringController } from '@/lib/keyringController'
+import { goto } from '@lit-web3/dui/src/shared/router'
 
 import style from './restore.css?inline'
-import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-restore')
 export class ViewRestore extends TailwindElement(style) {
-  @property() placeholder = ''
-  @property() phraseLen = PHRASE_LEN_MAP[0]
-
   @state() name = ''
+  @state() phrase = ''
   @state() pwd = ''
-  @state() pwdconfirm = ''
-  @state() toggle = { pwd: true, confirm: true }
-  @state() err = ''
-  @state() invalid: Record<string, string> = { pwd: '', pwdconfirm: '', phrase: '' }
-  @state() pending = false
-  @state() phrases = Array(this.phraseLen).fill('')
-  @state() seed = ''
-  @state() pair: any = null
+  @state() invalid: Record<string, string> = { pwd: '', phrase: '' }
 
   get wrapName() {
     return this.name ? wrapTLD(this.name) : ''
   }
-  get phraseValid() {
-    return !this.phrases.some((r) => !r)
-  }
   get restoreDisabled() {
-    if (!this.name || !this.phraseValid || !this.pwd || !this.pwdconfirm) return true
-
+    if (!this.name || !this.phrase || !this.pwd) return true
     return Object.values(this.invalid).some((r) => r)
-  }
-  onInput = async (e: CustomEvent, idx: number) => {
-    this.invalid = { ...this.invalid, phrase: '' }
-    this.phrases[idx] = e.detail
-    this.phrases = [...this.phrases]
-  }
-  onPaste = (e: ClipboardEvent) => {
-    e.preventDefault()
-    const text = (e.clipboardData || (window as any).clipboardData).getData('text')
-    const phrases = text.split(' ')
-    if (phrases.length === this.phraseLen) {
-      this.phrases = phrases
-    }
   }
   onInputName = (e: CustomEvent) => {
     // TODO: check valid
     const text = e.detail.trim()
     this.name = text
   }
-  onInputPwd = (e: CustomEvent) => {
-    const { error, msg } = chkPwdValid(e.detail)
-    this.invalid = { ...this.invalid, pwd: msg ?? '' }
-    this.pwd = e.detail
-    if (error) return
-    this.checkPwdEqual(e.detail, this.pwdconfirm)
+  onPhraseChange = (e: CustomEvent) => {
+    e.stopPropagation()
+    const { phrase, error } = e.detail as any
+    this.invalid = { ...this.invalid, phrase: error ?? '' }
+    this.phrase = phrase
   }
-  onInputPwdConfirm = (e: CustomEvent) => {
-    const { error, msg } = chkPwdValid(e.detail)
-    this.invalid = { ...this.invalid, pwdconfirm: msg ?? '' }
-    this.pwdconfirm = e.detail
-    if (error) return
-    this.checkPwdEqual(e.detail, this.pwd)
-  }
-  checkPwdEqual = (val: string, val2: string) => {
-    this.invalid = { ...this.invalid, pwdconfirm: val === val2 ? '' : `Password don't match` }
+  onPwdChange = (e: CustomEvent) => {
+    const { pwd, error } = e.detail
+    this.pwd = pwd
+    this.invalid = { ...this.invalid, pwd: error ?? '' }
   }
 
   restore = async () => {
-    this.pair = await getKey(this.phrases.join(' '))
-    console.table({ name: this.wrapName, pwd: this.pwd, seed: this.pair.seed })
+    console.table({ name: this.wrapName, ...(await getKey(this.phrase)) })
     try {
-      await keyringController.createNewVaultAndRestore(this.pwd, this.phrases.join(' '))
+      await keyringController.createNewVaultAndRestore(this.pwd, this.phrase)
       goto('/main')
     } catch (err: any) {
       this.invalid.phrase = err.message || err
       console.error(err)
     }
   }
-
   submit() {}
   connectedCallback() {
     super.connectedCallback()
@@ -106,65 +65,28 @@ export class ViewRestore extends TailwindElement(style) {
           <dui-link back class="link"><i class="mdi mdi-arrow-left"></i>Back</dui-link>
         </div>
         <h1 class="my-4 text-4xl">Restore wallet</h1>
+
         <!-- doid name -->
-        <p class="text-base mb-4">
+        <div class="text-base mb-4">
           You are importing an address as Main Address for
           <dui-link class="link ml-0.5 underline">${this.wrapName}</dui-link>
-        </p>
+        </div>
         <div>
           <dui-input-text @input=${this.onInputName} value=${this.name} placeholder="Enter DOID name" required>
             <span name="right">.doid</span>
             <span slot="label">DOID name</span>
           </dui-input-text>
         </div>
-        <!-- phrase -->
+
         <h3 class="text-lg">Secret Recovery Phrase</h3>
-        <div class="grid grid-cols-3 gap-4 m-4">
-          ${repeat(
-            this.phrases,
-            (phrases: string, idx: number) => html`<div class="flex items-center gap-4">
-              <b class="block w-10 shrink-0">${idx + 1}.</b>
-              <dui-input-pwd
-                .idx=${idx}
-                dense
-                ?autoforce=${idx === 0}
-                type="password"
-                @input=${(e: CustomEvent) => this.onInput(e, idx)}
-                @paste=${this.onPaste}
-                @submit=${this.submit}
-                .value=${phrases}
-                ?disabled=${this.pending}
-              >
-              </dui-input-pwd>
-            </div>`
-          )}
-          <span slot="msg">
-            ${when(this.invalid.phrase, () => html`<span class="text-red-500">${this.invalid.phrase}</span>`)}
-          </span>
-        </div>
-        <div class="mt-8">
-          <dui-input-pwd
-            .value=${this.pwd}
-            .toggle=${this.toggle.pwd}
-            required
-            @input=${(e: CustomEvent) => this.onInputPwd(e)}
-          >
-            <span slot="label">New password</span>
-            <span slot="msg">
-              ${when(this.invalid.pwd, () => html`<span class="text-red-500">${this.invalid.pwd}</span>`)}
-            </span></dui-input-pwd
-          >
-          <dui-input-pwd
-            .value=${this.pwdconfirm}
-            .toggle=${this.toggle.confirm}
-            required
-            @input=${this.onInputPwdConfirm}
-            ><span slot="label">Confirm password</span
-            ><span slot="msg">
-              ${when(this.invalid.pwdconfirm, () => html`<span class="text-red-500">${this.invalid.pwdconfirm}</span>`)}
-            </span></dui-input-pwd
-          >
-        </div>
+        <phrase-to-secret class="my-4" @change=${this.onPhraseChange}
+          ><div slot="tip" class="mb-2 p-2 bg-blue-100 border border-blue-300 rounded text-xs">
+            You can paste your entire secret recovery phrase into any field
+          </div></phrase-to-secret
+        >
+
+        <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+
         <div class="my-4">
           <dui-button class="secondary" block .disabled=${this.restoreDisabled} @click=${this.restore}
             >Restore</dui-button

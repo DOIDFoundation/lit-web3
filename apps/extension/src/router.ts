@@ -40,6 +40,15 @@ export const routes = [
       await import('~/views/main')
       return true
     }
+  },
+  {
+    name: 'start',
+    path: '/start',
+    render: () => html`<view-start></view-start>`,
+    enter: async () => {
+      await import('~/views/start')
+      return true
+    }
   }
 ]
 

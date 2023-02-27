@@ -1,12 +1,12 @@
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
-import bufferPolyfill from '@lit-web3/ethers/src/node.polyfill'
+// import bufferPolyfill from '@lit-web3/ethers/src/node.polyfill'
 //import { Mutex } from 'await-semaphore';
 
 export let keyringController = new KeyringController({
-  keyringBuilders: defaultKeyringBuilders,
+  keyringBuilders: defaultKeyringBuilders
   //initState: initState.KeyringController,
   //encryptor: {},
-});
+})
 //keyringController.createVaultMutex = new Mutex()
 console.log(keyringController)
 
@@ -16,99 +16,93 @@ enum HardwareKeyringTypes {
   lattice = 'Lattice Hardware',
   qr = 'QR Hardware Wallet Device',
   hdKeyTree = 'HD Key Tree',
-  imported = 'Simple Key Pair',
+  imported = 'Simple Key Pair'
 }
 
-keyringController.on("update", function(){
-  console.log("keyring update event")
+keyringController.on('update', function () {
+  console.log('keyring update event')
 })
 
 // create new vault
-export async function createNewVaultAndKeychain(password: string){
-  await bufferPolyfill()
+export async function createNewVaultAndKeychain(password: string) {
+  // await bufferPolyfill()
   try {
-    let vault;
+    let vault
     const accounts = await keyringController.getAccounts()
     if (accounts.length > 0) {
       vault = await keyringController.fullUpdate()
-    }else{
+    } else {
       vault = await keyringController.createNewVaultAndKeychain(password)
       const addresses = await keyringController.getAccounts()
-      console.log("new accounts", addresses)
-  //      this.preferencesController.setAddresses(addresses);
-  //      this.selectFirstIdentity();
+      console.log('new accounts', addresses)
+      //      this.preferencesController.setAddresses(addresses);
+      //      this.selectFirstIdentity();
     }
     return vault
-  }finally{
+  } finally {
     // release lock
   }
 }
 
-async function addNewAccount(accountCount : number) {
-  const [primaryKeyring] = keyringController.getKeyringsByType(
-    HardwareKeyringTypes.hdKeyTree,
-  );
+async function addNewAccount(accountCount: number) {
+  const [primaryKeyring] = keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
   if (!primaryKeyring) {
-    throw new Error('MetamaskController - No HD Key Tree found');
+    throw new Error('MetamaskController - No HD Key Tree found')
   }
-//  const { identities: oldIdentities } =
-//    this.preferencesController.store.getState();
-//
-//  if (Object.keys(oldIdentities).length === accountCount) {
-//    const oldAccounts = await keyringController.getAccounts();
-//    const keyState = await keyringController.addNewAccount(primaryKeyring);
-//    const newAccounts = await keyringController.getAccounts();
-//
-//    await this.verifySeedPhrase();
-//
-//    this.preferencesController.setAddresses(newAccounts);
-//    newAccounts.forEach((address) => {
-//      if (!oldAccounts.includes(address)) {
-//        this.preferencesController.setSelectedAddress(address);
-//      }
-//    });
-//
-//    const { identities } = this.preferencesController.store.getState();
-//    return { ...keyState, identities };
-//  }
-//
-//  return {
-//    ...keyringController.memStore.getState(),
-//    identities: oldIdentities,
-//  };
+  //  const { identities: oldIdentities } =
+  //    this.preferencesController.store.getState();
+  //
+  //  if (Object.keys(oldIdentities).length === accountCount) {
+  //    const oldAccounts = await keyringController.getAccounts();
+  //    const keyState = await keyringController.addNewAccount(primaryKeyring);
+  //    const newAccounts = await keyringController.getAccounts();
+  //
+  //    await this.verifySeedPhrase();
+  //
+  //    this.preferencesController.setAddresses(newAccounts);
+  //    newAccounts.forEach((address) => {
+  //      if (!oldAccounts.includes(address)) {
+  //        this.preferencesController.setSelectedAddress(address);
+  //      }
+  //    });
+  //
+  //    const { identities } = this.preferencesController.store.getState();
+  //    return { ...keyState, identities };
+  //  }
+  //
+  //  return {
+  //    ...keyringController.memStore.getState(),
+  //    identities: oldIdentities,
+  //  };
 }
 
 async function verifySeedPhrase() {
-  const [primaryKeyring] = keyringController.getKeyringsByType(
-    HardwareKeyringTypes.hdKeyTree,
-  );
+  const [primaryKeyring] = keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
   if (!primaryKeyring) {
-    throw new Error('MetamaskController - No HD Key Tree found');
+    throw new Error('MetamaskController - No HD Key Tree found')
   }
 
-  const serialized = await primaryKeyring.serialize();
-  const seedPhraseAsBuffer = Buffer.from(serialized.mnemonic);
+  const serialized = await primaryKeyring.serialize()
+  const seedPhraseAsBuffer = Buffer.from(serialized.mnemonic)
 
-  const accounts = await primaryKeyring.getAccounts();
+  const accounts = await primaryKeyring.getAccounts()
   if (accounts.length < 1) {
-    throw new Error('MetamaskController - No accounts found');
+    throw new Error('MetamaskController - No accounts found')
   }
 
   try {
     //await seedPhraseVerifier.verifyAccounts(accounts, seedPhraseAsBuffer);
-    return Array.from(seedPhraseAsBuffer.values());
+    return Array.from(seedPhraseAsBuffer.values())
   } catch (err) {
     //log.error(err.message);
-    throw err;
+    throw err
   }
-
 }
 
 async function resetAccount() {
   //const selectedAddress = this.preferencesController.getSelectedAddress();
   //this.txController.wipeTransactions(selectedAddress);
   //this.networkController.resetConnection();
-
   //return selectedAddress;
 }
 
@@ -208,7 +202,7 @@ async function resetAccount() {
 //}
 
 async function submitPassword(password: string) {
-  await keyringController.submitPassword(password);
+  await keyringController.submitPassword(password)
 
   try {
     //await this.blockTracker.checkForLatestBlock();
@@ -225,22 +219,20 @@ async function submitPassword(password: string) {
 
   //this.setLedgerTransportPreference(transportPreference);
 
-  return keyringController.fullUpdate();
+  return keyringController.fullUpdate()
 }
 
-async function verifyPassword(password : string) {
-  await keyringController.verifyPassword(password);
+async function verifyPassword(password: string) {
+  await keyringController.verifyPassword(password)
 }
 
 function getPrimaryKeyringMnemonic() {
-  const [keyring] = keyringController.getKeyringsByType(
-    HardwareKeyringTypes.hdKeyTree,
-  );
+  const [keyring] = keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
   if (!keyring.mnemonic) {
-    throw new Error('Primary keyring mnemonic unavailable.');
+    throw new Error('Primary keyring mnemonic unavailable.')
   }
 
-  return keyring.mnemonic;
+  return keyring.mnemonic
 }
 
 //=============================================================================
@@ -263,5 +255,4 @@ function unMarkPasswordForgotten() {
   //sendUpdate();
 }
 
-
-createNewVaultAndKeychain("12345678")
+createNewVaultAndKeychain('12345678')
