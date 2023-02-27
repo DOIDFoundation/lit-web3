@@ -42,6 +42,15 @@ export const routes = [
     }
   },
   {
+    name: 'main',
+    path: '/main',
+    render: () => html`<view-main></view-main>`,
+    enter: async () => {
+      await import('~/views/main')
+      return true
+    }
+  },
+  {
     name: 'start',
     path: '/start',
     render: () => html`<view-start></view-start>`,

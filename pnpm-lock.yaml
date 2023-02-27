@@ -66,7 +66,7 @@ importers:
       rollup: 3.17.2
       rollup-plugin-minify-html-literals: 1.2.6_rollup@3.17.2
       sass: 1.58.3
-      tailwindcss: 3.2.7_postcss@8.4.21
+      tailwindcss: 3.2.7
       terser: 5.16.5
       tsup: 6.6.3_uujdqti2krmttzhqvubwnsmcci
       typescript: 4.9.5
@@ -142,7 +142,7 @@ importers:
       crx: 5.0.1
       kolorist: 1.7.0
       unplugin-auto-import: 0.15.0
-      vite-plugin-ngmi-polyfill: 0.0.2
+      vite-plugin-ngmi-polyfill: 0.0.2_esbuild@0.17.10+vite@3.2.5
       web-ext: 7.5.0
       webext-bridge: 5.0.5
 
@@ -1747,17 +1747,20 @@ packages:
       sha3: 2.1.4
     dev: false
 
-  /@esbuild-plugins/node-globals-polyfill/0.2.3:
+  /@esbuild-plugins/node-globals-polyfill/0.2.3_esbuild@0.17.10:
     resolution: {integrity: sha512-r3MIryXDeXDOZh7ih1l/yE9ZLORCd5e8vWg02azWRGj5SPTuoh69A2AIyn0Z31V/kHBfZ4HgWJ+OK3GTTwLmnw==}
     peerDependencies:
       esbuild: '*'
+    dependencies:
+      esbuild: 0.17.10
     dev: true
 
-  /@esbuild-plugins/node-modules-polyfill/0.2.2:
+  /@esbuild-plugins/node-modules-polyfill/0.2.2_esbuild@0.17.10:
     resolution: {integrity: sha512-LXV7QsWJxRuMYvKbiznh+U1ilIop3g2TeKRzUxOG5X3YITc8JyyTa90BmLwqqv0YnX4v32CSlG+vsziZp9dMvA==}
     peerDependencies:
       esbuild: '*'
     dependencies:
+      esbuild: 0.17.10
       escape-string-regexp: 4.0.0
       rollup-plugin-node-polyfills: 0.2.1
     dev: true
@@ -10399,12 +10402,10 @@ packages:
     resolution: {integrity: sha512-P3cgh2bpaPvAO2NE3uRp/n6hmk4xPX4DQf+UzTlCAycssKdqhp6hjw+ENWe+aUS7TogKRFtptMosTSFeC6R55g==}
     dev: true
 
-  /tailwindcss/3.2.7_postcss@8.4.21:
+  /tailwindcss/3.2.7:
     resolution: {integrity: sha512-B6DLqJzc21x7wntlH/GsZwEXTBttVSl1FtCzC8WP4oBc/NKef7kaax5jeihkkCEWc831/5NDJ9gRNDK6NEioQQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -11173,14 +11174,15 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-ngmi-polyfill/0.0.2:
+  /vite-plugin-ngmi-polyfill/0.0.2_esbuild@0.17.10+vite@3.2.5:
     resolution: {integrity: sha512-1oT7X3wW2AxgFBPgDfnTyOp+/DLXA4PSDMHZLib3R0ZP98Y3mVjiETvkl0imoM1n7Qyj3g4peH8Y2xz0BgiRzw==}
     peerDependencies:
       vite: ^3
     dependencies:
-      '@esbuild-plugins/node-globals-polyfill': 0.2.3
-      '@esbuild-plugins/node-modules-polyfill': 0.2.2
+      '@esbuild-plugins/node-globals-polyfill': 0.2.3_esbuild@0.17.10
+      '@esbuild-plugins/node-modules-polyfill': 0.2.2_esbuild@0.17.10
       rollup-plugin-node-polyfills: 0.2.1
+      vite: 3.2.5
     transitivePeerDependencies:
       - esbuild
     dev: true
@@ -11214,6 +11216,39 @@ packages:
       fs-extra: 11.1.0
       picocolors: 1.0.0
       vite: 4.1.4_sass@1.58.3+terser@5.16.5
+    dev: true
+
+  /vite/3.2.5:
+    resolution: {integrity: sha512-4mVEpXpSOgrssFZAOmGIr85wPHKvaDAcXqxVxVRZhljkJOMZi1ibLibzjLHzJvcok8BMguLc7g1W6W/GqZbLdQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.15.18
+      postcss: 8.4.21
+      resolve: 1.22.1
+      rollup: 2.79.1
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: true
 
   /vite/3.2.5_@types+node@17.0.18:

@@ -8,9 +8,11 @@ import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
 import '@/components/phrase'
 import '@/components/pwd_equal'
+import { getKey } from '@/lib/phrase'
+import { keyringController } from '@/lib/keyringController'
+import { goto } from '@lit-web3/dui/src/shared/router'
 
 import style from './restore.css?inline'
-import { getKey } from '@/lib/phrase'
 @customElement('view-restore')
 export class ViewRestore extends TailwindElement(style) {
   @state() name = ''
@@ -44,6 +46,13 @@ export class ViewRestore extends TailwindElement(style) {
 
   restore = async () => {
     console.table({ name: this.wrapName, ...(await getKey(this.phrase)) })
+    try {
+      await keyringController.createNewVaultAndRestore(this.pwd, this.phrase)
+      goto('/main')
+    } catch (err: any) {
+      this.invalid.phrase = err.message || err
+      console.error(err)
+    }
   }
   submit() {}
   connectedCallback() {
