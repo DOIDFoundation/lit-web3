@@ -1,37 +1,54 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  when,
-  property,
-  state,
-  repeat
-} from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
-
+import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
 import '@lit-web3/dui/src/input/text'
+import '@lit-web3/dui/src/input/pwd'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
+import '@/components/phrase'
+import '@/components/pwd_equal'
 
 import style from './restore.css?inline'
+import { getKey } from '@/lib/phrase'
 @customElement('view-restore')
 export class ViewRestore extends TailwindElement(style) {
-  @property() placeholder = ''
+  @state() name = ''
+  @state() phrase = ''
   @state() pwd = ''
-  @state() err = ''
-  @state() pending = false
-  @state() phrases = new Array(12)
+  @state() invalid: Record<string, string> = { pwd: '', phrase: '' }
 
-  onInput = async (e: CustomEvent) => {
-    const { val = '', error = '', msg = '' } = {}
-    this.err = msg
-    if (error) return
-    this.pwd = val
+  get wrapName() {
+    return this.name ? wrapTLD(this.name) : ''
+  }
+  get restoreDisabled() {
+    if (!this.name || !this.phrase || !this.pwd) return true
+    return Object.values(this.invalid).some((r) => r)
+  }
+  onInputName = (e: CustomEvent) => {
+    // TODO: check valid
+    const text = e.detail.trim()
+    this.name = text
+  }
+  onPhraseChange = (e: CustomEvent) => {
+    e.stopPropagation()
+    const { phrase, error } = e.detail as any
+    this.invalid = { ...this.invalid, phrase: error ?? '' }
+    this.phrase = phrase
+  }
+  onPwdChange = (e: CustomEvent) => {
+    const { pwd, error } = e.detail
+    this.pwd = pwd
+    this.invalid = { ...this.invalid, pwd: error ?? '' }
   }
 
+  restore = async () => {
+    console.table({ name: this.wrapName, ...(await getKey(this.phrase)) })
+  }
   submit() {}
+  connectedCallback() {
+    super.connectedCallback()
+  }
   render() {
     return html`<div class="restore">
       <div class="dui-container">
@@ -39,27 +56,32 @@ export class ViewRestore extends TailwindElement(style) {
           <dui-link back class="link"><i class="mdi mdi-arrow-left"></i>Back</dui-link>
         </div>
         <h1 class="my-4 text-4xl">Restore wallet</h1>
-        <h3 class="text-lg">Secret Recovery Phrase</h3>
-        <div class="grid grid-cols-3 gap-4 m-4">
-          ${repeat(
-            this.phrases,
-            (phrase, i) => html`<div class="flex items-center gap-4">
-              <b class="block w-4">${i + 1}.</b>
-              <dui-input-text
-                dense
-                ?autoforce=${i === 0}
-                type="password"
-                @input=${this.onInput}
-                @submit=${this.submit}
-                value=${this.pwd}
-                ?disabled=${this.pending}
-              >
-              </dui-input-text>
-            </div>`
-          )}
+
+        <!-- doid name -->
+        <div class="text-base mb-4">
+          You are importing an address as Main Address for
+          <dui-link class="link ml-0.5 underline">${this.wrapName}</dui-link>
         </div>
-        <div class="my-2">
-          <dui-button class="secondary" block>Restore</dui-button>
+        <div>
+          <dui-input-text @input=${this.onInputName} value=${this.name} placeholder="Enter DOID name" required>
+            <span name="right">.doid</span>
+            <span slot="label">DOID name</span>
+          </dui-input-text>
+        </div>
+
+        <h3 class="text-lg">Secret Recovery Phrase</h3>
+        <phrase-to-secret class="my-4" @change=${this.onPhraseChange}
+          ><div slot="tip" class="mb-2 p-2 bg-blue-100 border border-blue-300 rounded text-xs">
+            You can paste your entire secret recovery phrase into any field
+          </div></phrase-to-secret
+        >
+
+        <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+
+        <div class="my-4">
+          <dui-button class="secondary" block .disabled=${this.restoreDisabled} @click=${this.restore}
+            >Restore</dui-button
+          >
         </div>
       </div>
     </div>`

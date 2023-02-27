@@ -1,11 +1,12 @@
 import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import manifest from './manifest.config'
 import { dirname, relative, resolve } from 'path'
-// S Here is a temporary hack for @crxjs/vite-plugin@2.0.0-beta.12
+// import AutoImport from 'unplugin-auto-import/vite'
+
+// S Here is a temporary hack for @crxjs/vite-plugin@2.0.0-beta.13
 // import { crx } from '@crxjs/vite-plugin'
 import fs from 'fs'
-import path from 'path'
-const depPath = path.resolve(__dirname, 'node_modules/@crxjs/vite-plugin/dist/index.mjs')
+const depPath = resolve(__dirname, 'node_modules/@crxjs/vite-plugin/dist/index.mjs')
 const depJsSrc = fs.readFileSync(depPath, 'utf8')
 const reg = /page\.scripts\.push\(\.\.\.scripts\)/
 if (/reg/.test(depJsSrc)) {
@@ -13,12 +14,26 @@ if (/reg/.test(depJsSrc)) {
 }
 // E
 
-export default async ({ mode = '' }) => {
-  const { crx } = await import('@crxjs/vite-plugin')
-  return viteConfig({
-    server: { port: 4813, https: false, hmr: { port: 4813 } },
+export const sharedConfig = async (mode = '') => {
+  const [port, isDev] = [4831, mode === 'development']
+  return {
+    server: { port, https: false, hmr: { port } },
+    build: {
+      minify: 'terser',
+      emptyOutDir: !isDev,
+      sourcemap: isDev ? 'inline' : false,
+      terserOptions: {
+        mangle: !isDev
+      },
+      // so annoying, here will break in build stage
+      rollupOptions: {
+        input: {
+          background: 'index.html',
+          popup: 'popup.html'
+        }
+      }
+    },
     plugins: [
-      crx({ manifest }),
       // rewrite assets to use relative path
       {
         name: 'assets-rewrite',
@@ -29,17 +44,20 @@ export default async ({ mode = '' }) => {
         }
       }
     ],
-    build: {
-      rollupOptions: {
-        input: {
-          background: resolve(__dirname, 'index.html'),
-          popup: resolve(__dirname, 'popup.html')
-        }
-      }
+    optimizeDeps: {
+      include: ['webextension-polyfill']
     },
     viteConfigOptions: {
       pwa: false,
+      legacy: false,
       copies: []
     }
-  })({ mode })
+  }
+}
+
+export default async ({ mode = '' }) => {
+  const config = await sharedConfig(mode)
+  const { crx } = await import('@crxjs/vite-plugin')
+  config.plugins.push(...([crx({ manifest })] as any[]))
+  return viteConfig(config)({ mode })
 }

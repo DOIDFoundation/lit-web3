@@ -12,6 +12,7 @@ import style from './header.css?inline'
 export class DuiHeader extends TailwindElement(style) {
   bindScreen: any = new StateController(this, screenStore)
   @property({ type: Boolean }) menuable = false
+  @property({ type: String }) logoHref = 'https://doid.tech'
   @state() menuActive = false
 
   get asMenu() {
@@ -49,7 +50,7 @@ export class DuiHeader extends TailwindElement(style) {
       <header class="dui-header">
         <div class="dui-container relative flex justify-between items-center">
           <div class="flex items-center gap-3 lg_gap-4 lg_w-40">
-            <slot name="logo"><a class="doid-logo" href="https://doid.tech"></a><slot name="sublogo"></slot></slot>
+            <slot name="logo"><a class="doid-logo" href=${this.logoHref}></a><slot name="sublogo"></slot></slot>
             <slot name="left"></slot>
           </div>
           <div class="flex justify-center items-center">

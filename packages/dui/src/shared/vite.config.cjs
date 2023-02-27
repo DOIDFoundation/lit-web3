@@ -21,8 +21,7 @@ const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font
 const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
   'import.meta.env.VITE_APP_MDI': JSON.stringify(mdi),
-  global: 'globalThis',
-  'process.env': JSON.stringify(env)
+  global: 'globalThis'
 }
 
 const viteConfig = (options = {}) => {
@@ -99,7 +98,7 @@ const viteConfig = (options = {}) => {
           },
           minify: true
         }),
-        ...(isDev
+        ...(isDev || !viteConfigOptions.copies?.length
           ? []
           : [
               viteStaticCopy({
@@ -131,9 +130,13 @@ const viteConfig = (options = {}) => {
                 }
               })
             ]),
-        legacy({
-          polyfills: ['web.url', 'es.object.from-entries']
-        })
+        ...(viteConfigOptions.legacy === false
+          ? []
+          : [
+              legacy({
+                polyfills: ['web.url', 'es.object.from-entries']
+              })
+            ])
       ]
     }
     // options (shallow merge)

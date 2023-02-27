@@ -6,9 +6,13 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "safe-decode-uri-component": "latest"
+    "safe-decode-uri-component": "latest",
+    "buffer": "^6.0.3",
+    "next-tick": "^1.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/next-tick": "^1.0.0"
+  },
   "peerDependencies": {
     "lit": "^2",
     "tsup": "^6"

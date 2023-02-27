@@ -42,11 +42,11 @@ export const routes = [
     }
   },
   {
-    name: 'keyring',
-    path: '/keyring',
-    render: () => html`<view-keyring></view-keyring>`,
+    name: 'start',
+    path: '/start',
+    render: () => html`<view-start></view-start>`,
     enter: async () => {
-      await import('~/views/keyring')
+      await import('~/views/start')
       return true
     }
   }
