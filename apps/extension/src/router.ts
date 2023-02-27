@@ -23,6 +23,16 @@ export const routes = [
       return true
     }
   },
+  // dApp Sample
+  {
+    name: 'dApp',
+    path: '/dApp',
+    render: () => html`<view-dapp></view-dapp>`,
+    enter: async () => {
+      await import('~/views/dApp.sample')
+      return true
+    }
+  },
   {
     name: 'restore',
     path: '/restore',

@@ -1,4 +1,6 @@
 // ref: @metamask-extention/app/scripts/app-init.js
+import { shouldInjectProvider } from '~/lib/providers/injection'
+
 self.addEventListener('install', function (event) {
   self.skipWaiting()
   console.log('[background] Installed', event)
@@ -19,7 +21,14 @@ chrome.action.onClicked.addListener((tab) => {
     function: function () {}
   })
 })
-console.log('[DOID][service-worker]', self)
+console.log('[service-worker]', self)
+
+chrome.runtime.onMessage.addListener(() => {
+  return false
+})
+chrome.runtime.onStartup.addListener(() => {
+  globalThis.isFirstTimeProfileLoaded = true
+})
 
 if (import.meta.hot) {
   // @crxjs/vite-plugin@2.0.0-beta.13 not always working
@@ -35,19 +44,21 @@ if (import.meta.hot) {
  * MAIN world injection does not work properly via manifest
  * https://bugs.chromium.org/p/chromium/issues/detail?id=634381
  */
-// const registerInPageContentScript = async () => {
-//   try {
-//     await chrome.scripting.registerContentScripts([
-//       {
-//         id: 'inpage',
-//         js: ['inpage.js'],
-//         matches: ['https://*/*', 'http://*/*', 'file://*/*'],
-//         runAt: 'document_start',
-//         world: 'MAIN'
-//       }
-//     ])
-//   } catch (err) {
-//     console.warn(`Dropped attempt to register inpage content script. ${err}`)
+// if (shouldInjectProvider('init')) {
+//   const registerInPageContentScript = async () => {
+//     try {
+//       await chrome.scripting.registerContentScripts([
+//         {
+//           id: 'inpage',
+//           js: ['inpage.js'],
+//           matches: ['https://*/*', 'http://*/*', 'file://*/*'],
+//           runAt: 'document_start',
+//           world: 'MAIN'
+//         }
+//       ])
+//     } catch (err) {
+//       console.warn(`Dropped attempt to register inpage content script. ${err}`)
+//     }
 //   }
+//   registerInPageContentScript()
 // }
-// registerInPageContentScript()

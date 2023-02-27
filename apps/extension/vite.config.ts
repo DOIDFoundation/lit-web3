@@ -1,6 +1,8 @@
 import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import manifest from './manifest.config'
 import { dirname, relative, resolve } from 'path'
+import nodePolyfills from 'rollup-plugin-polyfill-node'
+
 // import AutoImport from 'unplugin-auto-import/vite'
 
 // S Here is a temporary hack for @crxjs/vite-plugin@2.0.0-beta.13
@@ -34,6 +36,7 @@ export const sharedConfig = async (mode = '') => {
       }
     },
     plugins: [
+      nodePolyfills({ include: ['process*', 'buffer*', 'stream*'] }),
       // rewrite assets to use relative path
       {
         name: 'assets-rewrite',
@@ -45,6 +48,7 @@ export const sharedConfig = async (mode = '') => {
       }
     ],
     optimizeDeps: {
+      // not works, it will inject a wrapped sendMessage to inpage.js and throw error `This script should only be loaded in a browser extension.`
       include: ['webextension-polyfill']
     },
     viteConfigOptions: {
