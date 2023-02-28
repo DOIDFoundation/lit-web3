@@ -1,5 +1,5 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router/index'
+import { keyringController, verifySeedPhrase } from '@/lib/keyringController'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -42,8 +42,9 @@ export class ViewPwd extends TailwindElement(style) {
     this.isUnderstand = !this.isUnderstand
     this.btnDisabled = this.isValid()
   }
-  routeGoto = (path: string) => {
-    goto(`/generate-phrase/${path}`)
+  routeGoto = async (path: string) => {
+    console.log(path, 'route-path')
+    this.emit('routeGoto', { path, pwd: this.pwd })
   }
   submit() {}
   render() {

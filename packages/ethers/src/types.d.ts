@@ -1,3 +1,5 @@
+/// <reference src="@ethersproject/providers">
+
 declare type Address = `0x${string}` | string
 declare type TokenID = string
 declare type TokenURI = string
@@ -69,4 +71,12 @@ declare type getContractOpts = {
   abiName?: string
   account?: Address
   requireAccount?: boolean
+}
+
+declare interface useBridgeOptions {
+  chainId?: ChainId
+  provider?: JsonRpcProvider | WebSocketProvider
+  rpc?: string
+  autoConnect?: boolean
+  persistent?: boolean // ignore injected ethereum
 }

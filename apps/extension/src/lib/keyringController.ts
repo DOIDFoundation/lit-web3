@@ -1,5 +1,4 @@
-
-import EventEmitter from 'events';
+import EventEmitter from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
 import ExtensionStore from './local-store'
 //import { Mutex } from 'await-semaphore';
@@ -16,16 +15,14 @@ enum HardwareKeyringTypes {
   imported = 'Simple Key Pair'
 }
 
-class DoidController extends EventEmitter{
-  keyringController : KeyringController
+class DoidController extends EventEmitter {
+  keyringController: KeyringController
   //store : ComposableObservableStore
-  constructor(
-    opts : any
-  ){
+  constructor(opts: any) {
     super()
     const initState = opts.initState || {}
 
-    let additionalKeyrings: any = [defaultKeyringBuilders];
+    let additionalKeyrings: any = [defaultKeyringBuilders]
     //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
 
     //if (this.canUseHardwareWallets()) {
@@ -41,10 +38,10 @@ class DoidController extends EventEmitter{
     //}
     this.keyringController = new KeyringController({
       keyringBuilders: additionalKeyrings,
-      initState: initState.KeyringController,
+      initState: initState.KeyringController
       //encryptor: opts.encryptor || undefined,
       //cacheEncryptionKey: isManifestV3,
-    });
+    })
     //this.store = new ComposableObservableStore({
     //  state: initState,
     //  controllerMessenger: this.controllerMessenger,
@@ -56,7 +53,7 @@ class DoidController extends EventEmitter{
     })
   }
 
-//keyringController.createVaultMutex = new Mutex()
+  //keyringController.createVaultMutex = new Mutex()
 
   /**
    * Create a new Vault and restore an existent keyring.
@@ -68,9 +65,9 @@ class DoidController extends EventEmitter{
   async createNewVaultAndRestore(password: string, encodedSeedPhrase: number[]) {
     //const releaseLock = await createVaultMutex.acquire();
     try {
-      let accounts, lastBalance;
+      let accounts, lastBalance
 
-      const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase);
+      const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
 
       //const { keyringController } = this;
 
@@ -97,10 +94,7 @@ class DoidController extends EventEmitter{
       //this.txController.txStateManager.clearUnapprovedTxs();
 
       // create new vault
-      const vault = await this.keyringController.createNewVaultAndRestore(
-        password,
-        seedPhraseAsBuffer,
-      );
+      const vault = await this.keyringController.createNewVaultAndRestore(password, seedPhraseAsBuffer)
 
       //const ethQuery = new EthQuery(this.provider);
       //accounts = await keyringController.getAccounts();
@@ -109,11 +103,9 @@ class DoidController extends EventEmitter{
       //  ethQuery,
       //);
 
-      const [primaryKeyring] = this.keyringController.getKeyringsByType(
-        HardwareKeyringTypes.hdKeyTree,
-      );
+      const [primaryKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
       if (!primaryKeyring) {
-        throw new Error('MetamaskController - No HD Key Tree found');
+        throw new Error('MetamaskController - No HD Key Tree found')
       }
 
       // seek out the first zero balance
@@ -143,7 +135,7 @@ class DoidController extends EventEmitter{
       //// set new identities
       //this.preferencesController.setAddresses(accounts);
       //this.selectFirstIdentity();
-      return vault;
+      return vault
     } finally {
       //releaseLock();
     }
@@ -218,7 +210,8 @@ class DoidController extends EventEmitter{
 
     try {
       //await seedPhraseVerifier.verifyAccounts(accounts, seedPhraseAsBuffer);
-      return Array.from(seedPhraseAsBuffer.values())
+      const encodedSeedPhrase = Array.from(seedPhraseAsBuffer.values())
+      return Buffer.from(encodedSeedPhrase).toString('utf8')
     } catch (err) {
       //log.error(err.message);
       throw err
@@ -380,11 +373,10 @@ class DoidController extends EventEmitter{
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
-
 }
 
 async function loadStateFromPersistence() {
-  return await localStore.get()  
+  return await localStore.get()
   // migrations
 //  const migrator = new Migrator({ migrations });
 //  migrator.on('error', console.warn);
@@ -439,14 +431,14 @@ async function loadStateFromPersistence() {
  * @param {string} initLangCode - The region code for the language preferred by the current user.
  */
 function setupController(initState: any, initLangCode: string) {
-  return doidController = new DoidController({
+  return (doidController = new DoidController({
     initState,
     initLangCode
-  })
+  }))
   //
   // MetaMask Controller
   //
-/*
+  /*
   controller = new DoidController({
     infuraProjectId: process.env.INFURA_PROJECT_ID,
     // User confirmation callbacks:
@@ -519,16 +511,16 @@ function setupController(initState: any, initLangCode: string) {
   };
   */
 }
- 
-async function getFirstPreferredLangCode(){
+
+async function getFirstPreferredLangCode() {
   return 'en'
 }
 
-async function initialize(){
+async function initialize() {
   try {
-    const initState = await loadStateFromPersistence();
-    const initLangCode = await getFirstPreferredLangCode();
-    setupController(initState, initLangCode);
+    const initState = await loadStateFromPersistence()
+    const initLangCode = await getFirstPreferredLangCode()
+    setupController(initState, initLangCode)
     //if (!isManifestV3) {
     //  await loadPhishingWarningPage();
     //}
@@ -539,4 +531,3 @@ async function initialize(){
     //rejectInitialization(error);
   }
 }
-

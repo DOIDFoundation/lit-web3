@@ -9,10 +9,12 @@ import style from './phrase.css?inline'
 import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-create-addresses')
 export class ViewAddress extends TailwindElement(style) {
+  @property() phrase = ''
   @property() placeholder = 'Password'
   @state() pwd = ''
   @state() err = ''
   @state() pending = false
+  @state() showPhrase = true
 
   onInput = async (e: CustomEvent) => {
     const { val = '', error = '', msg = '' } = {}
@@ -22,6 +24,9 @@ export class ViewAddress extends TailwindElement(style) {
   }
   routeGoto = (path: string) => {
     goto(`/generate-phrase/${path}`)
+  }
+  onTogglePhrase = () => {
+    this.showPhrase = !this.showPhrase
   }
   submit() {}
   render() {
@@ -42,15 +47,31 @@ export class ViewAddress extends TailwindElement(style) {
             <li>Write down and store in multiple secret places</li>
           </ul>
         </div>
-        <div class="mt-2 relative rounded-md border-2 border-gray-600 h-48">
-          <div class="absolate cursor-pointer rounded-md flex flex-col justify-center items-center p-4 w-full h-full top-0 left-0 bg-gray-400">
-            <i class="mdi mdi-eye-outline text-white text-xl"></i>
-            <div class="mt-2 text-center text-white text-sm"><div class="text-center">CLICK HERE TO REVEAL SECRET WORDS</div>
-            <div class="mt-1">Make sure no one is watching your screen</div></div>
-          </div>
-          <!-- <textarea class="resize border rounded-md"></textarea> -->
+        <div class="mt-2 relative rounded-md border-2 border-gray-600 h-24">
+          ${when(
+            this.showPhrase,
+            () => html`
+              <div
+                @click=${this.onTogglePhrase}
+                class="z-1 absolute cursor-pointer rounded-md flex flex-col justify-center items-center p-4 w-full h-full top-0 left-0 bg-gray-400"
+              >
+                <i class="mdi mdi-eye-outline text-white text-xl"></i>
+                <div class="mt-2 text-center text-white text-xs">
+                  <div class="text-center">CLICK HERE TO REVEAL SECRET WORDS</div>
+                  <div class="mt-1">Make sure no one is watching your screen</div>
+                </div>
+              </div>
+            `
+          )}
+          
+          <textarea class="rounded-md w-full h-full p-4" readonly .value=${this.phrase}></textarea>
         </div>
-        
+        <div class="flex p-2 justify-between">
+          <dui-button text class="!text-blue-400 !text-sm" @click=${this.onTogglePhrase}>${
+      this.showPhrase ? 'Reveal seed phrase' : 'Hide seed phrase'
+    }</dui-button>
+          <dui-button text class="!text-blue-400 !text-sm">Copy to clipboard</dui-button>
+        </div>
         <div class="mt-4 flex justify-between">
           <dui-button @click=${() =>
             this.routeGoto('create-password')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
