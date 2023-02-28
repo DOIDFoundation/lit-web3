@@ -49,6 +49,17 @@ export const routes = [
       await import('~/views/start')
       return true
     }
+  },
+  {
+    name: 'generatePhrase',
+    path: '/generate-phrase/:step?',
+    render: ({ step = '' }) => {
+      return html`<view-phrase .ROUTE=${{ step }}></view-phrase>`
+    },
+    enter: async () => {
+      await import('~/views/generate-phrase')
+      return true
+    }
   }
 ]
 
