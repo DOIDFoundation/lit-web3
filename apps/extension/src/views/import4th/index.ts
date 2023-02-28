@@ -1,7 +1,7 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
-import { keyringController } from '@/lib/keyringController'
+import { doidController } from '@/lib/keyringController'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -29,7 +29,10 @@ export class ViewImport extends TailwindElement(style) {
 
   onCreateMainAddress = async () => {
     try {
-      await keyringController.createNewVaultAndRestore(this.pwd, keyringStore.mnemonic)
+      console.log(keyringStore.mnemonic)
+      const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
+
+      await doidController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
       goto('/main')
     } catch (err: any) {
       console.error(err)

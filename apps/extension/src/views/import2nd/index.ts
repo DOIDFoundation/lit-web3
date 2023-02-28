@@ -1,6 +1,6 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { keyringController } from '@/lib/keyringController'
+import { doidController } from '@/lib/keyringController'
 import { keyringStore, StateController } from '~/store/keyring'
 
 // Components
@@ -48,7 +48,7 @@ export class ViewImport extends TailwindElement(style) {
         <p slot="msg">as main addresses for EVM chains for satoshi.doid</p>
       </doid-symbol>
 
-      <div class="max-w-xs mx-auto">
+      
         <span slot="label">
           <slot name="label">Enter your Secret Recovery Phrase</slot>
         </span>
@@ -65,7 +65,7 @@ export class ViewImport extends TailwindElement(style) {
               '/main'
             )} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
         </div>
-      </div>
+      
     </div>
   </div>
 </div>`
