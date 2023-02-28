@@ -8,7 +8,7 @@ import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '@/components/phrase'
 
-import style from './home.css?inline'
+import style from './import2nd.css?inline'
 @customElement('import-2nd')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
@@ -25,6 +25,13 @@ export class ViewImport extends TailwindElement(style) {
     this.err = msg
     if (error) return
     this.pwd = val
+  }
+
+  onPhraseChange = (e: CustomEvent) => {
+    e.stopPropagation()
+    const { phrase } = e.detail as any
+    console.log(phrase)
+    keyringStore.mnemonic = phrase
   }
 
   routeGoto = (path: string) => {
@@ -45,7 +52,10 @@ export class ViewImport extends TailwindElement(style) {
         <span slot="label">
           <slot name="label">Enter your Secret Recovery Phrase</slot>
         </span>
-        <textarea class="resize border rounded-md"></textarea>
+        <phrase-to-secret class="my-4" @change=${this.onPhraseChange}
+          ><div slot="tip" class="mb-2 p-2 bg-blue-100 border border-blue-300 rounded text-xs">
+            You can paste your entire secret recovery phrase into any field
+          </div></phrase-to-secret>
 
         <div class="mt-4 flex justify-between">
           <dui-button @click=${() => this.routeGoto('/main')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "

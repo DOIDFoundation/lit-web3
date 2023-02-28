@@ -7,7 +7,7 @@ import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '@/components/phrase'
 
-import style from './home.css?inline'
+import style from './import3rd.css?inline'
 @customElement('import-3rd')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)

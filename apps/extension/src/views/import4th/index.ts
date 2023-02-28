@@ -8,7 +8,7 @@ import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '@/components/pwd_equal'
 
-import style from './home.css?inline'
+import style from './import4th.css?inline'
 @customElement('import-4th')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
