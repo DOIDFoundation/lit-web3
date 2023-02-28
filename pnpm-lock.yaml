@@ -66,7 +66,7 @@ importers:
       rollup: 3.17.2
       rollup-plugin-minify-html-literals: 1.2.6_rollup@3.17.2
       sass: 1.58.3
-      tailwindcss: 3.2.7_postcss@8.4.21
+      tailwindcss: 3.2.7
       terser: 5.16.5
       tsup: 6.6.3_uujdqti2krmttzhqvubwnsmcci
       typescript: 4.9.5
@@ -140,7 +140,7 @@ importers:
       crx: 5.0.1
       kolorist: 1.7.0
       unplugin-auto-import: 0.15.0
-      vite-plugin-ngmi-polyfill: 0.0.2
+      vite-plugin-ngmi-polyfill: 0.0.2_esbuild@0.17.10+vite@3.2.5
       web-ext: 7.5.0
       webext-bridge: 5.0.5
 
@@ -168,45 +168,77 @@ importers:
     specifiers:
       '@types/next-tick': ^1.0.0
       buffer: ^6.0.3
+      lit: ^2
       next-tick: ^1.1.0
       safe-decode-uri-component: latest
+      tsup: ^6
     dependencies:
       buffer: 6.0.3
+      lit: 2.6.1
       next-tick: 1.1.0
       safe-decode-uri-component: 1.2.1
     devDependencies:
       '@types/next-tick': 1.0.0
+      tsup: 6.6.3
 
   packages/dui:
     specifiers:
       '@lit-web3/core': workspace:latest
       '@lit-web3/ethers': workspace:latest
       '@metamask/jazzicon': ^2
+      tsup: ^6
     dependencies:
       '@lit-web3/core': link:../core
       '@lit-web3/ethers': link:../ethers
       '@metamask/jazzicon': 2.0.0
+    devDependencies:
+      tsup: 6.6.3
 
   packages/dui-docs:
     specifiers:
+      '@ethersproject/address': ^5
+      '@ethersproject/contracts': ^5
+      '@ethersproject/providers': ^5
+      '@ethersproject/units': ^5
+      '@ethersproject/wallet': ^5
       '@lit-web3/core': workspace:latest
       '@lit-web3/dui': workspace:latest
+      tsup: ^6
     dependencies:
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@ethersproject/units': 5.7.0
+      '@ethersproject/wallet': 5.7.0
       '@lit-web3/core': link:../core
       '@lit-web3/dui': link:../dui
+    devDependencies:
+      tsup: 6.6.3
 
   packages/ethers:
     specifiers:
       '@ensdomains/address-encoder': ^0.2.20
+      '@ethersproject/address': ^5
+      '@ethersproject/contracts': ^5
+      '@ethersproject/providers': ^5
+      '@ethersproject/units': ^5
+      '@ethersproject/wallet': ^5
       '@lit-web3/core': workspace:latest
       '@types/tr46': ^3.0.0
       tr46: ^4.1.0
+      tsup: ^6
     dependencies:
       '@ensdomains/address-encoder': 0.2.20
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@ethersproject/units': 5.7.0
+      '@ethersproject/wallet': 5.7.0
       '@lit-web3/core': link:../core
       tr46: 4.1.0
     devDependencies:
       '@types/tr46': 3.0.0
+      tsup: 6.6.3
 
   packages/tests:
     specifiers:
@@ -1745,17 +1777,20 @@ packages:
       sha3: 2.1.4
     dev: false
 
-  /@esbuild-plugins/node-globals-polyfill/0.2.3:
+  /@esbuild-plugins/node-globals-polyfill/0.2.3_esbuild@0.17.10:
     resolution: {integrity: sha512-r3MIryXDeXDOZh7ih1l/yE9ZLORCd5e8vWg02azWRGj5SPTuoh69A2AIyn0Z31V/kHBfZ4HgWJ+OK3GTTwLmnw==}
     peerDependencies:
       esbuild: '*'
+    dependencies:
+      esbuild: 0.17.10
     dev: true
 
-  /@esbuild-plugins/node-modules-polyfill/0.2.2:
+  /@esbuild-plugins/node-modules-polyfill/0.2.2_esbuild@0.17.10:
     resolution: {integrity: sha512-LXV7QsWJxRuMYvKbiznh+U1ilIop3g2TeKRzUxOG5X3YITc8JyyTa90BmLwqqv0YnX4v32CSlG+vsziZp9dMvA==}
     peerDependencies:
       esbuild: '*'
     dependencies:
+      esbuild: 0.17.10
       escape-string-regexp: 4.0.0
       rollup-plugin-node-polyfills: 0.2.1
     dev: true
@@ -8894,6 +8929,22 @@ packages:
       postcss-value-parser: 4.2.0
     dev: true
 
+  /postcss-load-config/3.1.4:
+    resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      postcss: '>=8.0.9'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      postcss:
+        optional: true
+      ts-node:
+        optional: true
+    dependencies:
+      lilconfig: 2.0.6
+      yaml: 1.10.2
+    dev: true
+
   /postcss-load-config/3.1.4_postcss@8.4.21:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
     engines: {node: '>= 10'}
@@ -10260,12 +10311,10 @@ packages:
     resolution: {integrity: sha512-P3cgh2bpaPvAO2NE3uRp/n6hmk4xPX4DQf+UzTlCAycssKdqhp6hjw+ENWe+aUS7TogKRFtptMosTSFeC6R55g==}
     dev: true
 
-  /tailwindcss/3.2.7_postcss@8.4.21:
+  /tailwindcss/3.2.7:
     resolution: {integrity: sha512-B6DLqJzc21x7wntlH/GsZwEXTBttVSl1FtCzC8WP4oBc/NKef7kaax5jeihkkCEWc831/5NDJ9gRNDK6NEioQQ==}
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
@@ -10493,6 +10542,41 @@ packages:
 
   /tslib/2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
+    dev: true
+
+  /tsup/6.6.3:
+    resolution: {integrity: sha512-OLx/jFllYlVeZQ7sCHBuRVEQBBa1tFbouoc/gbYakyipjVQdWy/iQOvmExUA/ewap9iQ7tbJf9pW0PgcEFfJcQ==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': ^1
+      postcss: ^8.4.12
+      typescript: ^4.1.0
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      postcss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      bundle-require: 4.0.1_esbuild@0.17.10
+      cac: 6.7.14
+      chokidar: 3.5.3
+      debug: 4.3.4
+      esbuild: 0.17.10
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 3.1.4
+      resolve-from: 5.0.0
+      rollup: 3.17.2
+      source-map: 0.8.0-beta.0
+      sucrase: 3.29.0
+      tree-kill: 1.2.2
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
     dev: true
 
   /tsup/6.6.3_uujdqti2krmttzhqvubwnsmcci:
@@ -11034,14 +11118,15 @@ packages:
       - supports-color
     dev: true
 
-  /vite-plugin-ngmi-polyfill/0.0.2:
+  /vite-plugin-ngmi-polyfill/0.0.2_esbuild@0.17.10+vite@3.2.5:
     resolution: {integrity: sha512-1oT7X3wW2AxgFBPgDfnTyOp+/DLXA4PSDMHZLib3R0ZP98Y3mVjiETvkl0imoM1n7Qyj3g4peH8Y2xz0BgiRzw==}
     peerDependencies:
       vite: ^3
     dependencies:
-      '@esbuild-plugins/node-globals-polyfill': 0.2.3
-      '@esbuild-plugins/node-modules-polyfill': 0.2.2
+      '@esbuild-plugins/node-globals-polyfill': 0.2.3_esbuild@0.17.10
+      '@esbuild-plugins/node-modules-polyfill': 0.2.2_esbuild@0.17.10
       rollup-plugin-node-polyfills: 0.2.1
+      vite: 3.2.5
     transitivePeerDependencies:
       - esbuild
     dev: true
@@ -11075,6 +11160,39 @@ packages:
       fs-extra: 11.1.0
       picocolors: 1.0.0
       vite: 4.1.4_sass@1.58.3+terser@5.16.5
+    dev: true
+
+  /vite/3.2.5:
+    resolution: {integrity: sha512-4mVEpXpSOgrssFZAOmGIr85wPHKvaDAcXqxVxVRZhljkJOMZi1ibLibzjLHzJvcok8BMguLc7g1W6W/GqZbLdQ==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.15.18
+      postcss: 8.4.21
+      resolve: 1.22.1
+      rollup: 2.79.1
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: true
 
   /vite/3.2.5_@types+node@17.0.18:
