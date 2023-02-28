@@ -10,6 +10,8 @@ declare type NameInfo = {
   id?: string
   tokenID?: TokenID
   account?: string
+  mainAddress?: string
+  publicKey?: string
 }
 declare type Commitment = {
   secret?: string

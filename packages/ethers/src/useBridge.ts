@@ -105,10 +105,12 @@ class BlockPolling {
   }
 }
 
-const initBridge = () => {
-  if (bridgeInstance) return
-  bridgeStore.bridge = bridgeInstance = new Bridge()
-  new BlockPolling()
+const initBridge = (options?: useBridgeOptions) => {
+  if (!bridgeInstance) {
+    bridgeStore.bridge = bridgeInstance = new Bridge(options)
+    new BlockPolling()
+  }
+  return bridgeStore.bridge
 }
 
 const wrapBridge = () => {
@@ -122,15 +124,13 @@ const wrapBridge = () => {
   }
 }
 
-export default (autoConnect = false) => {
-  initBridge()
-  bridgeStore.bridge.tryConnect(autoConnect)
+export default (options?: useBridgeOptions) => {
+  initBridge(options).tryConnect(options)
   return wrapBridge()
 }
 
-export const useBridgeAsync = async (autoConnect = false) => {
-  initBridge()
-  await bridgeStore.bridge.tryConnect(autoConnect)
+export const useBridgeAsync = async (options?: useBridgeOptions) => {
+  await initBridge(options).tryConnect(options)
   return wrapBridge()
 }
 
