@@ -16,6 +16,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "@libp2p/crypto": "^1.0.7",
     "@lit-web3/core": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
@@ -28,14 +29,16 @@
     "webextension-polyfill": "^0.10.0",
     "ethereum-cryptography": "^1.2.0",
     "ethereumjs-util": "^7.1.5",
+    "w3name": "^1.0.8",
+    "web3.storage": "^4.4.0",
     "ipfs-http-client": "^60.0.0"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
     "@crxjs/vite-plugin": "2.0.0-beta.13",
     "@types/webextension-polyfill": "^0.10.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@types/chrome": "latest",
+    "@types/fs-extra": "^9.0.13",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
     "crx": "^5.0.1",
