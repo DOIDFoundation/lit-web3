@@ -12,7 +12,11 @@ export class ViewHome extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
   @property() doid = ''
 
-  goto() {
+  gotoCreate() {
+    goto(`/generate-phrase`)
+  }
+
+  gotoRestore() {
     goto(`/restore/${this.doid}`)
   }
 
@@ -34,7 +38,10 @@ export class ViewHome extends TailwindElement(style) {
             >
           </div>
           <div class="max-w-xs mx-auto my-2">
-            <dui-button class="secondary" @click=${this.goto} block>Create in DOID for chrome</dui-button>
+            <dui-button class="secondary" @click=${this.gotoCreate} block>Create in DOID for chrome</dui-button>
+          </div>
+          <div class="max-w-xs mx-auto my-2">
+            <dui-button class="secondary" @click=${this.gotoRestore} block>Restore in DOID for chrome</dui-button>
           </div>
         </div>
       </div>
