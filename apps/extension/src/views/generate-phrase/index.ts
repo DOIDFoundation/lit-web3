@@ -1,4 +1,5 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { goto } from '@lit-web3/dui/src/shared/router/index'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -9,6 +10,7 @@ import './addresses'
 import './recovery'
 
 import style from './phrase.css?inline'
+import { keyringController, verifySeedPhrase } from '@/lib/keyringController'
 @customElement('view-phrase')
 export class ViewPhrase extends TailwindElement(style) {
   @property() ROUTE?: any
@@ -33,6 +35,7 @@ export class ViewPhrase extends TailwindElement(style) {
   @state() pwd = ''
   @state() err = ''
   @state() pending = false
+  @state() phrase = ''
 
   onInput = async (e: CustomEvent) => {
     const { val = '', error = '', msg = '' } = {}
@@ -48,14 +51,23 @@ export class ViewPhrase extends TailwindElement(style) {
   }
   getStepPage() {
     if (this.activeRoute?.pathName === 'create-password') {
-      return html`<view-create-pwd></view-create-pwd>`
+      return html`<view-create-pwd @routeGoto=${this.routeGoto}></view-create-pwd>`
     } else if (this.activeRoute?.pathName === 'generate-addresses') {
-      return html`<view-create-addresses></view-create-addresses>`
+      return html`<view-create-addresses @routeGoto=${this.routeGoto} .phrase=${this.phrase}></view-create-addresses>`
     } else if (this.activeRoute?.pathName === 'recovery-phrase') {
-      return html`<view-recovery></view-recovery>`
+      return html`<view-recovery .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-recovery>`
     } else {
       return html``
     }
+  }
+  routeGoto = async (e: CustomEvent) => {
+    console.log(e)
+    if (e.detail.path === 'generate-addresses') {
+      const res = await keyringController.createNewVaultAndKeychain(e.detail.pwd)
+      this.phrase = await verifySeedPhrase()
+      console.log(res, this.phrase, '----')
+    }
+    goto(`/generate-phrase/${e.detail.path}`)
   }
   submit() {}
   render() {
@@ -63,7 +75,7 @@ export class ViewPhrase extends TailwindElement(style) {
       <div class="dui-container">
         <div class="dui-container">
           <a class="doid-logo mx-auto block w-96 h-20" href="https://doid.tech"></a>
-          <div class="max-w-sm mx-auto border-gray-400 border-2 rounded-md mt-10 p-6">
+          <div class="max-w-lg mx-auto border-gray-400 border-2 rounded-md mt-10 p-6">
             <ul class="step-line mt-4">
               ${this.steps.map(
                 (item) =>

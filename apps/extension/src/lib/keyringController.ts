@@ -76,7 +76,7 @@ async function addNewAccount(accountCount: number) {
   //  };
 }
 
-async function verifySeedPhrase() {
+export async function verifySeedPhrase() {
   const [primaryKeyring] = keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
   if (!primaryKeyring) {
     throw new Error('MetamaskController - No HD Key Tree found')
@@ -92,7 +92,8 @@ async function verifySeedPhrase() {
 
   try {
     //await seedPhraseVerifier.verifyAccounts(accounts, seedPhraseAsBuffer);
-    return Array.from(seedPhraseAsBuffer.values())
+    const encodedSeedPhrase = Array.from(seedPhraseAsBuffer.values())
+    return Buffer.from(encodedSeedPhrase).toString('utf8')
   } catch (err) {
     //log.error(err.message);
     throw err
