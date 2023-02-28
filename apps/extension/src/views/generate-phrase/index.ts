@@ -10,7 +10,7 @@ import './addresses'
 import './recovery'
 
 import style from './phrase.css?inline'
-import { keyringController, verifySeedPhrase } from '@/lib/keyringController'
+import { doidController } from '@/lib/keyringController'
 @customElement('view-phrase')
 export class ViewPhrase extends TailwindElement(style) {
   @property() ROUTE?: any
@@ -63,8 +63,8 @@ export class ViewPhrase extends TailwindElement(style) {
   routeGoto = async (e: CustomEvent) => {
     console.log(e)
     if (e.detail.path === 'generate-addresses') {
-      const res = await keyringController.createNewVaultAndKeychain(e.detail.pwd)
-      this.phrase = await verifySeedPhrase()
+      const res = await doidController.createNewVaultAndKeychain(e.detail.pwd)
+      this.phrase = await doidController.verifySeedPhrase()
       console.log(res, this.phrase, '----')
     }
     goto(`/generate-phrase/${e.detail.path}`)

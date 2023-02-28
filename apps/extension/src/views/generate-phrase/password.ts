@@ -1,5 +1,4 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { keyringController, verifySeedPhrase } from '@/lib/keyringController'
 
 // Components
 import '@lit-web3/dui/src/input/text'
