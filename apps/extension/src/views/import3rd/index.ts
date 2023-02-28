@@ -7,34 +7,21 @@ import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '@/components/phrase'
 
-import style from './home.css?inline'
-@customElement('view-import')
+import style from './import3rd.css?inline'
+@customElement('import-3rd')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
   @property() placeholder = 'e.g. satoshi.doid'
   @state() secretRecoveryPhrase = ''
   @state() err = ''
   @state() pending = false
-  @state()
-  @property()
-  ownerAddress = '0xf446563d6737DF28D0FDe28C82CE4F34E98540f3'
-
-  @property() title = 'Enter your Secret Recovery Phrase for 0xf446563d6737DF28D0FDe28C82CE4F34E98540f3'
-  @state() invalid: Record<string, string> = { pwd: '', phrase: '' }
-  @state() phrase = ''
-
-  onInput = async (e: CustomEvent) => {
-    const { val = '', error = '', msg = '' } = {}
-    this.err = msg
-    if (error) return
-    this.secretRecoveryPhrase = val
-  }
+  @state() mnemonic = ''
 
   onPhraseChange = (e: CustomEvent) => {
     e.stopPropagation()
-    const { phrase, error } = e.detail as any
-    this.invalid = { ...this.invalid, phrase: error ?? '' }
-    this.phrase = phrase
+    const { phrase } = e.detail as any
+    console.log(phrase)
+    keyringStore.mnemonic = phrase
   }
 
   routeGoto = (path: string) => {
@@ -62,8 +49,7 @@ export class ViewImport extends TailwindElement(style) {
 
 
           <div class="mt-4 flex justify-between">
-          <dui-button @click=${() =>
-            this.routeGoto('create-password')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+          <dui-button @click=${() => this.routeGoto('/main')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
             ><i class="mdi mdi-arrow-left text-gray-500"></i></dui-button>
           <dui-button @click=${() =>
             this.routeGoto(

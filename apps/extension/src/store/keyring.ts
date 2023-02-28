@@ -14,6 +14,7 @@ class Store extends State {
   @property({ value: false }) pending!: boolean
   @property({ value: [] }) names!: NameInfo[]
   @property({ value: 0 }) ts!: number
+  @property() mnemonic!: string
 }
 
 export const keyringStore = new Store()

@@ -1,6 +1,6 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { keyringController } from '@/lib/keyringController'
+import { doidController } from '@/lib/keyringController'
 import { keyringStore, StateController } from '~/store/keyring'
 
 // Components
@@ -8,8 +8,8 @@ import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '@/components/phrase'
 
-import style from './home.css?inline'
-@customElement('view-import')
+import style from './import2nd.css?inline'
+@customElement('import-2nd')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
   @property() placeholder = 'e.g. satoshi.doid'
@@ -27,15 +27,15 @@ export class ViewImport extends TailwindElement(style) {
     this.pwd = val
   }
 
-  routeGoto = (path: string) => {
-    goto(`${path}`)
-  }
-
   onPhraseChange = (e: CustomEvent) => {
     e.stopPropagation()
-    const { phrase, error } = e.detail as any
-    this.invalid = { ...this.invalid, phrase: error ?? '' }
-    this.phrase = phrase
+    const { phrase } = e.detail as any
+    console.log(phrase)
+    keyringStore.mnemonic = phrase
+  }
+
+  routeGoto = (path: string) => {
+    goto(`${path}`)
   }
 
   submit() {}
@@ -48,22 +48,24 @@ export class ViewImport extends TailwindElement(style) {
         <p slot="msg">as main addresses for EVM chains for satoshi.doid</p>
       </doid-symbol>
 
-      <div class="max-w-xs mx-auto">
+      
         <span slot="label">
           <slot name="label">Enter your Secret Recovery Phrase</slot>
         </span>
-        <textarea class="resize border rounded-md"></textarea>
+        <phrase-to-secret class="my-4" @change=${this.onPhraseChange}
+          ><div slot="tip" class="mb-2 p-2 bg-blue-100 border border-blue-300 rounded text-xs">
+            You can paste your entire secret recovery phrase into any field
+          </div></phrase-to-secret>
 
         <div class="mt-4 flex justify-between">
-          <dui-button @click=${() =>
-            this.routeGoto('create-password')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+          <dui-button @click=${() => this.routeGoto('/main')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
             ><i class="mdi mdi-arrow-left text-gray-500"></i></dui-button>
           <dui-button @click=${() =>
             this.routeGoto(
-              'recovery-phrase'
+              '/main'
             )} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
         </div>
-      </div>
+      
     </div>
   </div>
 </div>`
