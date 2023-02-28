@@ -9,7 +9,7 @@ import '@lit-web3/dui/src/link'
 import '@/components/phrase'
 import '@/components/pwd_equal'
 import { getKey } from '@/lib/phrase'
-import { keyringController } from '@/lib/keyringController'
+import { doidController } from '@/lib/keyringController'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
 import style from './restore.css?inline'
@@ -28,6 +28,7 @@ export class ViewRestore extends TailwindElement(style) {
     return Object.values(this.invalid).some((r) => r)
   }
   onInputName = (e: CustomEvent) => {
+    
     // TODO: check valid
     const text = e.detail.trim()
     this.name = text
@@ -47,7 +48,11 @@ export class ViewRestore extends TailwindElement(style) {
   restore = async () => {
     console.table({ name: this.wrapName, ...(await getKey(this.phrase)) })
     try {
-      await keyringController.createNewVaultAndRestore(this.pwd, this.phrase)
+      const encodedSeedPhrase = Array.from(
+        Buffer.from(this.phrase, 'utf8').values(),
+      );
+
+      await doidController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
       goto('/main')
     } catch (err: any) {
       this.invalid.phrase = err.message || err
