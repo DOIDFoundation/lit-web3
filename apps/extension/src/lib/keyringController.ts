@@ -1,9 +1,8 @@
 import EventEmitter from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
-import ExtensionStore from './local-store'
+import LocalStore from './local-store'
 //import { Mutex } from 'await-semaphore';
 
-const localStore = new ExtensionStore()
 export let doidController: DoidController
 
 enum HardwareKeyringTypes {
@@ -38,8 +37,9 @@ class DoidController {//extends EventEmitter {
     //    keyringBuilderFactory(keyringType),
     //  );
     //}
+    console.log(initState)
     this.keyringController = new KeyringController({
-      keyringBuilders: additionalKeyrings,
+      //keyringBuilders: additionalKeyrings,
       initState: initState.KeyringController
       //encryptor: opts.encryptor || undefined,
       //cacheEncryptionKey: isManifestV3,
@@ -377,16 +377,67 @@ class DoidController {//extends EventEmitter {
   }
 }
 
+const initialState = {
+  config: {},
+  PreferencesController: {
+    frequentRpcListDetail: [
+      {
+        rpcUrl: 'http://localhost:8545',
+        chainId: '0x539',
+        ticker: 'ETH',
+        nickname: 'Localhost 8545',
+        rpcPrefs: {},
+      },
+    ],
+  },
+};
+
+class Migrator {//extends EventEmitter {
+  defaultVersion
+  constructor(){
+    //super()
+    this. defaultVersion = 0
+
+    //const migrations = opts.migrations || [];
+    //// sort migrations by version
+    //this.migrations = migrations.sort((a, b) => a.version - b.version);
+    //// grab migration with highest version
+    //const lastMigration = this.migrations.slice(-1)[0];
+    //// use specified defaultVersion or highest migration version
+    //this.defaultVersion =
+    //  opts.defaultVersion || (lastMigration && lastMigration.version) || 0;
+  }
+  /**
+   * Returns the initial state for the migrator
+   *
+   * @param {object} [data] - The data for the initial state
+   * @returns {{meta: {version: number}, data: any}}
+   */
+  generateInitialState(data : any) {
+    return {
+      meta: {
+        version: this.defaultVersion,
+      },
+      data,
+    };
+  }
+}
+
+let versionedData
+const inTest = process.env.IN_TEST;
+//const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
+const localStore = new LocalStore();
+
 async function loadStateFromPersistence() {
-  return await localStore.get()
   // migrations
-//  const migrator = new Migrator({ migrations });
+  const migrator = new Migrator();
 //  migrator.on('error', console.warn);
 //
-//  // read from disk
-//  // first from preferred, async API:
-//  versionedData =
-//    (await localStore.get()) || migrator.generateInitialState(firstTimeState);
+  // read from disk
+  // first from preferred, async API:
+  versionedData =
+    (await localStore.get()) || migrator.generateInitialState(initialState);
+  console.log(versionedData)
 //
 //  // check if somehow state is empty
 //  // this should never happen but new error reporting suggests that it has
@@ -413,14 +464,14 @@ async function loadStateFromPersistence() {
 //  if (!versionedData) {
 //    throw new Error('MetaMask - migrator returned undefined');
 //  }
-//  // this initializes the meta/version data as a class variable to be used for future writes
-//  localStore.setMetadata(versionedData.meta);
-//
-//  // write to disk
-//  localStore.set(versionedData.data);
-//
-//  // return just the data
-//  return versionedData.data;
+  // this initializes the meta/version data as a class variable to be used for future writes
+  localStore.setMetadata(versionedData.meta);
+
+  // write to disk
+  localStore.set(versionedData.data);
+
+  // return just the data
+  return versionedData.data;
 }
 
 /**
@@ -433,10 +484,11 @@ async function loadStateFromPersistence() {
  * @param {string} initLangCode - The region code for the language preferred by the current user.
  */
 function setupController(initState: any, initLangCode: string) {
-  return (doidController = new DoidController({
+  doidController = new DoidController({
     initState,
     initLangCode
-  }))
+  })
+  return doidController
   //
   // MetaMask Controller
   //
@@ -518,8 +570,8 @@ async function getFirstPreferredLangCode() {
   return 'en'
 }
 
-async function initialize() {
-  try {
+export async function initialize() {
+  //try {
     const initState = await loadStateFromPersistence()
     const initLangCode = await getFirstPreferredLangCode()
     setupController(initState, initLangCode)
@@ -529,7 +581,9 @@ async function initialize() {
     //await sendReadyMessageToTabs();
     //log.info('MetaMask initialization complete.');
     //resolveInitialization();
-  } catch (error) {
+  //} catch (error) {
     //rejectInitialization(error);
-  }
+  //  console.error(error)
+  //}
 }
+await initialize()

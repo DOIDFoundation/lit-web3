@@ -3,7 +3,7 @@
 //import { checkForLastError } from '../../../shared/modules/browser-runtime.utils';
 
 function checkForLastError() {
-  const { lastError } = browser.runtime;
+  const { lastError } = chrome.runtime;
   if (!lastError) {
     return undefined;
   }
