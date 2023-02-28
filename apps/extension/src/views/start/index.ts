@@ -2,6 +2,7 @@ import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/doid-symbol'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
+import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 
 import style from './start.css?inline'
 @customElement('view-start')
@@ -14,7 +15,14 @@ export class ViewStart extends TailwindElement(style) {
     return this.name ? wrapTLD(this.name) : ''
   }
 
+  async getAddressesByName() {
+    if (!this.name) return
+    const { owner, mainAddress } = await nameInfo(this.name)
+    this.ownerAddress = owner ?? ''
+    this.mainAddress = mainAddress ?? ''
+  }
   connectedCallback() {
+    this.getAddressesByName()
     super.connectedCallback()
   }
   render() {
@@ -28,7 +36,7 @@ export class ViewStart extends TailwindElement(style) {
         </doid-symbol>
         <div class="mt-48">
           <div class="flex justify-center">
-            <dui-link class="link underline mr-2">${this.name}</dui-link>
+            <dui-link class="link underline mr-2">${this.wrapName}</dui-link>
             ${when(
               this.ownerAddress,
               () => html`
