@@ -1,6 +1,19 @@
 //import log from 'loglevel';
 //import { captureException } from '@sentry/browser';
-import { checkForLastError } from '../../../shared/modules/browser-runtime.utils';
+//import { checkForLastError } from '../../../shared/modules/browser-runtime.utils';
+
+function checkForLastError() {
+  const { lastError } = browser.runtime;
+  if (!lastError) {
+    return undefined;
+  }
+  // if it quacks like an Error, its an Error
+  if (lastError.stack && lastError.message) {
+    return lastError;
+  }
+  // repair incomplete error object (eg chromium v77)
+  return new Error(lastError.message);
+}
 
 /**
  * A wrapper around the extension's storage local API
