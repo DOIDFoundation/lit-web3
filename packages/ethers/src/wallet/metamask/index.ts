@@ -36,7 +36,7 @@ class MetaMask implements Wallet {
     forceRequestUpdate()
   }
   updateProvider(chainId?: string) {
-    this.provider.update(chainId)
+    this.provider.update({ chainId })
     forceRequestUpdate()
   }
   unlisten() {
