@@ -170,45 +170,77 @@ importers:
     specifiers:
       '@types/next-tick': ^1.0.0
       buffer: ^6.0.3
+      lit: ^2
       next-tick: ^1.1.0
       safe-decode-uri-component: latest
+      tsup: ^6
     dependencies:
       buffer: 6.0.3
+      lit: 2.6.1
       next-tick: 1.1.0
       safe-decode-uri-component: 1.2.1
     devDependencies:
       '@types/next-tick': 1.0.0
+      tsup: 6.6.3
 
   packages/dui:
     specifiers:
       '@lit-web3/core': workspace:latest
       '@lit-web3/ethers': workspace:latest
       '@metamask/jazzicon': ^2
+      tsup: ^6
     dependencies:
       '@lit-web3/core': link:../core
       '@lit-web3/ethers': link:../ethers
       '@metamask/jazzicon': 2.0.0
+    devDependencies:
+      tsup: 6.6.3
 
   packages/dui-docs:
     specifiers:
+      '@ethersproject/address': ^5
+      '@ethersproject/contracts': ^5
+      '@ethersproject/providers': ^5
+      '@ethersproject/units': ^5
+      '@ethersproject/wallet': ^5
       '@lit-web3/core': workspace:latest
       '@lit-web3/dui': workspace:latest
+      tsup: ^6
     dependencies:
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@ethersproject/units': 5.7.0
+      '@ethersproject/wallet': 5.7.0
       '@lit-web3/core': link:../core
       '@lit-web3/dui': link:../dui
+    devDependencies:
+      tsup: 6.6.3
 
   packages/ethers:
     specifiers:
       '@ensdomains/address-encoder': ^0.2.20
+      '@ethersproject/address': ^5
+      '@ethersproject/contracts': ^5
+      '@ethersproject/providers': ^5
+      '@ethersproject/units': ^5
+      '@ethersproject/wallet': ^5
       '@lit-web3/core': workspace:latest
       '@types/tr46': ^3.0.0
       tr46: ^4.1.0
+      tsup: ^6
     dependencies:
       '@ensdomains/address-encoder': 0.2.20
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@ethersproject/units': 5.7.0
+      '@ethersproject/wallet': 5.7.0
       '@lit-web3/core': link:../core
       tr46: 4.1.0
     devDependencies:
       '@types/tr46': 3.0.0
+      tsup: 6.6.3
 
   packages/tests:
     specifiers:
@@ -6029,6 +6061,10 @@ packages:
     resolution: {integrity: sha512-Kl29QoNbNvn4nhDsLYjyIAaIqaJB6rBx5p3sL9VjaefJ+eMFBWVZiaoguaoZfzEKr5RhAti0UgM8703akGPJ6g==}
     dev: false
 
+  /fast-fifo/1.1.0:
+    resolution: {integrity: sha512-Kl29QoNbNvn4nhDsLYjyIAaIqaJB6rBx5p3sL9VjaefJ+eMFBWVZiaoguaoZfzEKr5RhAti0UgM8703akGPJ6g==}
+    dev: false
+
   /fast-glob/3.2.12:
     resolution: {integrity: sha512-DVj4CQIYYow0BlaelwK1pHl5n5cRSJfM60UA0zK891sVInoPri2Ekj7+e1CT3/3qxXenpI+nBBmQAcJPJgaj4w==}
     engines: {node: '>=8.6.0'}
@@ -6961,7 +6997,7 @@ packages:
       buffer: 6.0.3
       electron-fetch: 1.9.1
       err-code: 3.0.1
-      is-electron: 2.2.2
+      is-electron: 2.2.1
       iso-url: 1.2.1
       it-all: 1.0.6
       it-glob: 1.0.2
@@ -7062,8 +7098,8 @@ packages:
     hasBin: true
     dev: true
 
-  /is-electron/2.2.2:
-    resolution: {integrity: sha512-FO/Rhvz5tuw4MCWkpMzHFKWD2LsfHzIb7i6MdPYZ/KW7AlxawyLkqdy+jPZP1WubqEADE3O4FUENlJHDfQASRg==}
+  /is-electron/2.2.1:
+    resolution: {integrity: sha512-r8EEQQsqT+Gn0aXFx7lTFygYQhILLCB+wn0WCDL5LZRINeLH/Rvw1j2oKodELLXYNImQ3CRlVsY8wW4cGOsyuw==}
     dev: false
 
   /is-extglob/2.1.1:
@@ -7273,15 +7309,6 @@ packages:
   /iso-url/1.2.1:
     resolution: {integrity: sha512-9JPDgCN4B7QPkLtYAAOrEuAWvP9rWvR5offAr0/SeF046wIkglqH3VXgYYP6NcsKslH80UIVgmPqNe3j7tG2ng==}
     engines: {node: '>=12'}
-    dev: false
-
-  /isomorphic-fetch/3.0.0:
-    resolution: {integrity: sha512-qvUtwJ3j6qwsF3jLxkZ72qCgjMysPzDfeV240JHiGZsANBYd+EEuu35v7dfrJ9Up0Ak07D7GGSkGhCHTqg/5wA==}
-    dependencies:
-      node-fetch: 2.6.9
-      whatwg-fetch: 3.6.2
-    transitivePeerDependencies:
-      - encoding
     dev: false
 
   /isstream/0.1.2:
@@ -9028,6 +9055,22 @@ packages:
       postcss-value-parser: 4.2.0
     dev: true
 
+  /postcss-load-config/3.1.4:
+    resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      postcss: '>=8.0.9'
+      ts-node: '>=9.0.0'
+    peerDependenciesMeta:
+      postcss:
+        optional: true
+      ts-node:
+        optional: true
+    dependencies:
+      lilconfig: 2.0.6
+      yaml: 1.10.2
+    dev: true
+
   /postcss-load-config/3.1.4_postcss@8.4.21:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
     engines: {node: '>= 10'}
@@ -10632,6 +10675,41 @@ packages:
 
   /tslib/2.5.0:
     resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
+    dev: true
+
+  /tsup/6.6.3:
+    resolution: {integrity: sha512-OLx/jFllYlVeZQ7sCHBuRVEQBBa1tFbouoc/gbYakyipjVQdWy/iQOvmExUA/ewap9iQ7tbJf9pW0PgcEFfJcQ==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': ^1
+      postcss: ^8.4.12
+      typescript: ^4.1.0
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      postcss:
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      bundle-require: 4.0.1_esbuild@0.17.10
+      cac: 6.7.14
+      chokidar: 3.5.3
+      debug: 4.3.4
+      esbuild: 0.17.10
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 3.1.4
+      resolve-from: 5.0.0
+      rollup: 3.17.2
+      source-map: 0.8.0-beta.0
+      sucrase: 3.29.0
+      tree-kill: 1.2.2
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
     dev: true
 
   /tsup/6.6.3_uujdqti2krmttzhqvubwnsmcci:

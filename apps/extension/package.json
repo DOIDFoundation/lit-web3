@@ -29,7 +29,8 @@
     "process-nextick-args": "^2.0.1",
     "webextension-polyfill": "^0.10.0",
     "ethereum-cryptography": "^1.2.0",
-    "ethereumjs-util": "^7.1.5"
+    "ethereumjs-util": "^7.1.5",
+    "ipfs-http-client": "^60.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
