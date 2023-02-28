@@ -15,6 +15,15 @@ export const routes = [
   // Alias of home view
   { ...homeView, path: '/popup' },
   {
+    name: 'ipfs',
+    path: '/ipfs',
+    render: () => html`<view-ipfs></view-ipfs>`,
+    enter: async () => {
+      await import('~/views/ipfs')
+      return true
+    }
+  },
+  {
     name: 'unlock',
     path: '/unlock',
     render: () => html`<view-unlock></view-unlock>`,
@@ -47,6 +56,33 @@ export const routes = [
     render: () => html`<view-start></view-start>`,
     enter: async () => {
       await import('~/views/start')
+      return true
+    }
+  },
+  {
+    name: 'import2nd',
+    path: '/import2nd',
+    render: () => html`<view-import></view-import>`,
+    enter: async () => {
+      await import('~/views/import2nd')
+      return true
+    }
+  },
+  {
+    name: 'import3rd',
+    path: '/import3rd',
+    render: () => html`<view-import></view-import>`,
+    enter: async () => {
+      await import('~/views/import3rd')
+      return true
+    }
+  },
+  {
+    name: 'import4th',
+    path: '/import4th',
+    render: () => html`<view-import></view-import>`,
+    enter: async () => {
+      await import('~/views/import4th')
       return true
     }
   },

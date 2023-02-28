@@ -48,7 +48,7 @@ export class ViewRestore extends TailwindElement(style) {
     console.table({ name: this.wrapName, ...(await getKey(this.phrase)) })
     try {
       await keyringController.createNewVaultAndRestore(this.pwd, this.phrase)
-      goto('/main')
+      goto('/index4th')
     } catch (err: any) {
       this.invalid.phrase = err.message || err
       console.error(err)
