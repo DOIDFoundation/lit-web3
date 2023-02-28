@@ -9,7 +9,7 @@ import '@lit-web3/dui/src/button'
 import '@/components/phrase'
 
 import style from './home.css?inline'
-@customElement('view-import')
+@customElement('import-2nd')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
   @property() placeholder = 'e.g. satoshi.doid'
@@ -31,13 +31,6 @@ export class ViewImport extends TailwindElement(style) {
     goto(`${path}`)
   }
 
-  onPhraseChange = (e: CustomEvent) => {
-    e.stopPropagation()
-    const { phrase, error } = e.detail as any
-    this.invalid = { ...this.invalid, phrase: error ?? '' }
-    this.phrase = phrase
-  }
-
   submit() {}
   render() {
     return html`<div class="home">
@@ -55,12 +48,11 @@ export class ViewImport extends TailwindElement(style) {
         <textarea class="resize border rounded-md"></textarea>
 
         <div class="mt-4 flex justify-between">
-          <dui-button @click=${() =>
-            this.routeGoto('create-password')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+          <dui-button @click=${() => this.routeGoto('/main')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
             ><i class="mdi mdi-arrow-left text-gray-500"></i></dui-button>
           <dui-button @click=${() =>
             this.routeGoto(
-              'recovery-phrase'
+              '/main'
             )} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
         </div>
       </div>
