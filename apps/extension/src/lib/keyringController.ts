@@ -15,11 +15,13 @@ enum HardwareKeyringTypes {
   imported = 'Simple Key Pair'
 }
 
-class DoidController extends EventEmitter {
+
+
+class DoidController {//extends EventEmitter {
   keyringController: KeyringController
   //store : ComposableObservableStore
   constructor(opts: any) {
-    super()
+    //super()
     const initState = opts.initState || {}
 
     let additionalKeyrings: any = [defaultKeyringBuilders]
