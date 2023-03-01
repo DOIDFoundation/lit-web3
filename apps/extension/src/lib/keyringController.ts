@@ -21,7 +21,7 @@ class DoidController extends EventEmitter {
     super()
     const initState = opts.initState || {}
 
-    let additionalKeyrings: any = [defaultKeyringBuilders]
+    let additionalKeyrings: any = defaultKeyringBuilders
     //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
 
     //if (this.canUseHardwareWallets()) {
@@ -35,21 +35,32 @@ class DoidController extends EventEmitter {
     //    keyringBuilderFactory(keyringType),
     //  );
     //}
-    console.log(initState)
     this.keyringController = new KeyringController({
-      //keyringBuilders: additionalKeyrings,
+      keyringBuilders: additionalKeyrings,
       initState: initState.KeyringController
       //encryptor: opts.encryptor || undefined,
       //cacheEncryptionKey: isManifestV3,
     })
+    // console.log(chrome.storage.session.get(), 'get')
+    // this.keyringController.memStore.subscribe(
+    //   async (state: any) => {
+    //     console.log(state, 'chrome.storage.session.get()')
+    //     // const { encryptionKey: loginToken, encryptionSalt: loginSalt } = state
+    //     // await chrome.storage.session.set({ loginToken, loginSalt })
+    //   }
+    // )
     //this.store = new ComposableObservableStore({
     //  state: initState,
     //  controllerMessenger: this.controllerMessenger,
     //  persist: true,
     //});
 
-    this.keyringController.on('update', function () {
-      console.log('keyring update event')
+    this.keyringController.on('update', () => {
+      console.log('keyring update event', this.keyringController.store.getState(), initState)
+      const data = Object.assign(initState, {
+        KeyringController: this.keyringController.store.getState()
+      })
+      localStore.set(data)
     })
   }
 
@@ -435,7 +446,7 @@ async function loadStateFromPersistence() {
   // read from disk
   // first from preferred, async API:
   versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
-  console.log(versionedData)
+  console.log(versionedData, 'versionedData')
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has

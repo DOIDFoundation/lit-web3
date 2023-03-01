@@ -6,16 +6,17 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 
 import style from './phrase.css?inline'
+import { doidController } from '@/lib/keyringController'
 @customElement('view-create-pwd')
 export class ViewPwd extends TailwindElement(style) {
   @property() placeholder = 'Password'
   @property() PASSWORD_MIN_LENGTH = 8
-  @state() pwd = ''
-  @state() confirmPwd = ''
+  @state() pwd = '123qwe123'
+  @state() confirmPwd = '123qwe123'
   @state() err = ''
   @state() pending = false
   @state() btnDisabled = true
-  @state() isUnderstand = false
+  @state() isUnderstand = true
 
   isValid = () => {
     if (!this.pwd || !this.confirmPwd || this.pwd !== this.confirmPwd || !this.isUnderstand) {
@@ -47,6 +48,7 @@ export class ViewPwd extends TailwindElement(style) {
   }
   submit() {}
   render() {
+    console.log(doidController.keyringController.store.getState(), 'state')
     return html`
       <div class="dui-container">
         <div class="text-lg font-bold mt-2 text-center">Create password</div>

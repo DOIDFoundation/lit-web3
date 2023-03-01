@@ -13,6 +13,9 @@ import style from './phrase.css?inline'
 import { doidController } from '@/lib/keyringController'
 @customElement('view-phrase')
 export class ViewPhrase extends TailwindElement(style) {
+  constructor() {
+    super()
+  }
   @property() ROUTE?: any
   @property() steps = [
     {

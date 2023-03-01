@@ -7,6 +7,7 @@ import '@lit-web3/dui/src/link'
 
 import style from './phrase.css?inline'
 import { goto } from '@lit-web3/dui/src/shared/router'
+import { doidController } from '@/lib/keyringController'
 @customElement('view-create-addresses')
 export class ViewAddress extends TailwindElement(style) {
   @property() phrase = ''
@@ -30,6 +31,7 @@ export class ViewAddress extends TailwindElement(style) {
   }
   submit() {}
   render() {
+    console.log(doidController.keyringController.store, 'state')
     return html`
       <div class="dui-container">
         <div class="text-lg font-bold mt-2 text-center">Create Addresses</div>
