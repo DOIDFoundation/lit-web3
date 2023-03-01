@@ -1,6 +1,18 @@
 # @lit-web3
 
-## Requirements development
+A web3 components based on Lit
+
+## Install
+
+```sh
+npm i -g pnpm
+pnpm i
+pnpm --filter @lit-web3/tests test
+```
+
+## Settings
+
+### VSCode
 
 ### Environments
 

@@ -1,6 +1,7 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
+import { keyringController } from '@/lib/keyringController'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -11,18 +12,18 @@ import style from './home.css?inline'
 export class ViewHome extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
   @property() placeholder = 'e.g. satoshi.doid'
-  @state() pwd = ''
+  @state() doid = ''
   @state() err = ''
   @state() pending = false
 
   onInput = async (e: CustomEvent) => {
-    const { val = '', error = '', msg = '' } = {}
-    this.err = msg
-    if (error) return
-    this.pwd = val
+    this.doid = e.detail
   }
 
-  submit() {}
+  submit() {
+    goto(`/create/${this.doid}`)
+  }
+
   render() {
     return html`<div class="home">
       <div class="dui-container sparse">
@@ -36,7 +37,7 @@ export class ViewHome extends TailwindElement(style) {
               autoforce
               @input=${this.onInput}
               @submit=${this.submit}
-              value=${this.pwd}
+              value=${this.doid}
               placeholder=${this.placeholder}
               ?disabled=${this.pending}
             >
@@ -49,7 +50,9 @@ export class ViewHome extends TailwindElement(style) {
                 )}
               </span>
               <span slot="right" class="-mr-1">
-                <dui-button icon sm><i class="mdi mdi-arrow-right-bold-circle-outline text-xl"></i></dui-button>
+                <dui-button @click=${this.submit} icon sm
+                  ><i class="mdi mdi-arrow-right-bold-circle-outline text-xl"></i
+                ></dui-button>
               </span>
             </dui-input-text>
           </div>
