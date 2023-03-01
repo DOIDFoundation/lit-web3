@@ -15,6 +15,7 @@
     "@lit-labs/motion": "^1.0.3",
     "@lit-labs/router": "^0.1.1",
     "@webcomponents/webcomponentsjs": "^2.7.0",
+    "events": "^3.3.0",
     "lit": "^2.6.1",
     "urlpattern-polyfill": "^6.0.2"
   },

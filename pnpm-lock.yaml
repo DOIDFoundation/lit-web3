@@ -19,6 +19,7 @@ importers:
       '@webcomponents/webcomponentsjs': ^2.7.0
       autoprefixer: ^10.4.13
       dotenv: ^16.0.3
+      events: ^3.3.0
       lit: ^2.6.1
       npm-run-all: ^4.1.5
       postcss: ^8.4.21
@@ -49,6 +50,7 @@ importers:
       '@lit-labs/motion': 1.0.3
       '@lit-labs/router': 0.1.1
       '@webcomponents/webcomponentsjs': 2.7.0
+      events: 3.3.0
       lit: 2.6.1
       urlpattern-polyfill: 6.0.2
     devDependencies:
@@ -3500,7 +3502,7 @@ packages:
   /@types/clean-css/4.2.6:
     resolution: {integrity: sha512-Ze1tf+LnGPmG6hBFMi0B4TEB0mhF7EiMM5oyjLDNPE9hxrPU0W+5+bHvO+eFPA+bt0iC1zkQMoU/iGdRVjcRbw==}
     dependencies:
-      '@types/node': 18.14.1
+      '@types/node': 18.14.2
       source-map: 0.6.1
     dev: true
 
@@ -3579,6 +3581,10 @@ packages:
   /@types/node/18.14.1:
     resolution: {integrity: sha512-QH+37Qds3E0eDlReeboBxfHbX9omAcBCXEzswCu6jySP642jiM3cYSIkU/REqwhCUqXdonHFuBfJDiAJxMNhaQ==}
 
+  /@types/node/18.14.2:
+    resolution: {integrity: sha512-1uEQxww3DaghA0RxqHx0O0ppVlo43pJhepY51OxuQIKHpjbnYLA7vcdwioNPzIqmC2u3I/dmylcqjlh0e7AyUA==}
+    dev: true
+
   /@types/pbkdf2/3.1.0:
     resolution: {integrity: sha512-Cf63Rv7jCQ0LaL8tNXmEyqTHuIJxRdlS5vMh1mj5voN4+QFhVZnlZruezqpWYDiJ8UTzhP0VmeLXCmBk66YrMQ==}
     dependencies:
@@ -3592,7 +3598,7 @@ packages:
   /@types/resolve/1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
     dependencies:
-      '@types/node': 18.14.1
+      '@types/node': 18.14.2
     dev: true
 
   /@types/resolve/1.20.2:
@@ -7364,7 +7370,7 @@ packages:
     resolution: {integrity: sha512-KWYVV1c4i+jbMpaBC+U++4Va0cp8OisU185o73T1vo99hqi7w8tSJfUXYswwqqrjzwxa6KpRK54WhPvwf5w6PQ==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 18.14.1
+      '@types/node': 18.14.2
       merge-stream: 2.0.0
       supports-color: 7.2.0
     dev: true

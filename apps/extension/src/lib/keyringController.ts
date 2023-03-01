@@ -1,4 +1,4 @@
-import EventEmitter from 'events'
+import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
 import LocalStore from './local-store'
 //import { Mutex } from 'await-semaphore';
@@ -14,13 +14,11 @@ enum HardwareKeyringTypes {
   imported = 'Simple Key Pair'
 }
 
-
-
-class DoidController {//extends EventEmitter {
+class DoidController extends EventEmitter {
   keyringController: KeyringController
   //store : ComposableObservableStore
   constructor(opts: any) {
-    //super()
+    super()
     const initState = opts.initState || {}
 
     let additionalKeyrings: any = [defaultKeyringBuilders]
@@ -386,17 +384,18 @@ const initialState = {
         chainId: '0x539',
         ticker: 'ETH',
         nickname: 'Localhost 8545',
-        rpcPrefs: {},
-      },
-    ],
-  },
-};
+        rpcPrefs: {}
+      }
+    ]
+  }
+}
 
-class Migrator {//extends EventEmitter {
+class Migrator {
+  //extends EventEmitter {
   defaultVersion
-  constructor(){
+  constructor() {
     //super()
-    this. defaultVersion = 0
+    this.defaultVersion = 0
 
     //const migrations = opts.migrations || [];
     //// sort migrations by version
@@ -413,65 +412,64 @@ class Migrator {//extends EventEmitter {
    * @param {object} [data] - The data for the initial state
    * @returns {{meta: {version: number}, data: any}}
    */
-  generateInitialState(data : any) {
+  generateInitialState(data: any) {
     return {
       meta: {
-        version: this.defaultVersion,
+        version: this.defaultVersion
       },
-      data,
-    };
+      data
+    }
   }
 }
 
 let versionedData
-const inTest = process.env.IN_TEST;
+const inTest = process.env.IN_TEST
 //const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
-const localStore = new LocalStore();
+const localStore = new LocalStore()
 
 async function loadStateFromPersistence() {
   // migrations
-  const migrator = new Migrator();
-//  migrator.on('error', console.warn);
-//
+  const migrator = new Migrator()
+  //  migrator.on('error', console.warn);
+  //
   // read from disk
   // first from preferred, async API:
-  versionedData =
-    (await localStore.get()) || migrator.generateInitialState(initialState);
+  versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
   console.log(versionedData)
-//
-//  // check if somehow state is empty
-//  // this should never happen but new error reporting suggests that it has
-//  // for a small number of users
-//  // https://github.com/metamask/metamask-extension/issues/3919
-//  if (versionedData && !versionedData.data) {
-//    // unable to recover, clear state
-//    versionedData = migrator.generateInitialState(firstTimeState);
-//    sentry.captureMessage('MetaMask - Empty vault found - unable to recover');
-//  }
-//
-//  // report migration errors to sentry
-//  migrator.on('error', (err) => {
-//    // get vault structure without secrets
-//    const vaultStructure = getObjStructure(versionedData);
-//    sentry.captureException(err, {
-//      // "extra" key is required by Sentry
-//      extra: { vaultStructure },
-//    });
-//  });
-//
-//  // migrate data
-//  versionedData = await migrator.migrateData(versionedData);
-//  if (!versionedData) {
-//    throw new Error('MetaMask - migrator returned undefined');
-//  }
+  //
+  //  // check if somehow state is empty
+  //  // this should never happen but new error reporting suggests that it has
+  //  // for a small number of users
+  //  // https://github.com/metamask/metamask-extension/issues/3919
+  //  if (versionedData && !versionedData.data) {
+  //    // unable to recover, clear state
+  //    versionedData = migrator.generateInitialState(firstTimeState);
+  //    sentry.captureMessage('MetaMask - Empty vault found - unable to recover');
+  //  }
+  //
+  //  // report migration errors to sentry
+  //  migrator.on('error', (err) => {
+  //    // get vault structure without secrets
+  //    const vaultStructure = getObjStructure(versionedData);
+  //    sentry.captureException(err, {
+  //      // "extra" key is required by Sentry
+  //      extra: { vaultStructure },
+  //    });
+  //  });
+  //
+  //  // migrate data
+  //  versionedData = await migrator.migrateData(versionedData);
+  //  if (!versionedData) {
+  //    throw new Error('MetaMask - migrator returned undefined');
+  //  }
   // this initializes the meta/version data as a class variable to be used for future writes
-  localStore.setMetadata(versionedData.meta);
+  localStore.setMetadata(versionedData.meta)
 
   // write to disk
-  localStore.set(versionedData.data);
+  localStore.set(versionedData.data)
 
   // return just the data
-  return versionedData.data;
+  return versionedData.data
 }
 
 /**
@@ -572,17 +570,17 @@ async function getFirstPreferredLangCode() {
 
 export async function initialize() {
   //try {
-    const initState = await loadStateFromPersistence()
-    const initLangCode = await getFirstPreferredLangCode()
-    setupController(initState, initLangCode)
-    //if (!isManifestV3) {
-    //  await loadPhishingWarningPage();
-    //}
-    //await sendReadyMessageToTabs();
-    //log.info('MetaMask initialization complete.');
-    //resolveInitialization();
+  const initState = await loadStateFromPersistence()
+  const initLangCode = await getFirstPreferredLangCode()
+  setupController(initState, initLangCode)
+  //if (!isManifestV3) {
+  //  await loadPhishingWarningPage();
+  //}
+  //await sendReadyMessageToTabs();
+  //log.info('MetaMask initialization complete.');
+  //resolveInitialization();
   //} catch (error) {
-    //rejectInitialization(error);
+  //rejectInitialization(error);
   //  console.error(error)
   //}
 }
