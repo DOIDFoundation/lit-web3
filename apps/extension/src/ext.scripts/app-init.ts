@@ -1,5 +1,10 @@
 // ref: @metamask-extention/app/scripts/app-init.js
 import { shouldInjectProvider } from '~/lib/providers/injection'
+import { deferredPromise } from '~/lib/utils'
+
+import { connectRemote } from '~/ext.scripts/sw/connectRemote'
+
+const logger = (...args: any) => console.info(`[sw]`, ...args)
 
 self.addEventListener('install', function (event) {
   self.skipWaiting()
@@ -14,7 +19,7 @@ self.addEventListener('push', function (event) {
 self.addEventListener('updated', function (event) {
   console.log('[background] updated')
 })
-chrome.action.setPopup({ popup: './popup.html' })
+// chrome.action.setPopup({ popup: './popup.html' })
 chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
@@ -23,12 +28,40 @@ chrome.action.onClicked.addListener((tab) => {
 })
 console.log('[service-worker]', self)
 
-chrome.runtime.onMessage.addListener(() => {
+chrome.runtime.onMessage.addListener((e) => {
   return false
 })
-chrome.runtime.onStartup.addListener(() => {
+chrome.runtime.onStartup.addListener((e) => {
   globalThis.isFirstTimeProfileLoaded = true
 })
+chrome.runtime.onConnect.addListener(async (...args) => {
+  await isInitialized
+  connectRemote(...args)
+})
+chrome.runtime.onConnectExternal.addListener(async (...args) => {})
+
+// S
+let connectExternal
+const { promise: isInitialized, resolve: resolveInitialization, reject: rejectInitialization } = deferredPromise()
+
+async function initialize() {
+  try {
+    const initState = await loadStateFromPersistence()
+    const initLangCode = await getFirstPreferredLangCode()
+    setupController(initState, initLangCode)
+    if (!isManifestV3) {
+      await loadPhishingWarningPage()
+    }
+    await sendReadyMessageToTabs()
+    log.info('MetaMask initialization complete.')
+    resolveInitialization()
+  } catch (error) {
+    rejectInitialization(error)
+  }
+}
+initialize().catch(logger)
+
+// E
 
 if (import.meta.hot) {
   // @crxjs/vite-plugin@2.0.0-beta.13 not always working

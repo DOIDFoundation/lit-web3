@@ -103,11 +103,13 @@ importers:
       '@metamask/providers': ^10.2.1
       '@rollup/plugin-node-resolve': ^15.0.1
       '@types/chrome': latest
+      '@types/end-of-stream': ^1.4.1
       '@types/fs-extra': ^9.0.13
       '@types/webextension-polyfill': ^0.10.0
       chokidar: ^3.5.3
       cross-env: ^7.0.3
       crx: ^5.0.1
+      end-of-stream: ^1.4.4
       ethereum-cryptography: ^1.2.0
       ethereumjs-util: ^7.1.5
       json-rpc-engine: ^6.1.0
@@ -128,6 +130,7 @@ importers:
       '@metamask/eth-keyring-controller': 10.0.0
       '@metamask/post-message-stream': 6.1.0
       '@metamask/providers': 10.2.1
+      end-of-stream: 1.4.4
       ethereum-cryptography: 1.2.0
       ethereumjs-util: 7.1.5
       json-rpc-engine: 6.1.0
@@ -138,7 +141,8 @@ importers:
     devDependencies:
       '@crxjs/vite-plugin': 2.0.0-beta.13
       '@rollup/plugin-node-resolve': 15.0.1
-      '@types/chrome': 0.0.217
+      '@types/chrome': 0.0.218
+      '@types/end-of-stream': 1.4.1
       '@types/fs-extra': 9.0.13
       '@types/webextension-polyfill': 0.10.0
       chokidar: 3.5.3
@@ -3246,8 +3250,8 @@ packages:
       '@types/har-format': 1.2.10
     dev: false
 
-  /@types/chrome/0.0.217:
-    resolution: {integrity: sha512-q8fLzCCoHiR9gYRoqvrx12+HaJjRTqUom5Ks/wLSR8Ac83qAqWaA4NgUBUcDjM1O1ACczygxIHCEENXs1zmbqQ==}
+  /@types/chrome/0.0.218:
+    resolution: {integrity: sha512-GC/c9B3Eo3h3l+fV5G6A9cRMEZOYo46E21mjHHfkXz+/A5uypXstMVAMk04IeGY2DJ7PxVxbn26oFBPZOa4Dkw==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.10
@@ -3268,6 +3272,12 @@ packages:
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
     dependencies:
       '@types/ms': 0.7.31
+
+  /@types/end-of-stream/1.4.1:
+    resolution: {integrity: sha512-dYCSlUtCGXuP2axeKD5l1vj/04iNXW8TLXryDa0uA8u8EsNE68jn27ZLg7jAPV+qJAlk1wC4WtRdIoZXvuUl0A==}
+    dependencies:
+      '@types/node': 18.14.2
+    dev: true
 
   /@types/estree/0.0.39:
     resolution: {integrity: sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==}
@@ -3326,12 +3336,11 @@ packages:
 
   /@types/node/18.14.2:
     resolution: {integrity: sha512-1uEQxww3DaghA0RxqHx0O0ppVlo43pJhepY51OxuQIKHpjbnYLA7vcdwioNPzIqmC2u3I/dmylcqjlh0e7AyUA==}
-    dev: true
 
   /@types/pbkdf2/3.1.0:
     resolution: {integrity: sha512-Cf63Rv7jCQ0LaL8tNXmEyqTHuIJxRdlS5vMh1mj5voN4+QFhVZnlZruezqpWYDiJ8UTzhP0VmeLXCmBk66YrMQ==}
     dependencies:
-      '@types/node': 18.14.1
+      '@types/node': 18.14.2
     dev: false
 
   /@types/relateurl/0.2.29:
@@ -3351,7 +3360,7 @@ packages:
   /@types/secp256k1/4.0.3:
     resolution: {integrity: sha512-Da66lEIFeIz9ltsdMZcpQvmrmmoqrfju8pm1BH8WbYjZSwUgCwXLb9C+9XYogwBITnbsSaMdVPb2ekf7TV+03w==}
     dependencies:
-      '@types/node': 18.14.1
+      '@types/node': 18.14.2
     dev: false
 
   /@types/set-cookie-parser/2.4.2:
@@ -3384,7 +3393,7 @@ packages:
   /@types/yauzl/2.10.0:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     dependencies:
-      '@types/node': 18.14.1
+      '@types/node': 18.14.2
     dev: true
 
   /@vitejs/plugin-legacy/3.0.2_terser@5.16.5+vite@4.1.4:

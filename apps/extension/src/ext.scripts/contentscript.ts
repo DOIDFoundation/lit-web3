@@ -9,6 +9,7 @@ import PortStream from '~/lib/ext.runtime/extension-port-stream'
 import shouldInjectProvider from '~/lib/providers/injection'
 import { WindowPostMessageStream } from '@metamask/post-message-stream'
 import { checkForLastError } from '~/lib/ext.runtime/utils'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 const logger = (...args: any) => console.info(`[contentscript]`, ...args)
 
@@ -92,7 +93,7 @@ const setupPageStreams = () => {
   })
 
   pageStream.on('data', ({ data: { method } }) => {
-    logger({ method })
+    logger('on data:', { method })
     if (!IGNORE_INIT_METHODS_FOR_KEEP_ALIVE.includes(method)) {
       runWorkerKeepAliveInterval()
     }
@@ -128,7 +129,6 @@ function notifyInpageOfStreamFailure() {
 const setupExtensionStreams = () => {
   EXTENSION_CONNECT_SENT = true
   extensionPort = chrome.runtime.connect({ name: CONTENT_SCRIPT })
-  console.log('kk', extensionPort)
   extensionStream = new PortStream(extensionPort)
   extensionStream.on('data', extensionStreamMessageListener)
 

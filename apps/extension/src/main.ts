@@ -10,6 +10,9 @@ import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/address/avatar'
 
+globalThis.abc = 1
+console.log(globalThis.abc, globalThis.abc2)
+
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
   @state() showHeader = false
