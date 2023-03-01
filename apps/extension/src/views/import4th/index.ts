@@ -1,14 +1,15 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
+import { doidController } from '@/lib/keyringController'
 
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '@/components/pwd_equal'
 
-import style from './home.css?inline'
-@customElement('view-import')
+import style from './import4th.css?inline'
+@customElement('import-4th')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
   @property() placeholder = 'e.g. satoshi.doid'
@@ -16,31 +17,26 @@ export class ViewImport extends TailwindElement(style) {
   @state() err = ''
   @state() pwd = ''
   @state() pending = false
-  @property() ownerAddress = '0xf446563d6737DF28D0FDe28C82CE4F34E98540f3'
-
-  @property() title = 'Enter your Secret Recovery Phrase for 0xf446563d6737DF28D0FDe28C82CE4F34E98540f3'
-  @state() phrase = ''
-  @state() invalid: Record<string, string> = { pwd: '', phrase: '' }
-
-  onInput = async (e: CustomEvent) => {
-    const { val = '', error = '', msg = '' } = {}
-    this.err = msg
-    if (error) return
-    this.secretRecoveryPhrase = val
-  }
 
   onPwdChange = (e: CustomEvent) => {
     const { pwd, error } = e.detail
     this.pwd = pwd
-    this.invalid = { ...this.invalid, pwd: error ?? '' }
   }
 
   routeGoto = (path: string) => {
     goto(`${path}`)
   }
 
-  submit() {
-    console.log(this.secretRecoveryPhrase)
+  onCreateMainAddress = async () => {
+    try {
+      console.log(keyringStore.mnemonic)
+      const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
+
+      await doidController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
+      goto('/main')
+    } catch (err: any) {
+      console.error(err)
+    }
   }
   render() {
     return html`<div class="home">
@@ -62,9 +58,7 @@ export class ViewImport extends TailwindElement(style) {
             this.routeGoto('/import3rd')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
             ><i class="mdi mdi-arrow-left text-gray-500"></i></dui-button>
           <dui-button @click=${() =>
-            this.routeGoto(
-              '/import4th'
-            )} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
+            this.onCreateMainAddress()} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
         </div>
 
           </div>

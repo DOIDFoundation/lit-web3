@@ -72,7 +72,7 @@ export const routes = [
   {
     name: 'import2nd',
     path: '/import2nd',
-    render: () => html`<view-import></view-import>`,
+    render: () => html`<import-2nd></import-2nd>`,
     enter: async () => {
       await import('~/views/import2nd')
       return true
@@ -81,7 +81,7 @@ export const routes = [
   {
     name: 'import3rd',
     path: '/import3rd',
-    render: () => html`<view-import></view-import>`,
+    render: () => html`<import-3rd></import-3rd>`,
     enter: async () => {
       await import('~/views/import3rd')
       return true
@@ -90,7 +90,7 @@ export const routes = [
   {
     name: 'import4th',
     path: '/import4th',
-    render: () => html`<view-import></view-import>`,
+    render: () => html`<import-4th></import-4th>`,
     enter: async () => {
       await import('~/views/import4th')
       return true
