@@ -15,6 +15,8 @@ import { doidController } from '@/lib/keyringController'
 export class ViewPhrase extends TailwindElement(style) {
   constructor() {
     super()
+    // goto(`/unlock${location.pathname}`)
+    // console.log(location.pathname, 'location.pathname')
   }
   @property() ROUTE?: any
   @property() steps = [
@@ -38,7 +40,7 @@ export class ViewPhrase extends TailwindElement(style) {
   @state() pwd = ''
   @state() err = ''
   @state() pending = false
-  @state() phrase = ''
+  @property() phrase = ''
 
   onInput = async (e: CustomEvent) => {
     const { val = '', error = '', msg = '' } = {}
@@ -49,7 +51,6 @@ export class ViewPhrase extends TailwindElement(style) {
 
   get activeRoute() {
     const pathName = this.ROUTE?.step === '' ? 'create-password' : this.ROUTE.step
-    console.log(pathName, '')
     return this.steps.find((item) => item.pathName === pathName)
   }
   getStepPage() {
@@ -64,15 +65,25 @@ export class ViewPhrase extends TailwindElement(style) {
     }
   }
   routeGoto = async (e: CustomEvent) => {
-    console.log(e)
     if (e.detail.path === 'generate-addresses') {
-      const res = await doidController.createNewVaultAndKeychain(e.detail.pwd)
+      await doidController.createNewVaultAndKeychain(e.detail.pwd)
       this.phrase = await doidController.verifySeedPhrase()
-      console.log(res, this.phrase, '----')
     }
+    const res = await doidController.keyringController.memStore.getState()
+    console.log(res, 'memStore')
     goto(`/generate-phrase/${e.detail.path}`)
   }
+  getIsInitialized = async () => {
+    const res = await doidController.keyringController.memStore.getState()
+    console.log(res, 'memStore')
+    // return doidController.getState().isInitialized
+    // survey trick situate nature great under artist curious nasty profit decrease exotic
+  }
   submit() {}
+  connectedCallback(): void {
+    super.connectedCallback()
+    this.getIsInitialized()
+  }
   render() {
     return html`<div class="gen-phrase">
       <div class="dui-container">

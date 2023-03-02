@@ -1,26 +1,41 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 
 // Components
-import '@lit-web3/dui/src/input/text'
+import '@lit-web3/dui/src/input/pwd'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 
 import style from './unlock.css?inline'
+import { doidController } from '@/lib/keyringController'
+import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-unlock')
 export class ViewUnlock extends TailwindElement(style) {
+  @property() ROUTE?: any
   @property() placeholder = 'Password'
   @state() pwd = ''
   @state() err = ''
   @state() pending = false
+  @state() disabled = true
 
   onInput = async (e: CustomEvent) => {
-    const { val = '', error = '', msg = '' } = {}
-    this.err = msg
-    if (error) return
-    this.pwd = val
+    // const { val = '', error = '', msg = '' } = {}
+    // this.err = msg
+    // if (error) return
+    // this.pwd = val
+    this.pwd = e.detail
+    this.disabled = !Boolean(this.pwd)
+    console.log(this.ROUTE)
   }
 
-  submit() {}
+  submitPwd = async () => {
+    try {
+      await doidController.keyringController.submitPassword(this.pwd)
+      goto(`/${this.ROUTE.path}`)
+    } catch (error: any) {
+      console.log(error.message, 'error')
+      this.err = error.message ?? error
+    }
+  }
   render() {
     return html`<div class="unlock">
       <div class="dui-container">
@@ -30,11 +45,10 @@ export class ViewUnlock extends TailwindElement(style) {
             <p slot="msg">Your decentralized openid</p>
           </doid-symbol>
           <div class="max-w-xs mx-auto">
-            <dui-input-text
+            <dui-input-pwd
               autoforce
               type="password"
               @input=${this.onInput}
-              @submit=${this.submit}
               value=${this.pwd}
               placeholder=${this.placeholder}
               ?disabled=${this.pending}
@@ -47,9 +61,15 @@ export class ViewUnlock extends TailwindElement(style) {
                   () => html`<slot name="msg"></slot>`
                 )}
               </span>
-            </dui-input-text>
+            </dui-input-pwd>
             <div class="my-2">
-              <dui-button class="block w-full secondary !rounded-full h-12" block>Unlock</dui-button>
+              <dui-button
+                class="block w-full secondary !rounded-full h-12"
+                @click=${this.submitPwd}
+                ?disabled=${this.disabled}
+                block
+                >Unlock</dui-button
+              >
             </div>
             <p class="text-center my-4 text-xs"><dui-link href="/restore" class="link">Forgot?</dui-link></p>
           </div>

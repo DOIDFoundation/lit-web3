@@ -24,14 +24,14 @@ export class ViewAddress extends TailwindElement(style) {
     this.pwd = val
   }
   routeGoto = (path: string) => {
-    goto(`/generate-phrase/${path}`)
+    // goto(`/generate-phrase/${path}`)
+    this.emit('routeGoto', { path, pwd: this.pwd })
   }
   onTogglePhrase = () => {
     this.showPhrase = !this.showPhrase
   }
   submit() {}
   render() {
-    console.log(doidController.keyringController.store, 'state')
     return html`
       <div class="dui-container">
         <div class="text-lg font-bold mt-2 text-center">Create Addresses</div>
