@@ -4,7 +4,7 @@ import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
 import { toHex } from 'ethereum-cryptography/utils'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { keys } from '@libp2p/crypto'
-import * as w3name from 'w3name'
+import * as w3name from '@DOIDFoundation/w3name'
 import { Web3Storage } from 'web3.storage'
 
 // Components
@@ -66,8 +66,7 @@ export class ViewIPFS extends TailwindElement(style) {
 
   updateIPNS = async (e: CustomEvent) => {
     const files = [new File([this.ipfsFile], 'doid.json')]
-
-    let storage = new Web3Storage({ token: process.env.WEB3STORAGE_TOKEN })
+    let storage = new Web3Storage({ token: process.env.VITE_WEB3STORAGE_TOKEN })
     let cid = await storage.put(files, { name: `testing files for ${this.ipnsCID}` })
     this.ipfsCID = cid.toString()
     console.log('stored files with cid:', this.ipfsCID)
