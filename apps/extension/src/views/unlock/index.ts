@@ -33,7 +33,7 @@ export class ViewUnlock extends TailwindElement(style) {
         this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd })
         return
       }
-      await doidController.keyringController.submitPassword(this.pwd)
+      await doidController.submitPassword(this.pwd)
       goto(`/main`)
     } catch (error: any) {
       console.log(error.message, 'error')

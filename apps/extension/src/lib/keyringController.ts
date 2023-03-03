@@ -342,6 +342,8 @@ class DoidController extends EventEmitter {
 
     try {
       //await this.blockTracker.checkForLatestBlock();
+      const allAccounts = await this.keyringController.getAccounts()
+      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
