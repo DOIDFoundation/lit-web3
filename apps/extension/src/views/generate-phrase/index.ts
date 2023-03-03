@@ -8,6 +8,7 @@ import '@lit-web3/dui/src/link'
 import './password'
 import './addresses'
 import './recovery'
+import '../unlock'
 
 import style from './phrase.css?inline'
 import { doidController } from '@/lib/keyringController'
@@ -60,6 +61,8 @@ export class ViewPhrase extends TailwindElement(style) {
       return html`<view-create-addresses @routeGoto=${this.routeGoto} .phrase=${this.phrase}></view-create-addresses>`
     } else if (this.activeRoute?.pathName === 'recovery-phrase') {
       return html`<view-recovery .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-recovery>`
+    } else if (this.activeRoute?.pathName === 'unlock') {
+      return html`<view-unlock .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-unlock>`
     } else {
       return html``
     }
@@ -67,6 +70,10 @@ export class ViewPhrase extends TailwindElement(style) {
   routeGoto = async (e: CustomEvent) => {
     if (e.detail.path === 'generate-addresses') {
       await doidController.createNewVaultAndKeychain(e.detail.pwd)
+      this.phrase = await doidController.verifySeedPhrase()
+    }
+    if (e.detail.path === 'unlock') {
+      await doidController.submitPassword(e.detail.pwd)
       this.phrase = await doidController.verifySeedPhrase()
     }
     const res = await doidController.keyringController.memStore.getState()
@@ -90,20 +97,23 @@ export class ViewPhrase extends TailwindElement(style) {
         <div class="dui-container">
           <a class="doid-logo mx-auto block w-96 h-20" href="https://doid.tech"></a>
           <div class="max-w-lg mx-auto border-gray-400 border-2 rounded-md mt-10 p-6">
-            <ul class="step-line mt-4">
-              ${this.steps.map(
-                (item) =>
-                  html`<li
-                    class="step-item ${item.pathName === this.activeRoute?.pathName ? 'active' : ''} 
-                    ${this.activeRoute?.id && item.id < this.activeRoute.id ? 'finshed' : ''}"
-                  >
-                    ${item.title}
-                  </li>`
-              )}
-              <!-- <li class="step-item active">Create password</li>
-              <li class="step-item">Generate Addresses</li>
-              <li class="step-item">Confirm secret recovery phrase</li> -->
-            </ul>
+            ${when(
+              this.activeRoute?.pathName !== 'recovery-unlock',
+              () => html`
+                <ul class="step-line mt-4">
+                  ${this.steps.map(
+                    (item) =>
+                      html`<li
+                        class="step-item ${item.pathName === this.activeRoute?.pathName ? 'active' : ''} 
+                      ${this.activeRoute?.id && item.id < this.activeRoute.id ? 'finshed' : ''}"
+                      >
+                        ${item.title}
+                      </li>`
+                  )}
+                </ul>
+              `
+            )}
+
             <!-- <div>${this.activeRoute}---</div> -->
             ${this.getStepPage()}
           </div>
