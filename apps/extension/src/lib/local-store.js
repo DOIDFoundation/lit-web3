@@ -112,6 +112,7 @@ export default class ExtensionStore {
    */
   _set(obj) {
     const { local } = chrome.storage;
+    console.log("save to localstore", obj)
     return new Promise((resolve, reject) => {
       local.set(obj).then(() => {
         const err = checkForLastError();

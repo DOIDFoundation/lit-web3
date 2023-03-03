@@ -4,6 +4,7 @@ import LocalStore from './local-store'
 import ComposableObservableStore from './ComposableObservableStore'
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
 import { ControllerMessenger } from '@metamask/base-controller'
+import PreferencesController from  "./preferences"
 import { Mutex } from 'await-semaphore'
 
 export let doidController: DoidController
@@ -20,13 +21,16 @@ class DoidController extends EventEmitter {
   store: ComposableObservableStore
   keyringController: KeyringController
   controllerMessenger: ControllerMessenger<any, any>
+  preferencesController: PreferencesController
   createVaultMutex: Mutex
+  networkController: Object
+  tokenListController: Object
+  provider: Object
 
   constructor(opts: any) {
     super()
     const initState = opts.initState || {}
-    //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
-    let additionalKeyrings = defaultKeyringBuilders
+    let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
 
     //if (this.canUseHardwareWallets()) {
     //  const additionalKeyringTypes = [
@@ -47,15 +51,24 @@ class DoidController extends EventEmitter {
     })
 
     this.controllerMessenger = new ControllerMessenger()
+    this.store = new ComposableObservableStore({
+      controllerMessenger: this.controllerMessenger,
+      state: initState,
+      persist: true,
+    });
 
-    console.log('----------------', initState)
-    console.log(this.controllerMessenger)
-    //this.store = new ComposableObservableStore({
-    //  config: {},
-    //  controllerMessenger: this.controllerMessenger,
-    //  state: initState,
-    //  persist: true,
-    //});
+    this.networkController = {}
+    this.tokenListController = {}
+    this.provider = {}
+
+    this.preferencesController = new PreferencesController({
+      initState: initState.PreferencesController,
+      initLangCode: opts.initLangCode,
+      openPopup: opts.openPopup,
+      network: this.networkController,
+      tokenListController: this.tokenListController,
+      provider: this.provider,
+    });
 
     this.keyringController.on('update', function () {
       console.log('keyring update event')
@@ -194,31 +207,32 @@ class DoidController extends EventEmitter {
     if (!primaryKeyring) {
       throw new Error('MetamaskController - No HD Key Tree found')
     }
-    //  const { identities: oldIdentities } =
-    //    this.preferencesController.store.getState();
-    //
-    //  if (Object.keys(oldIdentities).length === accountCount) {
-    //    const oldAccounts = await keyringController.getAccounts();
-    //    const keyState = await keyringController.addNewAccount(primaryKeyring);
-    //    const newAccounts = await keyringController.getAccounts();
-    //
-    //    await this.verifySeedPhrase();
-    //
-    //    this.preferencesController.setAddresses(newAccounts);
-    //    newAccounts.forEach((address) => {
-    //      if (!oldAccounts.includes(address)) {
-    //        this.preferencesController.setSelectedAddress(address);
-    //      }
-    //    });
-    //
-    //    const { identities } = this.preferencesController.store.getState();
-    //    return { ...keyState, identities };
-    //  }
-    //
-    //  return {
-    //    ...keyringController.memStore.getState(),
-    //    identities: oldIdentities,
-    //  };
+    const { keyringController } = this;
+    const { identities: oldIdentities } =
+      this.preferencesController.store.getState();
+    
+    if (Object.keys(oldIdentities).length === accountCount) {
+      const oldAccounts = await keyringController.getAccounts();
+      const keyState = await keyringController.addNewAccount(primaryKeyring);
+      const newAccounts = await keyringController.getAccounts();
+    
+      await this.verifySeedPhrase();
+    
+      this.preferencesController.setAddresses(newAccounts);
+      newAccounts.forEach((address) => {
+        if (!oldAccounts.includes(address)) {
+          this.preferencesController.setSelectedAddress(address);
+        }
+      });
+    
+      const { identities } = this.preferencesController.store.getState();
+      return { ...keyState, identities };
+    }
+    
+    return {
+      ...keyringController.memStore.getState(),
+      identities: oldIdentities,
+    };
   }
 
   async verifySeedPhrase() {
@@ -634,9 +648,9 @@ export async function initialize() {
   const encodedSeedPhrase2 = Array.from(
     Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
   )
-  await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
-  await doidController.keyringController.clearKeyrings()
-  await doidController.keyringController.addNewKeyring(QRHardwareKeyring.type)
-  console.log(await doidController.keyringController.keyrings)
+  const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
+  console.log("first valut ", vault)
+  const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
+  console.log("second ", secondkeyring)
 }
 await initialize()
