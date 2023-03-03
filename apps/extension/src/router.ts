@@ -27,7 +27,9 @@ export const routes = [
   {
     name: 'unlock',
     path: '/unlock',
-    render: () => html`<view-unlock></view-unlock>`,
+    render: () => {
+      return html`<view-unlock></view-unlock>`
+    },
     enter: async () => {
       await import('~/views/unlock')
       return true

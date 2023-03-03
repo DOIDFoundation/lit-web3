@@ -35,7 +35,7 @@ export class DOIDController extends EventEmitter {
     this.connections = {}
     this.createVaultMutex = new Mutex()
 
-    let additionalKeyrings: any = [defaultKeyringBuilders]
+    let additionalKeyrings: any = defaultKeyringBuilders
     //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
 
     //if (this.canUseHardwareWallets()) {
@@ -49,21 +49,32 @@ export class DOIDController extends EventEmitter {
     //    keyringBuilderFactory(keyringType),
     //  );
     //}
-    console.log(initState)
     this.keyringController = new KeyringController({
-      //keyringBuilders: additionalKeyrings,
+      keyringBuilders: additionalKeyrings,
       initState: initState.KeyringController
       //encryptor: opts.encryptor || undefined,
       //cacheEncryptionKey: isManifestV3,
     })
+    // console.log(chrome.storage.session.get(), 'get')
+    // this.keyringController.memStore.subscribe(
+    //   async (state: any) => {
+    //     console.log(state, 'chrome.storage.session.get()')
+    //     // const { encryptionKey: loginToken, encryptionSalt: loginSalt } = state
+    //     // await chrome.storage.session.set({ loginToken, loginSalt })
+    //   }
+    // )
     //this.store = new ComposableObservableStore({
     //  state: initState,
     //  controllerMessenger: this.controllerMessenger,
     //  persist: true,
     //});
 
-    this.keyringController.on('update', function () {
-      console.log('keyring update event')
+    this.keyringController.on('update', () => {
+      console.log('keyring update event', this.keyringController.store.getState(), initState)
+      const data = Object.assign(initState, {
+        KeyringController: this.keyringController.store.getState()
+      })
+      localStore.set(data)
     })
   }
   opts: object
@@ -209,7 +220,13 @@ export class DOIDController extends EventEmitter {
     //    identities: oldIdentities,
     //  };
   }
-
+  getState() {
+    const { vault } = this.keyringController.store.getState()
+    const isInitialized = Boolean(vault)
+    return {
+      isInitialized
+    }
+  }
   async verifySeedPhrase() {
     const [primaryKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) {
@@ -341,6 +358,8 @@ export class DOIDController extends EventEmitter {
 
     try {
       //await this.blockTracker.checkForLatestBlock();
+      const allAccounts = await this.keyringController.getAccounts()
+      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
@@ -389,6 +408,7 @@ export class DOIDController extends EventEmitter {
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
+<<<<<<< HEAD
   // setupUntrustedCommunication
   setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
   // setupControllerConnection = Connections.setupControllerConnection.bind(this)
@@ -400,6 +420,28 @@ export class DOIDController extends EventEmitter {
   removeAllConnections = Connections.removeAllConnections.bind(this)
   notifyConnections = Connections.notifyConnections.bind(this)
   notifyAllConnections = Connections.notifyAllConnections.bind(this)
+=======
+}
+
+const initialState = {
+  config: {},
+  PreferencesController: {
+    frequentRpcListDetail: [
+      {
+        rpcUrl: 'http://localhost:8545',
+        chainId: '0x539',
+        ticker: 'ETH',
+        nickname: 'Localhost 8545',
+        rpcPrefs: {}
+      }
+    ]
+  },
+  onboardingController: {
+    seedPhraseBackedUp: null,
+    firstTimeFlowType: null,
+    completedOnboarding: false
+  }
+>>>>>>> dev
 }
 
 class Migrator {
@@ -446,8 +488,13 @@ export const loadStateFromPersistence = async function () {
   //
   // read from disk
   // first from preferred, async API:
+<<<<<<< HEAD
   versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
   console.log(versionedData)
+=======
+  versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
+  console.log(versionedData, 'versionedData')
+>>>>>>> dev
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has

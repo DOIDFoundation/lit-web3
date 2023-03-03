@@ -7,13 +7,14 @@ import '@lit-web3/dui/src/link'
 
 import style from './phrase.css?inline'
 import { goto } from '@lit-web3/dui/src/shared/router'
+import { doidController } from '@/lib/keyringController'
 @customElement('view-recovery')
 export class ViewAddress extends TailwindElement(style) {
   constructor() {
     super()
-    this.initPhrase()
+    // this.initPhrase()
   }
-  @property({ type: String }) phrase = ''
+  @property() phrase = ''
   @property() placeholder = 'Password'
   @state() phraseElements: string[] = []
   @state() validate = false
@@ -28,16 +29,21 @@ export class ViewAddress extends TailwindElement(style) {
   routeGoto = (path: string) => {
     goto(`/generate-phrase/${path}`)
   }
+  // gas punch sport hen claim click scene employ zoo catch luxury east
   initPhrase = () => {
-    const _phrase = this.phrase
-      ? this.phrase.split(' ')
-      : 'report ill kick deer daughter spice puppy shine bean corn forget protec'.split(' ')
-    console.log(_phrase, '_phrase')
+    const _phrase = this.phrase.split(' ')
+    // ? this.phrase
+    // : 'report ill kick deer daughter spice puppy shine bean corn forget protec'.split(' ')
+    console.log(this.phrase, '_phrase')
     const _randomPhrase = _phrase.sort(() => (Math.random() > 0.5 ? -1 : 1))
     _randomPhrase.forEach((item: string) => {
       this.randomPhrase.push({ name: item, active: false })
     })
     console.log(this.randomPhrase)
+  }
+  connectedCallback() {
+    super.connectedCallback()
+    this.initPhrase()
   }
   onRecovery = (item: any) => {
     if (!item.active) {
@@ -55,7 +61,17 @@ export class ViewAddress extends TailwindElement(style) {
   get phraseString() {
     return this.phraseElements.join(' ')
   }
-  submit() {}
+  submit = async () => {
+    // const res = await doidController.keyringController.memStore.getState()
+    const storeData = await chrome.storage.local.get()
+    const data = Object.assign(storeData.data, {
+      onboardingController: {
+        completedOnboarding: true
+      }
+    })
+    await chrome.storage.local.set({ data })
+    console.log(await chrome.storage.local.get(), 'chrome')
+  }
   render() {
     return html` <div class="dui-container">
       <div class="text-lg font-bold mt-2 text-center">Confirm Secret Recovery Phrase</div>
@@ -82,7 +98,7 @@ export class ViewAddress extends TailwindElement(style) {
         ></dui-button>
         <dui-button
           .disabled="${!this.validate}"
-          @click=${() => this.routeGoto('create-password')}
+          @click=${() => this.submit()}
           class="secondary !rounded-full h-12 w-12"
           ><i class="mdi mdi-arrow-right"></i
         ></dui-button>
