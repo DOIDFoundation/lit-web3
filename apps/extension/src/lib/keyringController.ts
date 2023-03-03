@@ -1,11 +1,10 @@
 import { EventEmitter } from 'events'
-import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders} from '@metamask/eth-keyring-controller'
+import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
 import LocalStore from './local-store'
-import ComposableObservableStore from './ComposableObservableStore';
-import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring';
-import { ControllerMessenger } from '@metamask/base-controller';
-import { Mutex } from 'await-semaphore';
-
+import ComposableObservableStore from './ComposableObservableStore'
+import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
+import { ControllerMessenger } from '@metamask/base-controller'
+import { Mutex } from 'await-semaphore'
 
 export let doidController: DoidController
 
@@ -18,10 +17,10 @@ enum HardwareKeyringTypes {
   imported = 'Simple Key Pair'
 }
 class DoidController extends EventEmitter {
-  store : ComposableObservableStore
+  store: ComposableObservableStore
   keyringController: KeyringController
   controllerMessenger: ControllerMessenger<any, any>
-  createVaultMutex : Mutex
+  createVaultMutex: Mutex
 
   constructor(opts: any) {
     super()
@@ -47,9 +46,9 @@ class DoidController extends EventEmitter {
       //cacheEncryptionKey: isManifestV3,
     })
 
-    this.controllerMessenger = new ControllerMessenger();
+    this.controllerMessenger = new ControllerMessenger()
 
-    console.log("----------------",initState)
+    console.log('----------------', initState)
     console.log(this.controllerMessenger)
     //this.store = new ComposableObservableStore({
     //  config: {},
@@ -63,7 +62,6 @@ class DoidController extends EventEmitter {
     })
     this.createVaultMutex = new Mutex()
   }
-
 
   /**
    * Create a new Vault and restore an existent keyring.
@@ -79,7 +77,7 @@ class DoidController extends EventEmitter {
 
       const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
 
-      const { keyringController } = this;
+      const { keyringController } = this
 
       // clear known identities
       //this.preferencesController.setAddresses([]);
@@ -107,7 +105,7 @@ class DoidController extends EventEmitter {
       const vault = await keyringController.createNewVaultAndRestore(password, seedPhraseAsBuffer)
 
       //const ethQuery = new EthQuery(this.provider);
-      accounts = await keyringController.getAccounts();
+      accounts = await keyringController.getAccounts()
       //lastBalance = await this.getBalance(
       //  accounts[accounts.length - 1],
       //  ethQuery,
@@ -153,19 +151,19 @@ class DoidController extends EventEmitter {
 
   /**
    * Get first address of an seedphrase
-   * @param seedPhrase 
+   * @param seedPhrase
    * @returns first address of the seed
    */
-  async getFirstAccountFromSeedPhrase(seedPhrase : number[]) {
+  async getFirstAccountFromSeedPhrase(seedPhrase: number[]) {
     const keyring = await this.keyringController._newKeyring(HardwareKeyringTypes.hdKeyTree, {
       mnemonic: seedPhrase,
-      numberOfAccounts: 1,
-    });
+      numberOfAccounts: 1
+    })
 
-    const [firstAccount] = await keyring.getAccounts();
+    const [firstAccount] = await keyring.getAccounts()
 
     if (!firstAccount) {
-      throw new Error('KeyringController - First Account not found.');
+      throw new Error('KeyringController - First Account not found.')
     }
     return firstAccount
   }
@@ -409,14 +407,14 @@ class DoidController extends EventEmitter {
    * @returns {object} status
    */
   getState() {
-    const { vault } = this.keyringController.store.getState();
+    const { vault } = this.keyringController.store.getState()
     console.log(vault)
-    const isInitialized = Boolean(vault);
-  
+    const isInitialized = Boolean(vault)
+
     return {
-      isInitialized,
+      isInitialized
       //...this.memStore.getFlatState(),
-    };
+    }
   }
 }
 
@@ -629,16 +627,16 @@ export async function initialize() {
   //  console.error(error)
   //}
 
-
   // test
   const encodedSeedPhrase = Array.from(
-    Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values(),
-  );
+    Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
+  )
   const encodedSeedPhrase2 = Array.from(
-    Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values(),
-  );
-  await doidController.createNewVaultAndRestore("123", encodedSeedPhrase)
-  //await doidController.keyringController.addNewKeyring(QRHardwareKeyring.type)
+    Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
+  )
+  await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
+  await doidController.keyringController.clearKeyrings()
+  await doidController.keyringController.addNewKeyring(QRHardwareKeyring.type)
   console.log(await doidController.keyringController.keyrings)
 }
 await initialize()
