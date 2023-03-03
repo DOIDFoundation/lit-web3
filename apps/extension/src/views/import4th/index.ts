@@ -2,6 +2,7 @@ import { TailwindElement, html, customElement, when, property, state } from '@li
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
 import { doidController } from '@/lib/keyringController'
+import { HardwareKeyringTypes } from '@/lib/keyringController'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -27,12 +28,26 @@ export class ViewImport extends TailwindElement(style) {
     goto(`${path}`)
   }
 
+  async getFirstAccountFromSeedPhrase(seedPhrase: number[]) {
+    const keyring = await doidController.keyringController._newKeyring(HardwareKeyringTypes.hdKeyTree, {
+      mnemonic: seedPhrase,
+      numberOfAccounts: 1
+    })
+
+    const [firstAccount] = await keyring.getAccounts()
+    console.log(firstAccount, '------------')
+    if (!firstAccount) {
+      throw new Error('KeyringController - First Account not found.')
+    }
+    return firstAccount
+  }
+
   onCreateMainAddress = async () => {
     try {
-      console.log(keyringStore.mnemonic)
+      console.log(keyringStore.mnemonic, this.pwd, '----------')
       const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
-
-      await doidController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
+      this.getFirstAccountFromSeedPhrase(encodedSeedPhrase)
+      await doidController.keyringController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
       goto('/main')
     } catch (err: any) {
       console.error(err)

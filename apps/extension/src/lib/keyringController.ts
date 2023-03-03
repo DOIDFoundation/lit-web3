@@ -5,7 +5,7 @@ import LocalStore from './local-store'
 
 export let doidController: DoidController
 
-enum HardwareKeyringTypes {
+export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
   trezor = 'Trezor Hardware',
   lattice = 'Lattice Hardware',
