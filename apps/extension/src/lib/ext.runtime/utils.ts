@@ -2,7 +2,7 @@
  * Utility Functions to support browser.runtime JavaScript API
  */
 
-// import browser from 'webextension-polyfill'
+import browser from '~/lib/webextension-polyfill'
 import log from 'loglevel'
 
 /**
@@ -20,7 +20,7 @@ import log from 'loglevel'
  * @returns {Error|undefined}
  */
 export function checkForLastError() {
-  const { lastError } = chrome.runtime
+  const { lastError } = browser.runtime
   if (!lastError) {
     return undefined
   }

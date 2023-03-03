@@ -1,9 +1,12 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
+import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
+import { setupMultiplex } from '~/lib/stream-utils'
+import { Mutex } from 'await-semaphore'
+import * as Connections from './keyringController.setup/connections'
 import LocalStore from './local-store'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 //import { Mutex } from 'await-semaphore';
-
-export let doidController: DoidController
 
 enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
@@ -14,12 +17,23 @@ enum HardwareKeyringTypes {
   imported = 'Simple Key Pair'
 }
 
-class DoidController extends EventEmitter {
+export class DOIDController extends EventEmitter {
   keyringController: KeyringController
+  opts: Record<string, any>
+  activeControllerConnections: any
+  connections: any
+  createVaultMutex: any
+  extension: any
   //store : ComposableObservableStore
-  constructor(opts: any) {
+  constructor(opts: Record<string, any>) {
     super()
+    this.opts = opts
+    this.extension = opts.browser ?? chrome
+
     const initState = opts.initState || {}
+    this.activeControllerConnections = 0
+    this.connections = {}
+    this.createVaultMutex = new Mutex()
 
     let additionalKeyrings: any = [defaultKeyringBuilders]
     //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
@@ -52,6 +66,8 @@ class DoidController extends EventEmitter {
       console.log('keyring update event')
     })
   }
+  opts: object
+  extension: object
 
   //keyringController.createVaultMutex = new Mutex()
 
@@ -373,21 +389,17 @@ class DoidController extends EventEmitter {
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
-}
-
-const initialState = {
-  config: {},
-  PreferencesController: {
-    frequentRpcListDetail: [
-      {
-        rpcUrl: 'http://localhost:8545',
-        chainId: '0x539',
-        ticker: 'ETH',
-        nickname: 'Localhost 8545',
-        rpcPrefs: {}
-      }
-    ]
-  }
+  // setupUntrustedCommunication
+  setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
+  // setupControllerConnection = Connections.setupControllerConnection.bind(this)
+  setupProviderConnection = Connections.setupProviderConnection.bind(this)
+  // setupSnapProvider = Connections.setupSnapProvider.bind(this)
+  // setupProviderEngine = Connections.setupProviderEngine.bind(this)
+  addConnection = Connections.addConnection.bind(this)
+  removeConnection = Connections.removeConnection.bind(this)
+  removeAllConnections = Connections.removeAllConnections.bind(this)
+  notifyConnections = Connections.notifyConnections.bind(this)
+  notifyAllConnections = Connections.notifyAllConnections.bind(this)
 }
 
 class Migrator {
@@ -427,14 +439,14 @@ const inTest = process.env.IN_TEST
 //const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
 const localStore = new LocalStore()
 
-async function loadStateFromPersistence() {
+export const loadStateFromPersistence = async function () {
   // migrations
   const migrator = new Migrator()
   //  migrator.on('error', console.warn);
   //
   // read from disk
   // first from preferred, async API:
-  versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
+  versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
   console.log(versionedData)
   //
   //  // check if somehow state is empty
@@ -482,16 +494,16 @@ async function loadStateFromPersistence() {
  * @param {string} initLangCode - The region code for the language preferred by the current user.
  */
 function setupController(initState: any, initLangCode: string) {
-  doidController = new DoidController({
+  swGlobal.controller = new DOIDController({
     initState,
     initLangCode
   })
-  return doidController
+  return swGlobal.controller
   //
   // MetaMask Controller
   //
   /*
-  controller = new DoidController({
+  controller = new DOIDController({
     infuraProjectId: process.env.INFURA_PROJECT_ID,
     // User confirmation callbacks:
     showUserConfirmation: triggerUi,
@@ -564,7 +576,7 @@ function setupController(initState: any, initLangCode: string) {
   */
 }
 
-async function getFirstPreferredLangCode() {
+export const getFirstPreferredLangCode = async function () {
   return 'en'
 }
 
@@ -584,4 +596,5 @@ export async function initialize() {
   //  console.error(error)
   //}
 }
-await initialize()
+export const initController = initialize
+// await initialize()

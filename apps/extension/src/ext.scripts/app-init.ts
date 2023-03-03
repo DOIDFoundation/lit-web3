@@ -1,75 +1,72 @@
 // ref: @metamask-extention/app/scripts/app-init.js
-import { shouldInjectProvider } from '~/lib/providers/injection'
+import '@lit-web3/core/src/shims/node'
+import '~/lib/webextension-polyfill'
+// import { shouldInjectProvider } from '~/lib/providers/injection'
 import { deferredPromise } from '~/lib/utils'
+import { initController } from '~/lib/keyringController'
+import { sendReadyMessageToTabs } from '~/ext.scripts/sw/swGlobal'
 
-import { connectRemote } from '~/ext.scripts/sw/connectRemote'
+import { connectRemote, connectExternal } from '~/ext.scripts/sw/connectRemote'
 
 const logger = (...args: any) => console.info(`[sw]`, ...args)
 
 self.addEventListener('install', function (event) {
   self.skipWaiting()
-  console.log('[background] Installed', event)
+  logger('Installed', event)
 })
 self.addEventListener('activate', function (event) {
-  console.log('[background] Activated', event)
+  logger('Activated', event)
 })
 self.addEventListener('push', function (event) {
-  console.log('[background] Push message received', event)
+  logger('Push message received', event)
 })
 self.addEventListener('updated', function (event) {
-  console.log('[background] updated')
+  logger('updated', event)
 })
-// chrome.action.setPopup({ popup: './popup.html' })
-chrome.action.onClicked.addListener((tab) => {
-  chrome.scripting.executeScript({
+browser.action.setPopup({ popup: './popup.html' })
+browser.action.onClicked.addListener((tab: typeof browser.tabs) => {
+  logger('onClicked')
+  browser.scripting.executeScript({
     target: { tabId: tab.id },
     function: function () {}
   })
 })
-console.log('[service-worker]', self)
+logger(self)
 
-chrome.runtime.onMessage.addListener((e) => {
+browser.runtime.onMessage.addListener(() => {
   return false
 })
-chrome.runtime.onStartup.addListener((e) => {
+browser.runtime.onStartup.addListener(() => {
   globalThis.isFirstTimeProfileLoaded = true
 })
-chrome.runtime.onConnect.addListener(async (...args) => {
+browser.runtime.onConnect.addListener(async (port: chrome.runtime.Port) => {
   await isInitialized
-  connectRemote(...args)
+  connectRemote(port)
 })
-chrome.runtime.onConnectExternal.addListener(async (...args) => {})
+browser.runtime.onConnectExternal.addListener(async (port: chrome.runtime.Port) => {
+  logger('onConnectExternal')
+  await isInitialized
+  connectExternal(port)
+})
 
 // S
-let connectExternal
 const { promise: isInitialized, resolve: resolveInitialization, reject: rejectInitialization } = deferredPromise()
 
 async function initialize() {
   try {
-    const initState = await loadStateFromPersistence()
-    const initLangCode = await getFirstPreferredLangCode()
-    setupController(initState, initLangCode)
-    if (!isManifestV3) {
-      await loadPhishingWarningPage()
-    }
+    await 0
+    await initController()
     await sendReadyMessageToTabs()
-    log.info('MetaMask initialization complete.')
+    // @ts-expect-error
     resolveInitialization()
+    logger('app-init complete.')
   } catch (error) {
+    // @ts-expect-error
     rejectInitialization(error)
   }
 }
 initialize().catch(logger)
-
 // E
-
-if (import.meta.hot) {
-  // @crxjs/vite-plugin@2.0.0-beta.13 not always working
-  // @ts-ignore
-  import('/@vite/client')
-  // @ts-ignore
-  import('./inpage.hmr')
-}
 
 // We use manifet.config.ts to inject inpage.js (see `src/ext.script/inpage.ts`), but Metamask said manifest has a bug due to:
 /*
@@ -80,7 +77,7 @@ if (import.meta.hot) {
 // if (shouldInjectProvider('init')) {
 //   const registerInPageContentScript = async () => {
 //     try {
-//       await chrome.scripting.registerContentScripts([
+//       await browser.scripting.registerContentScripts([
 //         {
 //           id: 'inpage',
 //           js: ['inpage.js'],

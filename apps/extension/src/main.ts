@@ -1,4 +1,5 @@
 import '@lit-web3/core/src/shims/node'
+// import '~/lib/webextension-polyfill'
 import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
@@ -9,9 +10,6 @@ import '~/views/home'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/address/avatar'
-
-globalThis.abc = 1
-console.log(globalThis.abc, globalThis.abc2)
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {

@@ -1,7 +1,7 @@
 import { ENVIRONMENT_TYPE_POPUP, ENVIRONMENT_TYPE_NOTIFICATION, ENVIRONMENT_TYPE_FULLSCREEN } from '~/constants/app'
 
 import endOfStream from 'end-of-stream'
-import swGlobal, { isClientOpenStatus, connectExternal } from '~/ext.scripts/sw/swGlobal'
+import swGlobal, { isClientOpenStatus } from '~/ext.scripts/sw/swGlobal'
 import PortStream from '~/lib/ext.runtime/extension-port-stream'
 
 const blockedPorts = ['trezor-connect']
@@ -15,7 +15,6 @@ export const connectRemote = async (remotePort: chrome.runtime.Port) => {
   isInternalProcess = [`chrome`, 'edge']
     .map((r) => `${r}-extension://${browser.runtime.id}`)
     .includes(senderUrl?.origin ?? '')
-
   if (isInternalProcess) {
     const portStream = new PortStream(remotePort)
     // communication with popup
@@ -68,11 +67,20 @@ export const connectRemote = async (remotePort: chrome.runtime.Port) => {
       const { origin } = url
 
       remotePort.onMessage.addListener((msg) => {
-        if (msg.data && msg.data.method === 'eth_requestAccounts') {
+        if (msg.data && ['DOID_requestAccount', 'eth_requestAccounts'].includes(msg.data.method)) {
           swGlobal.requestAccountTabIds[origin] = tabId
         }
       })
     }
     connectExternal(remotePort)
   }
+}
+
+export const connectExternal = (remotePort: chrome.runtime.Port) => {
+  const portStream = new PortStream(remotePort)
+  swGlobal.controller.setupUntrustedCommunication({
+    connectionStream: portStream,
+    sender: remotePort.sender
+  })
+  return portStream
 }

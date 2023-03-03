@@ -3,7 +3,6 @@ import manifest from './manifest.config'
 import { dirname, relative, resolve } from 'path'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
 import fs from 'fs'
-import { execSync } from 'child_process'
 
 // import AutoImport from 'unplugin-auto-import/vite'
 
@@ -47,7 +46,6 @@ export const sharedConfig = async (mode = '') => {
       }
     },
     plugins: [
-      nodePolyfills({ include: ['process*', 'buffer*', 'stream*'] }),
       // rewrite assets to use relative path
       {
         name: 'assets-rewrite',
@@ -59,7 +57,6 @@ export const sharedConfig = async (mode = '') => {
       }
     ],
     optimizeDeps: {
-      // not works, it will inject a wrapped sendMessage to inpage.js and throw error `This script should only be loaded in a browser extension.`
       include: ['webextension-polyfill']
     },
     viteConfigOptions: {
@@ -73,6 +70,6 @@ export const sharedConfig = async (mode = '') => {
 export default async ({ mode = '' }) => {
   const config = await sharedConfig(mode)
   const { crx } = await import('@crxjs/vite-plugin')
-  config.plugins.push(...([crx({ manifest })] as any[]))
+  config.plugins.push(...([nodePolyfills(), crx({ manifest })] as any[]))
   return viteConfig(config)({ mode })
 }

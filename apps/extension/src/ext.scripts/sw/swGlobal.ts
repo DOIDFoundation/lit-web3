@@ -1,5 +1,6 @@
-import { ENVIRONMENT_TYPE_FULLSCREEN } from '~/constants/app'
+import { ENVIRONMENT_TYPE_FULLSCREEN, EXTENSION_MESSAGES } from '~/constants/app'
 import PortStream from '~/lib/ext.runtime/extension-port-stream'
+import { checkForLastErrorAndLog } from '~/lib/ext.runtime/utils'
 
 export const swGlobal: SWGlobal = {
   popupIsOpen: false,
@@ -8,7 +9,21 @@ export const swGlobal: SWGlobal = {
   openMetamaskTabsIDs: {},
   requestAccountTabIds: {},
   controller: null,
-  WORKER_KEEP_ALIVE_MESSAGE: 'WORKER_KEEP_ALIVE_MESSAGE'
+  WORKER_KEEP_ALIVE_MESSAGE: 'WORKER_KEEP_ALIVE_MESSAGE',
+  initialState: {
+    config: {},
+    PreferencesController: {
+      frequentRpcListDetail: [
+        {
+          rpcUrl: 'http://localhost:8545',
+          chainId: '0x539',
+          ticker: 'ETH',
+          nickname: 'Localhost 8545',
+          rpcPrefs: {}
+        }
+      ]
+    }
+  }
 }
 export default swGlobal
 
@@ -19,13 +34,9 @@ export const isClientOpenStatus = () => {
 }
 
 export const onCloseEnvironmentInstances = (environmentType: string) => {
-  // if all instances of metamask are closed we call a method on the controller to stop gasFeeController polling
   if (isClientOpenStatus() === false) {
     swGlobal.controller.onClientClosed()
-    // otherwise we want to only remove the polling tokens for the environment type that has closed
   } else {
-    // in the case of fullscreen environment a user might have multiple tabs open so we don't want to disconnect all of
-    // its corresponding polling tokens unless all tabs are closed.
     if (environmentType === ENVIRONMENT_TYPE_FULLSCREEN && Boolean(Object.keys(swGlobal.openMetamaskTabsIDs).length)) {
       return
     }
@@ -33,10 +44,21 @@ export const onCloseEnvironmentInstances = (environmentType: string) => {
   }
 }
 
-export const connectExternal = (remotePort: chrome.runtime.Port) => {
-  const portStream = new PortStream(remotePort)
-  swGlobal.controller.setupUntrustedCommunication({
-    connectionStream: portStream,
-    sender: remotePort.sender
-  })
+export const sendReadyMessageToTabs = async () => {
+  const tabs = await chrome.tabs
+    .query({ url: '<all_urls>', windowType: 'normal' })
+    .then((result) => {
+      checkForLastErrorAndLog()
+      return result
+    })
+    .catch(() => checkForLastErrorAndLog())
+
+  /** @todo we should only sendMessage to dapp tabs, not all tabs. */
+  if (!Array.isArray(tabs)) return
+  for (const tab of tabs) {
+    chrome.tabs
+      .sendMessage(tab.id, { name: EXTENSION_MESSAGES.READY })
+      .then(() => checkForLastErrorAndLog())
+      .catch(() => checkForLastErrorAndLog())
+  }
 }

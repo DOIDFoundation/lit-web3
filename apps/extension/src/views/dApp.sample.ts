@@ -11,7 +11,7 @@ const logger = (...args: any) => console.info(`[dApp]`, ...args)
 @customElement('view-dapp')
 export class ViewRestore extends TailwindElement('') {
   request = () => {
-    window.DOID.request({ method: 'DOID_accounts' })
+    window.DOID.request({ method: 'DOID_account' })
     logger('request sent')
   }
   render() {

@@ -1,14 +1,4 @@
-import {
-  ENVIRONMENT_TYPE_POPUP,
-  ENVIRONMENT_TYPE_NOTIFICATION,
-  ENVIRONMENT_TYPE_FULLSCREEN,
-  ENVIRONMENT_TYPE_BACKGROUND,
-  PLATFORM_FIREFOX,
-  PLATFORM_OPERA,
-  PLATFORM_CHROME,
-  PLATFORM_EDGE,
-  PLATFORM_BRAVE
-} from '../../../shared/constants/app'
+import { PLATFORM_FIREFOX, PLATFORM_OPERA, PLATFORM_CHROME, PLATFORM_EDGE, PLATFORM_BRAVE } from '~/constants/app'
 
 export const chkPwdValid = (pwd: string, { min = 8, max = 30 } = {}) => {
   const len = pwd.length
