@@ -11,7 +11,7 @@ import './recovery'
 import '../unlock'
 
 import style from './phrase.css?inline'
-import { doidController } from '@/lib/keyringController'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 // const localStore = new LocalStore()
 
 @customElement('view-phrase')
@@ -71,21 +71,21 @@ export class ViewPhrase extends TailwindElement(style) {
   }
   routeGoto = async (e: CustomEvent) => {
     if (e.detail.path === 'generate-addresses') {
-      await doidController.createNewVaultAndKeychain(e.detail.pwd)
-      this.phrase = await doidController.verifySeedPhrase()
+      await swGlobal.controller.createNewVaultAndKeychain(e.detail.pwd)
+      this.phrase = await swGlobal.controller.verifySeedPhrase()
     }
     if (e.detail.path === 'unlock') {
-      await doidController.submitPassword(e.detail.pwd)
-      this.phrase = await doidController.verifySeedPhrase()
+      await swGlobal.controller.submitPassword(e.detail.pwd)
+      this.phrase = await swGlobal.controller.verifySeedPhrase()
     }
-    // const res = await doidController.keyringController.memStore.getState()
+    // const res = await swGlobal.controller.keyringController.memStore.getState()
     // console.log(res, 'memStore')
     goto(`/generate-phrase/${e.detail.path}`)
   }
   getIsInitialized = async () => {
-    const { vault } = await doidController.keyringController.store.getState()
+    const { vault } = await swGlobal.controller.keyringController.store.getState()
     const isInitialized = Boolean(vault)
-    const { isUnlocked } = await doidController.keyringController.memStore.getState()
+    const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
     const storageData = await chrome.storage.local.get()
     if (isInitialized && !storageData.data.onboardingController.completedOnboarding) {
       goto(`/generate-phrase/unlock`)
@@ -96,7 +96,7 @@ export class ViewPhrase extends TailwindElement(style) {
       goto('/unlock')
     }
     // console.log(storageData, 'memStoreonboardingController')
-    // return doidController.getState().isInitialized
+    // return swGlobal.controller.getState().isInitialized
     // survey trick situate nature great under artist curious nasty profit decrease exotic
   }
   submit() {}

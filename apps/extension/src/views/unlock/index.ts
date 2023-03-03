@@ -6,7 +6,7 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 
 import style from './unlock.css?inline'
-import { doidController } from '@/lib/keyringController'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-unlock')
 export class ViewUnlock extends TailwindElement(style) {
@@ -33,7 +33,7 @@ export class ViewUnlock extends TailwindElement(style) {
         this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd })
         return
       }
-      await doidController.submitPassword(this.pwd)
+      await swGlobal.controller.submitPassword(this.pwd)
       goto(`/main`)
     } catch (error: any) {
       console.log(error.message, 'error')

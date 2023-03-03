@@ -7,7 +7,7 @@ import '@lit-web3/dui/src/link'
 
 import style from './phrase.css?inline'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { doidController } from '@/lib/keyringController'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 @customElement('view-create-addresses')
 export class ViewAddress extends TailwindElement(style) {
   @property() phrase = ''
