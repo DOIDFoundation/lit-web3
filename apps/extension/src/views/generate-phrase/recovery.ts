@@ -62,8 +62,15 @@ export class ViewAddress extends TailwindElement(style) {
     return this.phraseElements.join(' ')
   }
   submit = async () => {
-    const res = await doidController.keyringController.memStore.getState()
-    console.log(res, 'memStore')
+    // const res = await doidController.keyringController.memStore.getState()
+    const storeData = await chrome.storage.local.get()
+    const data = Object.assign(storeData.data, {
+      onboardingController: {
+        completedOnboarding: true
+      }
+    })
+    await chrome.storage.local.set({ data })
+    console.log(await chrome.storage.local.get(), 'chrome')
   }
   render() {
     return html` <div class="dui-container">

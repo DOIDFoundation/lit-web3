@@ -12,6 +12,8 @@ import '../unlock'
 
 import style from './phrase.css?inline'
 import { doidController } from '@/lib/keyringController'
+// const localStore = new LocalStore()
+
 @customElement('view-phrase')
 export class ViewPhrase extends TailwindElement(style) {
   constructor() {
@@ -61,7 +63,7 @@ export class ViewPhrase extends TailwindElement(style) {
       return html`<view-create-addresses @routeGoto=${this.routeGoto} .phrase=${this.phrase}></view-create-addresses>`
     } else if (this.activeRoute?.pathName === 'recovery-phrase') {
       return html`<view-recovery .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-recovery>`
-    } else if (this.activeRoute?.pathName === 'unlock') {
+    } else if (this.ROUTE?.step === 'unlock') {
       return html`<view-unlock .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-unlock>`
     } else {
       return html``
@@ -76,13 +78,24 @@ export class ViewPhrase extends TailwindElement(style) {
       await doidController.submitPassword(e.detail.pwd)
       this.phrase = await doidController.verifySeedPhrase()
     }
-    const res = await doidController.keyringController.memStore.getState()
-    console.log(res, 'memStore')
+    // const res = await doidController.keyringController.memStore.getState()
+    // console.log(res, 'memStore')
     goto(`/generate-phrase/${e.detail.path}`)
   }
   getIsInitialized = async () => {
-    const res = await doidController.keyringController.memStore.getState()
-    console.log(res, 'memStore')
+    const { vault } = await doidController.keyringController.store.getState()
+    const isInitialized = Boolean(vault)
+    const { isUnlocked } = await doidController.keyringController.memStore.getState()
+    const storageData = await chrome.storage.local.get()
+    if (isInitialized && !storageData.data.onboardingController.completedOnboarding) {
+      goto(`/generate-phrase/unlock`)
+    }
+    if (isUnlocked) {
+      goto('/main')
+    } else {
+      goto('/unlock')
+    }
+    // console.log(storageData, 'memStoreonboardingController')
     // return doidController.getState().isInitialized
     // survey trick situate nature great under artist curious nasty profit decrease exotic
   }
@@ -98,7 +111,7 @@ export class ViewPhrase extends TailwindElement(style) {
           <a class="doid-logo mx-auto block w-96 h-20" href="https://doid.tech"></a>
           <div class="max-w-lg mx-auto border-gray-400 border-2 rounded-md mt-10 p-6">
             ${when(
-              this.activeRoute?.pathName !== 'recovery-unlock',
+              this.ROUTE?.step !== 'unlock',
               () => html`
                 <ul class="step-line mt-4">
                   ${this.steps.map(

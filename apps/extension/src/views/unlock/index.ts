@@ -29,8 +29,12 @@ export class ViewUnlock extends TailwindElement(style) {
 
   submitPwd = async () => {
     try {
+      if (location.pathname.includes('generate-phrase')) {
+        this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd })
+        return
+      }
       await doidController.keyringController.submitPassword(this.pwd)
-      goto(`/${this.ROUTE.path}`)
+      goto(`/main`)
     } catch (error: any) {
       console.log(error.message, 'error')
       this.err = error.message ?? error

@@ -204,7 +204,13 @@ class DoidController extends EventEmitter {
     //    identities: oldIdentities,
     //  };
   }
-
+  getState() {
+    const { vault } = this.keyringController.store.getState()
+    const isInitialized = Boolean(vault)
+    return {
+      isInitialized
+    }
+  }
   async verifySeedPhrase() {
     const [primaryKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) {
@@ -398,6 +404,11 @@ const initialState = {
         rpcPrefs: {}
       }
     ]
+  },
+  onboardingController: {
+    seedPhraseBackedUp: null,
+    firstTimeFlowType: null,
+    completedOnboarding: false
   }
 }
 
