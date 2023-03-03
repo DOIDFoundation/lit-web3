@@ -408,7 +408,14 @@ export class DOIDController extends EventEmitter {
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
-<<<<<<< HEAD
+  // _startUISync() {
+  //   // Message startUISync is used in MV3 to start syncing state with UI
+  //   // Sending this message after login is completed helps to ensure that incomplete state without
+  //   // account details are not flushed to UI.
+  //   this.emit('startUISync');
+  //   this.startUISync = true;
+  //   this.memStore.subscribe(this.sendUpdate.bind(this));
+  // }
   // setupUntrustedCommunication
   setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
   // setupControllerConnection = Connections.setupControllerConnection.bind(this)
@@ -420,7 +427,6 @@ export class DOIDController extends EventEmitter {
   removeAllConnections = Connections.removeAllConnections.bind(this)
   notifyConnections = Connections.notifyConnections.bind(this)
   notifyAllConnections = Connections.notifyAllConnections.bind(this)
-=======
 }
 
 const initialState = {
@@ -441,7 +447,6 @@ const initialState = {
     firstTimeFlowType: null,
     completedOnboarding: false
   }
->>>>>>> dev
 }
 
 class Migrator {
@@ -488,13 +493,8 @@ export const loadStateFromPersistence = async function () {
   //
   // read from disk
   // first from preferred, async API:
-<<<<<<< HEAD
   versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
   console.log(versionedData)
-=======
-  versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
-  console.log(versionedData, 'versionedData')
->>>>>>> dev
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has

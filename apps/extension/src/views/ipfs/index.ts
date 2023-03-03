@@ -4,7 +4,8 @@ import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
 import { toHex } from 'ethereum-cryptography/utils'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { keys } from '@libp2p/crypto'
-import * as w3name from '@DOIDFoundation/w3name'
+// import * as w3name from '@DOIDFoundation/w3name'
+import * as w3name from 'w3name'
 import { Web3Storage } from 'web3.storage'
 
 // Components
