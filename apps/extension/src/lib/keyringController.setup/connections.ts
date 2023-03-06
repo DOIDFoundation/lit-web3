@@ -26,6 +26,13 @@ export const setupUntrustedCommunication = function (
   // // messages between inpage and background
   setupProviderConnection.bind(this)(mux.createStream('DOID-provider'), sender, _subjectType)
 }
+export const setupTrustedCommunication = function (connectionStream: ReadableStream, sender: Sender) {
+  // setup multiplexing
+  const mux = setupMultiplex(connectionStream)
+  // connect features
+  setupControllerConnection.bind(this)(mux.createStream('controller'))
+  setupProviderConnection.bind(this)(mux.createStream('provider'), sender, SubjectType.Internal)
+}
 
 export const setupProviderConnection = function (outStream: any, sender: Sender, subjectType: string) {
   let origin: any
