@@ -23,7 +23,7 @@ export class AppMain extends TailwindElement('') {
     super.connectedCallback()
     this.chkView()
     emitter.on('router-change', this.chkView)
-    //  const { isUnlocked } = await doidController.keyringController.memStore.getState()
+    //  const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
   }
 
   render() {

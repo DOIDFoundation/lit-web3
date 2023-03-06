@@ -6,7 +6,6 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 
 import style from './phrase.css?inline'
-import { doidController } from '@/lib/keyringController'
 @customElement('view-create-pwd')
 export class ViewPwd extends TailwindElement(style) {
   @property() placeholder = 'Password'
