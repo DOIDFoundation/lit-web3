@@ -2660,7 +2660,7 @@ packages:
     resolution: {integrity: sha512-MoIJxem0qevnId0nWfq++t6VGOp9NSkfv4z/tgmvFvxYw5kMgBk4xUusFTxeamF8VfByLBNDNmMxxxGnK738Fw==}
     dependencies:
       '@ethereumjs/tx': 4.1.1
-      '@ethereumjs/util': 8.0.3
+      '@ethereumjs/util': 8.0.5
       '@keystonehq/bc-ur-registry-eth': 0.15.2
       hdkey: 2.1.0
       rlp: 3.0.0
@@ -2674,7 +2674,7 @@ packages:
   /@keystonehq/bc-ur-registry-eth/0.15.2:
     resolution: {integrity: sha512-M096p7RD4SfcU+EQOISa0eTGyr5+Ls4hKOx3pDVWu8Y3TlWZFgFE39ma+zLqKTzGjkt6Ita96dT2u2p4pZfyTA==}
     dependencies:
-      '@ethereumjs/util': 8.0.3
+      '@ethereumjs/util': 8.0.5
       '@keystonehq/bc-ur-registry': 0.5.4
       hdkey: 2.1.0
       uuid: 8.3.2

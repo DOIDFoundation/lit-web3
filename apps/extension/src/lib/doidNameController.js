@@ -1,4 +1,5 @@
-const ObservableStore = require('obs-store')
+import ObservableStore from '@metamask/obs-store'
+import EventEmitter from 'events'
 
 class DoidNameController extends EventEmitter {
   store = {}
