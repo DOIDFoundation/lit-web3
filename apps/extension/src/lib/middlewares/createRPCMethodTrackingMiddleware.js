@@ -99,7 +99,6 @@ const rateLimitTimeouts = {}
  *  MetaMetricsController
  * @param {number} [opts.rateLimitSeconds] - number of seconds to wait before
  *  allowing another set of events to be tracked.
- * @returns {Function}
  */
 export default function createRPCMethodTrackingMiddleware({ trackEvent, getMetricsState, rateLimitSeconds = 60 * 5 }) {
   return function rpcMethodTrackingMiddleware(

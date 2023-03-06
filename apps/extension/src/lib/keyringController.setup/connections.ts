@@ -1,16 +1,11 @@
 // !!! `this` must point to DOIDController with `bind()` method
 import { setupMultiplex } from '~/lib/stream-utils'
-import { SubjectType } from '@metamask/subject-metadata-controller'
 import { createEngineStream } from 'json-rpc-middleware-stream'
 import { ORIGIN_METAMASK } from '~/constants/app'
 import { nanoid } from 'nanoid'
 import pump from 'pump'
-// import { SubjectMetadataController } from '@metamask/subject-metadata-controller'
+import { SubjectType, SubjectMetadataController } from '@metamask/subject-metadata-controller'
 
-type SnapSender = {
-  snapId: string
-}
-interface Sender extends chrome.runtime.MessageSender, SnapSender {}
 interface setupUntrustedCommunicationOptions {
   connectionStream: ReadableStream
   sender: Sender

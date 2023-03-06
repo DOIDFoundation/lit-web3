@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
-import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
 import { setupMultiplex } from '~/lib/stream-utils'
 import { Mutex } from 'await-semaphore'
 import * as Connections from './keyringController.setup/connections'
