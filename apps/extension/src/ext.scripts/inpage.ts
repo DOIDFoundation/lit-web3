@@ -6,19 +6,42 @@
 // 4. `inpage.js` will be injected to "main world" aka real browser environment
 
 import '@lit-web3/core/src/shims/node'
-// S These deps only works in extension
-// import { WindowPostMessageStream } from '@metamask/post-message-stream'
+// S MetaMask logics
+let __define: any
+const cleanContextForImports = () => {
+  __define = global.define
+  try {
+    global.define = undefined
+  } catch (_) {
+    console.warn('DOID - global.define could not be deleted.')
+  }
+}
+const restoreContextAfterImports = () => {
+  try {
+    global.define = __define
+  } catch (_) {
+    console.warn('DOID - global.define could not be overwritten.')
+  }
+}
+cleanContextForImports()
 // E
-import { injectProvider } from '~/lib/providers/web3Provider'
-import shouldInject from '~/lib/providers/injection'
 
-const logger = (...args: any) => console.info(`[DOID][inpage]`, ...args)
+// S These deps only works in extension
+import { WindowPostMessageStream } from '@metamask/post-message-stream'
+// E
+import { injectProvider } from '@/lib/providers/inpageProvider'
+import shouldInjectProvider from '~/lib/providers/injection'
 
-// const inpageStream = new WindowPostMessageStream({
-//   name: 'DOID-background',
-//   target: 'DOID-inpage'
-// })
-// if (shouldInject()) injectProvider({ connectionStream: inpageStream })
+restoreContextAfterImports()
+
+const logger = (...args: any) => console.info(`[inpage]`, ...args)
+
+const inpageStream = new WindowPostMessageStream({
+  name: 'DOID-inpage',
+  target: 'DOID-contentscript'
+})
+
+if (shouldInjectProvider()) injectProvider({ connectionStream: inpageStream })
 
 const start = function () {
   logger('injected')

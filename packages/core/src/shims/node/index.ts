@@ -1,6 +1,5 @@
 import nextTick from './nextTick'
-import shimBuffer from './buffer'
+import Buffer from './buffer.sync'
+import './stream'
 
-shimBuffer()
-
-export { nextTick, shimBuffer }
+export { nextTick, Buffer }

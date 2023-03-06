@@ -1,4 +1,5 @@
 import '@lit-web3/core/src/shims/node'
+// import '~/lib/webextension-polyfill'
 import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
@@ -22,6 +23,7 @@ export class AppMain extends TailwindElement('') {
     super.connectedCallback()
     this.chkView()
     emitter.on('router-change', this.chkView)
+    //  const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
   }
 
   render() {

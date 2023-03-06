@@ -1,11 +1,5 @@
-import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
-import manifest from './manifest.config'
-import { dirname, relative, resolve } from 'path'
-// import AutoImport from 'unplugin-auto-import/vite'
-
 // S Here is a temporary hack for @crxjs/vite-plugin@2.0.0-beta.13
 // import { crx } from '@crxjs/vite-plugin'
-import fs from 'fs'
 const depPath = resolve(__dirname, 'node_modules/@crxjs/vite-plugin/dist/index.mjs')
 const depJsSrc = fs.readFileSync(depPath, 'utf8')
 const reg = /page\.scripts\.push\(\.\.\.scripts\)/
@@ -13,6 +7,23 @@ if (/reg/.test(depJsSrc)) {
   fs.writeFileSync(depPath, depJsSrc.replace(reg, `page?.scripts.push(...scripts)`))
 }
 // E
+// S touch public/inpage.js
+const inpagPath = resolve(__dirname, 'public/inpage.js')
+try {
+  const time = new Date()
+  fs.utimesSync(inpagPath, time, time)
+} catch (e) {
+  const fd = fs.openSync(inpagPath, 'w')
+  fs.closeSync(fd)
+}
+// E
+
+import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
+import manifest from './manifest.config'
+import { dirname, relative, resolve } from 'path'
+import nodePolyfills from 'rollup-plugin-polyfill-node'
+import fs from 'fs'
+// import AutoImport from 'unplugin-auto-import/vite'
 
 export const sharedConfig = async (mode = '') => {
   const [port, isDev] = [4831, mode === 'development']
@@ -63,6 +74,6 @@ export const sharedConfig = async (mode = '') => {
 export default async ({ mode = '' }) => {
   const config = await sharedConfig(mode)
   const { crx } = await import('@crxjs/vite-plugin')
-  config.plugins.push(...([crx({ manifest })] as any[]))
+  config.plugins.push(...([nodePolyfills(), crx({ manifest })] as any[]))
   return viteConfig(config)({ mode })
 }

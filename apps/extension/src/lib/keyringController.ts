@@ -1,13 +1,16 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
+import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
+import { setupMultiplex } from '~/lib/stream-utils'
+import { Mutex } from 'await-semaphore'
+import * as Connections from './keyringController.setup/connections'
 import LocalStore from './local-store'
 import ComposableObservableStore from './ComposableObservableStore'
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
 import { ControllerMessenger } from '@metamask/base-controller'
 import PreferencesController from './preferences'
-import { Mutex } from 'await-semaphore'
-
-export let doidController: DoidController
+import swGlobal from '~/ext.scripts/sw/swGlobal'
+import DoidNameController from './doidNameController'
 
 enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
@@ -17,27 +20,35 @@ enum HardwareKeyringTypes {
   hdKeyTree = 'HD Key Tree',
   imported = 'Simple Key Pair'
 }
-class DoidNameController extends EventEmitter {
-  constructor() {
-    super()
-  }
-}
 
-class DoidController extends EventEmitter {
+export class DOIDController extends EventEmitter {
+  keyringController: KeyringController
+  opts: Record<string, any>
+  activeControllerConnections: any
+  connections: any
+  createVaultMutex: any
+  extension: any
+
   store: ComposableObservableStore
   memStore: ComposableObservableStore
-  keyringController: KeyringController
   controllerMessenger: ControllerMessenger<any, any>
   preferencesController: PreferencesController
-  createVaultMutex: Mutex
   networkController: Object
   tokenListController: Object
   provider: Object
   doidNameController: DoidNameController
 
-  constructor(opts: any) {
+  //store : ComposableObservableStore
+  constructor(opts: Record<string, any>) {
     super()
+    this.opts = opts
+    this.extension = opts.browser ?? chrome
+
     const initState = opts.initState || {}
+    this.activeControllerConnections = 0
+    this.connections = {}
+    this.createVaultMutex = new Mutex()
+
     let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)]
 
     //if (this.canUseHardwareWallets()) {
@@ -68,7 +79,6 @@ class DoidController extends EventEmitter {
     this.networkController = {}
     this.tokenListController = {}
     this.provider = {}
-    this.doidNameController = new DoidNameController()
 
     this.preferencesController = new PreferencesController({
       initState: initState.PreferencesController,
@@ -79,10 +89,18 @@ class DoidController extends EventEmitter {
       provider: this.provider
     })
 
-    this.keyringController.on('update', function () {
-      console.log('keyring update event')
+    this.keyringController.on('update', () => {
+      console.log('keyring update event', this.keyringController.store.getState(), initState)
+      const data = Object.assign(initState, {
+        KeyringController: this.keyringController.store.getState()
+      })
+      localStore.set(data)
     })
-    this.createVaultMutex = new Mutex()
+
+    this.doidNameController = new DoidNameController({
+      initState: {},
+      store: this.store
+    })
 
     /**
      * All controllers in Memstore but not in store. They are not persisted.
@@ -328,7 +346,13 @@ class DoidController extends EventEmitter {
       identities: oldIdentities
     }
   }
-
+  getState() {
+    const { vault } = this.keyringController.store.getState()
+    const isInitialized = Boolean(vault)
+    return {
+      isInitialized
+    }
+  }
   async verifySeedPhrase() {
     const [primaryKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) {
@@ -460,6 +484,8 @@ class DoidController extends EventEmitter {
 
     try {
       //await this.blockTracker.checkForLatestBlock();
+      const allAccounts = await this.keyringController.getAccounts()
+      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
@@ -509,20 +535,25 @@ class DoidController extends EventEmitter {
     //sendUpdate();
   }
 
-  /**
-   * The metamask-state of the various controllers, made available to the UI
-   *
-   * @returns {object} status
-   */
-  getState() {
-    const { vault } = this.keyringController.store.getState()
-    const isInitialized = Boolean(vault)
-
-    return {
-      isInitialized
-      //...this.memStore.getFlatState(),
-    }
-  }
+  // _startUISync() {
+  //   // Message startUISync is used in MV3 to start syncing state with UI
+  //   // Sending this message after login is completed helps to ensure that incomplete state without
+  //   // account details are not flushed to UI.
+  //   this.emit('startUISync');
+  //   this.startUISync = true;
+  //   this.memStore.subscribe(this.sendUpdate.bind(this));
+  // }
+  // setupUntrustedCommunication
+  setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
+  // setupControllerConnection = Connections.setupControllerConnection.bind(this)
+  setupProviderConnection = Connections.setupProviderConnection.bind(this)
+  // setupSnapProvider = Connections.setupSnapProvider.bind(this)
+  // setupProviderEngine = Connections.setupProviderEngine.bind(this)
+  addConnection = Connections.addConnection.bind(this)
+  removeConnection = Connections.removeConnection.bind(this)
+  removeAllConnections = Connections.removeAllConnections.bind(this)
+  notifyConnections = Connections.notifyConnections.bind(this)
+  notifyAllConnections = Connections.notifyAllConnections.bind(this)
 }
 
 const initialState = {
@@ -537,6 +568,11 @@ const initialState = {
         rpcPrefs: {}
       }
     ]
+  },
+  onboardingController: {
+    seedPhraseBackedUp: null,
+    firstTimeFlowType: null,
+    completedOnboarding: false
   }
 }
 
@@ -577,14 +613,14 @@ const inTest = process.env.IN_TEST
 //const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
 const localStore = new LocalStore()
 
-async function loadStateFromPersistence() {
+export const loadStateFromPersistence = async function () {
   // migrations
   const migrator = new Migrator()
   //  migrator.on('error', console.warn);
   //
   // read from disk
   // first from preferred, async API:
-  versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
+  versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
   console.log(versionedData)
   //
   //  // check if somehow state is empty
@@ -632,16 +668,16 @@ async function loadStateFromPersistence() {
  * @param {string} initLangCode - The region code for the language preferred by the current user.
  */
 function setupController(initState: any, initLangCode: string) {
-  doidController = new DoidController({
+  swGlobal.controller = new DOIDController({
     initState,
     initLangCode
   })
-  return doidController
+  return swGlobal.controller
   //
   // MetaMask Controller
   //
   /*
-  controller = new DoidController({
+  controller = new DOIDController({
     infuraProjectId: process.env.INFURA_PROJECT_ID,
     // User confirmation callbacks:
     showUserConfirmation: triggerUi,
@@ -714,7 +750,7 @@ function setupController(initState: any, initLangCode: string) {
   */
 }
 
-async function getFirstPreferredLangCode() {
+export const getFirstPreferredLangCode = async function () {
   return 'en'
 }
 
@@ -722,7 +758,7 @@ export async function initialize() {
   //try {
   const initState = await loadStateFromPersistence()
   const initLangCode = await getFirstPreferredLangCode()
-  doidController = setupController(initState, initLangCode)
+  const doidController = setupController(initState, initLangCode)
   //if (!isManifestV3) {
   //  await loadPhishingWarningPage();
   //}
@@ -746,4 +782,5 @@ export async function initialize() {
   const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
   console.log('second ', secondkeyring)
 }
-await initialize()
+export const initController = initialize
+// await initialize()

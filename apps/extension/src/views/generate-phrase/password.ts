@@ -10,12 +10,12 @@ import style from './phrase.css?inline'
 export class ViewPwd extends TailwindElement(style) {
   @property() placeholder = 'Password'
   @property() PASSWORD_MIN_LENGTH = 8
-  @state() pwd = ''
-  @state() confirmPwd = ''
+  @state() pwd = '123qwe123'
+  @state() confirmPwd = '123qwe123'
   @state() err = ''
   @state() pending = false
   @state() btnDisabled = true
-  @state() isUnderstand = false
+  @state() isUnderstand = true
 
   isValid = () => {
     if (!this.pwd || !this.confirmPwd || this.pwd !== this.confirmPwd || !this.isUnderstand) {
@@ -42,7 +42,8 @@ export class ViewPwd extends TailwindElement(style) {
     this.btnDisabled = this.isValid()
   }
   routeGoto = async (path: string) => {
-    console.log(path, 'route-path')
+    // console.log(path, 'route-path')
+
     this.emit('routeGoto', { path, pwd: this.pwd })
   }
   submit() {}
