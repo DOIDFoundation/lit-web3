@@ -1,9 +1,12 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
+import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
+import { setupMultiplex } from '~/lib/stream-utils'
+import { Mutex } from 'await-semaphore'
+import * as Connections from './keyringController.setup/connections'
 import LocalStore from './local-store'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 //import { Mutex } from 'await-semaphore';
-
-export let doidController: DoidController
 
 export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
@@ -14,12 +17,23 @@ export const enum HardwareKeyringTypes {
   imported = 'Simple Key Pair'
 }
 
-class DoidController extends EventEmitter {
+export class DOIDController extends EventEmitter {
   keyringController: KeyringController
+  opts: Record<string, any>
+  activeControllerConnections: any
+  connections: any
+  createVaultMutex: any
+  extension: any
   //store : ComposableObservableStore
-  constructor(opts: any) {
+  constructor(opts: Record<string, any>) {
     super()
+    this.opts = opts
+    this.extension = opts.browser ?? chrome
+
     const initState = opts.initState || {}
+    this.activeControllerConnections = 0
+    this.connections = {}
+    this.createVaultMutex = new Mutex()
 
     let additionalKeyrings: any = defaultKeyringBuilders
     //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
@@ -63,6 +77,8 @@ class DoidController extends EventEmitter {
       localStore.set(data)
     })
   }
+  opts: object
+  extension: object
 
   //keyringController.createVaultMutex = new Mutex()
 
@@ -204,7 +220,13 @@ class DoidController extends EventEmitter {
     //    identities: oldIdentities,
     //  };
   }
-
+  getState() {
+    const { vault } = this.keyringController.store.getState()
+    const isInitialized = Boolean(vault)
+    return {
+      isInitialized
+    }
+  }
   async verifySeedPhrase() {
     const [primaryKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) {
@@ -336,6 +358,8 @@ class DoidController extends EventEmitter {
 
     try {
       //await this.blockTracker.checkForLatestBlock();
+      const allAccounts = await this.keyringController.getAccounts()
+      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
@@ -384,6 +408,25 @@ class DoidController extends EventEmitter {
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
+  // _startUISync() {
+  //   // Message startUISync is used in MV3 to start syncing state with UI
+  //   // Sending this message after login is completed helps to ensure that incomplete state without
+  //   // account details are not flushed to UI.
+  //   this.emit('startUISync');
+  //   this.startUISync = true;
+  //   this.memStore.subscribe(this.sendUpdate.bind(this));
+  // }
+  // setupUntrustedCommunication
+  setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
+  // setupControllerConnection = Connections.setupControllerConnection.bind(this)
+  setupProviderConnection = Connections.setupProviderConnection.bind(this)
+  // setupSnapProvider = Connections.setupSnapProvider.bind(this)
+  // setupProviderEngine = Connections.setupProviderEngine.bind(this)
+  addConnection = Connections.addConnection.bind(this)
+  removeConnection = Connections.removeConnection.bind(this)
+  removeAllConnections = Connections.removeAllConnections.bind(this)
+  notifyConnections = Connections.notifyConnections.bind(this)
+  notifyAllConnections = Connections.notifyAllConnections.bind(this)
 }
 
 const initialState = {
@@ -398,6 +441,11 @@ const initialState = {
         rpcPrefs: {}
       }
     ]
+  },
+  onboardingController: {
+    seedPhraseBackedUp: null,
+    firstTimeFlowType: null,
+    completedOnboarding: false
   }
 }
 
@@ -438,15 +486,15 @@ const inTest = process.env.IN_TEST
 //const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
 const localStore = new LocalStore()
 
-async function loadStateFromPersistence() {
+export const loadStateFromPersistence = async function () {
   // migrations
   const migrator = new Migrator()
   //  migrator.on('error', console.warn);
   //
   // read from disk
   // first from preferred, async API:
-  versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
-  console.log(versionedData, 'versionedData')
+  versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
+  console.log(versionedData)
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has
@@ -493,16 +541,16 @@ async function loadStateFromPersistence() {
  * @param {string} initLangCode - The region code for the language preferred by the current user.
  */
 function setupController(initState: any, initLangCode: string) {
-  doidController = new DoidController({
+  swGlobal.controller = new DOIDController({
     initState,
     initLangCode
   })
-  return doidController
+  return swGlobal.controller
   //
   // MetaMask Controller
   //
   /*
-  controller = new DoidController({
+  controller = new DOIDController({
     infuraProjectId: process.env.INFURA_PROJECT_ID,
     // User confirmation callbacks:
     showUserConfirmation: triggerUi,
@@ -575,7 +623,7 @@ function setupController(initState: any, initLangCode: string) {
   */
 }
 
-async function getFirstPreferredLangCode() {
+export const getFirstPreferredLangCode = async function () {
   return 'en'
 }
 
@@ -595,4 +643,5 @@ export async function initialize() {
   //  console.error(error)
   //}
 }
-await initialize()
+export const initController = initialize
+// await initialize()

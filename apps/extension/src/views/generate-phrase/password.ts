@@ -6,7 +6,6 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 
 import style from './phrase.css?inline'
-import { doidController } from '@/lib/keyringController'
 @customElement('view-create-pwd')
 export class ViewPwd extends TailwindElement(style) {
   @property() placeholder = 'Password'
@@ -43,12 +42,12 @@ export class ViewPwd extends TailwindElement(style) {
     this.btnDisabled = this.isValid()
   }
   routeGoto = async (path: string) => {
-    console.log(path, 'route-path')
+    // console.log(path, 'route-path')
+
     this.emit('routeGoto', { path, pwd: this.pwd })
   }
   submit() {}
   render() {
-    console.log(doidController.keyringController.store.getState(), 'state')
     return html`
       <div class="dui-container">
         <div class="text-lg font-bold mt-2 text-center">Create password</div>

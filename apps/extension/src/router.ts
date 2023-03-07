@@ -27,9 +27,21 @@ export const routes = [
   {
     name: 'unlock',
     path: '/unlock',
-    render: () => html`<view-unlock></view-unlock>`,
+    render: () => {
+      return html`<view-unlock></view-unlock>`
+    },
     enter: async () => {
       await import('~/views/unlock')
+      return true
+    }
+  },
+  // dApp Sample
+  {
+    name: 'dApp',
+    path: '/dApp',
+    render: () => html`<view-dapp></view-dapp>`,
+    enter: async () => {
+      await import('~/views/dApp.sample')
       return true
     }
   },

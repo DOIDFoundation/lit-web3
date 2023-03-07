@@ -11,7 +11,7 @@ import type { Duplex } from 'stream'
 import type { JsonRpcRequest, JsonRpcResponse } from 'json-rpc-engine'
 
 export interface SendSyncJsonRpcRequest extends JsonRpcRequest<unknown> {
-  method: 'DOID_accounts' | 'net_version'
+  method: 'DOID_account' | 'eth_accounts' | 'net_version'
 }
 
 interface InpageProviderOptions extends Partial<Omit<StreamProviderOptions, 'rpcMiddleware'>> {
@@ -290,7 +290,10 @@ export class InpageProvider extends AbstractStreamProvider {
   protected _sendSync(payload: SendSyncJsonRpcRequest) {
     let result
     switch (payload.method) {
-      case 'DOID_accounts':
+      case 'DOID_account':
+        result = this.selectedAddress ? [this.selectedAddress] : []
+        break
+      case 'eth_accounts':
         result = this.selectedAddress ? [this.selectedAddress] : []
         break
 
