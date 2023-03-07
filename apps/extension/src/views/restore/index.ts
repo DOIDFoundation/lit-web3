@@ -28,7 +28,6 @@ export class ViewRestore extends TailwindElement(style) {
     return Object.values(this.invalid).some((r) => r)
   }
   onInputName = (e: CustomEvent) => {
-    
     // TODO: check valid
     const text = e.detail.trim()
     this.name = text
@@ -48,9 +47,7 @@ export class ViewRestore extends TailwindElement(style) {
   restore = async () => {
     console.table({ name: this.wrapName, ...(await getKey(this.phrase)) })
     try {
-      const encodedSeedPhrase = Array.from(
-        Buffer.from(this.phrase, 'utf8').values(),
-      );
+      const encodedSeedPhrase = Array.from(Buffer.from(this.phrase, 'utf8').values())
 
       await doidController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
       goto('/main')

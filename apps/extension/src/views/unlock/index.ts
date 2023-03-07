@@ -6,6 +6,7 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 
 import style from './unlock.css?inline'
+import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-unlock')
 export class ViewUnlock extends TailwindElement(style) {
   @property() placeholder = 'Password'
@@ -19,7 +20,9 @@ export class ViewUnlock extends TailwindElement(style) {
     if (error) return
     this.pwd = val
   }
-
+  unlock = () => {
+    goto('/main')
+  }
   submit() {}
   render() {
     return html`<div class="unlock">
@@ -49,7 +52,9 @@ export class ViewUnlock extends TailwindElement(style) {
               </span>
             </dui-input-text>
             <div class="my-2">
-              <dui-button class="block w-full secondary !rounded-full h-12" block>Unlock</dui-button>
+              <dui-button class="block w-full secondary !rounded-full h-12" block @click=${this.unlock}
+                >Unlock</dui-button
+              >
             </div>
             <p class="text-center my-4 text-xs"><dui-link href="/restore" class="link">Forgot?</dui-link></p>
           </div>
