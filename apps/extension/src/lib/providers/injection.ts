@@ -1,5 +1,13 @@
 // ref: @metamask-extention/shared/modules/provider-injection.js
-export default function shouldInject() {
+enum InjectType {
+  'contentscript',
+  'init'
+}
+type InjectTypes = keyof typeof InjectType
+const injectType: InjectTypes = 'contentscript'
+
+export default function shouldInjectProvider(type?: string) {
+  if (type && type !== injectType) return false
   return doctypeCheck() && suffixCheck() && documentElementCheck() && !blockedDomainCheck()
 }
 function doctypeCheck() {

@@ -1,6 +1,5 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { doidController } from '@/lib/keyringController'
 import { keyringStore, StateController } from '~/store/keyring'
 
 // Components

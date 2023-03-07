@@ -1,6 +1,6 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { keyringStore, StateController } from '~/store/keyring'
-import { doidController } from '@/lib/keyringController'
+import { keyringStore, StateController } from '@/store/keyring'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -18,8 +18,8 @@ export class ViewMain extends TailwindElement(style) {
     return getAccount()
   }
 
-  async connectedCallback() {
-    await doidController.keyringController.getAccounts().then((accounts: any[]) => {
+  connectedCallback() {
+    swGlobal.controller?.keyringController.getAccounts().then((accounts: any[]) => {
       this.address = accounts.join(',')
     })
     super.connectedCallback()

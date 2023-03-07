@@ -9,7 +9,7 @@ import '@lit-web3/dui/src/link'
 import '@/components/phrase'
 import '@/components/pwd_equal'
 import { getKey } from '@/lib/phrase'
-import { doidController } from '@/lib/keyringController'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
 import style from './restore.css?inline'
@@ -49,7 +49,7 @@ export class ViewRestore extends TailwindElement(style) {
     try {
       const encodedSeedPhrase = Array.from(Buffer.from(this.phrase, 'utf8').values())
 
-      await doidController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
+      await swGlobal.controller.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
       goto('/main')
     } catch (err: any) {
       this.invalid.phrase = err.message || err

@@ -1,4 +1,4 @@
-/// <reference src="@ethersproject/providers">
+/// <reference types="@ethersproject/providers" />
 
 declare type Address = `0x${string}` | string
 declare type TokenID = string

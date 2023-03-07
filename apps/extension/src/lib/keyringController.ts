@@ -1,9 +1,16 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
+import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
+import { setupMultiplex } from '~/lib/stream-utils'
+import { Mutex } from 'await-semaphore'
+import * as Connections from './keyringController.setup/connections'
 import LocalStore from './local-store'
-//import { Mutex } from 'await-semaphore';
-
-export let doidController: DoidController
+import ComposableObservableStore from './ComposableObservableStore'
+import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
+import { ControllerMessenger } from '@metamask/base-controller'
+import PreferencesController from './preferences'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
+import DoidNameController from './doidNameController'
 
 enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
@@ -14,15 +21,35 @@ enum HardwareKeyringTypes {
   imported = 'Simple Key Pair'
 }
 
-class DoidController extends EventEmitter {
+export class DOIDController extends EventEmitter {
   keyringController: KeyringController
-  //store : ComposableObservableStore
-  constructor(opts: any) {
-    super()
-    const initState = opts.initState || {}
+  opts: Record<string, any>
+  activeControllerConnections: any
+  connections: any
+  createVaultMutex: any
+  extension: any
 
-    let additionalKeyrings: any = defaultKeyringBuilders
-    //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
+  store: ComposableObservableStore
+  memStore: ComposableObservableStore
+  controllerMessenger: ControllerMessenger<any, any>
+  preferencesController: PreferencesController
+  networkController: Object
+  tokenListController: Object
+  provider: Object
+  doidNameController: DoidNameController
+
+  //store : ComposableObservableStore
+  constructor(opts: Record<string, any>) {
+    super()
+    this.opts = opts
+    this.extension = opts.browser ?? chrome
+
+    const initState = opts.initState || {}
+    this.activeControllerConnections = 0
+    this.connections = {}
+    this.createVaultMutex = new Mutex()
+
+    let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)]
 
     //if (this.canUseHardwareWallets()) {
     //  const additionalKeyringTypes = [
@@ -41,19 +68,26 @@ class DoidController extends EventEmitter {
       //encryptor: opts.encryptor || undefined,
       //cacheEncryptionKey: isManifestV3,
     })
-    // console.log(chrome.storage.session.get(), 'get')
-    // this.keyringController.memStore.subscribe(
-    //   async (state: any) => {
-    //     console.log(state, 'chrome.storage.session.get()')
-    //     // const { encryptionKey: loginToken, encryptionSalt: loginSalt } = state
-    //     // await chrome.storage.session.set({ loginToken, loginSalt })
-    //   }
-    // )
-    //this.store = new ComposableObservableStore({
-    //  state: initState,
-    //  controllerMessenger: this.controllerMessenger,
-    //  persist: true,
-    //});
+
+    this.controllerMessenger = new ControllerMessenger()
+    this.store = new ComposableObservableStore({
+      controllerMessenger: this.controllerMessenger,
+      state: initState,
+      persist: true
+    })
+
+    this.networkController = {}
+    this.tokenListController = {}
+    this.provider = {}
+
+    this.preferencesController = new PreferencesController({
+      initState: initState.PreferencesController,
+      initLangCode: opts.initLangCode,
+      openPopup: opts.openPopup,
+      network: this.networkController,
+      tokenListController: this.tokenListController,
+      provider: this.provider
+    })
 
     this.keyringController.on('update', () => {
       console.log('keyring update event', this.keyringController.store.getState(), initState)
@@ -62,9 +96,98 @@ class DoidController extends EventEmitter {
       })
       localStore.set(data)
     })
-  }
 
-  //keyringController.createVaultMutex = new Mutex()
+    this.doidNameController = new DoidNameController({
+      initState: {},
+      store: this.store
+    })
+
+    /**
+     * All controllers in Memstore but not in store. They are not persisted.
+     * On chrome profile re-start, they will be re-initialized.
+     */
+    const resetOnRestartStore = {
+      //      AccountTracker: this.accountTracker.store,
+      //      TxController: this.txController.memStore,
+      //      TokenRatesController: this.tokenRatesController,
+      //      MessageManager: this.messageManager.memStore,
+      //      PersonalMessageManager: this.personalMessageManager.memStore,
+      //      DecryptMessageManager: this.decryptMessageManager.memStore,
+      //      EncryptionPublicKeyManager: this.encryptionPublicKeyManager.memStore,
+      //      TypesMessageManager: this.typedMessageManager.memStore,
+      //      SwapsController: this.swapsController.store,
+      //      EnsController: this.ensController.store,
+      //      ApprovalController: this.approvalController,
+    }
+
+    this.store.updateStructure({
+      //      AppStateController: this.appStateController.store,
+      //      TransactionController: this.txController.store,
+      KeyringController: this.keyringController.store,
+      DoidController: this.doidNameController,
+      PreferencesController: this.preferencesController.store,
+      //      MetaMetricsController: this.metaMetricsController.store,
+      //      AddressBookController: this.addressBookController,
+      //      CurrencyController: this.currencyRateController,
+      //      NetworkController: this.networkController.store,
+      //      CachedBalancesController: this.cachedBalancesController.store,
+      //      AlertController: this.alertController.store,
+      //      OnboardingController: this.onboardingController.store,
+      //      IncomingTransactionsController: this.incomingTransactionsController.store,
+      //      PermissionController: this.permissionController,
+      //      PermissionLogController: this.permissionLogController.store,
+      //      SubjectMetadataController: this.subjectMetadataController,
+      //      BackupController: this.backupController,
+      //      AnnouncementController: this.announcementController,
+      //      GasFeeController: this.gasFeeController,
+      TokenListController: this.tokenListController,
+      //      TokensController: this.tokensController,
+      //      SmartTransactionsController: this.smartTransactionsController,
+      //      NftController: this.nftController,
+      //      PhishingController: this.phishingController,
+      //      ///: BEGIN:ONLY_INCLUDE_IN(flask)
+      //      SnapController: this.snapController,
+      //      CronjobController: this.cronjobController,
+      //      NotificationController: this.notificationController,
+      ///: END:ONLY_INCLUDE_IN
+      ...resetOnRestartStore
+    })
+
+    this.memStore = new ComposableObservableStore({
+      config: {
+        //        AppStateController: this.appStateController.store,
+        //        NetworkController: this.networkController.store,
+        //        CachedBalancesController: this.cachedBalancesController.store,
+        KeyringController: this.keyringController.memStore,
+        DoidController: this.doidNameController,
+        PreferencesController: this.preferencesController.store,
+        //        MetaMetricsController: this.metaMetricsController.store,
+        //        AddressBookController: this.addressBookController,
+        //        CurrencyController: this.currencyRateController,
+        //        AlertController: this.alertController.store,
+        //        OnboardingController: this.onboardingController.store,
+        //        IncomingTransactionsController:
+        //          this.incomingTransactionsController.store,
+        //        PermissionController: this.permissionController,
+        //        PermissionLogController: this.permissionLogController.store,
+        //        SubjectMetadataController: this.subjectMetadataController,
+        //        BackupController: this.backupController,
+        //        AnnouncementController: this.announcementController,
+        //        GasFeeController: this.gasFeeController,
+        //        TokenListController: this.tokenListController,
+        //        TokensController: this.tokensController,
+        //        SmartTransactionsController: this.smartTransactionsController,
+        //        NftController: this.nftController,
+        //        ///: BEGIN:ONLY_INCLUDE_IN(flask)
+        //        SnapController: this.snapController,
+        //        CronjobController: this.cronjobController,
+        //        NotificationController: this.notificationController,
+        ///: END:ONLY_INCLUDE_IN
+        ...resetOnRestartStore
+      },
+      controllerMessenger: this.controllerMessenger
+    })
+  }
 
   /**
    * Create a new Vault and restore an existent keyring.
@@ -74,13 +197,13 @@ class DoidController extends EventEmitter {
    * of UTF-8 bytes.
    */
   async createNewVaultAndRestore(password: string, encodedSeedPhrase: number[]) {
-    //const releaseLock = await createVaultMutex.acquire();
+    //const releaseLock = await this.createVaultMutex.acquire();
     try {
       let accounts, lastBalance
 
       const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
 
-      //const { keyringController } = this;
+      const { keyringController } = this
 
       // clear known identities
       //this.preferencesController.setAddresses([]);
@@ -105,10 +228,10 @@ class DoidController extends EventEmitter {
       //this.txController.txStateManager.clearUnapprovedTxs();
 
       // create new vault
-      const vault = await this.keyringController.createNewVaultAndRestore(password, seedPhraseAsBuffer)
+      const vault = await keyringController.createNewVaultAndRestore(password, seedPhraseAsBuffer)
 
       //const ethQuery = new EthQuery(this.provider);
-      //accounts = await keyringController.getAccounts();
+      accounts = await keyringController.getAccounts()
       //lastBalance = await this.getBalance(
       //  accounts[accounts.length - 1],
       //  ethQuery,
@@ -152,6 +275,25 @@ class DoidController extends EventEmitter {
     }
   }
 
+  /**
+   * Get first address of an seedphrase
+   * @param seedPhrase
+   * @returns first address of the seed
+   */
+  async getFirstAccountFromSeedPhrase(seedPhrase: number[]) {
+    const keyring = await this.keyringController._newKeyring(HardwareKeyringTypes.hdKeyTree, {
+      mnemonic: seedPhrase,
+      numberOfAccounts: 1
+    })
+
+    const [firstAccount] = await keyring.getAccounts()
+
+    if (!firstAccount) {
+      throw new Error('KeyringController - First Account not found.')
+    }
+    return firstAccount
+  }
+
   // create new vault
   async createNewVaultAndKeychain(password: string) {
     // await bufferPolyfill()
@@ -178,33 +320,39 @@ class DoidController extends EventEmitter {
     if (!primaryKeyring) {
       throw new Error('MetamaskController - No HD Key Tree found')
     }
-    //  const { identities: oldIdentities } =
-    //    this.preferencesController.store.getState();
-    //
-    //  if (Object.keys(oldIdentities).length === accountCount) {
-    //    const oldAccounts = await keyringController.getAccounts();
-    //    const keyState = await keyringController.addNewAccount(primaryKeyring);
-    //    const newAccounts = await keyringController.getAccounts();
-    //
-    //    await this.verifySeedPhrase();
-    //
-    //    this.preferencesController.setAddresses(newAccounts);
-    //    newAccounts.forEach((address) => {
-    //      if (!oldAccounts.includes(address)) {
-    //        this.preferencesController.setSelectedAddress(address);
-    //      }
-    //    });
-    //
-    //    const { identities } = this.preferencesController.store.getState();
-    //    return { ...keyState, identities };
-    //  }
-    //
-    //  return {
-    //    ...keyringController.memStore.getState(),
-    //    identities: oldIdentities,
-    //  };
-  }
+    const { keyringController } = this
+    const { identities: oldIdentities } = this.preferencesController.store.getState()
 
+    if (Object.keys(oldIdentities).length === accountCount) {
+      const oldAccounts = await keyringController.getAccounts()
+      const keyState = await keyringController.addNewAccount(primaryKeyring)
+      const newAccounts = await keyringController.getAccounts()
+
+      await this.verifySeedPhrase()
+
+      this.preferencesController.setAddresses(newAccounts)
+      newAccounts.forEach((address) => {
+        if (!oldAccounts.includes(address)) {
+          this.preferencesController.setSelectedAddress(address)
+        }
+      })
+
+      const { identities } = this.preferencesController.store.getState()
+      return { ...keyState, identities }
+    }
+
+    return {
+      ...keyringController.memStore.getState(),
+      identities: oldIdentities
+    }
+  }
+  getState() {
+    const { vault } = this.keyringController.store.getState()
+    const isInitialized = Boolean(vault)
+    return {
+      isInitialized
+    }
+  }
   async verifySeedPhrase() {
     const [primaryKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) {
@@ -336,6 +484,8 @@ class DoidController extends EventEmitter {
 
     try {
       //await this.blockTracker.checkForLatestBlock();
+      const allAccounts = await this.keyringController.getAccounts()
+      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
@@ -384,6 +534,26 @@ class DoidController extends EventEmitter {
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
+
+  // _startUISync() {
+  //   // Message startUISync is used in MV3 to start syncing state with UI
+  //   // Sending this message after login is completed helps to ensure that incomplete state without
+  //   // account details are not flushed to UI.
+  //   this.emit('startUISync');
+  //   this.startUISync = true;
+  //   this.memStore.subscribe(this.sendUpdate.bind(this));
+  // }
+  // setupUntrustedCommunication
+  setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
+  // setupControllerConnection = Connections.setupControllerConnection.bind(this)
+  setupProviderConnection = Connections.setupProviderConnection.bind(this)
+  // setupSnapProvider = Connections.setupSnapProvider.bind(this)
+  // setupProviderEngine = Connections.setupProviderEngine.bind(this)
+  addConnection = Connections.addConnection.bind(this)
+  removeConnection = Connections.removeConnection.bind(this)
+  removeAllConnections = Connections.removeAllConnections.bind(this)
+  notifyConnections = Connections.notifyConnections.bind(this)
+  notifyAllConnections = Connections.notifyAllConnections.bind(this)
 }
 
 const initialState = {
@@ -398,6 +568,11 @@ const initialState = {
         rpcPrefs: {}
       }
     ]
+  },
+  onboardingController: {
+    seedPhraseBackedUp: null,
+    firstTimeFlowType: null,
+    completedOnboarding: false
   }
 }
 
@@ -438,15 +613,15 @@ const inTest = process.env.IN_TEST
 //const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
 const localStore = new LocalStore()
 
-async function loadStateFromPersistence() {
+export const loadStateFromPersistence = async function () {
   // migrations
   const migrator = new Migrator()
   //  migrator.on('error', console.warn);
   //
   // read from disk
   // first from preferred, async API:
-  versionedData = (await localStore.get()) || migrator.generateInitialState(initialState)
-  console.log(versionedData, 'versionedData')
+  versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
+  console.log(versionedData)
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has
@@ -493,16 +668,16 @@ async function loadStateFromPersistence() {
  * @param {string} initLangCode - The region code for the language preferred by the current user.
  */
 function setupController(initState: any, initLangCode: string) {
-  doidController = new DoidController({
+  swGlobal.controller = new DOIDController({
     initState,
     initLangCode
   })
-  return doidController
+  return swGlobal.controller
   //
   // MetaMask Controller
   //
   /*
-  controller = new DoidController({
+  controller = new DOIDController({
     infuraProjectId: process.env.INFURA_PROJECT_ID,
     // User confirmation callbacks:
     showUserConfirmation: triggerUi,
@@ -575,7 +750,7 @@ function setupController(initState: any, initLangCode: string) {
   */
 }
 
-async function getFirstPreferredLangCode() {
+export const getFirstPreferredLangCode = async function () {
   return 'en'
 }
 
@@ -583,7 +758,7 @@ export async function initialize() {
   //try {
   const initState = await loadStateFromPersistence()
   const initLangCode = await getFirstPreferredLangCode()
-  setupController(initState, initLangCode)
+  const doidController = setupController(initState, initLangCode)
   //if (!isManifestV3) {
   //  await loadPhishingWarningPage();
   //}
@@ -594,5 +769,18 @@ export async function initialize() {
   //rejectInitialization(error);
   //  console.error(error)
   //}
+
+  // test
+  const encodedSeedPhrase = Array.from(
+    Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
+  )
+  const encodedSeedPhrase2 = Array.from(
+    Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
+  )
+  const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
+  console.log('first valut ', vault)
+  const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
+  console.log('second ', secondkeyring)
 }
-await initialize()
+export const initController = initialize
+// await initialize()
