@@ -8,24 +8,12 @@ import {
   choose
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { keyringStore, StateController } from '~/store/keyring'
+import { getAddress, AddressType } from '@/lib/phrase'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
-import { mnemonicToSeed, validateMnemonic } from 'ethereum-cryptography/bip39'
-import { doidController } from '@/lib/keyringController'
-import { toHex } from 'ethereum-cryptography/utils'
-import { HDKey } from 'ethereum-cryptography/hdkey'
-import { bytesToHex } from 'ethereum-cryptography/utils'
-
-import {
-  bufferToHex,
-  privateToAddress,
-  publicToAddress,
-  toChecksumAddress,
-  privateToPublic,
-  importPublic,
-  isValidPrivate,
-  isValidPublic
-} from '@ethereumjs/util'
+import { keyringStore, StateController } from '~/store/keyring'
+import { validateMnemonic } from 'ethereum-cryptography/bip39'
+import { initialize } from '@/lib/keyringController'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -47,7 +35,7 @@ export class ViewImport extends TailwindElement(style) {
 
   @state() start = '1'
 
-  @state() mainAddress = '0xd21aa1fd018dc7ade0039b92ff05fba5df475e82'
+  @state() mainAddress = '0xf14fb3c8ab193b2aba966fe360534f43c43ff710'
 
   // get currentStep() {
   //   return this.step ?? 1
@@ -63,7 +51,7 @@ export class ViewImport extends TailwindElement(style) {
   }
 
   async showAddress() {
-    const [firstAccount] = await doidController.keyringController.getAccounts()
+    const [firstAccount] = await swGlobal.controller.keyringController.getAccounts()
     console.log(firstAccount, '------------')
     if (!firstAccount) {
       throw new Error('KeyringController - First Account not found.')
@@ -73,10 +61,11 @@ export class ViewImport extends TailwindElement(style) {
 
   onCreateMainAddress = async () => {
     try {
+      await initialize()
       console.log(this.mnemonic, this.pwd, '----------')
       const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
 
-      await doidController.keyringController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
+      await swGlobal.controller.keyringController.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
       this.showAddress()
       this.start = '4'
     } catch (err: any) {
@@ -95,15 +84,7 @@ export class ViewImport extends TailwindElement(style) {
     console.log(error)
     if (!error) return
 
-    let seed = await mnemonicToSeed(this.mnemonic)
-
-    // let seedStrHex = toHex(seed)
-    // console.log(seedStrHex)
-    let key = HDKey.fromMasterSeed(seed)
-    let pubKey = key.derive(`m/44'/60'/0'/0/0`).publicKey
-
-    // let ethAddress = bytesToHex(pubKey)
-    let ethAddress = bufferToHex(publicToAddress(Buffer.from(pubKey), true)).toLowerCase()
+    let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
     console.log(ethAddress, '---------')
 
     if (this.mainAddress != ethAddress) {

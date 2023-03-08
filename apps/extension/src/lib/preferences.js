@@ -1,6 +1,90 @@
+import { ObservableStore } from '@metamask/obs-store';
+import { normalize as normalizeAddress } from 'eth-sig-util';
+import { IPFS_DEFAULT_GATEWAY_URL } from '../constants/network';
+//import { isPrefixedFormattedHexString } from '../../../shared/modules/network.utils';
+import { LedgerTransportTypes } from '../constants/hardware-wallets';
+import { ThemeType } from '../constants/preferences';
+//import { NETWORK_EVENTS } from './network';
+import { NETWORK_EVENTS } from './network-controller';
 
-class PereferencesController {
-  constructor() {
+export default class PreferencesController {
+  /**
+   *
+   * @typedef {object} PreferencesController
+   * @param {object} opts - Overrides the defaults for the initial state of this.store
+   * @property {object} store The stored object containing a users preferences, stored in local storage
+   * @property {Array} store.frequentRpcList A list of custom rpcs to provide the user
+   * @property {boolean} store.useBlockie The users preference for blockie identicons within the UI
+   * @property {boolean} store.useNonceField The users preference for nonce field within the UI
+   * @property {object} store.featureFlags A key-boolean map, where keys refer to features and booleans to whether the
+   * user wishes to see that feature.
+   *
+   * Feature flags can be set by the global function `setPreference(feature, enabled)`, and so should not expose any sensitive behavior.
+   * @property {object} store.knownMethodData Contains all data methods known by the user
+   * @property {string} store.currentLocale The preferred language locale key
+   * @property {string} store.selectedAddress A hex string that matches the currently selected address in the app
+   */
+  constructor(opts = {}) {
+    const initState = {
+      frequentRpcListDetail: [],
+      useBlockie: false,
+      useNonceField: false,
+      usePhishDetect: true,
+      dismissSeedBackUpReminder: false,
+      disabledRpcMethodPreferences: {
+        eth_sign: false,
+      },
+      useMultiAccountBalanceChecker: true,
+
+      // set to true means the dynamic list from the API is being used
+      // set to false will be using the static list from contract-metadata
+      useTokenDetection: false,
+      useNftDetection: false,
+      useCurrencyRateCheck: true,
+      openSeaEnabled: false,
+      advancedGasFee: null,
+
+      // WARNING: Do not use feature flags for security-sensitive things.
+      // Feature flag toggling is available in the global namespace
+      // for convenient testing of pre-release features, and should never
+      // perform sensitive operations.
+      featureFlags: {
+        showIncomingTransactions: true,
+      },
+      knownMethodData: {},
+      currentLocale: opts.initLangCode,
+      identities: {},
+      lostIdentities: {},
+      forgottenPassword: false,
+      preferences: {
+        autoLockTimeLimit: undefined,
+        showFiatInTestnets: false,
+        showTestNetworks: false,
+        useNativeCurrencyAsPrimaryCurrency: true,
+        hideZeroBalanceTokens: false,
+      },
+      // ENS decentralized website resolution
+      ipfsGateway: IPFS_DEFAULT_GATEWAY_URL,
+      infuraBlocked: null,
+      ledgerTransportType: window.navigator.hid
+        ? LedgerTransportTypes.webhid
+        : LedgerTransportTypes.u2f,
+      transactionSecurityCheckEnabled: false,
+      theme: ThemeType.os,
+      ...opts.initState,
+    };
+
+    this.network = opts.network;
+    this.store = new ObservableStore(initState);
+    this.store.setMaxListeners(13);
+    this.openPopup = opts.openPopup;
+    this.tokenListController = opts.tokenListController;
+
+    this._subscribeToInfuraAvailability();
+
+    global.setPreference = (key, value) => {
+      return this.setFeatureFlag(key, value);
+    };
   }
   // PUBLIC METHODS
 
@@ -150,6 +234,7 @@ class PereferencesController {
     });
     return textDirection;
   }
+
   /**
    * Updates identities to only include specified addresses. Removes identities
    * not included in addresses array
@@ -303,7 +388,215 @@ class PereferencesController {
     this.store.updateState({ identities });
     return label;
   }
-  
-}
-export let preferencesController = new PereferencesController()
 
+  /**
+   * Adds custom RPC url to state.
+   *
+   * @param {string} rpcUrl - The RPC url to add to frequentRpcList.
+   * @param {string} chainId - The chainId of the selected network.
+   * @param {string} [ticker] - Ticker symbol of the selected network.
+   * @param {string} [nickname] - Nickname of the selected network.
+   * @param {object} [rpcPrefs] - Optional RPC preferences, such as the block explorer URL
+   */
+//  upsertToFrequentRpcList(
+//    rpcUrl,
+//    chainId,
+//    ticker = 'ETH',
+//    nickname = '',
+//    rpcPrefs = {},
+//  ) {
+//    const rpcList = this.getFrequentRpcListDetail();
+//
+//    const index = rpcList.findIndex((element) => {
+//      return element.rpcUrl === rpcUrl;
+//    });
+//    if (index !== -1) {
+//      rpcList.splice(index, 1, { rpcUrl, chainId, ticker, nickname, rpcPrefs });
+//      return;
+//    }
+//
+//    if (!isPrefixedFormattedHexString(chainId)) {
+//      throw new Error(`Invalid chainId: "${chainId}"`);
+//    }
+//
+//    rpcList.push({ rpcUrl, chainId, ticker, nickname, rpcPrefs });
+//    this.store.updateState({ frequentRpcListDetail: rpcList });
+//  }
+
+  /**
+   * Removes custom RPC url from state.
+   *
+   * @param {string} url - The RPC url to remove from frequentRpcList.
+   * @returns {Promise<Array>} Promise resolving to updated frequentRpcList.
+   */
+  async removeFromFrequentRpcList(url) {
+    const rpcList = this.getFrequentRpcListDetail();
+    const index = rpcList.findIndex((element) => {
+      return element.rpcUrl === url;
+    });
+    if (index !== -1) {
+      rpcList.splice(index, 1);
+    }
+    this.store.updateState({ frequentRpcListDetail: rpcList });
+    return rpcList;
+  }
+
+  /**
+   * Getter for the `frequentRpcListDetail` property.
+   *
+   * @returns {Array<Array>} An array of rpc urls.
+   */
+  getFrequentRpcListDetail() {
+    return this.store.getState().frequentRpcListDetail;
+  }
+
+  /**
+   * Updates the `featureFlags` property, which is an object. One property within that object will be set to a boolean.
+   *
+   * @param {string} feature - A key that corresponds to a UI feature.
+   * @param {boolean} activated - Indicates whether or not the UI feature should be displayed
+   * @returns {Promise<object>} Promises a new object; the updated featureFlags object.
+   */
+  async setFeatureFlag(feature, activated) {
+    const currentFeatureFlags = this.store.getState().featureFlags;
+    const updatedFeatureFlags = {
+      ...currentFeatureFlags,
+      [feature]: activated,
+    };
+
+    this.store.updateState({ featureFlags: updatedFeatureFlags });
+
+    return updatedFeatureFlags;
+  }
+
+  /**
+   * Updates the `preferences` property, which is an object. These are user-controlled features
+   * found in the settings page.
+   *
+   * @param {string} preference - The preference to enable or disable.
+   * @param {boolean} value - Indicates whether or not the preference should be enabled or disabled.
+   * @returns {Promise<object>} Promises a new object; the updated preferences object.
+   */
+  async setPreference(preference, value) {
+    const currentPreferences = this.getPreferences();
+    const updatedPreferences = {
+      ...currentPreferences,
+      [preference]: value,
+    };
+
+    this.store.updateState({ preferences: updatedPreferences });
+    return updatedPreferences;
+  }
+
+  /**
+   * A getter for the `preferences` property
+   *
+   * @returns {object} A key-boolean map of user-selected preferences.
+   */
+  getPreferences() {
+    return this.store.getState().preferences;
+  }
+
+  /**
+   * A getter for the `ipfsGateway` property
+   *
+   * @returns {string} The current IPFS gateway domain
+   */
+  getIpfsGateway() {
+    return this.store.getState().ipfsGateway;
+  }
+
+  /**
+   * A setter for the `ipfsGateway` property
+   *
+   * @param {string} domain - The new IPFS gateway domain
+   * @returns {Promise<string>} A promise of the update IPFS gateway domain
+   */
+  async setIpfsGateway(domain) {
+    this.store.updateState({ ipfsGateway: domain });
+    return domain;
+  }
+
+  /**
+   * A setter for the `ledgerTransportType` property.
+   *
+   * @param {string} ledgerTransportType - Either 'ledgerLive', 'webhid' or 'u2f'
+   * @returns {string} The transport type that was set.
+   */
+  setLedgerTransportPreference(ledgerTransportType) {
+    this.store.updateState({ ledgerTransportType });
+    return ledgerTransportType;
+  }
+
+  /**
+   * A getter for the `ledgerTransportType` property.
+   *
+   * @returns {string} The current preferred Ledger transport type.
+   */
+  getLedgerTransportPreference() {
+    return this.store.getState().ledgerTransportType;
+  }
+
+  /**
+   * A setter for the user preference to dismiss the seed phrase backup reminder
+   *
+   * @param {bool} dismissSeedBackUpReminder - User preference for dismissing the back up reminder.
+   */
+  async setDismissSeedBackUpReminder(dismissSeedBackUpReminder) {
+    await this.store.updateState({
+      dismissSeedBackUpReminder,
+    });
+  }
+
+  /**
+   * A setter for the user preference to enable/disable rpc methods
+   *
+   * @param {string} methodName - The RPC method name to change the setting of
+   * @param {bool} isEnabled - true to enable the rpc method
+   */
+  async setDisabledRpcMethodPreference(methodName, isEnabled) {
+    const currentRpcMethodPreferences =
+      this.store.getState().disabledRpcMethodPreferences;
+    const updatedRpcMethodPreferences = {
+      ...currentRpcMethodPreferences,
+      [methodName]: isEnabled,
+    };
+
+    this.store.updateState({
+      disabledRpcMethodPreferences: updatedRpcMethodPreferences,
+    });
+  }
+
+  getRpcMethodPreferences() {
+    return this.store.getState().disabledRpcMethodPreferences;
+  }
+
+  //
+  // PRIVATE METHODS
+  //
+
+  _subscribeToInfuraAvailability() {
+  //  this.network.on(NETWORK_EVENTS.INFURA_IS_BLOCKED, () => {
+  //    this._setInfuraBlocked(true);
+  //  });
+  //  this.network.on(NETWORK_EVENTS.INFURA_IS_UNBLOCKED, () => {
+  //    this._setInfuraBlocked(false);
+  //  });
+  }
+
+  /**
+   *
+   * A setter for the `infuraBlocked` property
+   *
+   * @param {boolean} isBlocked - Bool indicating whether Infura is blocked
+   */
+  _setInfuraBlocked(isBlocked) {
+    const { infuraBlocked } = this.store.getState();
+
+    if (infuraBlocked === isBlocked) {
+      return;
+    }
+
+    this.store.updateState({ infuraBlocked: isBlocked });
+  }
+}

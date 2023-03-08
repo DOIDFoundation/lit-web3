@@ -30,5 +30,18 @@ export const getKey = async (phrase: string) => {
 
 export const getAddress = async (mnemnoic: string, type: AddressType) => {
   if (type == AddressType.eth) {
+    let seed = await mnemonicToSeed(mnemnoic)
+    let key = HDKey.fromMasterSeed(seed)
+    let pubKey = key.derive(`m/44'/60'/0'/0/0`).publicKey
+
+    let ethAddress = bufferToHex(publicToAddress(Buffer.from(pubKey), true)).toLowerCase()
+    return ethAddress
+  } else if (type == AddressType.aptos) {
+    let apt = AptosAccount.fromDerivePath(`m/44'/637'/0'/0'/0'`, mnemnoic)
+    return apt.address().hex()
+  } else if (type == AddressType.solana) {
+    let seed = await mnemonicToSeed(mnemnoic)
+    let keypair = Keypair.fromSeed(seed.slice(0, 32))
+    return keypair.publicKey.toBase58()
   }
 }

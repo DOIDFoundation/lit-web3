@@ -1,8 +1,6 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
-import { DOIDController } from '@/lib/keyringController'
-import { HardwareKeyringTypes } from '@/lib/keyringController'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -23,9 +21,6 @@ export class ViewImport extends TailwindElement(style) {
   onPhraseChange = (e: CustomEvent) => {
     e.stopPropagation()
     const { phrase } = e.detail as any
-    // console.log(phrase)
-    // const encodedSeedPhrase = Array.from(Buffer.from(phrase, 'utf8').values())
-    // this.getFirstAccountFromSeedPhrase(encodedSeedPhrase)
     keyringStore.mnemonic = phrase
   }
 
@@ -33,19 +28,6 @@ export class ViewImport extends TailwindElement(style) {
     goto(`${path}`)
   }
 
-  // async getFirstAccountFromSeedPhrase(seedPhrase: number[]) {
-  //   const keyring = await doidController.keyringController._newKeyring(HardwareKeyringTypes.hdKeyTree, {
-  //     mnemonic: seedPhrase,
-  //     numberOfAccounts: 1
-  //   })
-
-  //   const [firstAccount] = await keyring.getAccounts()
-  //   console.log(firstAccount)
-  //   if (!firstAccount) {
-  //     throw new Error('KeyringController - First Account not found.')
-  //   }
-  //   return firstAccount
-  // }
   render() {
     return html`<div class="home">
       <div class="dui-container sparse">
