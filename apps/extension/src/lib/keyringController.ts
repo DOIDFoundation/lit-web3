@@ -102,7 +102,6 @@ export class DOIDController extends EventEmitter {
     })
     // E
     this.tokenListController = {}
-    this.provider = {}
 
     this.preferencesController = new PreferencesController({
       initState: initState.PreferencesController,

@@ -39,14 +39,12 @@ const initStreams = () => {
 }
 
 const onMessageSetUpExtensionStreams = (msg: any) => {
-  console.log(msg, 'msgggggggggggg')
   if (msg.name === EXTENSION_MESSAGES.READY) {
     if (!extensionStream) {
       setupExtensionStreams()
     }
     return Promise.resolve(`DOID: handled ${EXTENSION_MESSAGES.READY}`)
   }
-  return
 }
 
 const sendMessageWorkerKeepAlive = () => {
@@ -133,6 +131,7 @@ const setupExtensionStreams = () => {
 }
 
 function extensionStreamMessageListener(msg: any) {
+  console.log('ondata')
   if (EXTENSION_CONNECT_SENT && msg.data.method === 'DOID_chainChanged') {
     EXTENSION_CONNECT_SENT = false
     window.postMessage(
