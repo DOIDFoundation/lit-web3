@@ -1,5 +1,5 @@
-import { MESSAGE_TYPE } from '../../../../../shared/constants/app';
-import { EVENT } from '../../../../../shared/constants/metametrics';
+import { MESSAGE_TYPE } from '~/constants/app'
+import { EVENT } from '~/constants/metametrics'
 
 /**
  * This RPC method is called by the inpage provider whenever it detects the
@@ -14,10 +14,10 @@ const logWeb3ShimUsage = {
   hookNames: {
     sendMetrics: true,
     getWeb3ShimUsageState: true,
-    setWeb3ShimUsageRecorded: true,
-  },
-};
-export default logWeb3ShimUsage;
+    setWeb3ShimUsageRecorded: true
+  }
+}
+export default logWeb3ShimUsage
 
 /**
  * @typedef {object} LogWeb3ShimUsageOptions
@@ -40,26 +40,26 @@ function logWeb3ShimUsageHandler(
   res,
   _next,
   end,
-  { sendMetrics, getWeb3ShimUsageState, setWeb3ShimUsageRecorded },
+  { sendMetrics, getWeb3ShimUsageState, setWeb3ShimUsageRecorded }
 ) {
-  const { origin } = req;
+  const { origin } = req
   if (getWeb3ShimUsageState(origin) === undefined) {
-    setWeb3ShimUsageRecorded(origin);
+    setWeb3ShimUsageRecorded(origin)
 
     sendMetrics(
       {
         event: `Website Accessed window.web3 Shim`,
         category: EVENT.CATEGORIES.INPAGE_PROVIDER,
         referrer: {
-          url: origin,
-        },
+          url: origin
+        }
       },
       {
-        excludeMetaMetricsId: true,
-      },
-    );
+        excludeMetaMetricsId: true
+      }
+    )
   }
 
-  res.result = true;
-  return end();
+  res.result = true
+  return end()
 }

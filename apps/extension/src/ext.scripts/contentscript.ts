@@ -39,6 +39,7 @@ const initStreams = () => {
 }
 
 const onMessageSetUpExtensionStreams = (msg: any) => {
+  console.log(msg, 'msgggggggggggg')
   if (msg.name === EXTENSION_MESSAGES.READY) {
     if (!extensionStream) {
       setupExtensionStreams()

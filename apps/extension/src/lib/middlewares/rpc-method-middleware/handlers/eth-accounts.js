@@ -1,4 +1,4 @@
-import { MESSAGE_TYPE } from '../../../../../shared/constants/app';
+import { MESSAGE_TYPE } from '~/constants/app'
 
 /**
  * A wrapper for `eth_accounts` that returns an empty array when permission is denied.
@@ -8,10 +8,10 @@ const requestEthereumAccounts = {
   methodNames: [MESSAGE_TYPE.ETH_ACCOUNTS],
   implementation: ethAccountsHandler,
   hookNames: {
-    getAccounts: true,
-  },
-};
-export default requestEthereumAccounts;
+    getAccounts: true
+  }
+}
+export default requestEthereumAccounts
 
 /**
  * @typedef {Record<string, Function>} EthAccountsOptions
@@ -28,6 +28,6 @@ export default requestEthereumAccounts;
  * @param {EthAccountsOptions} options - The RPC method hooks.
  */
 async function ethAccountsHandler(_req, res, _next, end, { getAccounts }) {
-  res.result = await getAccounts();
-  return end();
+  res.result = await getAccounts()
+  return end()
 }

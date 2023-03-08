@@ -1,6 +1,8 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
+import { HardwareKeyringTypes } from '@/lib/keyringController'
+import { getAddress, AddressType } from '@/lib/phrase'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 // Components
@@ -29,9 +31,10 @@ export class ViewImport extends TailwindElement(style) {
 
   onCreateMainAddress = async () => {
     try {
-      console.log(keyringStore.mnemonic)
+      // console.log(keyringStore.mnemonic, this.pwd, '----------')
+      let ethAddress = await getAddress(keyringStore.mnemonic, AddressType.eth)
+      console.log('mainAddress:', ethAddress, '------------')
       const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
-
       await swGlobal.controller.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
       goto('/main')
     } catch (err: any) {

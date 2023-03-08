@@ -11,7 +11,8 @@
   "dependencies": {
     "@lit-web3/core": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
-    "@lit-web3/ethers": "workspace:latest"
+    "@lit-web3/ethers": "workspace:latest",
+    "@lit-web3/extension": "workspace:latest"
   },
   "devDependencies": {
     "@vitest/ui": "^0.28.3",
