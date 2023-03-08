@@ -1,4 +1,4 @@
-import { MESSAGE_TYPE } from '../../../../../shared/constants/app';
+import { MESSAGE_TYPE } from '~/constants/app'
 
 /**
  * This RPC method gets background state relevant to the provider.
@@ -10,10 +10,10 @@ const getProviderState = {
   methodNames: [MESSAGE_TYPE.GET_PROVIDER_STATE],
   implementation: getProviderStateHandler,
   hookNames: {
-    getProviderState: true,
-  },
-};
-export default getProviderState;
+    getProviderState: true
+  }
+}
+export default getProviderState
 
 /**
  * @typedef {object} ProviderStateHandlerResult
@@ -35,15 +35,9 @@ export default getProviderState;
  * @param {Function} end - The json-rpc-engine 'end' callback.
  * @param {ProviderStateHandlerOptions} options
  */
-async function getProviderStateHandler(
-  req,
-  res,
-  _next,
-  end,
-  { getProviderState: _getProviderState },
-) {
+async function getProviderStateHandler(req, res, _next, end, { getProviderState: _getProviderState }) {
   res.result = {
-    ...(await _getProviderState(req.origin)),
-  };
-  return end();
+    ...(await _getProviderState(req.origin))
+  }
+  return end()
 }

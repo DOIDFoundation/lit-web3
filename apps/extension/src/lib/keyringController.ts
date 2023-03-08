@@ -1,8 +1,9 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
-import { setupMultiplex } from '~/lib/stream-utils'
+import NetworkController from '~/lib/controllers/network-controller'
 import { Mutex } from 'await-semaphore'
 import * as Connections from './keyringController.setup/connections'
+import * as Middlewares from '~/lib/middlewares'
 import LocalStore from './local-store'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 //import { Mutex } from 'await-semaphore';
@@ -23,6 +24,12 @@ export class DOIDController extends EventEmitter {
   connections: any
   createVaultMutex: any
   extension: any
+  networkController: any
+  provider: any
+  blockTracker: any
+  walletMiddleware: any
+  approvalController: any
+  startUISync: boolean = false
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
     super()
@@ -54,6 +61,27 @@ export class DOIDController extends EventEmitter {
       //encryptor: opts.encryptor || undefined,
       //cacheEncryptionKey: isManifestV3,
     })
+    // S stream deps
+    this.networkController = new NetworkController({
+      state: initState.NetworkController
+    })
+    // this.approvalController = new ApprovalController({
+    //   messenger: this.controllerMessenger.getRestricted({
+    //     name: 'ApprovalController'
+    //   }),
+    //   showApprovalRequest: opts.showUserConfirmation
+    // })
+    this.networkController.initializeProvider()
+    this.provider = this.networkController.getProviderAndBlockTracker().provider
+    this.blockTracker = this.networkController.getProviderAndBlockTracker().blockTracker
+    this.walletMiddleware = Middlewares.createDOIDMiddleware.bind(this)({
+      version: '0.0.1',
+      // account mgmt
+      getAccounts: async ({ origin: innerOrigin }, { suppressUnauthorizedError = true } = {}) => {
+        return ['whoami']
+      }
+    })
+    // E
     // console.log(chrome.storage.session.get(), 'get')
     // this.keyringController.memStore.subscribe(
     //   async (state: any) => {
@@ -76,8 +104,6 @@ export class DOIDController extends EventEmitter {
       localStore.set(data)
     })
   }
-  opts: object
-  extension: object
 
   //keyringController.createVaultMutex = new Mutex()
 
@@ -407,20 +433,19 @@ export class DOIDController extends EventEmitter {
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
-  // _startUISync() {
-  //   // Message startUISync is used in MV3 to start syncing state with UI
-  //   // Sending this message after login is completed helps to ensure that incomplete state without
-  //   // account details are not flushed to UI.
-  //   this.emit('startUISync');
-  //   this.startUISync = true;
-  //   this.memStore.subscribe(this.sendUpdate.bind(this));
-  // }
+  _startUISync() {
+    // Message startUISync is used in MV3 to start syncing state with UI
+    // Sending this message after login is completed helps to ensure that incomplete state without
+    // account details are not flushed to UI.
+    this.emit('startUISync')
+    this.startUISync = true
+    // this.memStore.subscribe(this.sendUpdate.bind(this))
+  }
   // setupUntrustedCommunication
   setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
   // setupControllerConnection = Connections.setupControllerConnection.bind(this)
   setupProviderConnection = Connections.setupProviderConnection.bind(this)
   // setupSnapProvider = Connections.setupSnapProvider.bind(this)
-  // setupProviderEngine = Connections.setupProviderEngine.bind(this)
   addConnection = Connections.addConnection.bind(this)
   removeConnection = Connections.removeConnection.bind(this)
   removeAllConnections = Connections.removeAllConnections.bind(this)
@@ -631,16 +656,5 @@ export async function initialize() {
   const initState = await loadStateFromPersistence()
   const initLangCode = await getFirstPreferredLangCode()
   setupController(initState, initLangCode)
-  //if (!isManifestV3) {
-  //  await loadPhishingWarningPage();
-  //}
-  //await sendReadyMessageToTabs();
-  //log.info('MetaMask initialization complete.');
-  //resolveInitialization();
-  //} catch (error) {
-  //rejectInitialization(error);
-  //  console.error(error)
-  //}
 }
 export const initController = initialize
-// await initialize()

@@ -5,6 +5,7 @@ import '~/lib/webextension-polyfill'
 import { deferredPromise } from '~/lib/utils'
 import { initController } from '~/lib/keyringController'
 import { sendReadyMessageToTabs } from '~/ext.scripts/sw/swGlobal'
+import { sleep } from '@lit-web3/ethers/src/utils'
 
 import { connectRemote, connectExternal } from '~/ext.scripts/sw/connectRemote'
 
@@ -54,8 +55,8 @@ const { promise: isInitialized, resolve: resolveInitialization, reject: rejectIn
 
 async function initialize() {
   try {
-    await 0
     await initController()
+    await sleep(50)
     await sendReadyMessageToTabs()
     // @ts-expect-error
     resolveInitialization()

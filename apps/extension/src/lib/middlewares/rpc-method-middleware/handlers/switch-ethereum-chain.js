@@ -1,17 +1,14 @@
-import { ethErrors } from 'eth-rpc-errors';
-import { omit } from 'lodash';
-import { MESSAGE_TYPE } from '../../../../../shared/constants/app';
+import { ethErrors } from 'eth-rpc-errors'
+import { omit } from 'lodash'
+import { MESSAGE_TYPE } from '~/constants/app'
 import {
   CHAIN_ID_TO_TYPE_MAP,
   NETWORK_TO_NAME_MAP,
   CHAIN_ID_TO_RPC_URL_MAP,
   CURRENCY_SYMBOLS,
-  NETWORK_TYPES,
-} from '../../../../../shared/constants/network';
-import {
-  isPrefixedFormattedHexString,
-  isSafeChainId,
-} from '../../../../../shared/modules/network.utils';
+  NETWORK_TYPES
+} from '~/constants/network'
+import { isPrefixedFormattedHexString, isSafeChainId } from '~/lib/utils'
 
 const switchEthereumChain = {
   methodNames: [MESSAGE_TYPE.SWITCH_ETHEREUM_CHAIN],
@@ -21,10 +18,10 @@ const switchEthereumChain = {
     findCustomRpcBy: true,
     setProviderType: true,
     updateRpcTarget: true,
-    requestUserApproval: true,
-  },
-};
-export default switchEthereumChain;
+    requestUserApproval: true
+  }
+}
+export default switchEthereumChain
 
 function findExistingNetwork(chainId, findCustomRpcBy) {
   if (chainId in CHAIN_ID_TO_TYPE_MAP) {
@@ -33,11 +30,11 @@ function findExistingNetwork(chainId, findCustomRpcBy) {
       ticker: CURRENCY_SYMBOLS.ETH,
       nickname: NETWORK_TO_NAME_MAP[chainId],
       rpcUrl: CHAIN_ID_TO_RPC_URL_MAP[chainId],
-      type: CHAIN_ID_TO_TYPE_MAP[chainId],
-    };
+      type: CHAIN_ID_TO_TYPE_MAP[chainId]
+    }
   }
 
-  return findCustomRpcBy({ chainId });
+  return findCustomRpcBy({ chainId })
 }
 
 async function switchEthereumChainHandler(
@@ -45,87 +42,76 @@ async function switchEthereumChainHandler(
   res,
   _next,
   end,
-  {
-    getCurrentChainId,
-    findCustomRpcBy,
-    setProviderType,
-    updateRpcTarget,
-    requestUserApproval,
-  },
+  { getCurrentChainId, findCustomRpcBy, setProviderType, updateRpcTarget, requestUserApproval }
 ) {
   if (!req.params?.[0] || typeof req.params[0] !== 'object') {
     return end(
       ethErrors.rpc.invalidParams({
-        message: `Expected single, object parameter. Received:\n${JSON.stringify(
-          req.params,
-        )}`,
-      }),
-    );
+        message: `Expected single, object parameter. Received:\n${JSON.stringify(req.params)}`
+      })
+    )
   }
 
-  const { origin } = req;
+  const { origin } = req
 
-  const { chainId } = req.params[0];
+  const { chainId } = req.params[0]
 
-  const otherKeys = Object.keys(omit(req.params[0], ['chainId']));
+  const otherKeys = Object.keys(omit(req.params[0], ['chainId']))
 
   if (otherKeys.length > 0) {
     return end(
       ethErrors.rpc.invalidParams({
-        message: `Received unexpected keys on object parameter. Unsupported keys:\n${otherKeys}`,
-      }),
-    );
+        message: `Received unexpected keys on object parameter. Unsupported keys:\n${otherKeys}`
+      })
+    )
   }
 
-  const _chainId = typeof chainId === 'string' && chainId.toLowerCase();
+  const _chainId = typeof chainId === 'string' && chainId.toLowerCase()
 
   if (!isPrefixedFormattedHexString(_chainId)) {
     return end(
       ethErrors.rpc.invalidParams({
-        message: `Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received:\n${chainId}`,
-      }),
-    );
+        message: `Expected 0x-prefixed, unpadded, non-zero hexadecimal string 'chainId'. Received:\n${chainId}`
+      })
+    )
   }
 
   if (!isSafeChainId(parseInt(_chainId, 16))) {
     return end(
       ethErrors.rpc.invalidParams({
-        message: `Invalid chain ID "${_chainId}": numerical value greater than max safe value. Received:\n${chainId}`,
-      }),
-    );
+        message: `Invalid chain ID "${_chainId}": numerical value greater than max safe value. Received:\n${chainId}`
+      })
+    )
   }
 
-  const requestData = findExistingNetwork(_chainId, findCustomRpcBy);
+  const requestData = findExistingNetwork(_chainId, findCustomRpcBy)
   if (requestData) {
-    const currentChainId = getCurrentChainId();
+    const currentChainId = getCurrentChainId()
     if (currentChainId === _chainId) {
-      res.result = null;
-      return end();
+      res.result = null
+      return end()
     }
     try {
       const approvedRequestData = await requestUserApproval({
         origin,
         type: MESSAGE_TYPE.SWITCH_ETHEREUM_CHAIN,
-        requestData,
-      });
-      if (
-        chainId in CHAIN_ID_TO_TYPE_MAP &&
-        approvedRequestData.type !== NETWORK_TYPES.LOCALHOST
-      ) {
-        setProviderType(approvedRequestData.type);
+        requestData
+      })
+      if (chainId in CHAIN_ID_TO_TYPE_MAP && approvedRequestData.type !== NETWORK_TYPES.LOCALHOST) {
+        setProviderType(approvedRequestData.type)
       } else {
-        await updateRpcTarget(approvedRequestData);
+        await updateRpcTarget(approvedRequestData)
       }
-      res.result = null;
+      res.result = null
     } catch (error) {
-      return end(error);
+      return end(error)
     }
-    return end();
+    return end()
   }
   return end(
     ethErrors.provider.custom({
       code: 4902, // To-be-standardized "unrecognized chain ID" error
-      message: `Unrecognized chain ID "${chainId}". Try adding the chain using ${MESSAGE_TYPE.ADD_ETHEREUM_CHAIN} first.`,
-    }),
-  );
+      message: `Unrecognized chain ID "${chainId}". Try adding the chain using ${MESSAGE_TYPE.ADD_ETHEREUM_CHAIN} first.`
+    })
+  )
 }

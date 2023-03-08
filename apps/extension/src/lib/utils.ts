@@ -36,3 +36,8 @@ export const getPlatform = () => {
   }
   return PLATFORM_CHROME
 }
+
+export const isPrefixedFormattedHexString = (value: unknown) =>
+  typeof value === 'string' && /^0x[1-9a-f]+[0-9a-f]*$/iu.test(value)
+export const isSafeChainId = (chainId: number) =>
+  Number.isSafeInteger(chainId) && chainId > 0 && chainId <= 4503599627370476

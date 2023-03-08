@@ -40,3 +40,5 @@ export const PLATFORM_EDGE = 'Edge'
 export const PLATFORM_FIREFOX = 'Firefox'
 export const PLATFORM_OPERA = 'Opera'
 export const ORIGIN_METAMASK = 'DOID'
+
+export const UNKNOWN_TICKER_SYMBOL = 'UNKNOWN'

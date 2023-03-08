@@ -6,14 +6,15 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "safe-decode-uri-component": "latest",
     "buffer": "^6.0.3",
-    "readable-stream": "^4.3.0"
+    "localforage": "^1.10.0",
+    "readable-stream": "^4.3.0",
+    "safe-decode-uri-component": "latest"
   },
-  "devDependencies": {},
   "peerDependencies": {
     "lit": "^2",
     "tsup": "^6"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {}
 }
