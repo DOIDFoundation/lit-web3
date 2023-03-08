@@ -10,11 +10,13 @@ import 'stream-browserify'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
 import '@/components/account/switch'
+import { StateController, walletStore } from './store'
+import { connectToAccountManager, getConnectStream } from './lib/ui'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
   @state() showHeader = false
-
+  state = new StateController(this, walletStore)
   chkView = () => {
     this.showHeader = !['/unlock', '/', '/restore', '/create', '/start'].includes(location.pathname)
     const { style } = document.documentElement
@@ -24,6 +26,12 @@ export class AppMain extends TailwindElement('') {
   connectedCallback() {
     super.connectedCallback()
     this.chkView()
+    const connectionStream = getConnectStream()
+    connectToAccountManager(connectionStream, async (err: any, backgroundConnection: any) => {
+      console.log(backgroundConnection, 'backgroundConnection')
+      await walletStore.setBackgroundConnection(backgroundConnection)
+      walletStore.promisifiedBackground.submitPassword(12345)
+    })
     emitter.on('router-change', this.chkView)
     //  const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
   }
