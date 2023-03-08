@@ -2,11 +2,14 @@ import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui
 import '@lit-web3/dui/src/address'
 import '@lit-web3/dui/src/doid-symbol'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
-import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
+import { accountStore, StateController } from '~/store/account'
+import { goto } from '@lit-web3/dui/src/shared/router'
 
 import style from './start.css?inline'
 @customElement('view-start')
 export class ViewStart extends TailwindElement(style) {
+  bindStore: any = new StateController(this, accountStore)
+
   @state() name = ''
   @state() ownerAddress = ''
   @state() mainAddress = ''
@@ -17,9 +20,12 @@ export class ViewStart extends TailwindElement(style) {
 
   async getAddressesByName() {
     if (!this.name) return
-    const { owner, mainAddress } = await nameInfo(this.name)
-    this.ownerAddress = owner ?? ''
-    this.mainAddress = mainAddress ?? ''
+    const { owner, mainAddress } = await accountStore.search(this.name)
+    this.ownerAddress = owner
+    this.mainAddress = mainAddress
+  }
+  gotoRecover = () => {
+    goto('/recover')
   }
   connectedCallback() {
     this.getAddressesByName()
@@ -57,14 +63,14 @@ export class ViewStart extends TailwindElement(style) {
             `
           )}
           <div class="mt-10 flex flex-col gap-2">
-            <dui-button class="w-full" .disabled=${!this.mainAddress}
+            <dui-button class="w-full" .disabled=${!this.mainAddress} @click=${this.gotoRecover}
               >Manage
               ${when(
                 this.mainAddress,
                 () => html` with (<dui-address .address=${this.mainAddress} short></dui-address>)`
               )}</dui-button
             >
-            <dui-button class="w-full" .disabled=${!this.ownerAddress}
+            <dui-button class="w-full" .disabled=${!this.ownerAddress || true}
               >Reset
               ${when(
                 this.ownerAddress,
