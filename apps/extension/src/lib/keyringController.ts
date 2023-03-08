@@ -98,8 +98,7 @@ export class DOIDController extends EventEmitter {
     })
 
     this.doidNameController = new DoidNameController({
-      initState: {},
-      store: this.store
+      initState: initState.doidNameController
     })
 
     /**
@@ -124,7 +123,7 @@ export class DOIDController extends EventEmitter {
       //      AppStateController: this.appStateController.store,
       //      TransactionController: this.txController.store,
       KeyringController: this.keyringController.store,
-      DoidController: this.doidNameController,
+      DoidController: this.doidNameController.store,
       PreferencesController: this.preferencesController.store,
       //      MetaMetricsController: this.metaMetricsController.store,
       //      AddressBookController: this.addressBookController,
@@ -159,7 +158,7 @@ export class DOIDController extends EventEmitter {
         //        NetworkController: this.networkController.store,
         //        CachedBalancesController: this.cachedBalancesController.store,
         KeyringController: this.keyringController.memStore,
-        DoidController: this.doidNameController,
+        DoidController: this.doidNameController.memStore,
         PreferencesController: this.preferencesController.store,
         //        MetaMetricsController: this.metaMetricsController.store,
         //        AddressBookController: this.addressBookController,

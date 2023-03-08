@@ -175,7 +175,7 @@ importers:
     devDependencies:
       '@crxjs/vite-plugin': 2.0.0-beta.13
       '@rollup/plugin-node-resolve': 15.0.1
-      '@types/chrome': 0.0.219
+      '@types/chrome': 0.0.220
       '@types/end-of-stream': 1.4.1
       '@types/fs-extra': 9.0.13
       '@types/pump': 1.1.1
@@ -3663,8 +3663,8 @@ packages:
       '@types/har-format': 1.2.10
     dev: false
 
-  /@types/chrome/0.0.219:
-    resolution: {integrity: sha512-3j4Baa7DKrH2kJ5NLJIntpiqu4l7W0na0nrW9Y5y38HsLCXa4ydK8Y8Vicqq8ZZk/LLHKU7aarmUeqdBQmamAA==}
+  /@types/chrome/0.0.220:
+    resolution: {integrity: sha512-s5Sl4M3z3+IQLvYbR1yA+UVjX+LTtodmuZjqL6LkP+MWmuoNl1yryoJVCHBqEDZTH5p5PALGgkQVSTfjfYwXlg==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.10
