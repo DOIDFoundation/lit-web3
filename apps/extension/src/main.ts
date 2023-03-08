@@ -30,7 +30,7 @@ export class AppMain extends TailwindElement('') {
     connectToAccountManager(connectionStream, async (err: any, backgroundConnection: any) => {
       console.log(backgroundConnection, 'backgroundConnection')
       await walletStore.setBackgroundConnection(backgroundConnection)
-      walletStore.promisifiedBackground.submitPassword(12345)
+      // walletStore.promisifiedBackground.submitPassword(12345)
     })
     emitter.on('router-change', this.chkView)
     //  const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()

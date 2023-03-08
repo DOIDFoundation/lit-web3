@@ -11,7 +11,8 @@ import { ControllerMessenger } from '@metamask/base-controller'
 import PreferencesController from './preferences'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import DoidNameController from './doidNameController'
-
+import { setupMultiplex } from './stream-utils'
+import createMetaRPCHandler from './createMetaRPCHandler'
 export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
   trezor = 'Trezor Hardware',
@@ -538,7 +539,80 @@ export class DOIDController extends EventEmitter {
 
     return keyring.mnemonic
   }
+  setupTrustedCommunication(connectionStream: any, sender: any) {
+    // setup multiplexing
+    const mux = setupMultiplex(connectionStream)
+    // connect features
+    this.setupControllerConnection(mux.createStream('controller'))
+    // this.setupProviderConnection(
+    //   mux.createStream('provider'),
+    //   sender,
+    //   SubjectType.Internal,
+    // );
+  }
+  getApi() {
+    return {
+      getState: this.getState.bind(this),
+      markPasswordForgotten: this.markPasswordForgotten.bind(this),
+      unMarkPasswordForgotten: this.unMarkPasswordForgotten.bind(this),
+      addNewAccount: this.addNewAccount.bind(this),
+      verifySeedPhrase: this.verifySeedPhrase.bind(this),
+      resetAccount: this.resetAccount.bind(this),
+      submitPassword: this.submitPassword.bind(this),
+      verifyPassword: this.verifyPassword.bind(this),
+      createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
+      createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this)
+    }
+  }
+  setupControllerConnection(outStream: any) {
+    const api = this.getApi()
+    // report new active controller connection
+    // this.activeControllerConnections += 1;
+    // this.emit('controllerConnectionChanged', this.activeControllerConnections);
+    console.log(api, 'api')
 
+    // set up postStream transport  createMetaRPCHandler(api, outStream, this.store, {})
+    outStream.on('data', (data: any) => {
+      console.log(data, '----data')
+    })
+    // const handleUpdate = (update) => {
+    //   if (outStream._writableState.ended) {
+    //     return;
+    //   }
+    //   // send notification to client-side
+    //   outStream.write({
+    //     jsonrpc: '2.0',
+    //     method: 'sendUpdate',
+    //     params: [update],
+    //   });
+    // };
+    // this.on('update', handleUpdate);
+    // const startUISync = () => {
+    //   if (outStream._writableState.ended) {
+    //     return;
+    //   }
+    //   // send notification to client-side
+    //   outStream.write({
+    //     jsonrpc: '2.0',
+    //     method: 'startUISync',
+    //   });
+    // };
+
+    // if (this.startUISync) {
+    //   startUISync();
+    // } else {
+    //   this.once('startUISync', startUISync);
+    // }
+
+    // outStream.on('end', () => {
+    //   this.activeControllerConnections -= 1;
+    //   this.emit(
+    //     'controllerConnectionChanged',
+    //     this.activeControllerConnections,
+    //   );
+    //   this.removeListener('update', handleUpdate);
+    // });
+  }
   //=============================================================================
   // PASSWORD MANAGEMENT
   //=============================================================================

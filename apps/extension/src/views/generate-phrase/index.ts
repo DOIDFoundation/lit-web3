@@ -12,6 +12,7 @@ import '../unlock'
 
 import style from './phrase.css?inline'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { StateController, walletStore } from '~/store'
 // const localStore = new LocalStore()
 
 @customElement('view-phrase')
@@ -21,6 +22,7 @@ export class ViewPhrase extends TailwindElement(style) {
     // goto(`/unlock${location.pathname}`)
     // console.log(location.pathname, 'location.pathname')
   }
+  state = new StateController(this, walletStore)
   @property() ROUTE?: any
   @property() steps = [
     {
@@ -83,18 +85,20 @@ export class ViewPhrase extends TailwindElement(style) {
     goto(`/generate-phrase/${e.detail.path}`)
   }
   getIsInitialized = async () => {
-    const { vault } = await swGlobal.controller.keyringController.store.getState()
-    const isInitialized = Boolean(vault)
-    const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
-    const storageData = await chrome.storage.local.get()
-    if (isInitialized && !storageData.data.onboardingController.completedOnboarding) {
-      goto(`/generate-phrase/unlock`)
-    }
-    if (isUnlocked) {
-      goto('/main')
-    } else {
-      goto('/unlock')
-    }
+    console.log(await walletStore.promisifiedBackground.submitPassword(123), 'walletStore')
+
+    // const { vault } = await swGlobal.controller.keyringController.store.getState()
+    // const isInitialized = Boolean(vault)
+    // const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
+    // const storageData = await chrome.storage.local.get()
+    // if (isInitialized && !storageData.data.onboardingController.completedOnboarding) {
+    //   goto(`/generate-phrase/unlock`)
+    // }
+    // if (isUnlocked) {
+    //   goto('/main')
+    // } else {
+    //   goto('/unlock')
+    // }
     // console.log(storageData, 'memStoreonboardingController')
     // return swGlobal.controller.getState().isInitialized
     // survey trick situate nature great under artist curious nasty profit decrease exotic

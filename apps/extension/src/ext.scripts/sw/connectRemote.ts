@@ -19,7 +19,7 @@ export const connectRemote = async (remotePort: chrome.runtime.Port) => {
     const portStream = new PortStream(remotePort)
     // communication with popup
     // controller.isClientOpen = true
-    // controller.setupTrustedCommunication(portStream, remotePort.sender)
+    swGlobal.controller.setupTrustedCommunication(portStream, remotePort.sender)
 
     remotePort.onMessage.addListener((message) => {
       if (message.name === swGlobal.WORKER_KEEP_ALIVE_MESSAGE) {
