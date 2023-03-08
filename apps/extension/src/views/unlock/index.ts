@@ -24,7 +24,6 @@ export class ViewUnlock extends TailwindElement(style) {
     // this.pwd = val
     this.pwd = e.detail
     this.disabled = !Boolean(this.pwd)
-    console.log(this.ROUTE)
   }
 
   submitPwd = async () => {
