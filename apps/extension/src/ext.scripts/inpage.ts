@@ -29,8 +29,7 @@ cleanContextForImports()
 // S These deps only works in extension
 import { WindowPostMessageStream } from '@metamask/post-message-stream'
 // E
-import { injectProvider } from '@/lib/providers/inpageProvider'
-import shouldInjectProvider from '~/lib/providers/injection'
+import { injectProvider } from '@/lib/providers'
 
 restoreContextAfterImports()
 
@@ -41,7 +40,7 @@ const inpageStream = new WindowPostMessageStream({
   target: 'DOID-contentscript'
 })
 
-if (shouldInjectProvider()) injectProvider({ connectionStream: inpageStream })
+injectProvider({ connectionStream: inpageStream })
 
 const start = function () {
   logger('injected')
