@@ -28,6 +28,11 @@ import fs from 'fs'
 export const sharedConfig = async (mode = '') => {
   const [port, isDev] = [4831, mode === 'development']
   return {
+    resolve: {
+      alias: {
+        stream: 'rollup-plugin-node-polyfills/polyfills/stream'
+      }
+    },
     server: { port, https: false, hmr: { port } },
     build: {
       minify: 'terser',
@@ -56,7 +61,7 @@ export const sharedConfig = async (mode = '') => {
       }
     ],
     optimizeDeps: {
-      include: ['webextension-polyfill']
+      include: ['webextension-polyfill', 'rollup-plugin-node-polyfills']
     },
     viteConfigOptions: {
       pwa: false,

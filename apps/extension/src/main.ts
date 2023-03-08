@@ -5,34 +5,37 @@ import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui
 import { routes } from '~/router'
 import emitter from '@lit-web3/core/src/emitter'
 import '~/views/home'
-
+import 'stream-browserify'
 // Components
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
-import '@lit-web3/dui/src/address/avatar'
+import '@/components/account/switch'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
   @state() showHeader = false
+
   chkView = () => {
-    this.showHeader = !['/unlock'].includes(location.pathname)
+    this.showHeader = !['/unlock', '/', '/restore', '/create', '/start'].includes(location.pathname)
     const { style } = document.documentElement
     this.showHeader ? style.removeProperty('--header-height') : style.setProperty('--header-height', `0px`)
   }
+
   connectedCallback() {
     super.connectedCallback()
     this.chkView()
     emitter.on('router-change', this.chkView)
     //  const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
   }
-
   render() {
     return html`${when(
         this.showHeader,
         () =>
           html`<dui-header logoHref="/"
-            ><div slot="wallet"><dui-address-avatar></dui-address-avatar></div
-          ></dui-header>`
+            ><div slot="wallet">
+              <account-switch></account-switch>
+            </div>
+          </dui-header>`
       )}
       <main class="dui-app-main py-6">
         <slot></slot>

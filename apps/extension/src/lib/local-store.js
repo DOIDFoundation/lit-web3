@@ -3,16 +3,16 @@
 //import { checkForLastError } from '../../../shared/modules/browser-runtime.utils';
 
 function checkForLastError() {
-  const { lastError } = chrome.runtime;
+  const { lastError } = chrome.runtime
   if (!lastError) {
-    return undefined;
+    return undefined
   }
   // if it quacks like an Error, its an Error
   if (lastError.stack && lastError.message) {
-    return lastError;
+    return lastError
   }
   // repair incomplete error object (eg chromium v77)
-  return new Error(lastError.message);
+  return new Error(lastError.message)
 }
 
 /**
@@ -20,45 +20,41 @@ function checkForLastError() {
  */
 export default class ExtensionStore {
   constructor() {
-    this.isSupported = Boolean(chrome.storage.local);
+    this.isSupported = Boolean(chrome.storage.local)
     if (!this.isSupported) {
       //log.error('Storage local API not available.');
     }
     // we use this flag to avoid flooding sentry with a ton of errors:
     // once data persistence fails once and it flips true we don't send further
     // data persistence errors to sentry
-    this.dataPersistenceFailing = false;
+    this.dataPersistenceFailing = false
   }
 
   setMetadata(initMetaData) {
-    this.metadata = initMetaData;
+    this.metadata = initMetaData
   }
 
   async set(state) {
     if (!this.isSupported) {
-      throw new Error(
-        'Metamask- cannot persist state to local store as this browser does not support this action',
-      );
+      throw new Error('Metamask- cannot persist state to local store as this browser does not support this action')
     }
     if (!state) {
-      throw new Error('MetaMask - updated state is missing');
+      throw new Error('MetaMask - updated state is missing')
     }
     if (!this.metadata) {
-      throw new Error(
-        'MetaMask - metadata must be set on instance of ExtensionStore before calling "set"',
-      );
+      throw new Error('MetaMask - metadata must be set on instance of ExtensionStore before calling "set"')
     }
     try {
       // we format the data for storage as an object with the "data" key for the controller state object
       // and the "meta" key for a metadata object containing a version number that tracks how the data shape
       // has changed using migrations to adapt to backwards incompatible changes
-      await this._set({ data: state, meta: this.metadata });
+      await this._set({ data: state, meta: this.metadata })
       if (this.dataPersistenceFailing) {
-        this.dataPersistenceFailing = false;
+        this.dataPersistenceFailing = false
       }
     } catch (err) {
       if (!this.dataPersistenceFailing) {
-        this.dataPersistenceFailing = true;
+        this.dataPersistenceFailing = true
         //captureException(err);
       }
       //log.error('error setting state in local store:', err);
@@ -72,15 +68,15 @@ export default class ExtensionStore {
    */
   async get() {
     if (!this.isSupported) {
-      return undefined;
+      return undefined
     }
-    const result = await this._get();
+    const result = await this._get()
     // extension.storage.local always returns an obj
     // if the object is empty, treat it as undefined
     if (isEmpty(result)) {
-      return undefined;
+      return undefined
     }
-    return result;
+    return result
   }
 
   /**
@@ -90,17 +86,17 @@ export default class ExtensionStore {
    * @returns {object} the key-value map from local storage
    */
   _get() {
-    const { local } = chrome.storage;
+    const { local } = chrome.storage
     return new Promise((resolve, reject) => {
       local.get(null).then((/** @type {any} */ result) => {
-        const err = checkForLastError();
+        const err = checkForLastError()
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(result);
+          resolve(result)
         }
-      });
-    });
+      })
+    })
   }
 
   /**
@@ -111,17 +107,17 @@ export default class ExtensionStore {
    * @private
    */
   _set(obj) {
-    const { local } = chrome.storage;
+    const { local } = chrome.storage
     return new Promise((resolve, reject) => {
       local.set(obj).then(() => {
-        const err = checkForLastError();
+        const err = checkForLastError()
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve();
+          resolve()
         }
-      });
-    });
+      })
+    })
   }
 }
 
@@ -132,5 +128,5 @@ export default class ExtensionStore {
  * @returns {boolean}
  */
 function isEmpty(obj) {
-  return Object.keys(obj).length === 0;
+  return Object.keys(obj).length === 0
 }

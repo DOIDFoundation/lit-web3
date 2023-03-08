@@ -5,10 +5,14 @@ import { Mutex } from 'await-semaphore'
 import * as Connections from './keyringController.setup/connections'
 import * as Middlewares from '~/lib/middlewares'
 import LocalStore from './local-store'
+import ComposableObservableStore from './ComposableObservableStore'
+import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
+import { ControllerMessenger } from '@metamask/base-controller'
+import PreferencesController from './preferences'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
-//import { Mutex } from 'await-semaphore';
+import DoidNameController from './doidNameController'
 
-enum HardwareKeyringTypes {
+export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
   trezor = 'Trezor Hardware',
   lattice = 'Lattice Hardware',
@@ -24,12 +28,20 @@ export class DOIDController extends EventEmitter {
   connections: any
   createVaultMutex: any
   extension: any
+
+  store: ComposableObservableStore
+  memStore: ComposableObservableStore
+  controllerMessenger: ControllerMessenger<any, any>
+  preferencesController: PreferencesController
   networkController: any
-  provider: any
+  tokenListController: any
+  provider: Object
   blockTracker: any
   walletMiddleware: any
   approvalController: any
   startUISync: boolean = false
+  doidNameController: DoidNameController
+
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
     super()
@@ -41,8 +53,7 @@ export class DOIDController extends EventEmitter {
     this.connections = {}
     this.createVaultMutex = new Mutex()
 
-    let additionalKeyrings: any = defaultKeyringBuilders
-    //let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)];
+    let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)]
 
     //if (this.canUseHardwareWallets()) {
     //  const additionalKeyringTypes = [
@@ -61,6 +72,14 @@ export class DOIDController extends EventEmitter {
       //encryptor: opts.encryptor || undefined,
       //cacheEncryptionKey: isManifestV3,
     })
+
+    this.controllerMessenger = new ControllerMessenger()
+    this.store = new ComposableObservableStore({
+      controllerMessenger: this.controllerMessenger,
+      state: initState,
+      persist: true
+    })
+
     // S stream deps
     this.networkController = new NetworkController({
       state: initState.NetworkController
@@ -82,19 +101,17 @@ export class DOIDController extends EventEmitter {
       }
     })
     // E
-    // console.log(chrome.storage.session.get(), 'get')
-    // this.keyringController.memStore.subscribe(
-    //   async (state: any) => {
-    //     console.log(state, 'chrome.storage.session.get()')
-    //     // const { encryptionKey: loginToken, encryptionSalt: loginSalt } = state
-    //     // await chrome.storage.session.set({ loginToken, loginSalt })
-    //   }
-    // )
-    //this.store = new ComposableObservableStore({
-    //  state: initState,
-    //  controllerMessenger: this.controllerMessenger,
-    //  persist: true,
-    //});
+    this.tokenListController = {}
+    this.provider = {}
+
+    this.preferencesController = new PreferencesController({
+      initState: initState.PreferencesController,
+      initLangCode: opts.initLangCode,
+      openPopup: opts.openPopup,
+      network: this.networkController,
+      tokenListController: this.tokenListController,
+      provider: this.provider
+    })
 
     this.keyringController.on('update', () => {
       console.log('keyring update event', this.keyringController.store.getState(), initState)
@@ -103,9 +120,98 @@ export class DOIDController extends EventEmitter {
       })
       localStore.set(data)
     })
-  }
 
-  //keyringController.createVaultMutex = new Mutex()
+    this.doidNameController = new DoidNameController({
+      initState: {},
+      store: this.store
+    })
+
+    /**
+     * All controllers in Memstore but not in store. They are not persisted.
+     * On chrome profile re-start, they will be re-initialized.
+     */
+    const resetOnRestartStore = {
+      //      AccountTracker: this.accountTracker.store,
+      //      TxController: this.txController.memStore,
+      //      TokenRatesController: this.tokenRatesController,
+      //      MessageManager: this.messageManager.memStore,
+      //      PersonalMessageManager: this.personalMessageManager.memStore,
+      //      DecryptMessageManager: this.decryptMessageManager.memStore,
+      //      EncryptionPublicKeyManager: this.encryptionPublicKeyManager.memStore,
+      //      TypesMessageManager: this.typedMessageManager.memStore,
+      //      SwapsController: this.swapsController.store,
+      //      EnsController: this.ensController.store,
+      //      ApprovalController: this.approvalController,
+    }
+
+    this.store.updateStructure({
+      //      AppStateController: this.appStateController.store,
+      //      TransactionController: this.txController.store,
+      KeyringController: this.keyringController.store,
+      DoidController: this.doidNameController,
+      PreferencesController: this.preferencesController.store,
+      //      MetaMetricsController: this.metaMetricsController.store,
+      //      AddressBookController: this.addressBookController,
+      //      CurrencyController: this.currencyRateController,
+      //      NetworkController: this.networkController.store,
+      //      CachedBalancesController: this.cachedBalancesController.store,
+      //      AlertController: this.alertController.store,
+      //      OnboardingController: this.onboardingController.store,
+      //      IncomingTransactionsController: this.incomingTransactionsController.store,
+      //      PermissionController: this.permissionController,
+      //      PermissionLogController: this.permissionLogController.store,
+      //      SubjectMetadataController: this.subjectMetadataController,
+      //      BackupController: this.backupController,
+      //      AnnouncementController: this.announcementController,
+      //      GasFeeController: this.gasFeeController,
+      TokenListController: this.tokenListController,
+      //      TokensController: this.tokensController,
+      //      SmartTransactionsController: this.smartTransactionsController,
+      //      NftController: this.nftController,
+      //      PhishingController: this.phishingController,
+      //      ///: BEGIN:ONLY_INCLUDE_IN(flask)
+      //      SnapController: this.snapController,
+      //      CronjobController: this.cronjobController,
+      //      NotificationController: this.notificationController,
+      ///: END:ONLY_INCLUDE_IN
+      ...resetOnRestartStore
+    })
+
+    this.memStore = new ComposableObservableStore({
+      config: {
+        //        AppStateController: this.appStateController.store,
+        //        NetworkController: this.networkController.store,
+        //        CachedBalancesController: this.cachedBalancesController.store,
+        KeyringController: this.keyringController.memStore,
+        DoidController: this.doidNameController,
+        PreferencesController: this.preferencesController.store,
+        //        MetaMetricsController: this.metaMetricsController.store,
+        //        AddressBookController: this.addressBookController,
+        //        CurrencyController: this.currencyRateController,
+        //        AlertController: this.alertController.store,
+        //        OnboardingController: this.onboardingController.store,
+        //        IncomingTransactionsController:
+        //          this.incomingTransactionsController.store,
+        //        PermissionController: this.permissionController,
+        //        PermissionLogController: this.permissionLogController.store,
+        //        SubjectMetadataController: this.subjectMetadataController,
+        //        BackupController: this.backupController,
+        //        AnnouncementController: this.announcementController,
+        //        GasFeeController: this.gasFeeController,
+        //        TokenListController: this.tokenListController,
+        //        TokensController: this.tokensController,
+        //        SmartTransactionsController: this.smartTransactionsController,
+        //        NftController: this.nftController,
+        //        ///: BEGIN:ONLY_INCLUDE_IN(flask)
+        //        SnapController: this.snapController,
+        //        CronjobController: this.cronjobController,
+        //        NotificationController: this.notificationController,
+        ///: END:ONLY_INCLUDE_IN
+        ...resetOnRestartStore
+      },
+      controllerMessenger: this.controllerMessenger
+    })
+  }
 
   /**
    * Create a new Vault and restore an existent keyring.
@@ -115,13 +221,13 @@ export class DOIDController extends EventEmitter {
    * of UTF-8 bytes.
    */
   async createNewVaultAndRestore(password: string, encodedSeedPhrase: number[]) {
-    //const releaseLock = await createVaultMutex.acquire();
+    //const releaseLock = await this.createVaultMutex.acquire();
     try {
       let accounts, lastBalance
 
       const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
 
-      //const { keyringController } = this;
+      const { keyringController } = this
 
       // clear known identities
       //this.preferencesController.setAddresses([]);
@@ -146,10 +252,10 @@ export class DOIDController extends EventEmitter {
       //this.txController.txStateManager.clearUnapprovedTxs();
 
       // create new vault
-      const vault = await this.keyringController.createNewVaultAndRestore(password, seedPhraseAsBuffer)
+      const vault = await keyringController.createNewVaultAndRestore(password, seedPhraseAsBuffer)
 
       //const ethQuery = new EthQuery(this.provider);
-      //accounts = await keyringController.getAccounts();
+      accounts = await keyringController.getAccounts()
       //lastBalance = await this.getBalance(
       //  accounts[accounts.length - 1],
       //  ethQuery,
@@ -193,6 +299,25 @@ export class DOIDController extends EventEmitter {
     }
   }
 
+  /**
+   * Get first address of an seedphrase
+   * @param seedPhrase
+   * @returns first address of the seed
+   */
+  async getFirstAccountFromSeedPhrase(seedPhrase: number[]) {
+    const keyring = await this.keyringController._newKeyring(HardwareKeyringTypes.hdKeyTree, {
+      mnemonic: seedPhrase,
+      numberOfAccounts: 1
+    })
+
+    const [firstAccount] = await keyring.getAccounts()
+
+    if (!firstAccount) {
+      throw new Error('KeyringController - First Account not found.')
+    }
+    return firstAccount
+  }
+
   // create new vault
   async createNewVaultAndKeychain(password: string) {
     // await bufferPolyfill()
@@ -219,31 +344,31 @@ export class DOIDController extends EventEmitter {
     if (!primaryKeyring) {
       throw new Error('MetamaskController - No HD Key Tree found')
     }
-    //  const { identities: oldIdentities } =
-    //    this.preferencesController.store.getState();
-    //
-    //  if (Object.keys(oldIdentities).length === accountCount) {
-    //    const oldAccounts = await keyringController.getAccounts();
-    //    const keyState = await keyringController.addNewAccount(primaryKeyring);
-    //    const newAccounts = await keyringController.getAccounts();
-    //
-    //    await this.verifySeedPhrase();
-    //
-    //    this.preferencesController.setAddresses(newAccounts);
-    //    newAccounts.forEach((address) => {
-    //      if (!oldAccounts.includes(address)) {
-    //        this.preferencesController.setSelectedAddress(address);
-    //      }
-    //    });
-    //
-    //    const { identities } = this.preferencesController.store.getState();
-    //    return { ...keyState, identities };
-    //  }
-    //
-    //  return {
-    //    ...keyringController.memStore.getState(),
-    //    identities: oldIdentities,
-    //  };
+    const { keyringController } = this
+    const { identities: oldIdentities } = this.preferencesController.store.getState()
+
+    if (Object.keys(oldIdentities).length === accountCount) {
+      const oldAccounts = await keyringController.getAccounts()
+      const keyState = await keyringController.addNewAccount(primaryKeyring)
+      const newAccounts = await keyringController.getAccounts()
+
+      await this.verifySeedPhrase()
+
+      this.preferencesController.setAddresses(newAccounts)
+      newAccounts.forEach((address) => {
+        if (!oldAccounts.includes(address)) {
+          this.preferencesController.setSelectedAddress(address)
+        }
+      })
+
+      const { identities } = this.preferencesController.store.getState()
+      return { ...keyState, identities }
+    }
+
+    return {
+      ...keyringController.memStore.getState(),
+      identities: oldIdentities
+    }
   }
   getState() {
     const { vault } = this.keyringController.store.getState()
@@ -655,6 +780,29 @@ export async function initialize() {
   //try {
   const initState = await loadStateFromPersistence()
   const initLangCode = await getFirstPreferredLangCode()
-  setupController(initState, initLangCode)
+  const doidController = setupController(initState, initLangCode)
+  //if (!isManifestV3) {
+  //  await loadPhishingWarningPage();
+  //}
+  //await sendReadyMessageToTabs();
+  //log.info('MetaMask initialization complete.');
+  //resolveInitialization();
+  //} catch (error) {
+  //rejectInitialization(error);
+  //  console.error(error)
+  //}
+
+  // test
+  const encodedSeedPhrase = Array.from(
+    Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
+  )
+  const encodedSeedPhrase2 = Array.from(
+    Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
+  )
+  const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
+  console.log('first valut ', vault)
+  const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
+  console.log('second ', secondkeyring)
 }
 export const initController = initialize
+initialize()
