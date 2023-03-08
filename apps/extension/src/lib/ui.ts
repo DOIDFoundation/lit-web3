@@ -5,6 +5,8 @@ import PortStream from '~/lib/ext.runtime/extension-port-stream'
 
 export function getConnectStream() {
   const windowType = getEnvironmentType()
+  console.log(windowType, 'windowType')
+
   const extensionPort = chrome.runtime.connect({ name: windowType })
   let connectionStream = new PortStream(extensionPort)
   return connectionStream

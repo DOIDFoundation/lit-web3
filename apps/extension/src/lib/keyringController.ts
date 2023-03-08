@@ -569,7 +569,7 @@ export class DOIDController extends EventEmitter {
     // report new active controller connection
     // this.activeControllerConnections += 1;
     // this.emit('controllerConnectionChanged', this.activeControllerConnections);
-    console.log(api, 'api')
+    console.log(outStream, 'api')
 
     // set up postStream transport  createMetaRPCHandler(api, outStream, this.store, {})
     outStream.on('data', (data: any) => {
