@@ -11,6 +11,7 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 import { getAddress, AddressType } from '@/lib/phrase'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
 import { keyringStore, StateController } from '~/store/keyring'
+import { accountStore } from '~/store/account'
 import { validateMnemonic } from 'ethereum-cryptography/bip39'
 import { initialize } from '@/lib/keyringController'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
@@ -25,8 +26,9 @@ import style from './recover.css?inline'
 @customElement('view-recover')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
+  bindAccount: any = new StateController(this, accountStore)
   @property() step?: any
-  @property() doidName = 'satoshi.doid'
+  @property() doidName = ''
   @state() secretRecoveryPhrase = ''
   @state() err = ''
   @state() pending = false
@@ -35,7 +37,11 @@ export class ViewImport extends TailwindElement(style) {
 
   @state() start = '1'
 
-  @state() mainAddress = '0xf14fb3c8ab193b2aba966fe360534f43c43ff710'
+  @state() mainAddress = ''
+
+  get account() {
+    return accountStore.account
+  }
 
   // get currentStep() {
   //   return this.step ?? 1
@@ -87,7 +93,7 @@ export class ViewImport extends TailwindElement(style) {
     let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
     console.log(ethAddress, '---------')
 
-    if (this.mainAddress != ethAddress) {
+    if (this.account.mainAddress != ethAddress) {
       this.start = '2'
     }
   }
@@ -106,7 +112,7 @@ export class ViewImport extends TailwindElement(style) {
             <doid-symbol class="block mt-12">
             <span slot="h1" class="text-xl">
               <p>You are recovering</p>
-              <p>${this.doidName}</p>
+              <p>${this.account.name}</p>
             </span>
           </doid-symbol>
               <span slot="label">
@@ -128,7 +134,7 @@ export class ViewImport extends TailwindElement(style) {
               <doid-symbol class="block mt-12">
                 <span slot="h1" class="text-xl">
                   <p>You are recovering</p>
-                  <p>${this.doidName}</p>
+                  <p>${this.account.name}</p>
                 </span>
               </doid-symbol>
               <span slot="label">
