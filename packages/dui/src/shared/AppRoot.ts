@@ -9,7 +9,7 @@ import { fallbackRender, fallbackEnter } from './router/fallback'
 import { routerGuard } from './router'
 import emitter from '@lit-web3/core/src/emitter'
 
-import '@/variables-override.css' // => /apps/*/src/variables-override.css
+import '~/variables-override.css' // => /apps/*/src/variables-override.css
 import '../c/g.css'
 
 routerGuard.inject()

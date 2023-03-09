@@ -1,7 +1,7 @@
 import { TailwindElement, html, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { customElement } from 'lit/decorators.js'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { LENs, lockPass, checkNameExists, getInviteCode, getPassCateLen, getPassInfo } from '@/lib/locker'
+import { LENs, lockPass, checkNameExists, getInviteCode, getPassCateLen, getPassInfo } from '~/lib/locker'
 import { ref } from 'lit/directives/ref.js'
 import { replace } from '@lit-web3/dui/src/shared/router'
 import { ValidateDOIDName } from '@lit-web3/dui/src/validator/doid-name'

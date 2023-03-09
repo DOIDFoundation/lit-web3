@@ -5,11 +5,10 @@ import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui
 import { routes } from '~/router'
 import emitter from '@lit-web3/core/src/emitter'
 import '~/views/home'
-import 'stream-browserify'
 // Components
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
-import '@/components/account/switch'
+import '~/components/account/switch'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {

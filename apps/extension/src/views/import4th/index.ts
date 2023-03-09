@@ -1,14 +1,14 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
-import { HardwareKeyringTypes } from '@/lib/keyringController'
-import { getAddress, AddressType } from '@/lib/phrase'
+import { HardwareKeyringTypes } from '~/lib/keyringController'
+import { getAddress, AddressType } from '~/lib/phrase'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
-import '@/components/pwd_equal'
+import '~/components/pwd_equal'
 
 import style from './import4th.css?inline'
 @customElement('import-4th')

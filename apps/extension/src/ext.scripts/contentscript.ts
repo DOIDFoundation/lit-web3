@@ -4,7 +4,7 @@ import browser from 'webextension-polyfill'
 // @ts-expect-error
 import inpage from '/public/inpage.js?script&module'
 import { EXTENSION_MESSAGES, MESSAGE_TYPE } from '~/constants/app'
-import ObjectMultiplex from 'obj-multiplex'
+import ObjectMultiplex from '@metamask/object-multiplex'
 import pump from 'pump'
 import PortStream from '~/lib/ext.runtime/extension-port-stream'
 import shouldInjectProvider from '~/lib/providers/injection'
@@ -85,7 +85,7 @@ const setupPageStreams = () => {
   })
 
   pageStream.on('data', ({ data: { method } }) => {
-    logger('on data:', { method })
+    logger('pagestream on data:', { method })
     if (!IGNORE_INIT_METHODS_FOR_KEEP_ALIVE.includes(method)) {
       runWorkerKeepAliveInterval()
     }
@@ -136,10 +136,9 @@ function extensionStreamMessageListener(msg: any) {
     EXTENSION_CONNECT_SENT = false
     window.postMessage(
       {
-        target: INPAGE, // the post-message-stream "target"
+        target: INPAGE,
         data: {
-          // this object gets passed to obj-multiplex
-          name: PROVIDER, // the obj-multiplex channel name
+          name: PROVIDER,
           data: {
             jsonrpc: '2.0',
             method: 'DOID_EXTENSION_CONNECT_CAN_RETRY'

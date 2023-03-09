@@ -49,6 +49,7 @@ const viteConfig = (options = {}) => {
         }
       },
       build: {
+        ...(isDev ? { minify: false, sourcemap: 'inline' } : {}),
         rollupOptions: {
           // external: /^lit/
           // input: {

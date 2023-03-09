@@ -1,8 +1,8 @@
 import { TailwindElement, html, customElement, property, when } from '@lit-web3/dui/src/shared/TailwindElement'
 // Components
-import '@/components/collection/marker'
-import '@/components/collection/list'
-import '@/components/collection/item'
+import '~/components/collection/marker'
+import '~/components/collection/list'
+import '~/components/collection/item'
 // Style
 import style from './index.css?inline'
 

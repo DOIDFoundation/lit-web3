@@ -21,7 +21,6 @@ import log from 'loglevel'
  */
 export function checkForLastError() {
   const { lastError } = browser.runtime
-  console.log('errxxxxxxxxxx', lastError)
   if (!lastError) {
     return undefined
   }

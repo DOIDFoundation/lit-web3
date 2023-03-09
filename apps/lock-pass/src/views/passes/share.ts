@@ -1,7 +1,7 @@
 import { TailwindElement, html } from '@lit-web3/dui/src/shared/TailwindElement'
 import { customElement, property, state } from 'lit/decorators.js'
 
-import { getInviteCode, getInviteLimits } from '@/lib/locker'
+import { getInviteCode, getInviteLimits } from '~/lib/locker'
 
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 

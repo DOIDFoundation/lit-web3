@@ -8,19 +8,19 @@ import {
   choose
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { getAddress, AddressType } from '@/lib/phrase'
+import { getAddress, AddressType } from '~/lib/phrase'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
 import { keyringStore, StateController } from '~/store/keyring'
 import { accountStore } from '~/store/account'
 import { validateMnemonic } from 'ethereum-cryptography/bip39'
-import { initialize } from '@/lib/keyringController'
+import { initialize } from '~/lib/keyringController'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
-import '@/components/phrase'
-import '@/components/pwd_equal'
+import '~/components/phrase'
+import '~/components/pwd_equal'
 
 import style from './recover.css?inline'
 @customElement('view-recover')

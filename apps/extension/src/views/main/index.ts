@@ -1,12 +1,12 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { keyringStore, StateController } from '@/store/keyring'
+import { keyringStore, StateController } from '~/store/keyring'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/address'
-import { getAccount } from '@/lib/account'
+import { getAccount } from '~/lib/account'
 
 import style from './main.css?inline'
 @customElement('view-main')

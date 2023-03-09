@@ -13,6 +13,7 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
   const engine = new JsonRpcEngine()
   // forward notifications from network provider
   provider.on('data', (error: any, message: any) => {
+    console.log('engine on data')
     if (error) throw error
     engine.emit('notification', message)
   })

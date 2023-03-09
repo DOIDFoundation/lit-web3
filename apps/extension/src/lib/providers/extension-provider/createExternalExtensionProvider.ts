@@ -1,5 +1,5 @@
 import PortStream from '~/lib/ext.runtime/extension-port-stream'
-import { MetaMaskInpageProviderStreamName } from '../MetaMaskInpageProvider'
+import { InpageProviderStreamName } from '../InpageProvider'
 import { StreamProvider } from '../StreamProvider'
 import { getDefaultExternalMiddleware } from '../utils'
 import config from './external-extension-config.json'
@@ -14,7 +14,7 @@ export function createExternalExtensionProvider() {
 
     const pluginStream = new PortStream(port)
     provider = new StreamProvider(pluginStream, {
-      jsonRpcStreamName: MetaMaskInpageProviderStreamName,
+      jsonRpcStreamName: InpageProviderStreamName,
       logger: console,
       rpcMiddleware: getDefaultExternalMiddleware(console)
     })

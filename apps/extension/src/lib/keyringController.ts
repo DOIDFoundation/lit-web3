@@ -577,26 +577,6 @@ export class DOIDController extends EventEmitter {
   notifyAllConnections = Connections.notifyAllConnections.bind(this)
 }
 
-const initialState = {
-  config: {},
-  PreferencesController: {
-    frequentRpcListDetail: [
-      {
-        rpcUrl: 'http://localhost:8545',
-        chainId: '0x539',
-        ticker: 'ETH',
-        nickname: 'Localhost 8545',
-        rpcPrefs: {}
-      }
-    ]
-  },
-  onboardingController: {
-    seedPhraseBackedUp: null,
-    firstTimeFlowType: null,
-    completedOnboarding: false
-  }
-}
-
 class Migrator {
   //extends EventEmitter {
   defaultVersion
@@ -630,7 +610,6 @@ class Migrator {
 }
 
 let versionedData
-const inTest = process.env.IN_TEST
 //const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
 const localStore = new LocalStore()
 
@@ -776,20 +755,9 @@ export const getFirstPreferredLangCode = async function () {
 }
 
 export async function initialize() {
-  //try {
   const initState = await loadStateFromPersistence()
   const initLangCode = await getFirstPreferredLangCode()
   const doidController = setupController(initState, initLangCode)
-  //if (!isManifestV3) {
-  //  await loadPhishingWarningPage();
-  //}
-  //await sendReadyMessageToTabs();
-  //log.info('MetaMask initialization complete.');
-  //resolveInitialization();
-  //} catch (error) {
-  //rejectInitialization(error);
-  //  console.error(error)
-  //}
 
   // test
   const encodedSeedPhrase = Array.from(

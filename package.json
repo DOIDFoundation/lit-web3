@@ -21,11 +21,11 @@
     "urlpattern-polyfill": "^6.0.2"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.30",
+    "@iconify/json": "^2.2.32",
     "@rollup/plugin-inject": "^5.0.3",
     "@rollup/plugin-terser": "^0.4.0",
-    "@vitejs/plugin-legacy": "^3.0.2",
     "@types/lodash": "^4.14.191",
+    "@vitejs/plugin-legacy": "^3.0.2",
     "autoprefixer": "^10.4.13",
     "dotenv": "^16.0.3",
     "loglevel": "^1.8.1",
@@ -42,7 +42,7 @@
     "terser": "^5.16.5",
     "tsup": "^6.6.3",
     "typescript": "^4.9.5",
-    "unplugin-auto-import": "^0.15.0",
+    "unplugin-auto-import": "^0.15.1",
     "vite": "^4.1.4",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-mkcert": "^1.13.3",

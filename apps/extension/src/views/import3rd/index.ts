@@ -5,7 +5,7 @@ import { keyringStore, StateController } from '~/store/keyring'
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
-import '@/components/phrase'
+import '~/components/phrase'
 
 import style from './import3rd.css?inline'
 @customElement('import-3rd')

@@ -1,5 +1,6 @@
-// S Here is a temporary hack for @crxjs/vite-plugin@2.0.0-beta.13
 // import { crx } from '@crxjs/vite-plugin'
+// S Here is a temporary hack for @crxjs/vite-plugin@2.0.0-beta.13
+import fs from 'fs'
 const depPath = resolve(__dirname, 'node_modules/@crxjs/vite-plugin/dist/index.mjs')
 const depJsSrc = fs.readFileSync(depPath, 'utf8')
 const reg = /page\.scripts\.push\(\.\.\.scripts\)/
@@ -22,25 +23,22 @@ import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import manifest from './manifest.config'
 import { dirname, relative, resolve } from 'path'
 import nodePolyfills from 'rollup-plugin-polyfill-node'
-import fs from 'fs'
 // import AutoImport from 'unplugin-auto-import/vite'
 
 export const sharedConfig = async (mode = '') => {
   const [port, isDev] = [4831, mode === 'development']
+  const shimNode = (s: string) => resolve(__dirname, '../../packages/core/src/shims/node', s)
   return {
     resolve: {
       alias: {
-        stream: 'rollup-plugin-node-polyfills/polyfills/stream'
+        stream: shimNode('stream.ts'),
+        util: shimNode('util.ts'),
+        'obj-multiplex': '@metamask/object-multiplex'
       }
     },
     server: { port, https: false, hmr: { port } },
     build: {
-      minify: 'terser',
       emptyOutDir: !isDev,
-      sourcemap: isDev ? 'inline' : false,
-      terserOptions: {
-        mangle: !isDev
-      },
       // so annoying, here will break in build stage
       rollupOptions: {
         input: {
@@ -61,7 +59,7 @@ export const sharedConfig = async (mode = '') => {
       }
     ],
     optimizeDeps: {
-      include: ['webextension-polyfill', 'rollup-plugin-node-polyfills']
+      include: ['webextension-polyfill', 'rollup-plugin-polyfill-node']
     },
     viteConfigOptions: {
       pwa: false,

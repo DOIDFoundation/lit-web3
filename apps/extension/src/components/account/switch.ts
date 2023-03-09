@@ -4,7 +4,7 @@ import '@lit-web3/dui/src/address/avatar'
 import '@lit-web3/dui/src/address/name'
 import '@lit-web3/dui/src/menu/drop'
 import './menu'
-import { getAccount, setAccountIdx, getAccounts } from '@/lib/account'
+import { getAccount, setAccountIdx, getAccounts } from '~/lib/account'
 
 @customElement('account-switch')
 export class AccountSwitch extends TailwindElement(null) {

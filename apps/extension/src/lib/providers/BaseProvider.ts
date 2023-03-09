@@ -259,7 +259,7 @@ export abstract class BaseProvider extends SafeEventEmitter {
    * required events. Idempotent.
    *
    * @param chainId - The ID of the newly connected chain.
-   * @emits MetaMaskInpageProvider#connect
+   * @emits InpageProvider#connect
    */
   protected _handleConnect(chainId: string) {
     if (!this._state.isConnected) {

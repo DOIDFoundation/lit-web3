@@ -4,8 +4,8 @@ import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
-import '@/components/favorites/btn'
-import '@/components/names/list'
+import '~/components/favorites/btn'
+import '~/components/names/list'
 
 import style from './search.css?inline'
 @customElement('view-search')

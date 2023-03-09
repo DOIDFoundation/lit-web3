@@ -8,7 +8,7 @@ import { shortAddress } from '@lit-web3/ethers/src/utils'
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/nav'
-import '@/components/names/list'
+import '~/components/names/list'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/nav/nav'
 

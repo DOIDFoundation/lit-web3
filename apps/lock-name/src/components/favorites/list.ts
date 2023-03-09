@@ -1,11 +1,11 @@
 import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { getFavorites } from '@/components/favorites/store'
+import { getFavorites } from '~/components/favorites/store'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 // Components
 import '@lit-web3/dui/src/ns-search'
 import '@lit-web3/dui/src/doid-symbol'
-import '@/components/favorites/btn'
-import '@/components/names/list'
+import '~/components/favorites/btn'
+import '~/components/names/list'
 
 import style from './list.css?inline'
 @customElement('doid-favorites')

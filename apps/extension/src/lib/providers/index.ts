@@ -1,7 +1,7 @@
 import { BaseProvider } from './BaseProvider'
 import { createExternalExtensionProvider } from './extension-provider/createExternalExtensionProvider'
 import { initializeProvider, injectProvider, setGlobalProvider } from './initializeInpageProvider'
-import { MetaMaskInpageProvider, MetaMaskInpageProviderStreamName } from './MetaMaskInpageProvider'
+import { InpageProvider, InpageProviderStreamName } from './InpageProvider'
 import { StreamProvider } from './StreamProvider'
 
 export {
@@ -9,8 +9,8 @@ export {
   createExternalExtensionProvider,
   initializeProvider,
   injectProvider,
-  MetaMaskInpageProviderStreamName,
-  MetaMaskInpageProvider,
+  InpageProviderStreamName,
+  InpageProvider,
   setGlobalProvider,
   StreamProvider
 }

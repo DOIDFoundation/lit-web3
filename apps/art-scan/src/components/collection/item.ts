@@ -1,5 +1,5 @@
 import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { getColl } from '@/lib/query'
+import { getColl } from '~/lib/query'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/address'

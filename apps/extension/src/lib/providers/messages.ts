@@ -4,7 +4,7 @@ const messages = {
     permanentlyDisconnected: () => 'DOID: Disconnected from DOID background. Page reload required.',
     sendSiteMetadata: () => `DOID: Failed to send site metadata. This is an internal error, please report this bug.`,
     unsupportedSync: (method: string) =>
-      `DOID: The DOID Ethereum provider does not support synchronous methods like ${method} without a callback parameter.`,
+      `DOID: The DOID provider does not support synchronous methods like ${method} without a callback parameter.`,
     invalidDuplexStream: () => 'Must provide a Node.js-style duplex stream.',
     invalidNetworkParams: () => 'DOID: Received invalid network parameters. Please report this bug.',
     invalidRequestArgs: () => `Expected a single, non-array, object argument.`,

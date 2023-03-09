@@ -29,7 +29,7 @@ cleanContextForImports()
 // S These deps only works in extension
 import { WindowPostMessageStream } from '@metamask/post-message-stream'
 // E
-import { injectProvider } from '@/lib/providers'
+import { injectProvider } from '~/lib/providers'
 
 restoreContextAfterImports()
 

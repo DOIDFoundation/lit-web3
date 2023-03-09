@@ -9,7 +9,8 @@
     "buffer": "^6.0.3",
     "localforage": "^1.10.0",
     "readable-stream": "^4.3.0",
-    "safe-decode-uri-component": "latest"
+    "safe-decode-uri-component": "latest",
+    "utilShim": "npm:util@^0.12.5"
   },
   "peerDependencies": {
     "lit": "^2",

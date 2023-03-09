@@ -8,7 +8,7 @@ import {
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import '@lit-web3/dui/src/input/pwd'
-import { chkPwdValid } from '@/lib/utils'
+import { chkPwdValid } from '~/lib/utils'
 
 import style from './confirm.css?inline'
 

@@ -1,29 +1,43 @@
-// src: @metamask/providers
-import { AbstractStreamProvider, StreamProviderOptions } from '@metamask/providers/dist/StreamProvider'
-import {
-  getDefaultExternalMiddleware,
-  getRpcPromiseCallback,
-  EMITTED_NOTIFICATIONS
-} from '@metamask/providers/dist/utils'
-import { sendSiteMetadata } from '@metamask/providers/dist/siteMetadata'
-import messages from '@metamask/providers/dist/messages'
-import type { UnvalidatedJsonRpcRequest } from '@metamask/providers/dist/BaseProvider'
 import type { Duplex } from '@lit-web3/core/src/shims/node/stream'
 import type { JsonRpcRequest, JsonRpcResponse } from 'json-rpc-engine'
+import { ethErrors } from 'eth-rpc-errors'
+import { sendSiteMetadata } from './siteMetadata'
+import messages from './messages'
+import { EMITTED_NOTIFICATIONS, getDefaultExternalMiddleware, getRpcPromiseCallback, NOOP } from './utils'
+import type { UnvalidatedJsonRpcRequest } from './BaseProvider'
+import { AbstractStreamProvider, StreamProviderOptions } from './StreamProvider'
 
 export interface SendSyncJsonRpcRequest extends JsonRpcRequest<unknown> {
-  method: 'DOID_account' | 'eth_accounts' | 'net_version'
+  method: 'DOID_account' | 'eth_accounts' | 'eth_coinbase' | 'eth_uninstallFilter' | 'net_version'
 }
 
-interface InpageProviderOptions extends Partial<Omit<StreamProviderOptions, 'rpcMiddleware'>> {
+type WarningEventName = keyof SentWarningsState['events']
+
+export interface InpageProviderOptions extends Partial<Omit<StreamProviderOptions, 'rpcMiddleware'>> {
   /**
    * Whether the provider should send page metadata.
    */
   shouldSendMetadata?: boolean
 }
 
-// Provider
-export const ProviderStreamName = 'DOID-provider'
+interface SentWarningsState {
+  // methods
+  enable: boolean
+  experimentalMethods: boolean
+  send: boolean
+  // events
+  events: {
+    close: boolean
+    data: boolean
+    networkChanged: boolean
+    notification: boolean
+  }
+}
+
+/**
+ * The name of the stream consumed by {@link InpageProvider}.
+ */
+export const InpageProviderStreamName = 'DOID-provider'
 
 export class InpageProvider extends AbstractStreamProvider {
   protected _sentWarnings: SentWarningsState = {
@@ -48,7 +62,7 @@ export class InpageProvider extends AbstractStreamProvider {
   public networkVersion: string | null
 
   /**
-   * Indicating that this provider is a DOID provider.
+   * Indicating that this provider is a MetaMask provider.
    */
   public readonly isDOID: true
 
@@ -56,7 +70,7 @@ export class InpageProvider extends AbstractStreamProvider {
    * @param connectionStream - A Node.js duplex stream
    * @param options - An options bag
    * @param options.jsonRpcStreamName - The name of the internal JSON-RPC stream.
-   * Default: DOID-provider
+   * Default: metamask-provider
    * @param options.logger - The logging API to use. Default: console
    * @param options.maxEventListeners - The maximum number of event
    * listeners. Default: 100
@@ -66,7 +80,7 @@ export class InpageProvider extends AbstractStreamProvider {
   constructor(
     connectionStream: Duplex,
     {
-      jsonRpcStreamName = ProviderStreamName,
+      jsonRpcStreamName = InpageProviderStreamName,
       logger = console,
       maxEventListeners,
       shouldSendMetadata
@@ -296,6 +310,15 @@ export class InpageProvider extends AbstractStreamProvider {
         result = this.selectedAddress ? [this.selectedAddress] : []
         break
 
+      case 'eth_coinbase':
+        result = this.selectedAddress || null
+        break
+
+      case 'eth_uninstallFilter':
+        this._rpcRequest(payload, NOOP)
+        result = true
+        break
+
       case 'net_version':
         result = this.networkVersion || null
         break
@@ -321,9 +344,9 @@ export class InpageProvider extends AbstractStreamProvider {
     return new Proxy(
       {
         /**
-         * Determines if DOID is unlocked by the user.
+         * Determines if MetaMask is unlocked by the user.
          *
-         * @returns Promise resolving to true if DOID is currently unlocked
+         * @returns Promise resolving to true if MetaMask is currently unlocked
          */
         isUnlocked: async () => {
           if (!this._state.initialized) {
@@ -339,7 +362,10 @@ export class InpageProvider extends AbstractStreamProvider {
          */
         requestBatch: async (requests: UnvalidatedJsonRpcRequest[]) => {
           if (!Array.isArray(requests)) {
-            throw new Error('Batch requests must be made with an array of request objects.')
+            throw ethErrors.rpc.invalidRequest({
+              message: 'Batch requests must be made with an array of request objects.',
+              data: requests
+            })
           }
 
           return new Promise((resolve, reject) => {
@@ -381,28 +407,4 @@ export class InpageProvider extends AbstractStreamProvider {
       }
     }
   }
-}
-
-// Inject to inpage
-interface InitializeProviderOptions extends InpageProviderOptions {
-  connectionStream: Duplex
-}
-export function injectProvider({
-  connectionStream,
-  jsonRpcStreamName,
-  logger = console,
-  maxEventListeners = 100,
-  shouldSendMetadata = true
-}: any): InpageProvider {
-  const provider = new InpageProvider(connectionStream, {
-    jsonRpcStreamName,
-    logger,
-    maxEventListeners,
-    shouldSendMetadata
-  })
-  // Protect properties
-  const providerInstance = new Proxy(provider, { deleteProperty: () => true })
-  window.DOID ?? (window.DOID = providerInstance)
-  window.dispatchEvent(new Event('DOID#initialized'))
-  return providerInstance
 }

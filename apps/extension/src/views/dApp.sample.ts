@@ -13,8 +13,6 @@ export class ViewRestore extends TailwindElement('') {
   request = () => {
     window.DOID.request({ method: 'DOID_account' })
     window.DOID.request({ method: 'eth_accounts' })
-    window.DOID.send({ method: 'DOID_account' })
-    window.DOID.send({ method: 'eth_accounts' })
     logger('request sent')
   }
   render() {

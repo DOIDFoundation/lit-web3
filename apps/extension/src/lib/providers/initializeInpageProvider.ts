@@ -1,8 +1,8 @@
 import { Duplex } from '@lit-web3/core/src/shims/node/stream'
-import { MetaMaskInpageProvider, MetaMaskInpageProviderOptions } from './MetaMaskInpageProvider'
+import { InpageProvider, InpageProviderOptions } from './InpageProvider'
 import shouldInjectProvider from './injection'
 
-interface InitializeProviderOptions extends MetaMaskInpageProviderOptions {
+interface InitializeProviderOptions extends InpageProviderOptions {
   /**
    * The stream used to connect to the wallet.
    */
@@ -15,7 +15,7 @@ interface InitializeProviderOptions extends MetaMaskInpageProviderOptions {
 }
 
 /**
- * Initializes a MetaMaskInpageProvider and (optionally) assigns it as window.ethereum.
+ * Initializes a InpageProvider and (optionally) assigns it as window.ethereum.
  *
  * @param options - An options bag.
  * @param options.connectionStream - A Node.js stream.
@@ -32,8 +32,8 @@ export function initializeProvider({
   maxEventListeners = 100,
   shouldSendMetadata = true,
   shouldSetOnWindow = true
-}: InitializeProviderOptions): MetaMaskInpageProvider {
-  const provider = new MetaMaskInpageProvider(connectionStream, {
+}: InitializeProviderOptions): InpageProvider {
+  const provider = new InpageProvider(connectionStream, {
     jsonRpcStreamName,
     logger,
     maxEventListeners,
@@ -58,10 +58,11 @@ export function initializeProvider({
  *
  * @param providerInstance - The provider instance.
  */
-export function setGlobalProvider(providerInstance: MetaMaskInpageProvider): void {
+export function setGlobalProvider(providerInstance: InpageProvider): void {
   ;(window as Record<string, any>).DOID = providerInstance
   window.dispatchEvent(new Event('DOID#initialized'))
 }
 export function injectProvider(providerInstance: InitializeProviderOptions) {
+  console.log('hh')
   if (shouldInjectProvider()) initializeProvider(providerInstance)
 }

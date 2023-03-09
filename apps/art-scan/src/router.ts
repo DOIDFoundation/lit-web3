@@ -11,7 +11,7 @@ export const routes = [
     path: '/',
     render: () => html`<view-home></view-home>`,
     enter: async () => {
-      await import('@/views/home')
+      await import('~/views/home')
       return true
     }
   },
@@ -35,7 +35,7 @@ export const routes = [
         emitter.emit('router-replace', '/')
         return false
       }
-      await import('@/views/artist')
+      await import('~/views/artist')
       return true
     }
   },
@@ -63,7 +63,7 @@ export const routes = [
         emitter.emit('router-replace', '/')
         return false
       }
-      await import('@/views/collection')
+      await import('~/views/collection')
       return true
     }
   }

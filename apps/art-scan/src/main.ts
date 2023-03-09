@@ -1,9 +1,9 @@
 import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
 import emitter from '@lit-web3/core/src/emitter'
-import { routes } from '@/router'
+import { routes } from '~/router'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 // Components
-import '@/components/search-bar'
+import '~/components/search-bar'
 import '@lit-web3/dui/src/network-warning'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/nav/footer'

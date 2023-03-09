@@ -1,5 +1,5 @@
 import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
-import { routes } from '@/router'
+import { routes } from '~/router'
 import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
 // Components
 import '@lit-web3/dui/src/network-warning'
