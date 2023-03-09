@@ -18,7 +18,9 @@ export class AppMain extends TailwindElement('') {
   @state() showHeader = false
   state = new StateController(this, walletStore)
   chkView = () => {
-    this.showHeader = !['/unlock', '/', '/restore', '/create', '/start'].includes(location.pathname)
+    this.showHeader = !['/unlock', '/', '/landing', '/restore', '/create', '/start', '/recover'].includes(
+      location.pathname
+    )
     const { style } = document.documentElement
     this.showHeader ? style.removeProperty('--header-height') : style.setProperty('--header-height', `0px`)
   }

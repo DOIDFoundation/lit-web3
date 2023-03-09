@@ -13,6 +13,7 @@ export class ViewStart extends TailwindElement(style) {
   @state() name = ''
   @state() ownerAddress = ''
   @state() mainAddress = ''
+  @state() pending = false
 
   get wrapName() {
     return this.name ? wrapTLD(this.name) : ''
@@ -20,9 +21,11 @@ export class ViewStart extends TailwindElement(style) {
 
   async getAddressesByName() {
     if (!this.name) return
-    const { owner, mainAddress } = await accountStore.search(this.name)
+    this.pending = true
+    const { owner, mainAddress } = await accountStore.search(this.name, true)
     this.ownerAddress = owner
     this.mainAddress = mainAddress
+    this.pending = false
   }
   gotoRecover = () => {
     goto('/recover')
@@ -41,44 +44,50 @@ export class ViewStart extends TailwindElement(style) {
           </div>
         </doid-symbol>
         <div class="mt-48">
-          <div class="flex justify-center">
-            <dui-link class="link underline mr-2">${this.wrapName}</dui-link>
-            ${when(
-              this.ownerAddress,
-              () => html`
-                <div>
-                  <span class="text-gray-400 mr-2">is owned by</span>
-                  <dui-address .address=${this.ownerAddress} short></dui-address>
-                </div>
-              `
-            )}
-          </div>
           ${when(
-            this.ownerAddress,
+            this.pending,
+            () => html`<div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
             () => html`
               <div class="flex justify-center">
-                <span class="text-gray-400 mr-2">and managed by</span>
-                <dui-address .address=${this.mainAddress} short></dui-address>
+                <dui-link class="link underline mr-2">${this.wrapName}</dui-link>
+                ${when(
+                  this.ownerAddress,
+                  () => html`
+                    <div>
+                      <span class="text-gray-400 mr-2">is owned by</span>
+                      <dui-address .address=${this.ownerAddress} short></dui-address>
+                    </div>
+                  `
+                )}
+              </div>
+              ${when(
+                this.ownerAddress,
+                () => html`
+                  <div class="flex justify-center">
+                    <span class="text-gray-400 mr-2">and managed by</span>
+                    <dui-address .address=${this.mainAddress} short></dui-address>
+                  </div>
+                `
+              )}
+              <div class="mt-10 flex flex-col gap-2">
+                <dui-button class="w-full" .disabled=${!this.mainAddress} @click=${this.gotoRecover}
+                  >Manage
+                  ${when(
+                    this.mainAddress,
+                    () => html` with (<dui-address .address=${this.mainAddress} short></dui-address>)`
+                  )}</dui-button
+                >
+                <dui-button class="w-full" .disabled=${!this.ownerAddress || true}
+                  >Reset
+                  ${when(
+                    this.ownerAddress,
+                    () => html` with owner (<dui-address .address=${this.ownerAddress} short></dui-address>)`
+                  )}</dui-button
+                >
+                <dui-button class="w-full outlined">Cancel</dui-button>
               </div>
             `
           )}
-          <div class="mt-10 flex flex-col gap-2">
-            <dui-button class="w-full" .disabled=${!this.mainAddress} @click=${this.gotoRecover}
-              >Manage
-              ${when(
-                this.mainAddress,
-                () => html` with (<dui-address .address=${this.mainAddress} short></dui-address>)`
-              )}</dui-button
-            >
-            <dui-button class="w-full" .disabled=${!this.ownerAddress || true}
-              >Reset
-              ${when(
-                this.ownerAddress,
-                () => html` with owner (<dui-address .address=${this.ownerAddress} short></dui-address>)`
-              )}</dui-button
-            >
-            <dui-button class="w-full outlined">Cancel</dui-button>
-          </div>
         </div>
       </div>
     </div>`

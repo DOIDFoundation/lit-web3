@@ -56,7 +56,7 @@ export const routes = [
   },
   {
     name: 'restore',
-    path: '/restore/:doid?',
+    path: '/restore/:doid',
     render: ({ doid = '' }) => html`<view-restore .name=${safeDecodeURIComponent(doid)}></view-restore>`,
     enter: async () => {
       await import('~/views/restore')
@@ -138,6 +138,17 @@ export const routes = [
     },
     enter: async () => {
       await import('~/views/recover')
+      return true
+    }
+  },
+  {
+    name: 'dAppLanding',
+    path: '/landing',
+    render: () => {
+      return html`<view-landing></view-landing>`
+    },
+    enter: async () => {
+      await import('~/views/dapps/landing')
       return true
     }
   }

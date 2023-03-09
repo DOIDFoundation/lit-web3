@@ -1,12 +1,4 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  when,
-  property,
-  state,
-  choose
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { getAddress, AddressType } from '@/lib/phrase'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
