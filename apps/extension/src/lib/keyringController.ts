@@ -114,7 +114,6 @@ export class DOIDController extends EventEmitter {
     })
 
     this.keyringController.on('update', () => {
-      console.log('keyring update event', this.keyringController.store.getState(), initState)
       const data = Object.assign(initState, {
         KeyringController: this.keyringController.store.getState()
       })
@@ -122,8 +121,7 @@ export class DOIDController extends EventEmitter {
     })
 
     this.doidNameController = new DoidNameController({
-      initState: {},
-      store: this.store
+      initState: initState.doidNameController
     })
 
     /**
@@ -148,7 +146,7 @@ export class DOIDController extends EventEmitter {
       //      AppStateController: this.appStateController.store,
       //      TransactionController: this.txController.store,
       KeyringController: this.keyringController.store,
-      DoidController: this.doidNameController,
+      DoidController: this.doidNameController.store,
       PreferencesController: this.preferencesController.store,
       //      MetaMetricsController: this.metaMetricsController.store,
       //      AddressBookController: this.addressBookController,
@@ -183,7 +181,7 @@ export class DOIDController extends EventEmitter {
         //        NetworkController: this.networkController.store,
         //        CachedBalancesController: this.cachedBalancesController.store,
         KeyringController: this.keyringController.memStore,
-        DoidController: this.doidNameController,
+        DoidController: this.doidNameController.memStore,
         PreferencesController: this.preferencesController.store,
         //        MetaMetricsController: this.metaMetricsController.store,
         //        AddressBookController: this.addressBookController,
@@ -220,7 +218,7 @@ export class DOIDController extends EventEmitter {
    * @param {number[]} encodedSeedPhrase - The seed phrase, encoded as an array
    * of UTF-8 bytes.
    */
-  async createNewVaultAndRestore(password: string, encodedSeedPhrase: number[]) {
+  async createNewVaultAndRestore(doidName: string, password: string, encodedSeedPhrase: number[]) {
     //const releaseLock = await this.createVaultMutex.acquire();
     try {
       let accounts, lastBalance
@@ -293,6 +291,12 @@ export class DOIDController extends EventEmitter {
       //// set new identities
       //this.preferencesController.setAddresses(accounts);
       //this.selectFirstIdentity();
+
+      if (doidName === null || doidName === '') {
+        return
+      }
+      this.doidNameController.bindName(doidName, accounts[0])
+
       return vault
     } finally {
       //releaseLock();
@@ -329,7 +333,6 @@ export class DOIDController extends EventEmitter {
       } else {
         vault = await this.keyringController.createNewVaultAndKeychain(password)
         const addresses = await this.keyringController.getAccounts()
-        console.log('new accounts', addresses)
         //      this.preferencesController.setAddresses(addresses);
         //      this.selectFirstIdentity();
       }
@@ -509,7 +512,6 @@ export class DOIDController extends EventEmitter {
     try {
       //await this.blockTracker.checkForLatestBlock();
       const allAccounts = await this.keyringController.getAccounts()
-      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
@@ -716,7 +718,6 @@ export const loadStateFromPersistence = async function () {
   // read from disk
   // first from preferred, async API:
   versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
-  console.log(versionedData)
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has
@@ -866,16 +867,14 @@ export async function initialize() {
   //}
 
   // test
-  const encodedSeedPhrase = Array.from(
-    Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
-  )
-  const encodedSeedPhrase2 = Array.from(
-    Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
-  )
-  const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
-  console.log('first valut ', vault)
-  const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
-  console.log('second ', secondkeyring)
+  //const encodedSeedPhrase = Array.from(
+  //  Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
+  //)
+  //const encodedSeedPhrase2 = Array.from(
+  //  Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
+  //)
+  //const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
+  //const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
 }
 export const initController = initialize
 initialize()
