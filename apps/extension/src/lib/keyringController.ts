@@ -13,7 +13,8 @@ import PreferencesController from './preferences'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import DoidNameController from './doidNameController'
 import { MILLISECOND } from '@lit-web3/core/src/constants/time'
-
+import { setupMultiplex } from './stream-utils'
+import createMetaRPCHandler from './createMetaRPCHandler'
 export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
   trezor = 'Trezor Hardware',
@@ -122,7 +123,6 @@ export class DOIDController extends EventEmitter {
     })
 
     this.keyringController.on('update', () => {
-      console.log('keyring update event', this.keyringController.store.getState(), initState)
       const data = Object.assign(initState, {
         KeyringController: this.keyringController.store.getState()
       })
@@ -130,8 +130,7 @@ export class DOIDController extends EventEmitter {
     })
 
     this.doidNameController = new DoidNameController({
-      initState: {},
-      store: this.store
+      initState: initState.doidNameController
     })
 
     /**
@@ -156,7 +155,7 @@ export class DOIDController extends EventEmitter {
       //      AppStateController: this.appStateController.store,
       //      TransactionController: this.txController.store,
       KeyringController: this.keyringController.store,
-      DoidController: this.doidNameController,
+      DoidController: this.doidNameController.store,
       PreferencesController: this.preferencesController.store,
       //      MetaMetricsController: this.metaMetricsController.store,
       //      AddressBookController: this.addressBookController,
@@ -191,7 +190,7 @@ export class DOIDController extends EventEmitter {
         //        NetworkController: this.networkController.store,
         //        CachedBalancesController: this.cachedBalancesController.store,
         KeyringController: this.keyringController.memStore,
-        DoidController: this.doidNameController,
+        DoidController: this.doidNameController.memStore,
         PreferencesController: this.preferencesController.store,
         //        MetaMetricsController: this.metaMetricsController.store,
         //        AddressBookController: this.addressBookController,
@@ -228,7 +227,7 @@ export class DOIDController extends EventEmitter {
    * @param {number[]} encodedSeedPhrase - The seed phrase, encoded as an array
    * of UTF-8 bytes.
    */
-  async createNewVaultAndRestore(password: string, encodedSeedPhrase: number[]) {
+  async createNewVaultAndRestore(doidName: string, password: string, encodedSeedPhrase: number[]) {
     //const releaseLock = await this.createVaultMutex.acquire();
     try {
       let accounts, lastBalance
@@ -301,6 +300,12 @@ export class DOIDController extends EventEmitter {
       //// set new identities
       //this.preferencesController.setAddresses(accounts);
       //this.selectFirstIdentity();
+
+      if (doidName === null || doidName === '') {
+        return
+      }
+      this.doidNameController.bindName(doidName, accounts[0])
+
       return vault
     } finally {
       //releaseLock();
@@ -337,7 +342,6 @@ export class DOIDController extends EventEmitter {
       } else {
         vault = await this.keyringController.createNewVaultAndKeychain(password)
         const addresses = await this.keyringController.getAccounts()
-        console.log('new accounts', addresses)
         //      this.preferencesController.setAddresses(addresses);
         //      this.selectFirstIdentity();
       }
@@ -517,7 +521,6 @@ export class DOIDController extends EventEmitter {
     try {
       //await this.blockTracker.checkForLatestBlock();
       const allAccounts = await this.keyringController.getAccounts()
-      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
@@ -546,7 +549,80 @@ export class DOIDController extends EventEmitter {
 
     return keyring.mnemonic
   }
+  setupTrustedCommunication(connectionStream: any, sender: any) {
+    // setup multiplexing
+    const mux = setupMultiplex(connectionStream)
+    // connect features
+    this.setupControllerConnection(mux.createStream('controller'))
+    // this.setupProviderConnection(
+    //   mux.createStream('provider'),
+    //   sender,
+    //   SubjectType.Internal,
+    // );
+  }
+  getApi() {
+    return {
+      getState: this.getState.bind(this),
+      markPasswordForgotten: this.markPasswordForgotten.bind(this),
+      unMarkPasswordForgotten: this.unMarkPasswordForgotten.bind(this),
+      addNewAccount: this.addNewAccount.bind(this),
+      verifySeedPhrase: this.verifySeedPhrase.bind(this),
+      resetAccount: this.resetAccount.bind(this),
+      submitPassword: this.submitPassword.bind(this),
+      verifyPassword: this.verifyPassword.bind(this),
+      createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
+      createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this)
+    }
+  }
+  setupControllerConnection(outStream: any) {
+    const api = this.getApi()
+    // report new active controller connection
+    // this.activeControllerConnections += 1;
+    // this.emit('controllerConnectionChanged', this.activeControllerConnections);
+    console.log(outStream, 'api')
 
+    // set up postStream transport  createMetaRPCHandler(api, outStream, this.store, {})
+    outStream.on('data', (data: any) => {
+      console.log(data, '----data')
+    })
+    // const handleUpdate = (update) => {
+    //   if (outStream._writableState.ended) {
+    //     return;
+    //   }
+    //   // send notification to client-side
+    //   outStream.write({
+    //     jsonrpc: '2.0',
+    //     method: 'sendUpdate',
+    //     params: [update],
+    //   });
+    // };
+    // this.on('update', handleUpdate);
+    // const startUISync = () => {
+    //   if (outStream._writableState.ended) {
+    //     return;
+    //   }
+    //   // send notification to client-side
+    //   outStream.write({
+    //     jsonrpc: '2.0',
+    //     method: 'startUISync',
+    //   });
+    // };
+
+    // if (this.startUISync) {
+    //   startUISync();
+    // } else {
+    //   this.once('startUISync', startUISync);
+    // }
+
+    // outStream.on('end', () => {
+    //   this.activeControllerConnections -= 1;
+    //   this.emit(
+    //     'controllerConnectionChanged',
+    //     this.activeControllerConnections,
+    //   );
+    //   this.removeListener('update', handleUpdate);
+    // });
+  }
   //=============================================================================
   // PASSWORD MANAGEMENT
   //=============================================================================
@@ -635,7 +711,6 @@ export const loadStateFromPersistence = async function () {
   // read from disk
   // first from preferred, async API:
   versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
-  console.log(versionedData)
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has
@@ -774,16 +849,14 @@ export async function initialize() {
   const doidController = setupController(initState, initLangCode)
 
   // test
-  const encodedSeedPhrase = Array.from(
-    Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
-  )
-  const encodedSeedPhrase2 = Array.from(
-    Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
-  )
-  const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
-  console.log('first valut ', vault)
-  const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
-  console.log('second ', secondkeyring)
+  //const encodedSeedPhrase = Array.from(
+  //  Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
+  //)
+  //const encodedSeedPhrase2 = Array.from(
+  //  Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
+  //)
+  //const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
+  //const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
 }
 export const initController = initialize
 initialize()

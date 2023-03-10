@@ -20,9 +20,6 @@ export const connectRemote = async (remotePort: chrome.runtime.Port) => {
     // communication with popup
     swGlobal.controller.isClientOpen = true
     swGlobal.controller.setupTrustedCommunication(portStream, remotePort.sender)
-    portStream.on('data', (e) => {
-      console.log('connectRemote ondata', e)
-    })
 
     remotePort.onMessage.addListener((message) => {
       if (message.name === swGlobal.WORKER_KEEP_ALIVE_MESSAGE) {
@@ -75,7 +72,6 @@ export const connectRemote = async (remotePort: chrome.runtime.Port) => {
         }
       })
     }
-    console.log(remotePort, 'remotePort')
     connectExternal(remotePort)
   }
 }
@@ -85,9 +81,6 @@ export const connectExternal = (remotePort: chrome.runtime.Port) => {
   swGlobal.controller.setupUntrustedCommunication({
     connectionStream: portStream,
     sender: remotePort.sender
-  })
-  portStream.on('data', (e) => {
-    console.log('connect external on data', e)
   })
   return portStream
 }

@@ -1,4 +1,14 @@
-import { PLATFORM_FIREFOX, PLATFORM_OPERA, PLATFORM_CHROME, PLATFORM_EDGE, PLATFORM_BRAVE } from '~/constants/app'
+import {
+  ENVIRONMENT_TYPE_POPUP,
+  ENVIRONMENT_TYPE_NOTIFICATION,
+  ENVIRONMENT_TYPE_FULLSCREEN,
+  ENVIRONMENT_TYPE_BACKGROUND,
+  PLATFORM_FIREFOX,
+  PLATFORM_OPERA,
+  PLATFORM_CHROME,
+  PLATFORM_EDGE,
+  PLATFORM_BRAVE
+} from '~/constants/app'
 
 export const chkPwdValid = (pwd: string, { min = 8, max = 30 } = {}) => {
   const len = pwd.length
@@ -37,6 +47,18 @@ export const getPlatform = () => {
   return PLATFORM_CHROME
 }
 
+const getEnvironmentTypeMemo = (url: string) => {
+  const parsedUrl = new URL(url)
+  if (parsedUrl.pathname === '/popup.html') {
+    return ENVIRONMENT_TYPE_POPUP
+  } else if (parsedUrl.pathname.includes('generate')) {
+    return ENVIRONMENT_TYPE_FULLSCREEN
+  } else if (parsedUrl.pathname === '/notification.html') {
+    return ENVIRONMENT_TYPE_NOTIFICATION
+  }
+  return ENVIRONMENT_TYPE_BACKGROUND
+}
+export const getEnvironmentType = (url = window.location.href) => getEnvironmentTypeMemo(url)
 export const isPrefixedFormattedHexString = (value: unknown) =>
   typeof value === 'string' && /^0x[1-9a-f]+[0-9a-f]*$/iu.test(value)
 export const isSafeChainId = (chainId: number) =>

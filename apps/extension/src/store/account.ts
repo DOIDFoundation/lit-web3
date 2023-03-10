@@ -16,13 +16,15 @@ class AccountStore extends State {
     return { name: this.name, mainAddress: this.mainAddress }
   }
 
-  search = async (keyword: string) => {
+  search = async (keyword: string, mark = false) => {
     let res = null
     this.pending = true
     if (keyword) {
       const { name, owner, mainAddress } = (await nameInfo(keyword)) as NameInfo
-      this.name = name
-      this.mainAddress = mainAddress || ''
+      if (mark) {
+        this.name = name
+        this.mainAddress = mainAddress || ''
+      }
       res = { name, owner, mainAddress }
     }
     this.ts++

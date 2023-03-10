@@ -11,6 +11,7 @@ import {
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/address/avatar'
 import { getAccounts, getAccountIdx } from '~/lib/account'
+import { goto } from '@lit-web3/dui/src/shared/router'
 
 import css from './menu.css?inline'
 @customElement('account-menu')
@@ -60,7 +61,9 @@ export class AccountMenu extends TailwindElement(css) {
         )}
         <div class="w-full border-b py-2"></div>
 
-        <div class="flex items-center gap-2 px-4 py-2"><i class="text-xl mdi mdi-plus"></i> Create Account</div>
+        <div class="flex items-center gap-2 px-4 py-2" @click=${() => goto('/create')}>
+          <i class="text-xl mdi mdi-plus"></i> Create Account
+        </div>
         <div class="flex items-center gap-2 px-4 py-2">
           <i class="text-xl mdi mdi-tray-arrow-down"></i> Import Account
         </div>
