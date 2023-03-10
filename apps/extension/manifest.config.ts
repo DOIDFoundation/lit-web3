@@ -38,7 +38,14 @@ export default defineManifest({
   content_security_policy: {
     extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; frame-ancestors 'none';"
   },
-  // web_accessible_resources: [{ resources: ['public/inpage.js'], matches }, defineDynamicResource({ matches })],
-  web_accessible_resources: [defineDynamicResource({ matches })],
+  externally_connectable: {
+    matches: ['https://doid.tech/*'],
+    ids: ['*']
+  },
+  web_accessible_resources: [
+    { resources: ['public/inpage.js', 'src/ext.scripts/contentscript.ts'], matches },
+    defineDynamicResource({ matches })
+  ],
+  // web_accessible_resources: [defineDynamicResource({ matches })],
   minimum_chrome_version: '80'
 })

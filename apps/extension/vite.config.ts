@@ -32,7 +32,8 @@ export const sharedConfig = async (mode = '') => {
     resolve: {
       alias: {
         stream: shimNode('stream.ts'),
-        util: shimNode('util.ts'),
+        util: shimNode('util.js'),
+        assert: shimNode('assert.js'),
         'obj-multiplex': '@metamask/object-multiplex'
       }
     },

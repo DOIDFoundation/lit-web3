@@ -2,7 +2,7 @@ import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/T
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '~/components/search-bar'
-import '~lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/src/doid-symbol'
 
 // Style
 import style from './index.css?inline'

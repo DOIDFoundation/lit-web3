@@ -1,5 +1,5 @@
 import PortStream from '~/lib/ext.runtime/extension-port-stream'
-import { InpageProviderStreamName } from '../InpageProvider'
+import { InpageProviderStreamName } from '../inpageProvider'
 import { StreamProvider } from '../StreamProvider'
 import { getDefaultExternalMiddleware } from '../utils'
 import config from './external-extension-config.json'

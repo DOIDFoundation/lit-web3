@@ -1,5 +1,5 @@
 import { MESSAGE_TYPE, ORIGIN_METAMASK } from '~/constants/app'
-import { SECOND } from '~/constants/time'
+import { SECOND } from '@lit-web3/core/src/constants/time'
 // import { detectSIWE } from '../../../shared/modules/siwe'
 import { EVENT, EVENT_NAMES, METAMETRIC_KEY_OPTIONS, METAMETRIC_KEY } from '~/constants/metametrics'
 

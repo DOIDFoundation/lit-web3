@@ -15,6 +15,7 @@ const logger = (...args: any) => console.info(`[contentscript]`, ...args)
 
 if (typeof browser !== 'undefined') {
   const s = document.createElement('script')
+  s.setAttribute('async', 'false')
   s.src = browser.runtime.getURL(inpage)
   s.onload = () => s.remove()
   const target = document.head || document.documentElement

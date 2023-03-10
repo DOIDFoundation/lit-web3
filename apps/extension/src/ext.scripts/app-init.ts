@@ -76,20 +76,20 @@ initialize().catch(logger)
  * https://bugs.chromium.org/p/chromium/issues/detail?id=634381
  */
 // if (shouldInjectProvider('init')) {
-//   const registerInPageContentScript = async () => {
-//     try {
-//       await browser.scripting.registerContentScripts([
-//         {
-//           id: 'inpage',
-//           js: ['inpage.js'],
-//           matches: ['https://*/*', 'http://*/*', 'file://*/*'],
-//           runAt: 'document_start',
-//           world: 'MAIN'
-//         }
-//       ])
-//     } catch (err) {
-//       console.warn(`Dropped attempt to register inpage content script. ${err}`)
-//     }
+// const registerInPageContentScript = async () => {
+//   try {
+//     await browser.scripting.registerContentScripts([
+//       {
+//         id: 'inpage',
+//         js: ['/public/inpage.js'],
+//         matches: ['https://*/*', 'http://*/*', 'file://*/*'],
+//         runAt: 'document_start',
+//         world: 'MAIN'
+//       }
+//     ])
+//   } catch (err) {
+//     console.warn(`Dropped attempt to register inpage content script. ${err}`)
 //   }
-//   registerInPageContentScript()
+// }
+// registerInPageContentScript()
 // }

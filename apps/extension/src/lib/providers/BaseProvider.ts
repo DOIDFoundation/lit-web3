@@ -242,10 +242,18 @@ export abstract class BaseProvider extends SafeEventEmitter {
         payload.jsonrpc = '2.0'
       }
 
-      if (payload.method === 'eth_accounts' || payload.method === 'eth_requestAccounts') {
+      if (
+        payload.method === 'eth_accounts' ||
+        payload.method === 'eth_requestAccounts' ||
+        payload.method === 'DOID_account' ||
+        payload.method === 'DOID_requestAccount'
+      ) {
         // handle accounts changing
         cb = (err: Error, res: JsonRpcSuccess<string[]>) => {
-          this._handleAccountsChanged(res.result || [], payload.method === 'eth_accounts')
+          this._handleAccountsChanged(
+            res.result || [],
+            payload.method === 'eth_accounts' || payload.method === 'DOID_account'
+          )
           callback(err, res)
         }
       }

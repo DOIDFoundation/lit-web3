@@ -5,6 +5,7 @@ import { isDuplexStream } from 'is-stream'
 import type { JsonRpcMiddleware } from 'json-rpc-engine'
 import { createStreamMiddleware } from 'json-rpc-middleware-stream'
 import pump from 'pump'
+import type { Callback } from 'pump'
 import messages from './messages'
 import { EMITTED_NOTIFICATIONS, isValidChainId, isValidNetworkVersion } from './utils'
 import { BaseProvider, BaseProviderOptions } from './BaseProvider'
@@ -54,7 +55,12 @@ export abstract class AbstractStreamProvider extends BaseProvider {
 
     // Set up connectionStream multiplexing
     const mux = new ObjectMultiplex()
-    pump(connectionStream, mux as unknown as Duplex, connectionStream, this._handleStreamDisconnect.bind(this, 'DOID'))
+    pump(
+      connectionStream,
+      mux as unknown as Duplex,
+      connectionStream,
+      this._handleStreamDisconnect.bind(this, 'DOID') as Callback
+    )
 
     // Set up RPC connection
     this._jsonRpcConnection = createStreamMiddleware({
@@ -64,7 +70,7 @@ export abstract class AbstractStreamProvider extends BaseProvider {
       this._jsonRpcConnection.stream,
       mux.createStream(jsonRpcStreamName) as unknown as Duplex,
       this._jsonRpcConnection.stream,
-      this._handleStreamDisconnect.bind(this, 'DOID RpcProvider')
+      this._handleStreamDisconnect.bind(this, 'DOID RpcProvider') as Callback
     )
 
     // Wire up the JsonRpcEngine to the JSON-RPC connection stream

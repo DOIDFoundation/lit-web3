@@ -1,5 +1,5 @@
 import { Duplex } from '@lit-web3/core/src/shims/node/stream'
-import { InpageProvider, InpageProviderOptions } from './InpageProvider'
+import { InpageProvider, InpageProviderOptions } from './inpageProvider'
 import shouldInjectProvider from './injection'
 
 interface InitializeProviderOptions extends InpageProviderOptions {

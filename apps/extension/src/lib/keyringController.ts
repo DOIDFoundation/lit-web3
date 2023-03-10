@@ -2,6 +2,7 @@ import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
 import NetworkController from '~/lib/controllers/network-controller'
 import { Mutex } from 'await-semaphore'
+import { debounce } from 'lodash'
 import * as Connections from './keyringController.setup/connections'
 import * as Middlewares from '~/lib/middlewares'
 import LocalStore from './local-store'
@@ -11,6 +12,7 @@ import { ControllerMessenger } from '@metamask/base-controller'
 import PreferencesController from './preferences'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import DoidNameController from './doidNameController'
+import { MILLISECOND } from '@lit-web3/core/src/constants/time'
 
 export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
@@ -41,12 +43,18 @@ export class DOIDController extends EventEmitter {
   approvalController: any
   startUISync: boolean = false
   doidNameController: DoidNameController
+  sendUpdate: any
 
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
     super()
     this.opts = opts
     this.extension = opts.browser ?? chrome
+
+    this.extension.runtime.onMessageExternal.addListener((message: string) => {
+      if (message === 'isRunning') console.warn('Warning! You have multiple instances of DOID running!')
+    })
+    this.sendUpdate = debounce(this.privateSendUpdate.bind(this), MILLISECOND * 200)
 
     const initState = opts.initState || {}
     this.activeControllerConnections = 0
@@ -93,6 +101,7 @@ export class DOIDController extends EventEmitter {
     this.networkController.initializeProvider()
     this.provider = this.networkController.getProviderAndBlockTracker().provider
     this.blockTracker = this.networkController.getProviderAndBlockTracker().blockTracker
+    this.networkController.lookupNetwork()
     this.walletMiddleware = Middlewares.createDOIDMiddleware.bind(this)({
       version: '0.0.1',
       // account mgmt
@@ -563,11 +572,16 @@ export class DOIDController extends EventEmitter {
     // account details are not flushed to UI.
     this.emit('startUISync')
     this.startUISync = true
-    // this.memStore.subscribe(this.sendUpdate.bind(this))
+    this.memStore.subscribe(this.sendUpdate.bind(this))
   }
+  privateSendUpdate() {
+    this.emit('update', this.getState())
+  }
+
   // setupUntrustedCommunication
   setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
-  // setupControllerConnection = Connections.setupControllerConnection.bind(this)
+  setupTrustedCommunication = Connections.setupTrustedCommunication.bind(this)
+  setupControllerConnection = Connections.setupControllerConnection.bind(this)
   setupProviderConnection = Connections.setupProviderConnection.bind(this)
   // setupSnapProvider = Connections.setupSnapProvider.bind(this)
   addConnection = Connections.addConnection.bind(this)

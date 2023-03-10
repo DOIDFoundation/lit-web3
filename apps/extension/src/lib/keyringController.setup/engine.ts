@@ -2,7 +2,7 @@ import { JsonRpcEngine } from 'json-rpc-engine'
 import * as Middlewares from '../middlewares'
 import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
 
-interface engineOpts {
+declare interface engineOpts {
   origin: string
   subjectType: string
   sender: Sender
