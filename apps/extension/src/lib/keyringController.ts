@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
-import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
-import { setupMultiplex } from '~/lib/stream-utils'
+import NetworkController from '~/lib/controllers/network-controller'
 import { Mutex } from 'await-semaphore'
 import * as Connections from './keyringController.setup/connections'
+import * as Middlewares from '~/lib/middlewares'
 import LocalStore from './local-store'
 import ComposableObservableStore from './ComposableObservableStore'
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
@@ -12,7 +12,7 @@ import PreferencesController from './preferences'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import DoidNameController from './doidNameController'
 
-enum HardwareKeyringTypes {
+export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
   trezor = 'Trezor Hardware',
   lattice = 'Lattice Hardware',
@@ -33,9 +33,13 @@ export class DOIDController extends EventEmitter {
   memStore: ComposableObservableStore
   controllerMessenger: ControllerMessenger<any, any>
   preferencesController: PreferencesController
-  networkController: Object
-  tokenListController: Object
+  networkController: any
+  tokenListController: any
   provider: Object
+  blockTracker: any
+  walletMiddleware: any
+  approvalController: any
+  startUISync: boolean = false
   doidNameController: DoidNameController
 
   //store : ComposableObservableStore
@@ -76,7 +80,27 @@ export class DOIDController extends EventEmitter {
       persist: true
     })
 
-    this.networkController = {}
+    // S stream deps
+    this.networkController = new NetworkController({
+      state: initState.NetworkController
+    })
+    // this.approvalController = new ApprovalController({
+    //   messenger: this.controllerMessenger.getRestricted({
+    //     name: 'ApprovalController'
+    //   }),
+    //   showApprovalRequest: opts.showUserConfirmation
+    // })
+    this.networkController.initializeProvider()
+    this.provider = this.networkController.getProviderAndBlockTracker().provider
+    this.blockTracker = this.networkController.getProviderAndBlockTracker().blockTracker
+    this.walletMiddleware = Middlewares.createDOIDMiddleware.bind(this)({
+      version: '0.0.1',
+      // account mgmt
+      getAccounts: async ({ origin: innerOrigin }, { suppressUnauthorizedError = true } = {}) => {
+        return ['whoami']
+      }
+    })
+    // E
     this.tokenListController = {}
     this.provider = {}
 
@@ -195,7 +219,7 @@ export class DOIDController extends EventEmitter {
    * @param {number[]} encodedSeedPhrase - The seed phrase, encoded as an array
    * of UTF-8 bytes.
    */
-  async createNewVaultAndRestore(password: string, encodedSeedPhrase: number[]) {
+  async createNewVaultAndRestore(doidName: string, password: string, encodedSeedPhrase: number[]) {
     //const releaseLock = await this.createVaultMutex.acquire();
     try {
       let accounts, lastBalance
@@ -268,6 +292,12 @@ export class DOIDController extends EventEmitter {
       //// set new identities
       //this.preferencesController.setAddresses(accounts);
       //this.selectFirstIdentity();
+
+      if (doidName === null || doidName === '') {
+        return
+      }
+      this.doidNameController.bindName(doidName, accounts[0])
+
       return vault
     } finally {
       //releaseLock();
@@ -304,7 +334,6 @@ export class DOIDController extends EventEmitter {
       } else {
         vault = await this.keyringController.createNewVaultAndKeychain(password)
         const addresses = await this.keyringController.getAccounts()
-        console.log('new accounts', addresses)
         //      this.preferencesController.setAddresses(addresses);
         //      this.selectFirstIdentity();
       }
@@ -484,7 +513,6 @@ export class DOIDController extends EventEmitter {
     try {
       //await this.blockTracker.checkForLatestBlock();
       const allAccounts = await this.keyringController.getAccounts()
-      console.log(allAccounts, 'allAccounts')
     } catch (error) {
       //log.error('Error while unlocking extension.', error);
     }
@@ -533,21 +561,19 @@ export class DOIDController extends EventEmitter {
     //preferencesController.setPasswordForgotten(false);
     //sendUpdate();
   }
-
-  // _startUISync() {
-  //   // Message startUISync is used in MV3 to start syncing state with UI
-  //   // Sending this message after login is completed helps to ensure that incomplete state without
-  //   // account details are not flushed to UI.
-  //   this.emit('startUISync');
-  //   this.startUISync = true;
-  //   this.memStore.subscribe(this.sendUpdate.bind(this));
-  // }
+  _startUISync() {
+    // Message startUISync is used in MV3 to start syncing state with UI
+    // Sending this message after login is completed helps to ensure that incomplete state without
+    // account details are not flushed to UI.
+    this.emit('startUISync')
+    this.startUISync = true
+    // this.memStore.subscribe(this.sendUpdate.bind(this))
+  }
   // setupUntrustedCommunication
   setupUntrustedCommunication = Connections.setupUntrustedCommunication.bind(this)
   // setupControllerConnection = Connections.setupControllerConnection.bind(this)
   setupProviderConnection = Connections.setupProviderConnection.bind(this)
   // setupSnapProvider = Connections.setupSnapProvider.bind(this)
-  // setupProviderEngine = Connections.setupProviderEngine.bind(this)
   addConnection = Connections.addConnection.bind(this)
   removeConnection = Connections.removeConnection.bind(this)
   removeAllConnections = Connections.removeAllConnections.bind(this)
@@ -620,7 +646,6 @@ export const loadStateFromPersistence = async function () {
   // read from disk
   // first from preferred, async API:
   versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
-  console.log(versionedData)
   //
   //  // check if somehow state is empty
   //  // this should never happen but new error reporting suggests that it has
@@ -770,16 +795,14 @@ export async function initialize() {
   //}
 
   // test
-  const encodedSeedPhrase = Array.from(
-    Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
-  )
-  const encodedSeedPhrase2 = Array.from(
-    Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
-  )
-  const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
-  console.log('first valut ', vault)
-  const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
-  console.log('second ', secondkeyring)
+  //const encodedSeedPhrase = Array.from(
+  //  Buffer.from('swear type number garlic physical mean voice island report typical multiply holiday', 'utf8').values()
+  //)
+  //const encodedSeedPhrase2 = Array.from(
+  //  Buffer.from('legal winner thank year wave sausage worth useful legal winner thank yellow', 'utf8').values()
+  //)
+  //const vault = await doidController.createNewVaultAndRestore('123', encodedSeedPhrase)
+  //const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
 }
 export const initController = initialize
-// await initialize()
+initialize()

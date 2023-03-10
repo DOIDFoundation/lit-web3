@@ -1,16 +1,12 @@
 // !!! `this` must point to DOIDController with `bind()` method
 import { setupMultiplex } from '~/lib/stream-utils'
-import { SubjectType } from '@metamask/subject-metadata-controller'
 import { createEngineStream } from 'json-rpc-middleware-stream'
 import { ORIGIN_METAMASK } from '~/constants/app'
 import { nanoid } from 'nanoid'
 import pump from 'pump'
-// import { SubjectMetadataController } from '@metamask/subject-metadata-controller'
+import { SubjectType, SubjectMetadataController } from '@metamask/subject-metadata-controller'
+import { setupProviderEngine } from './engine'
 
-type SnapSender = {
-  snapId: string
-}
-interface Sender extends chrome.runtime.MessageSender, SnapSender {}
 interface setupUntrustedCommunicationOptions {
   connectionStream: ReadableStream
   sender: Sender
@@ -30,6 +26,13 @@ export const setupUntrustedCommunication = function (
   const mux = setupMultiplex(connectionStream)
   // // messages between inpage and background
   setupProviderConnection.bind(this)(mux.createStream('DOID-provider'), sender, _subjectType)
+}
+export const setupTrustedCommunication = function (connectionStream: ReadableStream, sender: Sender) {
+  // setup multiplexing
+  const mux = setupMultiplex(connectionStream)
+  // connect features
+  setupControllerConnection.bind(this)(mux.createStream('controller'))
+  setupProviderConnection.bind(this)(mux.createStream('provider'), sender, SubjectType.Internal)
 }
 
 export const setupProviderConnection = function (outStream: any, sender: Sender, subjectType: string) {
@@ -59,29 +62,29 @@ export const setupProviderConnection = function (outStream: any, sender: Sender,
     tabId = sender.tab.id
   }
 
-  // const engine = this.setupProviderEngine({
-  //   origin,
-  //   sender,
-  //   subjectType,
-  //   tabId
-  // })
+  const engine = setupProviderEngine.bind(this)({
+    origin,
+    sender,
+    subjectType,
+    tabId
+  })
 
   // // setup connection
-  // const providerStream = createEngineStream({ engine })
-  // const connectionId = addConnection.bind(this)(origin, { engine })
+  const providerStream = createEngineStream({ engine })
+  const connectionId = addConnection.bind(this)(origin, { engine })
 
-  // pump(outStream, providerStream, outStream, (err) => {
-  //   // handle any middleware cleanup
-  //   engine._middleware.forEach((mid: any) => {
-  //     if (mid.destroy && typeof mid.destroy === 'function') {
-  //       mid.destroy()
-  //     }
-  //   })
-  //   connectionId && removeConnection.bind(this)(origin, connectionId)
-  //   if (err) {
-  //     log.error(err)
-  //   }
-  // })
+  pump(outStream, providerStream, outStream, (err) => {
+    // handle any middleware cleanup
+    engine._middleware.forEach((mid: any) => {
+      if (mid.destroy && typeof mid.destroy === 'function') {
+        mid.destroy()
+      }
+    })
+    connectionId && removeConnection.bind(this)(origin, connectionId)
+    if (err) {
+      console.error(err)
+    }
+  })
 }
 
 interface engineOpts {
@@ -143,14 +146,14 @@ export const notifyAllConnections = function (payload: unknown) {
 }
 
 export const setupControllerConnection = function (outStream: any) {
-  const api = this.getApi()
+  // const api = this.getApi()
 
   // report new active controller connection
   this.activeControllerConnections += 1
   this.emit('controllerConnectionChanged', this.activeControllerConnections)
 
   // set up postStream transport
-  outStream.on('data', createMetaRPCHandler(api, outStream, this.store, this.localStoreApiWrapper))
+  // outStream.on('data', createMetaRPCHandler(api, outStream, this.store, this.localStoreApiWrapper))
   const handleUpdate = (update) => {
     if (outStream._writableState.ended) {
       return

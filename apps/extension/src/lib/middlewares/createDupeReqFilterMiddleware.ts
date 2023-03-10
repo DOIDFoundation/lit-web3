@@ -1,6 +1,7 @@
 import log from 'loglevel'
+import type { JsonRpcMiddleware } from 'json-rpc-engine'
 
-export const createDupeReqFilterMiddleware = function (): Function {
+export const createDupeReqFilterMiddleware = function () {
   const processedRequestId: any[] = []
   return function filterDuplicateRequestMiddleware(req: any, _res: any, next: Function, end: Function) {
     if (processedRequestId.indexOf(req.id) >= 0) {

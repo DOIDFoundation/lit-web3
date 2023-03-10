@@ -1,5 +1,5 @@
-import { ethErrors } from 'eth-rpc-errors';
-import { MESSAGE_TYPE } from '../../../../../shared/constants/app';
+import { ethErrors } from 'eth-rpc-errors'
+import { MESSAGE_TYPE } from '~/constants/app'
 
 /**
  * This internal method is used by our external provider to send metadata about
@@ -12,10 +12,10 @@ const sendMetadata = {
   implementation: sendMetadataHandler,
   hookNames: {
     addSubjectMetadata: true,
-    subjectType: true,
-  },
-};
-export default sendMetadata;
+    subjectType: true
+  }
+}
+export default sendMetadata
 
 /**
  * @typedef {Record<string, Function>} SendMetadataOptions
@@ -31,28 +31,22 @@ export default sendMetadata;
  * @param {Function} end - The json-rpc-engine 'end' callback.
  * @param {SendMetadataOptions} options
  */
-function sendMetadataHandler(
-  req,
-  res,
-  _next,
-  end,
-  { addSubjectMetadata, subjectType },
-) {
-  const { origin, params } = req;
+function sendMetadataHandler(req, res, _next, end, { addSubjectMetadata, subjectType }) {
+  const { origin, params } = req
   if (params && typeof params === 'object' && !Array.isArray(params)) {
-    const { icon = null, name = null, ...remainingParams } = params;
+    const { icon = null, name = null, ...remainingParams } = params
 
     addSubjectMetadata({
       ...remainingParams,
       iconUrl: icon,
       name,
       subjectType,
-      origin,
-    });
+      origin
+    })
   } else {
-    return end(ethErrors.rpc.invalidParams({ data: params }));
+    return end(ethErrors.rpc.invalidParams({ data: params }))
   }
 
-  res.result = true;
-  return end();
+  res.result = true
+  return end()
 }

@@ -1,4 +1,4 @@
-import { ObservableStore } from '@metamask/obs-store'
+import { ObservableStore } from './obs-store/ObservableStore'
 import EventEmitter from 'events'
 
 class DoidNameController extends EventEmitter {
@@ -21,6 +21,7 @@ class DoidNameController extends EventEmitter {
     names.set(name, address)
     this.doidNames.set(name, address)
     this._updateMemStore()
+    this.persistDoidNames()
   }
 
   getAddressByName(name) {
@@ -30,6 +31,7 @@ class DoidNameController extends EventEmitter {
   clearNames() {
     this.doidNames = {}
     this._updateMemStore()
+    this.persistDoidNames()
   }
 
   // setting memstore by this.doidNames

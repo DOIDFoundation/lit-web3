@@ -1,6 +1,7 @@
 import { ENVIRONMENT_TYPE_FULLSCREEN, EXTENSION_MESSAGES } from '~/constants/app'
-import PortStream from '~/lib/ext.runtime/extension-port-stream'
 import { checkForLastErrorAndLog } from '~/lib/ext.runtime/utils'
+import LocalStore from '~/ext.scripts/sw/localStore'
+import ReadOnlyNetworkStore from '~/ext.scripts/sw/networkStore'
 
 export const swGlobal: SWGlobal = {
   popupIsOpen: false,
@@ -23,7 +24,8 @@ export const swGlobal: SWGlobal = {
         }
       ]
     }
-  }
+  },
+  localStore: import.meta.env.MODE === 'test' ? new ReadOnlyNetworkStore() : new LocalStore()
 }
 export default swGlobal
 
@@ -45,6 +47,7 @@ export const onCloseEnvironmentInstances = (environmentType: string) => {
 }
 
 export const sendReadyMessageToTabs = async () => {
+  console.log('send')
   const tabs = await chrome.tabs
     .query({ url: '<all_urls>', windowType: 'normal' })
     .then((result) => {
@@ -52,9 +55,11 @@ export const sendReadyMessageToTabs = async () => {
       return result
     })
     .catch(() => checkForLastErrorAndLog())
+  console.log('send', 2)
 
   /** @todo we should only sendMessage to dapp tabs, not all tabs. */
   if (!Array.isArray(tabs)) return
+  console.log('send', 3, tabs)
   for (const tab of tabs) {
     chrome.tabs
       .sendMessage(tab.id, { name: EXTENSION_MESSAGES.READY })

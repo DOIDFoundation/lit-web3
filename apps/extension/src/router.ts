@@ -74,8 +74,8 @@ export const routes = [
   },
   {
     name: 'start',
-    path: '/start',
-    render: () => html`<view-start></view-start>`,
+    path: '/start/:doid?',
+    render: ({ doid = '' }) => html`<view-start .name=${safeDecodeURIComponent(doid)}></view-start>`,
     enter: async () => {
       await import('~/views/start')
       return true
@@ -116,6 +116,28 @@ export const routes = [
     },
     enter: async () => {
       await import('~/views/generate-phrase')
+      return true
+    }
+  },
+  {
+    name: 'seed',
+    path: '/seed',
+    render: () => {
+      return html`<view-seed></view-seed>`
+    },
+    enter: async () => {
+      await import('~/views/seed')
+      return true
+    }
+  },
+  {
+    name: 'recover',
+    path: '/recover',
+    render: () => {
+      return html`<view-recover></view-recover>`
+    },
+    enter: async () => {
+      await import('~/views/recover')
       return true
     }
   }
