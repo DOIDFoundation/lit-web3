@@ -4,6 +4,7 @@ import { keyringStore, StateController } from '~/store/keyring'
 import { HardwareKeyringTypes } from '@/lib/keyringController'
 import { getAddress, AddressType } from '@/lib/phrase'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { accountStore } from '~/store/account'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -14,7 +15,8 @@ import style from './import4th.css?inline'
 @customElement('import-4th')
 export class ViewImport extends TailwindElement(style) {
   bindStore: any = new StateController(this, keyringStore)
-  @property() placeholder = 'e.g. satoshi.doid'
+  bindAccount: any = new StateController(this, accountStore)
+  @property() placeholder = ''
   @state() secretRecoveryPhrase = ''
   @state() err = ''
   @state() pwd = ''
@@ -23,6 +25,10 @@ export class ViewImport extends TailwindElement(style) {
   onPwdChange = (e: CustomEvent) => {
     const { pwd, error } = e.detail
     this.pwd = pwd
+  }
+
+  get account() {
+    return accountStore.account
   }
 
   routeGoto = (path: string) => {
@@ -46,7 +52,7 @@ export class ViewImport extends TailwindElement(style) {
       <div class="dui-container sparse">
         <div class="dui-container sparse">
           <doid-symbol class="block mt-12">
-            <span slot="h1" class="text-base">Create password</span>
+            <span slot="h1" class="text-base">Create password for ${this.account.name}</span>
           </doid-symbol>
           <div class="max-w-xs mx-auto">
             <span slot="h1" class="text-sm"
