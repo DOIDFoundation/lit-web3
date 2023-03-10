@@ -37,7 +37,7 @@ export class ViewImport extends TailwindElement(style) {
 
   @state() start = '1'
 
-  @state() mainAddress = ''
+  // @state() mainAddress = this.mainAddress
 
   get account() {
     return accountStore.account
@@ -116,7 +116,7 @@ export class ViewImport extends TailwindElement(style) {
             </span>
           </doid-symbol>
               <span slot="label">
-              <slot name="label">Enter the Secret Recovery Phrase of ${this.mainAddress}</slot>
+              <slot name="label">Enter the Secret Recovery Phrase of ${this.account.mainAddress}</slot>
            </span>
            <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
            <div class="mt-4 flex justify-between">
@@ -138,7 +138,7 @@ export class ViewImport extends TailwindElement(style) {
                 </span>
               </doid-symbol>
               <span slot="label">
-                <slot name="label">The Secret Recovery Phrase entered does not match ${this.mainAddress}</slot>
+                <slot name="label">The Secret Recovery Phrase entered does not match ${this.account.mainAddress}</slot>
               </span>
             `
           )}
