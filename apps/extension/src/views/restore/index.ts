@@ -27,11 +27,6 @@ export class ViewRestore extends TailwindElement(style) {
     if (!this.name || !this.phrase || !this.pwd) return true
     return Object.values(this.invalid).some((r) => r)
   }
-  onInputName = (e: CustomEvent) => {
-    // TODO: check valid
-    const text = e.detail.trim()
-    this.name = text
-  }
   onPhraseChange = (e: CustomEvent) => {
     e.stopPropagation()
     const { phrase, error } = e.detail as any
@@ -72,12 +67,6 @@ export class ViewRestore extends TailwindElement(style) {
         <div class="text-base mb-4">
           You are importing an address as Main Address for
           <dui-link class="link ml-0.5 underline">${this.wrapName}</dui-link>
-        </div>
-        <div>
-          <dui-input-text @input=${this.onInputName} value=${this.name} placeholder="Enter DOID name" required>
-            <span name="right">.doid</span>
-            <span slot="label">DOID name</span>
-          </dui-input-text>
         </div>
 
         <h3 class="text-lg">Secret Recovery Phrase</h3>
