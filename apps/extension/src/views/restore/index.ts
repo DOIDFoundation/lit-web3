@@ -49,7 +49,7 @@ export class ViewRestore extends TailwindElement(style) {
     try {
       const encodedSeedPhrase = Array.from(Buffer.from(this.phrase, 'utf8').values())
 
-      await swGlobal.controller.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
+      await swGlobal.controller.createNewVaultAndRestore(this.name, this.pwd, encodedSeedPhrase)
       goto('/main')
     } catch (err: any) {
       this.invalid.phrase = err.message || err

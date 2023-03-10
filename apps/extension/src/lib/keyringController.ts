@@ -114,7 +114,6 @@ export class DOIDController extends EventEmitter {
     })
 
     this.keyringController.on('update', () => {
-      console.log('keyring update event', this.keyringController.store.getState(), initState)
       const data = Object.assign(initState, {
         KeyringController: this.keyringController.store.getState()
       })
