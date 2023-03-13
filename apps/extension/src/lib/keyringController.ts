@@ -382,6 +382,10 @@ export class DOIDController extends EventEmitter {
     }
   }
 
+  isUnlocked() {
+    return this.keyringController.memStore.getState().isUnlocked
+  }
+
   async resetAccount() {
     //const selectedAddress = this.preferencesController.getSelectedAddress();
     //this.txController.wipeTransactions(selectedAddress);

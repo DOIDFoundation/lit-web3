@@ -8,7 +8,7 @@ import { ApprovalController } from '@metamask/approval-controller'
 import { setupOnBoardingController } from './onBoarding'
 import { setupAccountTracker } from './accountTracker'
 import { setupPermissionController } from './permission'
-import setupSubjectMetadataController from './SubjectMetadata'
+import setupSubjectMetadataController from './subjectMetadata'
 
 // Init controllers step by step
 export default function setupControllers() {
