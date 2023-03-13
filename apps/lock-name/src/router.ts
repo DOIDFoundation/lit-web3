@@ -86,6 +86,16 @@ export const routes = [
       await import('~/views/faq')
       return true
     }
+  },
+  // dApp Sample
+  {
+    name: 'dApp',
+    path: '/dApp',
+    render: () => html`<view-dapp></view-dapp>`,
+    enter: async () => {
+      await import('~/views/dApp.sample')
+      return true
+    }
   }
 ]
 

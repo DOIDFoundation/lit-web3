@@ -4,12 +4,7 @@ export { createTabIdMiddleware } from './createTabIdMiddleware'
 export { createLoggerMiddleware } from './createLoggerMiddleware'
 export { default as createRPCMethodTrackingMiddleware } from './createRPCMethodTrackingMiddleware'
 export { createOnboardingMiddleware } from './createOnboardingMiddleware'
-export {
-  createMethodMiddleware
-  ///: BEGIN:ONLY_INCLUDE_IN(flask)
-  // createSnapMethodMiddleware
-  ///: END:ONLY_INCLUDE_IN
-} from './rpc-method-middleware'
+export { createMethodMiddleware } from './rpc-method-middleware'
 
 import { providerAsMiddleware, createWalletMiddleware } from 'eth-json-rpc-middleware'
 import { createScaffoldMiddleware, mergeMiddleware } from 'json-rpc-engine'

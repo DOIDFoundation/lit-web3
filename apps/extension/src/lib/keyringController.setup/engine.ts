@@ -1,6 +1,7 @@
 import { JsonRpcEngine } from 'json-rpc-engine'
 import * as Middlewares from '../middlewares'
 import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
+import { providerAsMiddleware } from '@metamask/eth-json-rpc-middleware'
 
 declare interface engineOpts {
   origin: string
@@ -36,40 +37,40 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
 
   // onboarding
   if (subjectType === SubjectType.Website) {
-    // engine.push(
-    //   Middlewares.createOnboardingMiddleware({
-    //     location: sender.url,
-    //     registerOnboarding: this.onboardingController.registerOnboarding
-    //   })
-    // )
+    engine.push(
+      Middlewares.createOnboardingMiddleware({
+        location: sender.url,
+        registerOnboarding: this.onboardingController.registerOnboarding
+      })
+    )
   }
 
   // Unrestricted/permissionless RPC method implementations
   engine.push(
     Middlewares.createMethodMiddleware({
       origin,
-      subjectType
+      subjectType,
 
       // Miscellaneous
       // addSubjectMetadata: this.subjectMetadataController.addSubjectMetadata.bind(this.subjectMetadataController),
       // getProviderState: this.getProviderState.bind(this),
       // getUnlockPromise: this.appStateController.getUnlockPromise.bind(this.appStateController),
       // handleWatchAssetRequest: this.tokensController.watchAsset.bind(this.tokensController),
-      // requestUserApproval: this.approvalController.addAndShowApprovalRequest.bind(this.approvalController),
+      requestUserApproval: this.approvalController.addAndShowApprovalRequest.bind(this.approvalController),
       // sendMetrics: this.metaMetricsController.trackEvent.bind(this.metaMetricsController),
 
       // Permission-related
-      // getAccounts: this.getPermittedAccounts.bind(this, origin)
-      // getPermissionsForOrigin: this.permissionController.getPermissions.bind(this.permissionController, origin),
-      // hasPermission: this.permissionController.hasPermission.bind(this.permissionController, origin),
-      // requestAccountsPermission: this.permissionController.requestPermissions.bind(
-      //   this.permissionController,
-      //   { origin },
-      //   { eth_accounts: {} }
-      // ),
-      // requestPermissionsForOrigin: this.permissionController.requestPermissions.bind(this.permissionController, {
-      //   origin
-      // }),
+      getAccounts: this.getPermittedAccounts.bind(this, origin),
+      getPermissionsForOrigin: this.permissionController.getPermissions.bind(this.permissionController, origin),
+      hasPermission: this.permissionController.hasPermission.bind(this.permissionController, origin),
+      requestAccountsPermission: this.permissionController.requestPermissions.bind(
+        this.permissionController,
+        { origin },
+        { eth_accounts: {} }
+      ),
+      requestPermissionsForOrigin: this.permissionController.requestPermissions.bind(this.permissionController, {
+        origin
+      })
 
       // Custom RPC-related
       // addCustomRpc: async ({ chainId, blockExplorerUrl, ticker, chainName, rpcUrl } = {}) => {
@@ -91,39 +92,18 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
     })
   )
 
-  ///: BEGIN:ONLY_INCLUDE_IN(flask)
-  // engine.push(
-  //   Middlewares.createSnapMethodMiddleware(subjectType === SubjectType.Snap, {
-  //     getAppKey: this.getAppKeyForSubject.bind(this, origin),
-  //     getUnlockPromise: this.appStateController.getUnlockPromise.bind(this.appStateController),
-  //     getSnaps: this.controllerMessenger.call.bind(this.controllerMessenger, 'SnapController:getPermitted', origin),
-  //     requestPermissions: async (requestedPermissions) => {
-  //       const [approvedPermissions] = await this.permissionController.requestPermissions(
-  //         { origin },
-  //         requestedPermissions
-  //       )
-
-  //       return Object.values(approvedPermissions)
-  //     },
-  //     getPermissions: this.permissionController.getPermissions.bind(this.permissionController, origin),
-  //     getAccounts: this.getPermittedAccounts.bind(this, origin),
-  //     installSnaps: this.controllerMessenger.call.bind(this.controllerMessenger, 'SnapController:install', origin)
-  //   })
-  // )
-  ///: END:ONLY_INCLUDE_IN
-
   if (subjectType !== SubjectType.Internal) {
     // permissions
-    // engine.push(
-    //   this.permissionController.createPermissionMiddleware({
-    //     origin
-    //   })
-    // )
+    engine.push(
+      this.permissionController.createPermissionMiddleware({
+        origin
+      })
+    )
   }
 
   engine.push(this.walletMiddleware)
 
   // forward to metamask primary provider
-  // engine.push(providerAsMiddleware(provider))
+  engine.push(providerAsMiddleware(provider))
   return engine
 }

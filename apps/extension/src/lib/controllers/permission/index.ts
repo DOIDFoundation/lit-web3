@@ -1,8 +1,13 @@
-import { PermissionController } from '@metamask/permission-controller'
-import { ApprovalController, ApprovalRequestNotFoundError } from '@metamask/approval-controller'
+import { PermissionController, PermissionsRequestNotFoundError } from '@metamask/permission-controller'
+import { getCaveatSpecifications, getPermissionSpecifications, unrestrictedMethods } from './permissions'
 
-export const createPermissionController = function () {
-  this.permissionController = new PermissionController({
+const captureException = (err: any) => console.error(err)
+
+export const setupPermissionController = function () {
+  const { opts, initState } = this
+  const getIdentities = () => this.preferencesController.store.getState().identities
+
+  return new PermissionController({
     messenger: this.controllerMessenger.getRestricted({
       name: 'PermissionController',
       allowedActions: [
@@ -34,11 +39,8 @@ export const createPermissionController = function () {
             )
           )
         }
-      }),
-      ///: BEGIN:ONLY_INCLUDE_IN(flask)
-      ...this.getSnapPermissionSpecifications()
-      ///: END:ONLY_INCLUDE_IN
+      } as any)
     },
     unrestrictedMethods
-  })
+  } as any)
 }

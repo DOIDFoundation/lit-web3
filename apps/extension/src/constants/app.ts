@@ -21,12 +21,7 @@ export const MESSAGE_TYPE = {
   SWITCH_ETHEREUM_CHAIN: 'wallet_switchEthereumChain',
   WALLET_REQUEST_PERMISSIONS: 'wallet_requestPermissions',
   WATCH_ASSET: 'wallet_watchAsset',
-  WATCH_ASSET_LEGACY: 'DOID_watchAsset',
-  ///: BEGIN:ONLY_INCLUDE_IN(flask)
-  SNAP_DIALOG_ALERT: `${RestrictedMethods.snap_dialog}:alert`,
-  SNAP_DIALOG_CONFIRMATION: `${RestrictedMethods.snap_dialog}:confirmation`,
-  SNAP_DIALOG_PROMPT: `${RestrictedMethods.snap_dialog}:prompt`
-  ///: END:ONLY_INCLUDE_IN
+  WATCH_ASSET_LEGACY: 'DOID_watchAsset'
 } as const
 export type EnvironmentType = 'popup' | 'notification' | 'fullscreen' | 'background'
 export const ENVIRONMENT_TYPE_POPUP = 'popup'

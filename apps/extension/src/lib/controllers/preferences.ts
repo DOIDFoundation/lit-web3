@@ -1,11 +1,8 @@
-import { ObservableStore } from '@metamask/obs-store';
-import { normalize as normalizeAddress } from 'eth-sig-util';
-import { IPFS_DEFAULT_GATEWAY_URL } from '../constants/network';
-//import { isPrefixedFormattedHexString } from '../../../shared/modules/network.utils';
-import { LedgerTransportTypes } from '../constants/hardware-wallets';
-import { ThemeType } from '../constants/preferences';
-//import { NETWORK_EVENTS } from './network';
-import { NETWORK_EVENTS } from './network-controller';
+import { ObservableStore } from '@metamask/obs-store'
+import { normalize as normalizeAddress } from 'eth-sig-util'
+import { IPFS_DEFAULT_GATEWAY_URL } from '~/constants/network'
+import { LedgerTransportTypes } from '~/constants/hardware-wallets'
+import { ThemeType } from '~/constants/preferences'
 
 export default class PreferencesController {
   /**
@@ -32,7 +29,7 @@ export default class PreferencesController {
       usePhishDetect: true,
       dismissSeedBackUpReminder: false,
       disabledRpcMethodPreferences: {
-        eth_sign: false,
+        eth_sign: false
       },
       useMultiAccountBalanceChecker: true,
 
@@ -49,7 +46,7 @@ export default class PreferencesController {
       // for convenient testing of pre-release features, and should never
       // perform sensitive operations.
       featureFlags: {
-        showIncomingTransactions: true,
+        showIncomingTransactions: true
       },
       knownMethodData: {},
       currentLocale: opts.initLangCode,
@@ -61,30 +58,28 @@ export default class PreferencesController {
         showFiatInTestnets: false,
         showTestNetworks: false,
         useNativeCurrencyAsPrimaryCurrency: true,
-        hideZeroBalanceTokens: false,
+        hideZeroBalanceTokens: false
       },
       // ENS decentralized website resolution
       ipfsGateway: IPFS_DEFAULT_GATEWAY_URL,
       infuraBlocked: null,
-      ledgerTransportType: window.navigator.hid
-        ? LedgerTransportTypes.webhid
-        : LedgerTransportTypes.u2f,
+      ledgerTransportType: window.navigator.hid ? LedgerTransportTypes.webhid : LedgerTransportTypes.u2f,
       transactionSecurityCheckEnabled: false,
       theme: ThemeType.os,
-      ...opts.initState,
-    };
+      ...opts.initState
+    }
 
-    this.network = opts.network;
-    this.store = new ObservableStore(initState);
-    this.store.setMaxListeners(13);
-    this.openPopup = opts.openPopup;
-    this.tokenListController = opts.tokenListController;
+    this.network = opts.network
+    this.store = new ObservableStore(initState)
+    this.store.setMaxListeners(13)
+    this.openPopup = opts.openPopup
+    this.tokenListController = opts.tokenListController
 
-    this._subscribeToInfuraAvailability();
+    this._subscribeToInfuraAvailability()
 
     global.setPreference = (key, value) => {
-      return this.setFeatureFlag(key, value);
-    };
+      return this.setFeatureFlag(key, value)
+    }
   }
   // PUBLIC METHODS
 
@@ -94,7 +89,7 @@ export default class PreferencesController {
    * @param {boolean} forgottenPassword - whether or not the user has forgotten their password
    */
   setPasswordForgotten(forgottenPassword) {
-    this.store.updateState({ forgottenPassword });
+    this.store.updateState({ forgottenPassword })
   }
 
   /**
@@ -103,7 +98,7 @@ export default class PreferencesController {
    * @param {boolean} val - Whether or not the user prefers blockie indicators
    */
   setUseBlockie(val) {
-    this.store.updateState({ useBlockie: val });
+    this.store.updateState({ useBlockie: val })
   }
 
   /**
@@ -112,7 +107,7 @@ export default class PreferencesController {
    * @param {boolean} val - Whether or not the user prefers to set nonce
    */
   setUseNonceField(val) {
-    this.store.updateState({ useNonceField: val });
+    this.store.updateState({ useNonceField: val })
   }
 
   /**
@@ -121,7 +116,7 @@ export default class PreferencesController {
    * @param {boolean} val - Whether or not the user prefers phishing domain protection
    */
   setUsePhishDetect(val) {
-    this.store.updateState({ usePhishDetect: val });
+    this.store.updateState({ usePhishDetect: val })
   }
 
   /**
@@ -130,7 +125,7 @@ export default class PreferencesController {
    * @param {boolean} val - Whether or not the user prefers to turn off/on all security settings
    */
   setUseMultiAccountBalanceChecker(val) {
-    this.store.updateState({ useMultiAccountBalanceChecker: val });
+    this.store.updateState({ useMultiAccountBalanceChecker: val })
   }
 
   /**
@@ -139,13 +134,13 @@ export default class PreferencesController {
    * @param {boolean} val - Whether or not the user prefers to use the static token list or dynamic token list from the API
    */
   setUseTokenDetection(val) {
-    this.store.updateState({ useTokenDetection: val });
-    this.tokenListController.updatePreventPollingOnNetworkRestart(!val);
+    this.store.updateState({ useTokenDetection: val })
+    this.tokenListController.updatePreventPollingOnNetworkRestart(!val)
     if (val) {
-      this.tokenListController.start();
+      this.tokenListController.start()
     } else {
-      this.tokenListController.clearingTokenListData();
-      this.tokenListController.stop();
+      this.tokenListController.clearingTokenListData()
+      this.tokenListController.stop()
     }
   }
 
@@ -155,7 +150,7 @@ export default class PreferencesController {
    * @param {boolean} useNftDetection - Whether or not the user prefers to autodetect collectibles.
    */
   setUseNftDetection(useNftDetection) {
-    this.store.updateState({ useNftDetection });
+    this.store.updateState({ useNftDetection })
   }
 
   /**
@@ -164,7 +159,7 @@ export default class PreferencesController {
    * @param {boolean} val - Whether or not the user prefers to use currency rate check for ETH and tokens.
    */
   setUseCurrencyRateCheck(val) {
-    this.store.updateState({ useCurrencyRateCheck: val });
+    this.store.updateState({ useCurrencyRateCheck: val })
   }
 
   /**
@@ -174,8 +169,8 @@ export default class PreferencesController {
    */
   setOpenSeaEnabled(openSeaEnabled) {
     this.store.updateState({
-      openSeaEnabled,
-    });
+      openSeaEnabled
+    })
   }
 
   /**
@@ -184,7 +179,7 @@ export default class PreferencesController {
    * @param {object} val - holds the maxBaseFee and PriorityFee that the user set as default advanced settings.
    */
   setAdvancedGasFee(val) {
-    this.store.updateState({ advancedGasFee: val });
+    this.store.updateState({ advancedGasFee: val })
   }
 
   /**
@@ -193,7 +188,7 @@ export default class PreferencesController {
    * @param {string} val - 'default' or 'dark' value based on the mode selected by user.
    */
   setTheme(val) {
-    this.store.updateState({ theme: val });
+    this.store.updateState({ theme: val })
   }
 
   /**
@@ -203,8 +198,8 @@ export default class PreferencesController {
    */
   setTransactionSecurityCheckEnabled(transactionSecurityCheckEnabled) {
     this.store.updateState({
-      transactionSecurityCheckEnabled,
-    });
+      transactionSecurityCheckEnabled
+    })
   }
 
   /**
@@ -214,9 +209,9 @@ export default class PreferencesController {
    * @param {string} methodData - Corresponding data method
    */
   addKnownMethodData(fourBytePrefix, methodData) {
-    const { knownMethodData } = this.store.getState();
-    knownMethodData[fourBytePrefix] = methodData;
-    this.store.updateState({ knownMethodData });
+    const { knownMethodData } = this.store.getState()
+    knownMethodData[fourBytePrefix] = methodData
+    this.store.updateState({ knownMethodData })
   }
 
   /**
@@ -225,14 +220,12 @@ export default class PreferencesController {
    * @param {string} key - he preferred language locale key
    */
   setCurrentLocale(key) {
-    const textDirection = ['ar', 'dv', 'fa', 'he', 'ku'].includes(key)
-      ? 'rtl'
-      : 'auto';
+    const textDirection = ['ar', 'dv', 'fa', 'he', 'ku'].includes(key) ? 'rtl' : 'auto'
     this.store.updateState({
       currentLocale: key,
-      textDirection,
-    });
-    return textDirection;
+      textDirection
+    })
+    return textDirection
   }
 
   /**
@@ -242,15 +235,15 @@ export default class PreferencesController {
    * @param {string[]} addresses - An array of hex addresses
    */
   setAddresses(addresses) {
-    const oldIdentities = this.store.getState().identities;
+    const oldIdentities = this.store.getState().identities
 
     const identities = addresses.reduce((ids, address, index) => {
-      const oldId = oldIdentities[address] || {};
-      ids[address] = { name: `Account ${index + 1}`, address, ...oldId };
-      return ids;
-    }, {});
+      const oldId = oldIdentities[address] || {}
+      ids[address] = { name: `Account ${index + 1}`, address, ...oldId }
+      return ids
+    }, {})
 
-    this.store.updateState({ identities });
+    this.store.updateState({ identities })
   }
 
   /**
@@ -260,21 +253,21 @@ export default class PreferencesController {
    * @returns {string} the address that was removed
    */
   removeAddress(address) {
-    const { identities } = this.store.getState();
+    const { identities } = this.store.getState()
 
     if (!identities[address]) {
-      throw new Error(`${address} can't be deleted cause it was not found`);
+      throw new Error(`${address} can't be deleted cause it was not found`)
     }
-    delete identities[address];
-    this.store.updateState({ identities });
+    delete identities[address]
+    this.store.updateState({ identities })
 
     // If the selected account is no longer valid,
     // select an arbitrary other account:
     if (address === this.getSelectedAddress()) {
-      const [selected] = Object.keys(identities);
-      this.setSelectedAddress(selected);
+      const [selected] = Object.keys(identities)
+      this.setSelectedAddress(selected)
     }
-    return address;
+    return address
   }
 
   /**
@@ -283,18 +276,18 @@ export default class PreferencesController {
    * @param {string[]} addresses - An array of hex addresses
    */
   addAddresses(addresses) {
-    const { identities } = this.store.getState();
+    const { identities } = this.store.getState()
     addresses.forEach((address) => {
       // skip if already exists
       if (identities[address]) {
-        return;
+        return
       }
       // add missing identity
-      const identityCount = Object.keys(identities).length;
+      const identityCount = Object.keys(identities).length
 
-      identities[address] = { name: `Account ${identityCount + 1}`, address };
-    });
-    this.store.updateState({ identities });
+      identities[address] = { name: `Account ${identityCount + 1}`, address }
+    })
+    this.store.updateState({ identities })
   }
 
   /**
@@ -306,39 +299,39 @@ export default class PreferencesController {
    */
   syncAddresses(addresses) {
     if (!Array.isArray(addresses) || addresses.length === 0) {
-      throw new Error('Expected non-empty array of addresses. Error #11201');
+      throw new Error('Expected non-empty array of addresses. Error #11201')
     }
 
-    const { identities, lostIdentities } = this.store.getState();
+    const { identities, lostIdentities } = this.store.getState()
 
-    const newlyLost = {};
+    const newlyLost = {}
     Object.keys(identities).forEach((identity) => {
       if (!addresses.includes(identity)) {
-        newlyLost[identity] = identities[identity];
-        delete identities[identity];
+        newlyLost[identity] = identities[identity]
+        delete identities[identity]
       }
-    });
+    })
 
     // Identities are no longer present.
     if (Object.keys(newlyLost).length > 0) {
       // store lost accounts
       Object.keys(newlyLost).forEach((key) => {
-        lostIdentities[key] = newlyLost[key];
-      });
+        lostIdentities[key] = newlyLost[key]
+      })
     }
 
-    this.store.updateState({ identities, lostIdentities });
-    this.addAddresses(addresses);
+    this.store.updateState({ identities, lostIdentities })
+    this.addAddresses(addresses)
 
     // If the selected account is no longer valid,
     // select an arbitrary other account:
-    let selected = this.getSelectedAddress();
+    let selected = this.getSelectedAddress()
     if (!addresses.includes(selected)) {
-      [selected] = addresses;
-      this.setSelectedAddress(selected);
+      ;[selected] = addresses
+      this.setSelectedAddress(selected)
     }
 
-    return selected;
+    return selected
   }
 
   /**
@@ -347,16 +340,16 @@ export default class PreferencesController {
    * @param {string} _address - A new hex address for an account
    */
   setSelectedAddress(_address) {
-    const address = normalizeAddress(_address);
+    const address = normalizeAddress(_address)
 
-    const { identities } = this.store.getState();
-    const selectedIdentity = identities[address];
+    const { identities } = this.store.getState()
+    const selectedIdentity = identities[address]
     if (!selectedIdentity) {
-      throw new Error(`Identity for '${address} not found`);
+      throw new Error(`Identity for '${address} not found`)
     }
 
-    selectedIdentity.lastSelected = Date.now();
-    this.store.updateState({ identities, selectedAddress: address });
+    selectedIdentity.lastSelected = Date.now()
+    this.store.updateState({ identities, selectedAddress: address })
   }
 
   /**
@@ -365,7 +358,7 @@ export default class PreferencesController {
    * @returns {string} The hex address for the currently selected account
    */
   getSelectedAddress() {
-    return this.store.getState().selectedAddress;
+    return this.store.getState().selectedAddress
   }
 
   /**
@@ -377,16 +370,14 @@ export default class PreferencesController {
    */
   async setAccountLabel(account, label) {
     if (!account) {
-      throw new Error(
-        `setAccountLabel requires a valid address, got ${String(account)}`,
-      );
+      throw new Error(`setAccountLabel requires a valid address, got ${String(account)}`)
     }
-    const address = normalizeAddress(account);
-    const { identities } = this.store.getState();
-    identities[address] = identities[address] || {};
-    identities[address].name = label;
-    this.store.updateState({ identities });
-    return label;
+    const address = normalizeAddress(account)
+    const { identities } = this.store.getState()
+    identities[address] = identities[address] || {}
+    identities[address].name = label
+    this.store.updateState({ identities })
+    return label
   }
 
   /**
@@ -398,30 +389,30 @@ export default class PreferencesController {
    * @param {string} [nickname] - Nickname of the selected network.
    * @param {object} [rpcPrefs] - Optional RPC preferences, such as the block explorer URL
    */
-//  upsertToFrequentRpcList(
-//    rpcUrl,
-//    chainId,
-//    ticker = 'ETH',
-//    nickname = '',
-//    rpcPrefs = {},
-//  ) {
-//    const rpcList = this.getFrequentRpcListDetail();
-//
-//    const index = rpcList.findIndex((element) => {
-//      return element.rpcUrl === rpcUrl;
-//    });
-//    if (index !== -1) {
-//      rpcList.splice(index, 1, { rpcUrl, chainId, ticker, nickname, rpcPrefs });
-//      return;
-//    }
-//
-//    if (!isPrefixedFormattedHexString(chainId)) {
-//      throw new Error(`Invalid chainId: "${chainId}"`);
-//    }
-//
-//    rpcList.push({ rpcUrl, chainId, ticker, nickname, rpcPrefs });
-//    this.store.updateState({ frequentRpcListDetail: rpcList });
-//  }
+  //  upsertToFrequentRpcList(
+  //    rpcUrl,
+  //    chainId,
+  //    ticker = 'ETH',
+  //    nickname = '',
+  //    rpcPrefs = {},
+  //  ) {
+  //    const rpcList = this.getFrequentRpcListDetail();
+  //
+  //    const index = rpcList.findIndex((element) => {
+  //      return element.rpcUrl === rpcUrl;
+  //    });
+  //    if (index !== -1) {
+  //      rpcList.splice(index, 1, { rpcUrl, chainId, ticker, nickname, rpcPrefs });
+  //      return;
+  //    }
+  //
+  //    if (!isPrefixedFormattedHexString(chainId)) {
+  //      throw new Error(`Invalid chainId: "${chainId}"`);
+  //    }
+  //
+  //    rpcList.push({ rpcUrl, chainId, ticker, nickname, rpcPrefs });
+  //    this.store.updateState({ frequentRpcListDetail: rpcList });
+  //  }
 
   /**
    * Removes custom RPC url from state.
@@ -430,15 +421,15 @@ export default class PreferencesController {
    * @returns {Promise<Array>} Promise resolving to updated frequentRpcList.
    */
   async removeFromFrequentRpcList(url) {
-    const rpcList = this.getFrequentRpcListDetail();
+    const rpcList = this.getFrequentRpcListDetail()
     const index = rpcList.findIndex((element) => {
-      return element.rpcUrl === url;
-    });
+      return element.rpcUrl === url
+    })
     if (index !== -1) {
-      rpcList.splice(index, 1);
+      rpcList.splice(index, 1)
     }
-    this.store.updateState({ frequentRpcListDetail: rpcList });
-    return rpcList;
+    this.store.updateState({ frequentRpcListDetail: rpcList })
+    return rpcList
   }
 
   /**
@@ -447,7 +438,7 @@ export default class PreferencesController {
    * @returns {Array<Array>} An array of rpc urls.
    */
   getFrequentRpcListDetail() {
-    return this.store.getState().frequentRpcListDetail;
+    return this.store.getState().frequentRpcListDetail
   }
 
   /**
@@ -458,15 +449,15 @@ export default class PreferencesController {
    * @returns {Promise<object>} Promises a new object; the updated featureFlags object.
    */
   async setFeatureFlag(feature, activated) {
-    const currentFeatureFlags = this.store.getState().featureFlags;
+    const currentFeatureFlags = this.store.getState().featureFlags
     const updatedFeatureFlags = {
       ...currentFeatureFlags,
-      [feature]: activated,
-    };
+      [feature]: activated
+    }
 
-    this.store.updateState({ featureFlags: updatedFeatureFlags });
+    this.store.updateState({ featureFlags: updatedFeatureFlags })
 
-    return updatedFeatureFlags;
+    return updatedFeatureFlags
   }
 
   /**
@@ -478,14 +469,14 @@ export default class PreferencesController {
    * @returns {Promise<object>} Promises a new object; the updated preferences object.
    */
   async setPreference(preference, value) {
-    const currentPreferences = this.getPreferences();
+    const currentPreferences = this.getPreferences()
     const updatedPreferences = {
       ...currentPreferences,
-      [preference]: value,
-    };
+      [preference]: value
+    }
 
-    this.store.updateState({ preferences: updatedPreferences });
-    return updatedPreferences;
+    this.store.updateState({ preferences: updatedPreferences })
+    return updatedPreferences
   }
 
   /**
@@ -494,7 +485,7 @@ export default class PreferencesController {
    * @returns {object} A key-boolean map of user-selected preferences.
    */
   getPreferences() {
-    return this.store.getState().preferences;
+    return this.store.getState().preferences
   }
 
   /**
@@ -503,7 +494,7 @@ export default class PreferencesController {
    * @returns {string} The current IPFS gateway domain
    */
   getIpfsGateway() {
-    return this.store.getState().ipfsGateway;
+    return this.store.getState().ipfsGateway
   }
 
   /**
@@ -513,8 +504,8 @@ export default class PreferencesController {
    * @returns {Promise<string>} A promise of the update IPFS gateway domain
    */
   async setIpfsGateway(domain) {
-    this.store.updateState({ ipfsGateway: domain });
-    return domain;
+    this.store.updateState({ ipfsGateway: domain })
+    return domain
   }
 
   /**
@@ -524,8 +515,8 @@ export default class PreferencesController {
    * @returns {string} The transport type that was set.
    */
   setLedgerTransportPreference(ledgerTransportType) {
-    this.store.updateState({ ledgerTransportType });
-    return ledgerTransportType;
+    this.store.updateState({ ledgerTransportType })
+    return ledgerTransportType
   }
 
   /**
@@ -534,7 +525,7 @@ export default class PreferencesController {
    * @returns {string} The current preferred Ledger transport type.
    */
   getLedgerTransportPreference() {
-    return this.store.getState().ledgerTransportType;
+    return this.store.getState().ledgerTransportType
   }
 
   /**
@@ -544,8 +535,8 @@ export default class PreferencesController {
    */
   async setDismissSeedBackUpReminder(dismissSeedBackUpReminder) {
     await this.store.updateState({
-      dismissSeedBackUpReminder,
-    });
+      dismissSeedBackUpReminder
+    })
   }
 
   /**
@@ -555,20 +546,19 @@ export default class PreferencesController {
    * @param {bool} isEnabled - true to enable the rpc method
    */
   async setDisabledRpcMethodPreference(methodName, isEnabled) {
-    const currentRpcMethodPreferences =
-      this.store.getState().disabledRpcMethodPreferences;
+    const currentRpcMethodPreferences = this.store.getState().disabledRpcMethodPreferences
     const updatedRpcMethodPreferences = {
       ...currentRpcMethodPreferences,
-      [methodName]: isEnabled,
-    };
+      [methodName]: isEnabled
+    }
 
     this.store.updateState({
-      disabledRpcMethodPreferences: updatedRpcMethodPreferences,
-    });
+      disabledRpcMethodPreferences: updatedRpcMethodPreferences
+    })
   }
 
   getRpcMethodPreferences() {
-    return this.store.getState().disabledRpcMethodPreferences;
+    return this.store.getState().disabledRpcMethodPreferences
   }
 
   //
@@ -576,12 +566,12 @@ export default class PreferencesController {
   //
 
   _subscribeToInfuraAvailability() {
-  //  this.network.on(NETWORK_EVENTS.INFURA_IS_BLOCKED, () => {
-  //    this._setInfuraBlocked(true);
-  //  });
-  //  this.network.on(NETWORK_EVENTS.INFURA_IS_UNBLOCKED, () => {
-  //    this._setInfuraBlocked(false);
-  //  });
+    //  this.network.on(NETWORK_EVENTS.INFURA_IS_BLOCKED, () => {
+    //    this._setInfuraBlocked(true);
+    //  });
+    //  this.network.on(NETWORK_EVENTS.INFURA_IS_UNBLOCKED, () => {
+    //    this._setInfuraBlocked(false);
+    //  });
   }
 
   /**
@@ -591,12 +581,23 @@ export default class PreferencesController {
    * @param {boolean} isBlocked - Bool indicating whether Infura is blocked
    */
   _setInfuraBlocked(isBlocked) {
-    const { infuraBlocked } = this.store.getState();
+    const { infuraBlocked } = this.store.getState()
 
     if (infuraBlocked === isBlocked) {
-      return;
+      return
     }
 
-    this.store.updateState({ infuraBlocked: isBlocked });
+    this.store.updateState({ infuraBlocked: isBlocked })
   }
+}
+
+export const setupPreferencesController = function () {
+  return new PreferencesController({
+    initState: this.initState.PreferencesController,
+    initLangCode: this.opts.initLangCode,
+    openPopup: this.opts.openPopup,
+    network: this.networkController,
+    tokenListController: this.tokenListController,
+    provider: this.provider
+  })
 }

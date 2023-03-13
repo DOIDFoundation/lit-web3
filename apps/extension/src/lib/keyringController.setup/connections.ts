@@ -39,13 +39,7 @@ export const setupProviderConnection = function (outStream: any, sender: Sender,
   let origin: any
   if (subjectType === SubjectType.Internal) {
     origin = ORIGIN_METAMASK
-  }
-  ///: BEGIN:ONLY_INCLUDE_IN(flask)
-  else if (subjectType === SubjectType.Snap) {
-    origin = sender.snapId
-  }
-  ///: END:ONLY_INCLUDE_IN
-  else if (sender.url) {
+  } else if (sender.url) {
     origin = new URL(sender.url).origin
   }
 

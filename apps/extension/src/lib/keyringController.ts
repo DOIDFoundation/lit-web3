@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
-import NetworkController from '~/lib/controllers/network-controller'
+import setupAllControllers from '~/lib/controllers'
+import setupAllMethods from '~/lib/keyringController.setup/methods'
 import { Mutex } from 'await-semaphore'
 import { debounce } from 'lodash'
 import * as Connections from './keyringController.setup/connections'
@@ -8,8 +9,6 @@ import * as Middlewares from '~/lib/middlewares'
 import LocalStore from './local-store'
 import ComposableObservableStore from './ComposableObservableStore'
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
-import { ControllerMessenger } from '@metamask/base-controller'
-import PreferencesController from './preferences'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import DoidNameController from './doidNameController'
 import { MILLISECOND } from '@lit-web3/core/src/constants/time'
@@ -34,10 +33,12 @@ export class DOIDController extends EventEmitter {
 
   store: ComposableObservableStore
   memStore: ComposableObservableStore
-  controllerMessenger: ControllerMessenger<any, any>
-  preferencesController: PreferencesController
+
+  controllerMessenger: any
+  preferencesController: any
   networkController: any
   tokenListController: any
+
   provider: Object
   blockTracker: any
   walletMiddleware: any
@@ -45,6 +46,7 @@ export class DOIDController extends EventEmitter {
   startUISync: boolean = false
   doidNameController: DoidNameController
   sendUpdate: any
+  initState: any
 
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
@@ -57,7 +59,7 @@ export class DOIDController extends EventEmitter {
     })
     this.sendUpdate = debounce(this.privateSendUpdate.bind(this), MILLISECOND * 200)
 
-    const initState = opts.initState || {}
+    const initState = (this.initState = opts.initState || {})
     this.activeControllerConnections = 0
     this.connections = {}
     this.createVaultMutex = new Mutex()
@@ -82,44 +84,23 @@ export class DOIDController extends EventEmitter {
       //cacheEncryptionKey: isManifestV3,
     })
 
-    this.controllerMessenger = new ControllerMessenger()
+    // Setup all controllers
+    setupAllControllers.bind(this)()
+    // Setup all methods
+    setupAllMethods.bind(this)()
+
     this.store = new ComposableObservableStore({
       controllerMessenger: this.controllerMessenger,
       state: initState,
       persist: true
     })
 
-    // S stream deps
-    this.networkController = new NetworkController({
-      state: initState.NetworkController
-    })
-    // this.approvalController = new ApprovalController({
-    //   messenger: this.controllerMessenger.getRestricted({
-    //     name: 'ApprovalController'
-    //   }),
-    //   showApprovalRequest: opts.showUserConfirmation
-    // })
-    this.networkController.initializeProvider()
-    this.provider = this.networkController.getProviderAndBlockTracker().provider
-    this.blockTracker = this.networkController.getProviderAndBlockTracker().blockTracker
-    this.networkController.lookupNetwork()
     this.walletMiddleware = Middlewares.createDOIDMiddleware.bind(this)({
       version: '0.0.1',
       // account mgmt
       getAccounts: async ({ origin: innerOrigin }, { suppressUnauthorizedError = true } = {}) => {
         return ['whoami']
       }
-    })
-    // E
-    this.tokenListController = {}
-
-    this.preferencesController = new PreferencesController({
-      initState: initState.PreferencesController,
-      initLangCode: opts.initLangCode,
-      openPopup: opts.openPopup,
-      network: this.networkController,
-      tokenListController: this.tokenListController,
-      provider: this.provider
     })
 
     this.keyringController.on('update', () => {
@@ -176,11 +157,6 @@ export class DOIDController extends EventEmitter {
       //      SmartTransactionsController: this.smartTransactionsController,
       //      NftController: this.nftController,
       //      PhishingController: this.phishingController,
-      //      ///: BEGIN:ONLY_INCLUDE_IN(flask)
-      //      SnapController: this.snapController,
-      //      CronjobController: this.cronjobController,
-      //      NotificationController: this.notificationController,
-      ///: END:ONLY_INCLUDE_IN
       ...resetOnRestartStore
     })
 
@@ -209,11 +185,6 @@ export class DOIDController extends EventEmitter {
         //        TokensController: this.tokensController,
         //        SmartTransactionsController: this.smartTransactionsController,
         //        NftController: this.nftController,
-        //        ///: BEGIN:ONLY_INCLUDE_IN(flask)
-        //        SnapController: this.snapController,
-        //        CronjobController: this.cronjobController,
-        //        NotificationController: this.notificationController,
-        ///: END:ONLY_INCLUDE_IN
         ...resetOnRestartStore
       },
       controllerMessenger: this.controllerMessenger
@@ -241,13 +212,6 @@ export class DOIDController extends EventEmitter {
 
       // clear permissions
       //this.permissionController.clearState();
-
-      ///: BEGIN:ONLY_INCLUDE_IN(flask)
-      // Clear snap state
-      //this.snapController.clearState();
-      // Clear notification state
-      //this.notificationController.clear();
-      ///: END:ONLY_INCLUDE_IN
 
       // clear accounts in accountTracker
       //this.accountTracker.clearAccounts();
@@ -549,17 +513,6 @@ export class DOIDController extends EventEmitter {
 
     return keyring.mnemonic
   }
-  setupTrustedCommunication(connectionStream: any, sender: any) {
-    // setup multiplexing
-    const mux = setupMultiplex(connectionStream)
-    // connect features
-    this.setupControllerConnection(mux.createStream('controller'))
-    // this.setupProviderConnection(
-    //   mux.createStream('provider'),
-    //   sender,
-    //   SubjectType.Internal,
-    // );
-  }
   getApi() {
     return {
       getState: this.getState.bind(this),
@@ -573,55 +526,6 @@ export class DOIDController extends EventEmitter {
       createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
       createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this)
     }
-  }
-  setupControllerConnection(outStream: any) {
-    const api = this.getApi()
-    // report new active controller connection
-    // this.activeControllerConnections += 1;
-    // this.emit('controllerConnectionChanged', this.activeControllerConnections);
-    console.log(outStream, 'api')
-
-    // set up postStream transport  createMetaRPCHandler(api, outStream, this.store, {})
-    outStream.on('data', (data: any) => {
-      console.log(data, '----data')
-    })
-    // const handleUpdate = (update) => {
-    //   if (outStream._writableState.ended) {
-    //     return;
-    //   }
-    //   // send notification to client-side
-    //   outStream.write({
-    //     jsonrpc: '2.0',
-    //     method: 'sendUpdate',
-    //     params: [update],
-    //   });
-    // };
-    // this.on('update', handleUpdate);
-    // const startUISync = () => {
-    //   if (outStream._writableState.ended) {
-    //     return;
-    //   }
-    //   // send notification to client-side
-    //   outStream.write({
-    //     jsonrpc: '2.0',
-    //     method: 'startUISync',
-    //   });
-    // };
-
-    // if (this.startUISync) {
-    //   startUISync();
-    // } else {
-    //   this.once('startUISync', startUISync);
-    // }
-
-    // outStream.on('end', () => {
-    //   this.activeControllerConnections -= 1;
-    //   this.emit(
-    //     'controllerConnectionChanged',
-    //     this.activeControllerConnections,
-    //   );
-    //   this.removeListener('update', handleUpdate);
-    // });
   }
   //=============================================================================
   // PASSWORD MANAGEMENT
@@ -659,7 +563,6 @@ export class DOIDController extends EventEmitter {
   setupTrustedCommunication = Connections.setupTrustedCommunication.bind(this)
   setupControllerConnection = Connections.setupControllerConnection.bind(this)
   setupProviderConnection = Connections.setupProviderConnection.bind(this)
-  // setupSnapProvider = Connections.setupSnapProvider.bind(this)
   addConnection = Connections.addConnection.bind(this)
   removeConnection = Connections.removeConnection.bind(this)
   removeAllConnections = Connections.removeAllConnections.bind(this)
@@ -859,4 +762,3 @@ export async function initialize() {
   //const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
 }
 export const initController = initialize
-initialize()

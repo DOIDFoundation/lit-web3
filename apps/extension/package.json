@@ -63,6 +63,7 @@
     "promise-to-callback": "^1.0.0",
     "pump": "^3.0.0",
     "readable-stream": "^4.3.0",
+    "reselect": "^4.1.7",
     "swappable-obj-proxy": "^1.1.0",
     "tweetnacl": "^1.0.3",
     "w3name": "^1.0.8",
