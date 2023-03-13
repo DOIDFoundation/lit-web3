@@ -4,10 +4,11 @@
 import { setupPreferencesController } from './preferences'
 import NetworkController from '~/lib/controllers/network'
 import { ControllerMessenger } from '@metamask/base-controller'
-import { ApprovalController, ApprovalRequestNotFoundError } from '@metamask/approval-controller'
+import { ApprovalController } from '@metamask/approval-controller'
 import { setupOnBoardingController } from './onBoarding'
 import { setupAccountTracker } from './accountTracker'
 import { setupPermissionController } from './permission'
+import setupSubjectMetadataController from './SubjectMetadata'
 
 // Init controllers step by step
 export default function setupControllers() {
@@ -38,4 +39,6 @@ export default function setupControllers() {
   })
   // deps: keyringController/approvalController/accountTracker
   this.permissionController = setupPermissionController.bind(this)()
+  // deps: controllerMessenger/permissionController
+  this.subjectMetadataController = setupSubjectMetadataController.bind(this)()
 }

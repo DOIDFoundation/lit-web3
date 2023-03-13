@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid'
 import pump from 'pump'
 import { SubjectType, SubjectMetadataController } from '@metamask/subject-metadata-controller'
 import { setupProviderEngine } from './engine'
+import createMetaRPCHandler from '../createMetaRPCHandler'
 
 interface setupUntrustedCommunicationOptions {
   connectionStream: ReadableStream
@@ -44,11 +45,11 @@ export const setupProviderConnection = function (outStream: any, sender: Sender,
   }
 
   if (sender.id && sender.id !== chrome.runtime.id) {
-    // this.subjectMetadataController.addSubjectMetadata({
-    //   origin,
-    //   extensionId: sender.id,
-    //   subjectType: SubjectType.Extension
-    // })
+    this.subjectMetadataController.addSubjectMetadata({
+      origin,
+      extensionId: sender.id,
+      subjectType: SubjectType.Extension
+    })
   }
 
   let tabId
@@ -140,14 +141,14 @@ export const notifyAllConnections = function (payload: unknown) {
 }
 
 export const setupControllerConnection = function (outStream: any) {
-  // const api = this.getApi()
+  const api = this.getApi()
 
   // report new active controller connection
   this.activeControllerConnections += 1
   this.emit('controllerConnectionChanged', this.activeControllerConnections)
 
   // set up postStream transport
-  // outStream.on('data', createMetaRPCHandler(api, outStream, this.store, this.localStoreApiWrapper))
+  outStream.on('data', createMetaRPCHandler(api, outStream, this.store, this.localStoreApiWrapper))
   const handleUpdate = (update) => {
     if (outStream._writableState.ended) {
       return

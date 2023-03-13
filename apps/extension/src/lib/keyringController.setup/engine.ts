@@ -1,6 +1,6 @@
 import { JsonRpcEngine } from 'json-rpc-engine'
 import * as Middlewares from '../middlewares'
-import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
+import { SubjectType } from '@metamask/subject-metadata-controller'
 import { providerAsMiddleware } from '@metamask/eth-json-rpc-middleware'
 
 declare interface engineOpts {
