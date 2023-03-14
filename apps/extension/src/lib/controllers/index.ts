@@ -1,18 +1,18 @@
 // TODO: This should be a mixin class instead
 
-// export { createPermissionController } from './permission'
 import { setupPreferencesController } from './preferences'
 import NetworkController from '~/lib/controllers/network'
 import { ControllerMessenger } from '@metamask/base-controller'
-import { ApprovalController } from '@metamask/approval-controller'
+import { setupApprovalController } from './approval'
 import { setupOnBoardingController } from './onBoarding'
 import { setupAccountTracker } from './accountTracker'
 import { setupPermissionController } from './permission'
-import setupSubjectMetadataController from './subjectMetadata'
+import { setupSubjectMetadataController } from './subjectMetadata'
+import { setupAppStateController } from './appState'
+import { notificationManager } from '~/ext.scripts/sw/notificationManager'
 
 // Init controllers step by step
 export default function setupControllers() {
-  const { opts, initState } = this
   // no deps
   this.controllerMessenger = new ControllerMessenger()
   // no deps
@@ -28,17 +28,18 @@ export default function setupControllers() {
   // no deps
   this.tokenListController = {}
 
-  // deps: provider/tokenListController
+  // deps: provider/openPopup/networkController/tokenListController
   this.preferencesController = setupPreferencesController.bind(this)()
+  // setLocked/isUnlocked/preferencesController/showUserConfirmation
+  this.appStateController = setupAppStateController.bind(this)()
   // deps: provider/blockTracker/preferencesController/onboardingController
   this.accountTracker = setupAccountTracker.bind(this)()
   // deps: controllerMessenger
-  this.approvalController = new ApprovalController({
-    messenger: this.controllerMessenger.getRestricted({ name: 'ApprovalController' }),
-    showApprovalRequest: opts.showUserConfirmation
-  })
+  this.approvalController = setupApprovalController.bind(this)()
   // deps: keyringController/approvalController/accountTracker
   this.permissionController = setupPermissionController.bind(this)()
   // deps: controllerMessenger/permissionController
   this.subjectMetadataController = setupSubjectMetadataController.bind(this)()
+  // deps: keyringController
+  this.notificationManager = notificationManager
 }

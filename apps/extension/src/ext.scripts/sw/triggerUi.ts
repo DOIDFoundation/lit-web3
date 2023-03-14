@@ -1,4 +1,6 @@
-import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { SECOND } from '@lit-web3/core/src/constants/time'
+import swGlobal from './swGlobal'
+import { notificationManager } from './notificationManager'
 
 export const triggerUi = async function () {
   const tabs = await swGlobal.platform.getActiveTabs()
@@ -11,7 +13,7 @@ export const triggerUi = async function () {
     swGlobal.uiIsTriggering = true
     try {
       const currentPopupId = controller.appStateController.getCurrentPopupId()
-      await this.notificationManager.showPopup(
+      await notificationManager.showPopup(
         (newPopupId) => controller.appStateController.setCurrentPopupId(newPopupId),
         currentPopupId
       )
@@ -19,4 +21,17 @@ export const triggerUi = async function () {
       swGlobal.uiIsTriggering = false
     }
   }
+}
+if (!('triggerUi' in swGlobal)) swGlobal.triggerUi = triggerUi
+
+export const openPopup = async function () {
+  await triggerUi()
+  await new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (!swGlobal.notificationIsOpen) {
+        clearInterval(interval)
+        resolve(true)
+      }
+    }, SECOND)
+  })
 }

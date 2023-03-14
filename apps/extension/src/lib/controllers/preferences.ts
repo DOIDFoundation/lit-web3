@@ -6,23 +6,11 @@ import { LedgerTransportTypes } from '~/constants/hardware-wallets'
 import { ThemeType } from '~/constants/preferences'
 
 export default class PreferencesController {
-  /**
-   *
-   * @typedef {object} PreferencesController
-   * @param {object} opts - Overrides the defaults for the initial state of this.store
-   * @property {object} store The stored object containing a users preferences, stored in local storage
-   * @property {Array} store.frequentRpcList A list of custom rpcs to provide the user
-   * @property {boolean} store.useBlockie The users preference for blockie identicons within the UI
-   * @property {boolean} store.useNonceField The users preference for nonce field within the UI
-   * @property {object} store.featureFlags A key-boolean map, where keys refer to features and booleans to whether the
-   * user wishes to see that feature.
-   *
-   * Feature flags can be set by the global function `setPreference(feature, enabled)`, and so should not expose any sensitive behavior.
-   * @property {object} store.knownMethodData Contains all data methods known by the user
-   * @property {string} store.currentLocale The preferred language locale key
-   * @property {string} store.selectedAddress A hex string that matches the currently selected address in the app
-   */
-  constructor(opts = {}) {
+  network: any
+  store: any
+  openPopup: any
+  tokenListController: any
+  constructor(opts: Record<string, any> = {}) {
     const initState = {
       frequentRpcListDetail: [],
       useBlockie: false,
@@ -593,10 +581,11 @@ export default class PreferencesController {
 }
 
 export const setupPreferencesController = function () {
+  const { initState, opts } = this
   return new PreferencesController({
-    initState: this.initState.PreferencesController,
-    initLangCode: this.opts.initLangCode,
-    openPopup: this.opts.openPopup,
+    initState: initState.PreferencesController,
+    initLangCode: opts.initLangCode,
+    openPopup: opts.openPopup,
     network: this.networkController,
     tokenListController: this.tokenListController,
     provider: this.provider
