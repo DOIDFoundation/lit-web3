@@ -17,15 +17,13 @@ class DoidNameController extends EventEmitter {
   }
 
   bindName(name, address) {
-    const names = this.memStore.getState().names
-    names.set(name, address)
-    this.doidNames.set(name, address)
+    this.doidNames[name] = address
     this._updateMemStore()
     this.persistDoidNames()
   }
 
   getAddressByName(name) {
-    return this.doidNames.get(name)
+    return this.doidNames[name]
   }
 
   clearNames() {
@@ -39,7 +37,7 @@ class DoidNameController extends EventEmitter {
     this.memStore.updateState({ names: this.names })
   }
 
-  // setting
+  // setting store by memStore
   persistDoidNames() {
     const names = this.memStore.getState().names
     this.store.updateState({ names: names })
