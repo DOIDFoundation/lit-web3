@@ -139,26 +139,27 @@ notificationManager.on(NOTIFICATION_MANAGER_EVENTS.POPUP_CLOSED, ({ automaticall
 })
 
 export const getUnapprovedTransactionCount = function () {
-  const { controller } = swGlobal
-  if (!controller) debugger
-  const unapprovedTxCount = controller.txController.getUnapprovedTxCount()
-  const { unapprovedMsgCount } = controller.messageManager
-  const { unapprovedPersonalMsgCount } = controller.personalMessageManager
-  const { unapprovedDecryptMsgCount } = controller.decryptMessageManager
-  const { unapprovedEncryptionPublicKeyMsgCount } = controller.encryptionPublicKeyManager
-  const { unapprovedTypedMessagesCount } = controller.typedMessageManager
-  const pendingApprovalCount = controller.approvalController.getTotalApprovalCount()
-  const waitingForUnlockCount = controller.appStateController.waitingForUnlock.length
-  return (
-    unapprovedTxCount +
-    unapprovedMsgCount +
-    unapprovedPersonalMsgCount +
-    unapprovedDecryptMsgCount +
-    unapprovedEncryptionPublicKeyMsgCount +
-    unapprovedTypedMessagesCount +
-    pendingApprovalCount +
-    waitingForUnlockCount
-  )
+  return 0
+  // const { controller } = swGlobal
+  // if (!controller) debugger
+  // const unapprovedTxCount = controller.txController.getUnapprovedTxCount()
+  // const { unapprovedMsgCount } = controller.messageManager
+  // const { unapprovedPersonalMsgCount } = controller.personalMessageManager
+  // const { unapprovedDecryptMsgCount } = controller.decryptMessageManager
+  // const { unapprovedEncryptionPublicKeyMsgCount } = controller.encryptionPublicKeyManager
+  // const { unapprovedTypedMessagesCount } = controller.typedMessageManager
+  // const pendingApprovalCount = controller.approvalController.getTotalApprovalCount()
+  // const waitingForUnlockCount = controller.appStateController.waitingForUnlock.length
+  // return (
+  //   unapprovedTxCount +
+  //   unapprovedMsgCount +
+  //   unapprovedPersonalMsgCount +
+  //   unapprovedDecryptMsgCount +
+  //   unapprovedEncryptionPublicKeyMsgCount +
+  //   unapprovedTypedMessagesCount +
+  //   pendingApprovalCount +
+  //   waitingForUnlockCount
+  // )
 }
 export const updateBadge = function () {
   let label = ''
@@ -174,24 +175,24 @@ export const updateBadge = function () {
 export const rejectUnapprovedNotifications = function () {
   const { controller } = swGlobal
   if (!controller) debugger
-  Object.keys(controller.txController.txStateManager.getUnapprovedTxList()).forEach((txId) =>
-    controller.txController.txStateManager.setTxStatusRejected(txId)
-  )
-  controller.messageManager.messages
-    .filter((msg: any) => msg.status === 'unapproved')
-    .forEach((tx: any) => controller.messageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE_SIG))
-  controller.personalMessageManager.messages
-    .filter((msg: any) => msg.status === 'unapproved')
-    .forEach((tx: any) => controller.personalMessageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE_SIG))
-  controller.typedMessageManager.messages
-    .filter((msg: any) => msg.status === 'unapproved')
-    .forEach((tx: any) => controller.typedMessageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE_SIG))
-  controller.decryptMessageManager.messages
-    .filter((msg: any) => msg.status === 'unapproved')
-    .forEach((tx: any) => controller.decryptMessageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE))
-  controller.encryptionPublicKeyManager.messages
-    .filter((msg: any) => msg.status === 'unapproved')
-    .forEach((tx: any) => controller.encryptionPublicKeyManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE))
+  // Object.keys(controller.txController.txStateManager.getUnapprovedTxList()).forEach((txId) =>
+  //   controller.txController.txStateManager.setTxStatusRejected(txId)
+  // )
+  // controller.messageManager.messages
+  //   .filter((msg: any) => msg.status === 'unapproved')
+  //   .forEach((tx: any) => controller.messageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE_SIG))
+  // controller.personalMessageManager.messages
+  //   .filter((msg: any) => msg.status === 'unapproved')
+  //   .forEach((tx: any) => controller.personalMessageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE_SIG))
+  // controller.typedMessageManager.messages
+  //   .filter((msg: any) => msg.status === 'unapproved')
+  //   .forEach((tx: any) => controller.typedMessageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE_SIG))
+  // controller.decryptMessageManager.messages
+  //   .filter((msg: any) => msg.status === 'unapproved')
+  //   .forEach((tx: any) => controller.decryptMessageManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE))
+  // controller.encryptionPublicKeyManager.messages
+  //   .filter((msg: any) => msg.status === 'unapproved')
+  //   .forEach((tx: any) => controller.encryptionPublicKeyManager.rejectMsg(tx.id, REJECT_NOTFICIATION_CLOSE))
 
   // Finally, resolve snap dialog approvals on Flask and reject all the others managed by the ApprovalController.
   Object.values(controller.approvalController.state.pendingApprovals).forEach(({ id, type }) => {

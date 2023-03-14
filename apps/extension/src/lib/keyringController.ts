@@ -52,6 +52,11 @@ export class DOIDController extends EventEmitter {
   initState: any
   localStoreApiWrapper: any
   onboardingController: OnboardingController
+  appStateController: any
+  permissionController: any
+  accountTracker: any
+  _isClientOpen: any
+
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
     super()
@@ -138,7 +143,7 @@ export class DOIDController extends EventEmitter {
      * On chrome profile re-start, they will be re-initialized.
      */
     const resetOnRestartStore = {
-      //      AccountTracker: this.accountTracker.store,
+      AccountTracker: this.accountTracker.store
       //      TxController: this.txController.memStore,
       //      TokenRatesController: this.tokenRatesController,
       //      MessageManager: this.messageManager.memStore,
@@ -152,7 +157,7 @@ export class DOIDController extends EventEmitter {
     }
 
     this.store.updateStructure({
-      //      AppStateController: this.appStateController.store,
+      AppStateController: this.appStateController.store,
       //      TransactionController: this.txController.store,
       KeyringController: this.keyringController.store,
       DoidController: this.doidNameController.store,
@@ -160,12 +165,12 @@ export class DOIDController extends EventEmitter {
       //      MetaMetricsController: this.metaMetricsController.store,
       //      AddressBookController: this.addressBookController,
       //      CurrencyController: this.currencyRateController,
-      //      NetworkController: this.networkController.store,
+      NetworkController: this.networkController.store,
       //      CachedBalancesController: this.cachedBalancesController.store,
       //      AlertController: this.alertController.store,
       OnboardingController: this.onboardingController.store,
       //      IncomingTransactionsController: this.incomingTransactionsController.store,
-      //      PermissionController: this.permissionController,
+      PermissionController: this.permissionController,
       //      PermissionLogController: this.permissionLogController.store,
       //      SubjectMetadataController: this.subjectMetadataController,
       //      BackupController: this.backupController,
@@ -181,8 +186,8 @@ export class DOIDController extends EventEmitter {
 
     this.memStore = new ComposableObservableStore({
       config: {
-        //        AppStateController: this.appStateController.store,
-        //        NetworkController: this.networkController.store,
+        AppStateController: this.appStateController.store,
+        NetworkController: this.networkController.store,
         //        CachedBalancesController: this.cachedBalancesController.store,
         KeyringController: this.keyringController.memStore,
         DoidController: this.doidNameController.memStore,
@@ -194,13 +199,13 @@ export class DOIDController extends EventEmitter {
         OnboardingController: this.onboardingController.store,
         //        IncomingTransactionsController:
         //          this.incomingTransactionsController.store,
-        //        PermissionController: this.permissionController,
+        PermissionController: this.permissionController,
         //        PermissionLogController: this.permissionLogController.store,
         //        SubjectMetadataController: this.subjectMetadataController,
         //        BackupController: this.backupController,
         //        AnnouncementController: this.announcementController,
         //        GasFeeController: this.gasFeeController,
-        //        TokenListController: this.tokenListController,
+        TokenListController: this.tokenListController,
         //        TokensController: this.tokensController,
         //        SmartTransactionsController: this.smartTransactionsController,
         //        NftController: this.nftController,
@@ -227,13 +232,13 @@ export class DOIDController extends EventEmitter {
       const { keyringController } = this
 
       // clear known identities
-      //this.preferencesController.setAddresses([]);
+      this.preferencesController.setAddresses([])
 
       // clear permissions
-      //this.permissionController.clearState();
+      this.permissionController.clearState()
 
       // clear accounts in accountTracker
-      //this.accountTracker.clearAccounts();
+      this.accountTracker.clearAccounts()
 
       // clear cachedBalances
       //this.cachedBalancesController.clearCachedBalances();
@@ -397,6 +402,7 @@ export class DOIDController extends EventEmitter {
     }
   }
 
+  // Unlock
   isUnlocked() {
     return this.keyringController.memStore.getState().isUnlocked
   }
@@ -408,6 +414,19 @@ export class DOIDController extends EventEmitter {
   }
   async clearLoginArtifacts() {
     await browser.storage.session.remove(['loginToken', 'loginSalt'])
+  }
+  // Popup
+  set isClientOpen(open: boolean) {
+    this._isClientOpen = open
+    // this.detectTokensController.isOpen = open;
+  }
+  onClientClosed() {
+    try {
+      // this.gasFeeController.stopPolling()
+      this.appStateController.clearPollingTokens()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   async resetAccount() {
@@ -456,39 +475,38 @@ export class DOIDController extends EventEmitter {
   // * @param {string} targetAccount - The address of the account to stop exposing
   // * to third parties.
   // */
-  //function removeAllAccountPermissions(targetAccount) {
-  //  this.permissionController.updatePermissionsByCaveat(
-  //    CaveatTypes.restrictReturnedAccounts,
-  //    (existingAccounts) =>
-  //      CaveatMutatorFactories[
-  //        CaveatTypes.restrictReturnedAccounts
-  //      ].removeAccount(targetAccount, existingAccounts),
-  //  );
-  //}
+  removeAllAccountPermissions(targetAccount: string) {
+    //  this.permissionController.updatePermissionsByCaveat(
+    //    CaveatTypes.restrictReturnedAccounts,
+    //    (existingAccounts) =>
+    //      CaveatMutatorFactories[
+    //        CaveatTypes.restrictReturnedAccounts
+    //      ].removeAccount(targetAccount, existingAccounts),
+    //  );
+  }
   //
   ///**
   // * Removes an account from state / storage.
   // *
   // * @param {string[]} address - A hex address
   // */
-  //async function removeAccount(address) {
-  //  // Remove all associated permissions
-  //  this.removeAllAccountPermissions(address);
-  //  // Remove account from the preferences controller
-  //  this.preferencesController.removeAddress(address);
-  //  // Remove account from the account tracker controller
-  //  this.accountTracker.removeAccount([address]);
-  //
-  //  const keyring = await this.keyringController.getKeyringForAccount(address);
-  //  // Remove account from the keyring
-  //  await this.keyringController.removeAccount(address);
-  //  const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {};
-  //  if (updatedKeyringAccounts?.length === 0) {
-  //    keyring.destroy?.();
-  //  }
-  //
-  //  return address;
-  //}
+  async removeAccount(address: string) {
+    // Remove all associated permissions
+    this.removeAllAccountPermissions(address)
+    // Remove account from the preferences controller
+    this.preferencesController.removeAddress(address)
+    // Remove account from the account tracker controller
+    this.accountTracker.removeAccount([address])
+    //
+    const keyring = await this.keyringController.getKeyringForAccount(address)
+    // Remove account from the keyring
+    await this.keyringController.removeAccount(address)
+    const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {}
+    if (updatedKeyringAccounts?.length === 0) {
+      keyring.destroy?.()
+    }
+    return address
+  }
   //
   ///**
   // * Imports an account with the specified import strategy.
@@ -516,10 +534,10 @@ export class DOIDController extends EventEmitter {
     await this.keyringController.submitPassword(password)
 
     try {
-      //await this.blockTracker.checkForLatestBlock();
+      await this.blockTracker.checkForLatestBlock()
       const allAccounts = await this.keyringController.getAccounts()
     } catch (error) {
-      //log.error('Error while unlocking extension.', error);
+      console.error('Error while unlocking extension.', error)
     }
 
     // This must be set as soon as possible to communicate to the
@@ -631,7 +649,7 @@ function setupController(initState: any, initLangCode: string) {
     }
   })
   // stream error
-  // setupPump()
+  setupPump()
   return swGlobal.controller
   //
   // MetaMask Controller
@@ -648,44 +666,7 @@ function setupController(initState: any, initLangCode: string) {
     provider: controller.provider,
   });
 
-  // setup state persistence
-  pump(
-    storeAsStream(controller.store),
-    debounce(1000),
-    createStreamSink((state) => localStore.set(state)),
-    (error) => {
-      log.error('MetaMask - Persistence pipeline failed', error);
-    },
-  );
-
   setupSentryGetStateGlobal(controller);
-
-  const isClientOpenStatus = () => {
-    return (
-      popupIsOpen ||
-      Boolean(Object.keys(openMetamaskTabsIDs).length) ||
-      notificationIsOpen
-    );
-  };
-  
-
-  const onCloseEnvironmentInstances = (isClientOpen, environmentType) => {
-    // if all instances of metamask are closed we call a method on the controller to stop gasFeeController polling
-    if (isClientOpen === false) {
-      controller.onClientClosed();
-      // otherwise we want to only remove the polling tokens for the environment type that has closed
-    } else {
-      // in the case of fullscreen environment a user might have multiple tabs open so we don't want to disconnect all of
-      // its corresponding polling tokens unless all tabs are closed.
-      if (
-        environmentType === ENVIRONMENT_TYPE_FULLSCREEN &&
-        Boolean(Object.keys(openMetamaskTabsIDs).length)
-      ) {
-        return;
-      }
-      controller.onEnvironmentTypeClosed(environmentType);
-    }
-  };
   */
 }
 

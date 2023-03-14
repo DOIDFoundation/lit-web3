@@ -11,12 +11,17 @@ const logger = (...args: any) => console.info(`[dApp]`, ...args)
 @customElement('view-dapp')
 export class ViewRestore extends TailwindElement('') {
   request = async () => {
-    logger('request sent')
     try {
       const res = await window.DOID.request({ method: 'eth_requestAccounts' })
       console.log(res)
+      const res1 = await window.DOID.request({ method: 'eth_accounts' })
+      logger(res1)
+      // const res2 = await window.DOID.request({ method: 'DOID_account' })
+      // logger(res2)
+      // const res3 = await window.DOID.request({ method: 'DOID_setup' })
+      // logger(res3)
     } catch (e) {
-      console.log('e,', e)
+      logger('e,', e)
     }
   }
   render() {

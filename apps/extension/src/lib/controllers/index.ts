@@ -10,6 +10,7 @@ import { setupPermissionController } from './permission'
 import { setupSubjectMetadataController } from './subjectMetadata'
 import { setupAppStateController } from './appState'
 import { notificationManager } from '~/ext.scripts/sw/notificationManager'
+// import MessageManager from './messageManager'
 
 // Init controllers step by step
 export default function setupControllers() {
@@ -42,4 +43,31 @@ export default function setupControllers() {
   this.subjectMetadataController = setupSubjectMetadataController.bind(this)()
   // deps: keyringController
   this.notificationManager = notificationManager
+  // deps: metaMetricsController/securityProviderRequest
+  // this.messageManager = new MessageManager({
+  //   metricsEvent: this.metaMetricsController.trackEvent.bind(this.metaMetricsController),
+  //   securityProviderRequest: this.securityProviderRequest.bind(this)
+  // })
+
+  //
+  // this.metaMetricsController = new MetaMetricsController({
+  //   segment,
+  //   preferencesStore: this.preferencesController.store,
+  //   onNetworkDidChange: this.networkController.on.bind(
+  //     this.networkController,
+  //     NETWORK_EVENTS.NETWORK_DID_CHANGE,
+  //   ),
+  //   getNetworkIdentifier: () => {
+  //     const { type, rpcUrl } =
+  //       this.networkController.store.getState().provider;
+  //     return type === NETWORK_TYPES.RPC ? rpcUrl : type;
+  //   },
+  //   getCurrentChainId: () =>
+  //     this.networkController.store.getState().provider.chainId,
+  //   version: this.platform.getVersion(),
+  //   environment: process.env.METAMASK_ENVIRONMENT,
+  //   extension: this.extension,
+  //   initState: initState.MetaMetricsController,
+  //   captureException,
+  // });
 }
