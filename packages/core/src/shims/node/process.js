@@ -1,4 +1,4 @@
-import './global'
+import './nodeGlobal'
 // src: https://github.com/ionic-team/rollup-plugin-node-polyfills/blob/master/polyfills/process-es6.js
 
 function defaultSetTimout() {
