@@ -16,7 +16,6 @@ class Store extends State {
     this.doidState = state
   }
   async executeBackgroundAction(method: string, ...args: any) {
-    console.log(args, '----')
     try {
       return await this.promisifiedBackground?.[method](...args, (error: any) => {
         throw error
@@ -34,8 +33,20 @@ class Store extends State {
   async verifySeedPhrase() {
     return await this.executeBackgroundAction('verifySeedPhrase', [])
   }
-  async setSeedPhraseBackedUp(...args: any) {
-    return await this.executeBackgroundAction('setSeedPhraseBackedUp', ...args)
+  async markPasswordForgotten() {
+    return await this.executeBackgroundAction('markPasswordForgotten', [])
+  }
+  async unMarkPasswordForgotten() {
+    return await this.executeBackgroundAction('unMarkPasswordForgotten', [])
+  }
+  async addNewAccount(...args: any) {
+    return await this.executeBackgroundAction('addNewAccount', ...args)
+  }
+  async resetAccount() {
+    return await this.executeBackgroundAction('resetAccount', [])
+  }
+  async createNewVaultAndRestore(...args: any) {
+    return await this.executeBackgroundAction('createNewVaultAndRestore', ...args)
   }
 }
 

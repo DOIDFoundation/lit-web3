@@ -66,9 +66,7 @@ export class ViewAddress extends TailwindElement(style) {
   }
   submit = async () => {
     await walletStore.setSeedPhraseBackedUp(true)
-    console.log(walletStore)
-
-    // goto('/main')
+    goto('/main')
     // const res = await swGlobal.Controller.keyringController.memStore.getState()
     // const storeData = await chrome.storage.local.get()
     // const data = Object.assign(storeData.data, {
@@ -83,7 +81,7 @@ export class ViewAddress extends TailwindElement(style) {
     return html` <div class="dui-container">
       <div class="text-lg font-bold mt-2 text-center">Confirm Secret Recovery Phrase</div>
       <div class="mt-2 ">
-        <textarea class="border rounded-md w-full h-24 p-2" .value=${this.phraseString}></textarea>
+        <textarea class="border rounded-md w-full h-24 p-2" .value=${this.phraseString} readonly></textarea>
       </div>
       <div class="mt-2 text-center flex flex-wrap">
         ${this.randomPhrase.map(
