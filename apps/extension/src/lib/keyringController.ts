@@ -11,8 +11,11 @@ import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airga
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import DoidNameController from './doidNameController'
 import { MILLISECOND } from '@lit-web3/core/src/constants/time'
-import { setupMultiplex } from './stream-utils'
-import createMetaRPCHandler from './createMetaRPCHandler'
+// import { setupMultiplex } from './stream-utils'
+// import createMetaRPCHandler from './createMetaRPCHandler'
+import OnboardingController from '@/lib/controllers/onBoarding'
+import setupPump from '@/lib/keyringController.setup/setupPump'
+import { loadStateFromPersistence } from './keyringController.setup/loadStateFromPersistence'
 export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
   trezor = 'Trezor Hardware',
@@ -47,7 +50,7 @@ export class DOIDController extends EventEmitter {
   sendUpdate: any
   initState: any
   localStoreApiWrapper: any
-
+  onboardingController: OnboardingController
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
     super()
@@ -80,9 +83,9 @@ export class DOIDController extends EventEmitter {
     //}
     this.keyringController = new KeyringController({
       keyringBuilders: additionalKeyrings,
-      initState: initState.KeyringController
-      //encryptor: opts.encryptor || undefined,
-      //cacheEncryptionKey: isManifestV3,
+      initState: initState.KeyringController,
+      encryptor: opts.encryptor || undefined,
+      cacheEncryptionKey: true //isManifestV3,
     })
 
     // Setup all controllers
@@ -107,16 +110,26 @@ export class DOIDController extends EventEmitter {
         return ['whoami']
       }
     })
-
-    this.keyringController.on('update', () => {
-      const data = Object.assign(initState, {
-        KeyringController: this.keyringController.store.getState()
-      })
-      localStore.set(data)
+    this.on('update', (memState) => {
+      console.log(memState, '000000000')
     })
+    // this.keyringController.on('update', () => {
+    //   const data = Object.assign(initState, {
+    //     KeyringController: this.keyringController.store.getState()
+    //   })
+    //   localStore.set(data)
+    // })
+    // this.keyringController.memStore.subscribe((state:any) =>
+    //   this._onKeyringControllerUpdate(state),
+    // );
+    // this.keyringController.on('unlock', () => this._onUnlock());
+    // this.keyringController.on('lock', () => this._onLock());
 
     this.doidNameController = new DoidNameController({
       initState: initState.doidNameController
+    })
+    this.onboardingController = new OnboardingController({
+      initState: initState.OnboardingController
     })
 
     /**
@@ -149,7 +162,7 @@ export class DOIDController extends EventEmitter {
       //      NetworkController: this.networkController.store,
       //      CachedBalancesController: this.cachedBalancesController.store,
       //      AlertController: this.alertController.store,
-      //      OnboardingController: this.onboardingController.store,
+      OnboardingController: this.onboardingController.store,
       //      IncomingTransactionsController: this.incomingTransactionsController.store,
       //      PermissionController: this.permissionController,
       //      PermissionLogController: this.permissionLogController.store,
@@ -177,7 +190,7 @@ export class DOIDController extends EventEmitter {
         //        AddressBookController: this.addressBookController,
         //        CurrencyController: this.currencyRateController,
         //        AlertController: this.alertController.store,
-        //        OnboardingController: this.onboardingController.store,
+        OnboardingController: this.onboardingController.store,
         //        IncomingTransactionsController:
         //          this.incomingTransactionsController.store,
         //        PermissionController: this.permissionController,
@@ -355,7 +368,8 @@ export class DOIDController extends EventEmitter {
     const { vault } = this.keyringController.store.getState()
     const isInitialized = Boolean(vault)
     return {
-      isInitialized
+      isInitialized,
+      ...this.memStore.getFlatState()
     }
   }
   async verifySeedPhrase() {
@@ -519,6 +533,7 @@ export class DOIDController extends EventEmitter {
     return keyring.mnemonic
   }
   getApi() {
+    const { onboardingController } = this
     return {
       getState: this.getState.bind(this),
       markPasswordForgotten: this.markPasswordForgotten.bind(this),
@@ -529,7 +544,8 @@ export class DOIDController extends EventEmitter {
       submitPassword: this.submitPassword.bind(this),
       verifyPassword: this.verifyPassword.bind(this),
       createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
-      createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this)
+      createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this),
+      setSeedPhraseBackedUp: onboardingController.setSeedPhraseBackedUp.bind(onboardingController)
     }
   }
   //=============================================================================
@@ -573,85 +589,7 @@ export class DOIDController extends EventEmitter {
   removeAllConnections = Connections.removeAllConnections.bind(this)
   notifyConnections = Connections.notifyConnections.bind(this)
   notifyAllConnections = Connections.notifyAllConnections.bind(this)
-}
-
-class Migrator {
-  //extends EventEmitter {
-  defaultVersion
-  constructor() {
-    //super()
-    this.defaultVersion = 0
-
-    //const migrations = opts.migrations || [];
-    //// sort migrations by version
-    //this.migrations = migrations.sort((a, b) => a.version - b.version);
-    //// grab migration with highest version
-    //const lastMigration = this.migrations.slice(-1)[0];
-    //// use specified defaultVersion or highest migration version
-    //this.defaultVersion =
-    //  opts.defaultVersion || (lastMigration && lastMigration.version) || 0;
-  }
-  /**
-   * Returns the initial state for the migrator
-   *
-   * @param {object} [data] - The data for the initial state
-   * @returns {{meta: {version: number}, data: any}}
-   */
-  generateInitialState(data: any) {
-    return {
-      meta: {
-        version: this.defaultVersion
-      },
-      data
-    }
-  }
-}
-
-let versionedData
-const localStore = swGlobal.localStore
-
-export const loadStateFromPersistence = async function () {
-  // migrations
-  const migrator = new Migrator()
-  //  migrator.on('error', console.warn);
-  //
-  // read from disk
-  // first from preferred, async API:
-  versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
-  //
-  //  // check if somehow state is empty
-  //  // this should never happen but new error reporting suggests that it has
-  //  // for a small number of users
-  //  // https://github.com/metamask/metamask-extension/issues/3919
-  //  if (versionedData && !versionedData.data) {
-  //    // unable to recover, clear state
-  //    versionedData = migrator.generateInitialState(firstTimeState);
-  //    sentry.captureMessage('MetaMask - Empty vault found - unable to recover');
-  //  }
-  //
-  //  // report migration errors to sentry
-  //  migrator.on('error', (err) => {
-  //    // get vault structure without secrets
-  //    const vaultStructure = getObjStructure(versionedData);
-  //    sentry.captureException(err, {
-  //      // "extra" key is required by Sentry
-  //      extra: { vaultStructure },
-  //    });
-  //  });
-  //
-  //  // migrate data
-  //  versionedData = await migrator.migrateData(versionedData);
-  //  if (!versionedData) {
-  //    throw new Error('MetaMask - migrator returned undefined');
-  //  }
-  // this initializes the meta/version data as a class variable to be used for future writes
-  localStore.setMetadata(versionedData.meta)
-
-  // write to disk
-  localStore.set(versionedData.data)
-
-  // return just the data
-  return versionedData.data
+  // _onKeyringControllerUpdate=
 }
 
 /**
@@ -667,8 +605,10 @@ function setupController(initState: any, initLangCode: string) {
   swGlobal.controller = new DOIDController({
     initState,
     initLangCode,
-    localStore: swGlobal.swGlobal
+    localStore: swGlobal.localStore
   })
+  // stream error
+  // setupPump()
   return swGlobal.controller
   //
   // MetaMask Controller

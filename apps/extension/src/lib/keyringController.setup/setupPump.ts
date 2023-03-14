@@ -7,9 +7,12 @@ import { sleep } from '@lit-web3/ethers/src/utils'
 
 export default async function setupPump() {
   pump(
-    storeAsStream(swGlobal.controller.store),
+    storeAsStream(swGlobal?.controller?.store),
     debounce(1000),
-    createStreamSink((state) => swGlobal.localStore.set(state)),
+    createStreamSink((state: any) => {
+      console.log(state, 'pump---')
+      swGlobal.localStore.set(state)
+    }),
     (error) => {
       console.warn('DOID - Persistence pipeline failed', error)
     }

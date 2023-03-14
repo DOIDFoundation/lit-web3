@@ -73,20 +73,20 @@ export class ViewPhrase extends TailwindElement(style) {
   }
   routeGoto = async (e: CustomEvent) => {
     if (e.detail.path === 'generate-addresses') {
-      await swGlobal.controller.createNewVaultAndKeychain(e.detail.pwd)
-      this.phrase = await swGlobal.controller.verifySeedPhrase()
+      walletStore.createNewVaultAndKeychain(e.detail.pwd)
+      this.phrase = await walletStore.verifySeedPhrase()
+      console.log(this.phrase, 'this.phrase')
     }
     if (e.detail.path === 'unlock') {
-      await swGlobal.controller.submitPassword(e.detail.pwd)
-      this.phrase = await swGlobal.controller.verifySeedPhrase()
+      await walletStore.submitPassword(e.detail.pwd)
+      this.phrase = await walletStore.verifySeedPhrase()
     }
     // const res = await swGlobal.controller.keyringController.memStore.getState()
     // console.log(res, 'memStore')
     goto(`/generate-phrase/${e.detail.path}`)
   }
   getIsInitialized = async () => {
-    console.log(await walletStore.promisifiedBackground.submitPassword(123), 'walletStore')
-
+    // console.log(await walletStore.executeBackgroundAction('submitPassword', 123), 'walletStore')
     // const { vault } = await swGlobal.controller.keyringController.store.getState()
     // const isInitialized = Boolean(vault)
     // const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()

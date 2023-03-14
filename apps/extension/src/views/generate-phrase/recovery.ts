@@ -7,13 +7,16 @@ import '@lit-web3/dui/src/link'
 
 import style from './phrase.css?inline'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { StateController, walletStore } from '~/store'
+
 @customElement('view-recovery')
 export class ViewAddress extends TailwindElement(style) {
   constructor() {
     super()
     // this.initPhrase()
   }
+  state = new StateController(this, walletStore)
+
   @property() phrase = ''
   @property() placeholder = 'Password'
   @state() phraseElements: string[] = []
@@ -62,15 +65,19 @@ export class ViewAddress extends TailwindElement(style) {
     return this.phraseElements.join(' ')
   }
   submit = async () => {
+    await walletStore.setSeedPhraseBackedUp(true)
+    console.log(walletStore)
+
+    // goto('/main')
     // const res = await swGlobal.Controller.keyringController.memStore.getState()
-    const storeData = await chrome.storage.local.get()
-    const data = Object.assign(storeData.data, {
-      onboardingController: {
-        completedOnboarding: true
-      }
-    })
-    await chrome.storage.local.set({ data })
-    console.log(await chrome.storage.local.get(), 'chrome')
+    // const storeData = await chrome.storage.local.get()
+    // const data = Object.assign(storeData.data, {
+    //   onboardingController: {
+    //     completedOnboarding: true
+    //   }
+    // })
+    // await chrome.storage.local.set({ data })
+    // console.log(await chrome.storage.local.get(), 'chrome')
   }
   render() {
     return html` <div class="dui-container">

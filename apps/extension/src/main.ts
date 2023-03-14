@@ -11,6 +11,7 @@ import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
 import { StateController, walletStore } from './store'
 import { connectToAccountManager, getConnectStream } from './lib/ui'
+import { goto } from '@lit-web3/dui/src/shared/router'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
@@ -27,14 +28,30 @@ export class AppMain extends TailwindElement('') {
   connectedCallback() {
     super.connectedCallback()
     this.chkView()
+    emitter.on('router-change', this.chkView)
     const connectionStream = getConnectStream()
     connectToAccountManager(connectionStream, async (err: any, backgroundConnection: any) => {
-      console.log(backgroundConnection, 'backgroundConnection')
-      await walletStore.setBackgroundConnection(backgroundConnection)
-      // walletStore.promisifiedBackground.submitPassword(12345)
+      // console.log(backgroundConnection, 'backgroundConnection')
+      await backgroundConnection.getState(async (err: any, state: any) => {
+        if (err) return
+        console.log(state, 'state----')
+        walletStore.setState(state)
+        await walletStore.setBackgroundConnection(backgroundConnection)
+        if (!walletStore.doidState.seedPhraseBackedUp && !walletStore.doidState.isInitialized) {
+          goto('/generate-phrase')
+          return
+        }
+        if (walletStore.doidState.isInitialized && !walletStore.doidState.seedPhraseBackedUp) {
+          goto('/generate-phrase/unlock')
+          return
+        }
+        if (!walletStore.doidState.isUnlocked) {
+          goto('/unlock')
+          return
+        }
+        goto('/main')
+      })
     })
-    emitter.on('router-change', this.chkView)
-    //  const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
   }
   render() {
     return html`${when(

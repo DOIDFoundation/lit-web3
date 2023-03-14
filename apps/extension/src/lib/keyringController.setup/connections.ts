@@ -142,7 +142,6 @@ export const notifyAllConnections = function (payload: unknown) {
 
 export const setupControllerConnection = function (outStream: any) {
   const api = this.getApi()
-
   // report new active controller connection
   this.activeControllerConnections += 1
   this.emit('controllerConnectionChanged', this.activeControllerConnections)
