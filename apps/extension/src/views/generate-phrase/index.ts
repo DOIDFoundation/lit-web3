@@ -17,12 +17,15 @@ import { StateController, walletStore } from '~/store'
 
 @customElement('view-phrase')
 export class ViewPhrase extends TailwindElement(style) {
+  state = new StateController(this, walletStore)
   constructor() {
     super()
     // goto(`/unlock${location.pathname}`)
     // console.log(location.pathname, 'location.pathname')
+    if (walletStore.doidState.seedPhraseBackedUp) {
+      goto('/main')
+    }
   }
-  state = new StateController(this, walletStore)
   @property() ROUTE?: any
   @property() steps = [
     {

@@ -49,7 +49,6 @@ export class AppMain extends TailwindElement('') {
           goto('/unlock')
           return
         }
-        goto('/main')
       })
     })
   }
