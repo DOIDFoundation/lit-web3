@@ -63,11 +63,7 @@ export class ViewImport extends TailwindElement(style) {
       console.log(this.mnemonic, this.pwd, '----------')
       const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
 
-      await swGlobal.controller.keyringController.createNewVaultAndRestore(
-        this.account.name,
-        this.pwd,
-        encodedSeedPhrase
-      )
+      await swGlobal.controller.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
       this.showAddress()
       this.start = '4'
     } catch (err: any) {
