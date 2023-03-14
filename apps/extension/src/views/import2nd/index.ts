@@ -43,7 +43,7 @@ export class ViewImport extends TailwindElement(style) {
   <div class="dui-container sparse">
     <div class="dui-container sparse">
       <doid-symbol class="block mt-12">
-        <span slot="h1" class="text-xl">You are setting 0xf446563d6737DF28D0FDe28C82CE4F34E98540f3</span>
+      <div slot="h1"><div class="text-lg">You are setting</div><span class="text-sm">0xf446563d6737DF28D0FDe28C82CE4F34E98540f3</span></div>
         <p slot="msg">as main addresses for EVM chains for satoshi.doid</p>
       </doid-symbol>
 

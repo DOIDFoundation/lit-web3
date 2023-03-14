@@ -27,9 +27,7 @@ export class ViewStart extends TailwindElement(style) {
     this.mainAddress = mainAddress
     this.pending = false
   }
-  gotoRecover = () => {
-    goto('/recover')
-  }
+
   connectedCallback() {
     this.getAddressesByName()
     super.connectedCallback()
@@ -70,7 +68,7 @@ export class ViewStart extends TailwindElement(style) {
                 `
               )}
               <div class="mt-10 flex flex-col gap-2">
-                <dui-button class="w-full" .disabled=${!this.mainAddress} @click=${this.gotoRecover}
+                <dui-button class="w-full" .disabled=${!this.mainAddress} @click=${() => goto('/recover')}
                   >Manage
                   ${when(
                     this.mainAddress,

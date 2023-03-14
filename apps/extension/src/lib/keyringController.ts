@@ -2,6 +2,7 @@ import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
 import setupAllControllers from '~/lib/controllers'
 import setupAllMethods from '~/lib/keyringController.setup/methods'
+import { triggerUi, openPopup } from '~/ext.scripts/sw/notificationManager'
 import { Mutex } from 'await-semaphore'
 import { debounce } from 'lodash'
 import * as Connections from './keyringController.setup/connections'
@@ -396,6 +397,19 @@ export class DOIDController extends EventEmitter {
     }
   }
 
+  isUnlocked() {
+    return this.keyringController.memStore.getState().isUnlocked
+  }
+  setLocked() {
+    const [ledgerKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.ledger)
+    ledgerKeyring?.destroy?.()
+    this.clearLoginArtifacts()
+    return this.keyringController.setLocked()
+  }
+  async clearLoginArtifacts() {
+    await browser.storage.session.remove(['loginToken', 'loginSalt'])
+  }
+
   async resetAccount() {
     //const selectedAddress = this.preferencesController.getSelectedAddress();
     //this.txController.wipeTransactions(selectedAddress);
@@ -605,7 +619,16 @@ function setupController(initState: any, initLangCode: string) {
   swGlobal.controller = new DOIDController({
     initState,
     initLangCode,
-    localStore: swGlobal.localStore
+    localStore: swGlobal.localStore,
+    // deps: notificationManager/appStateController
+    ...{ showUserConfirmation: triggerUi, openPopup },
+    browser: chrome,
+    getRequestAccountTabIds: () => {
+      return swGlobal.requestAccountTabIds
+    },
+    getOpenMetamaskTabsIds: () => {
+      return swGlobal.openMetamaskTabsIDs
+    }
   })
   // stream error
   // setupPump()
@@ -614,27 +637,6 @@ function setupController(initState: any, initLangCode: string) {
   // MetaMask Controller
   //
   /*
-  controller = new DOIDController({
-    infuraProjectId: process.env.INFURA_PROJECT_ID,
-    // User confirmation callbacks:
-    showUserConfirmation: triggerUi,
-    openPopup,
-    // initial state
-    initState,
-    // initial locale code
-    initLangCode,
-    // platform specific api
-    platform,
-    notificationManager,
-    browser,
-    getRequestAccountTabIds: () => {
-      return requestAccountTabIds;
-    },
-    getOpenMetamaskTabsIds: () => {
-      return openMetamaskTabsIDs;
-    },
-    localStore,
-  });
 
   setupEnsIpfsResolver({
     getCurrentChainId: controller.networkController.getCurrentChainId.bind(
@@ -707,3 +709,4 @@ export async function initialize() {
   //const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
 }
 export const initController = initialize
+initialize() // incorrect entry

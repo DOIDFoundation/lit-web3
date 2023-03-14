@@ -44,7 +44,8 @@ export const sharedConfig = async (mode = '') => {
       rollupOptions: {
         input: {
           background: 'index.html',
-          popup: 'popup.html'
+          popup: 'popup.html',
+          notification: 'notification.html'
         }
       }
     },

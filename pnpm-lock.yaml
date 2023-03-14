@@ -19,6 +19,7 @@ importers:
       '@vitejs/plugin-legacy': ^3.0.2
       '@webcomponents/webcomponentsjs': ^2.7.0
       autoprefixer: ^10.4.14
+      cross-env: ^7.0.3
       dotenv: ^16.0.3
       events: ^3.3.0
       lit: ^2.6.1
@@ -54,6 +55,7 @@ importers:
       '@lit-labs/motion': 1.0.3
       '@lit-labs/router': 0.1.1
       '@webcomponents/webcomponentsjs': 2.7.0
+      cross-env: 7.0.3
       events: 3.3.0
       lit: 2.6.1
       lodash: 4.17.21
@@ -112,6 +114,7 @@ importers:
       '@metamask/eth-json-rpc-middleware': ^11.0.0
       '@metamask/eth-json-rpc-provider': ^1.0.0
       '@metamask/eth-keyring-controller': ^10.0.0
+      '@metamask/etherscan-link': ^2.2.0
       '@metamask/object-multiplex': ^1.2.0
       '@metamask/obs-store': ^7.0.0
       '@metamask/permission-controller': ^3.0.0
@@ -178,6 +181,7 @@ importers:
       '@metamask/eth-json-rpc-middleware': 11.0.0
       '@metamask/eth-json-rpc-provider': 1.0.0
       '@metamask/eth-keyring-controller': 10.0.0
+      '@metamask/etherscan-link': 2.2.0
       '@metamask/object-multiplex': 1.2.0
       '@metamask/obs-store': 7.0.0
       '@metamask/permission-controller': 3.0.0_mtgp6jpzkasa6klgl3fhpgsgze
@@ -221,7 +225,7 @@ importers:
       webextension-polyfill: 0.10.0
     devDependencies:
       '@crxjs/vite-plugin': 2.0.0-beta.13
-      '@types/chrome': 0.0.222
+      '@types/chrome': 0.0.223
       '@types/end-of-stream': 1.4.1
       '@types/fs-extra': 9.0.13
       '@types/pump': 1.1.1
@@ -2969,6 +2973,11 @@ packages:
       randombytes: 2.1.0
     dev: false
 
+  /@metamask/etherscan-link/2.2.0:
+    resolution: {integrity: sha512-xUgehvgU+ZbzeJ44m4sUtsyf6Dwou+SlYhiKfi6lkRcbWh6Jl3TCi0YM9C7XWgxfnLSdQBO1ndvcp0kslKgMsA==}
+    engines: {node: '>=12.0.0'}
+    dev: false
+
   /@metamask/jazzicon/2.0.0:
     resolution: {integrity: sha512-7M+WSZWKcQAo0LEhErKf1z+D3YX0tEDAcGvcKbDyvDg34uvgeKR00mFNIYwAhdAS9t8YXxhxZgsrRBBg6X8UQg==}
     dependencies:
@@ -3653,8 +3662,8 @@ packages:
       '@types/har-format': 1.2.10
     dev: false
 
-  /@types/chrome/0.0.222:
-    resolution: {integrity: sha512-7XQnS85od1P0aBz0nrl5L7B+p4mKG/g4ya8nrJOJFVFRfVfqZTnp1B8c9JP6gAbHv7LRAeu9/BTPzMLLjHLiZQ==}
+  /@types/chrome/0.0.223:
+    resolution: {integrity: sha512-Z/wYh1K9ekdnv/uLSIU/vOF9s3PG8nP7Gn7mwsCdFlyKJUH3BMsOyj2qDv4pU6sF+b2bCHbxBpDjpGgvEqDPLg==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.10
@@ -4907,7 +4916,7 @@ packages:
     dev: true
 
   /concat-map/0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   /connect-history-api-fallback/1.6.0:
     resolution: {integrity: sha512-e54B99q/OUoH64zYYRf3HBP5z24G38h5D3qXu23JGRoigpX5Ss4r9ZnDk3g0Z8uQC2x2lPaJ+UlWBc1ZWBWdLg==}
@@ -5003,7 +5012,6 @@ packages:
     hasBin: true
     dependencies:
       cross-spawn: 7.0.3
-    dev: true
 
   /cross-fetch/3.1.5:
     resolution: {integrity: sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==}
@@ -5031,7 +5039,6 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-    dev: true
 
   /crx/5.0.1:
     resolution: {integrity: sha512-n/PzBx/fR1+xZCiJBats9y5zw/a+YBcoJ0ABnUaY56xb1RpXuFhsiCMpNY6WjVtylLzhUUXSWsbitesVg7v2vg==}
@@ -7265,7 +7272,6 @@ packages:
 
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
-    dev: true
 
   /iso-random-stream/2.0.2:
     resolution: {integrity: sha512-yJvs+Nnelic1L2vH2JzWvvPQFA4r7kSTnpST/+LkAQjSz0hos2oqLD+qIVi9Qk38Hoe7mNDt3j0S27R58MVjLQ==}
@@ -8606,7 +8612,6 @@ packages:
   /path-key/3.1.1:
     resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
     engines: {node: '>=8'}
-    dev: true
 
   /path-parse/1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
@@ -9817,7 +9822,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       shebang-regex: 3.0.0
-    dev: true
 
   /shebang-regex/1.0.0:
     resolution: {integrity: sha512-wpoSFAxys6b2a2wHZ1XpDSgD7N9iVjg29Ph9uV/uaP9Ex/KXlkTZTeddxDPSYQpgvzKLGJke2UU0AzoGCjNIvQ==}
@@ -9827,7 +9831,6 @@ packages:
   /shebang-regex/3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
-    dev: true
 
   /shell-quote/1.8.0:
     resolution: {integrity: sha512-QHsz8GgQIGKlRi24yFc6a6lN69Idnx634w49ay6+jA5yFh7a1UY+4Rp6HPx/L/1zcEDPEij8cIsiqR6bQsE5VQ==}
@@ -11233,7 +11236,6 @@ packages:
     hasBin: true
     dependencies:
       isexe: 2.0.0
-    dev: true
 
   /why-is-node-running/2.2.2:
     resolution: {integrity: sha512-6tSwToZxTOcotxHeA+qGCq1mVzKR3CwcJGmVcY+QE8SHy6TnpFnh8PAvPNHYr7EcuVeG0QSMxtYCuO1ta/G/oA==}

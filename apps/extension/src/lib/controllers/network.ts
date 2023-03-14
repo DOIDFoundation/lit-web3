@@ -1,6 +1,5 @@
 // import { strict as assert } from 'assert'
 import EventEmitter from 'events'
-console.log(EventEmitter)
 import { ComposedStore, ObservableStore } from '~/lib/obs-store'
 import { JsonRpcEngine } from 'json-rpc-engine'
 import { providerFromEngine, providerFromMiddleware } from '@metamask/eth-json-rpc-provider'

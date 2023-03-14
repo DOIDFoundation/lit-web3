@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -8,7 +8,6 @@ import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
 import '~/components/phrase'
 import '~/components/pwd_equal'
-import { getKey } from '~/lib/phrase'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
@@ -19,6 +18,7 @@ export class ViewRestore extends TailwindElement(style) {
   @state() phrase = ''
   @state() pwd = ''
   @state() invalid: Record<string, string> = { pwd: '', phrase: '' }
+  @state() err = ''
 
   get wrapName() {
     return this.name ? wrapTLD(this.name) : ''
@@ -40,14 +40,12 @@ export class ViewRestore extends TailwindElement(style) {
   }
 
   restore = async () => {
-    console.table({ name: this.wrapName, ...(await getKey(this.phrase)) })
     try {
       const encodedSeedPhrase = Array.from(Buffer.from(this.phrase, 'utf8').values())
-
       await swGlobal.controller.createNewVaultAndRestore(this.name, this.pwd, encodedSeedPhrase)
-      goto('/main')
+      goto('/unlock')
     } catch (err: any) {
-      this.invalid.phrase = err.message || err
+      this.err = err.message || err
       console.error(err)
     }
   }
@@ -77,7 +75,10 @@ export class ViewRestore extends TailwindElement(style) {
         >
 
         <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
-
+        ${when(
+          this.err,
+          () => html`<div class="-mt-4"></div><span class="text-red-500 text-xs">${this.err}</span></div>`
+        )}
         <div class="my-4">
           <dui-button class="secondary" block .disabled=${this.restoreDisabled} @click=${this.restore}
             >Restore</dui-button

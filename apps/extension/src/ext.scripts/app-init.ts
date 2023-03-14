@@ -13,16 +13,16 @@ const logger = (...args: any) => console.info(`[sw]`, ...args)
 
 self.addEventListener('install', function (event) {
   self.skipWaiting()
-  logger('Installed', event)
+  logger('Installed')
 })
 self.addEventListener('activate', function (event) {
-  logger('Activated', event)
+  logger('Activated')
 })
 self.addEventListener('push', function (event) {
-  logger('Push message received', event)
+  logger('Push message received')
 })
 self.addEventListener('updated', function (event) {
-  logger('updated', event)
+  logger('updated')
 })
 browser.action.setPopup({ popup: './popup.html' })
 browser.action.onClicked.addListener((tab: typeof browser.tabs) => {
