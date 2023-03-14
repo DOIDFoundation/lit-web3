@@ -1,5 +1,4 @@
 import { permissionRpcMethods } from '@metamask/permission-controller'
-// import { selectHooks } from '@metamask/rpc-methods/dist/utils'
 import { ethErrors } from 'eth-rpc-errors'
 import { flatten } from 'lodash'
 import { UNSUPPORTED_RPC_METHODS } from '~/constants/network'
@@ -43,17 +42,30 @@ export function createMethodMiddleware(hooks) {
 
     const handler = handlerMap.get(req.method)
     if (handler) {
-      console.warn('[DOID]', 'Is this necessary?', { handler })
-      // const { implementation, hookNames } = handler
-      // try {
-      //   // Implementations may or may not be async, so we must await them.
-      //   return await implementation(req, res, next, end, selectHooks(hooks, hookNames))
-      // } catch (error) {
-      //   console.error(error)
-      //   return end(error)
-      // }
+      const { implementation, hookNames } = handler
+      try {
+        // Implementations may or may not be async, so we must await them.
+        return await implementation(req, res, next, end, selectHooks(hooks, hookNames))
+      } catch (error) {
+        console.error(error)
+        return end(error)
+      }
     }
 
     return next()
   }
+}
+
+export function selectHooks<Hooks extends Record<string, unknown>, HookName extends keyof Hooks>(
+  hooks: Hooks,
+  hookNames?: Record<HookName, boolean>
+): Pick<Hooks, HookName> | undefined {
+  if (hookNames) {
+    return Object.keys(hookNames).reduce<Partial<Pick<Hooks, HookName>>>((hookSubset, _hookName) => {
+      const hookName = _hookName as HookName
+      hookSubset[hookName] = hooks[hookName]
+      return hookSubset
+    }, {}) as Pick<Hooks, HookName>
+  }
+  return undefined
 }

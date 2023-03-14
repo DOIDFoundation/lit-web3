@@ -1,6 +1,6 @@
 import { JsonRpcEngine } from 'json-rpc-engine'
 import * as Middlewares from '../middlewares'
-import { SubjectMetadataController, SubjectType } from '@metamask/subject-metadata-controller'
+import { SubjectType } from '@metamask/subject-metadata-controller'
 import { providerAsMiddleware } from '@metamask/eth-json-rpc-middleware'
 
 declare interface engineOpts {
@@ -52,8 +52,8 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
       subjectType,
 
       // Miscellaneous
-      // addSubjectMetadata: this.subjectMetadataController.addSubjectMetadata.bind(this.subjectMetadataController),
-      // getProviderState: this.getProviderState.bind(this),
+      addSubjectMetadata: this.subjectMetadataController.addSubjectMetadata.bind(this.subjectMetadataController),
+      getProviderState: this.getProviderState.bind(this),
       // getUnlockPromise: this.appStateController.getUnlockPromise.bind(this.appStateController),
       // handleWatchAssetRequest: this.tokensController.watchAsset.bind(this.tokensController),
       requestUserApproval: this.approvalController.addAndShowApprovalRequest.bind(this.approvalController),

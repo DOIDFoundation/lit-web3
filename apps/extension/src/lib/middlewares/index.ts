@@ -26,7 +26,7 @@ export const createDOIDMiddleware = function (
     // getPendingTransactionByHash,
   } = <any>{}
 ) {
-  const metamaskMiddleware = mergeMiddleware([
+  const DOIDMiddleware = mergeMiddleware([
     createScaffoldMiddleware({
       eth_syncing: false,
       web3_clientVersion: `DOID/v${version}`
@@ -45,5 +45,5 @@ export const createDOIDMiddleware = function (
     // createPendingNonceMiddleware({ getPendingNonce }),
     // createPendingTxMiddleware({ getPendingTransactionByHash }),
   ])
-  return metamaskMiddleware
+  return DOIDMiddleware
 }

@@ -1,3 +1,4 @@
+// deps: provider/tokenListController
 import { ObservableStore } from '@metamask/obs-store'
 import { normalize as normalizeAddress } from 'eth-sig-util'
 import { IPFS_DEFAULT_GATEWAY_URL } from '~/constants/network'

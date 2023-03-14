@@ -2,8 +2,10 @@ import { ENVIRONMENT_TYPE_FULLSCREEN, EXTENSION_MESSAGES } from '~/constants/app
 import { checkForLastErrorAndLog } from '~/lib/ext.runtime/utils'
 import LocalStore from '~/ext.scripts/sw/localStore'
 import ReadOnlyNetworkStore from '~/ext.scripts/sw/networkStore'
+import ExtensionPlatform from '~/lib/keyringController.setup/platform'
 
 export const swGlobal: SWGlobal = {
+  platform: new ExtensionPlatform(),
   popupIsOpen: false,
   notificationIsOpen: false,
   uiIsTriggering: false,

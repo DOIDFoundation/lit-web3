@@ -1,3 +1,4 @@
+// deps: provider/blockTracker/preferencesController/onboardingController
 /* Account Tracker
  *
  * This module is responsible for tracking any number of accounts

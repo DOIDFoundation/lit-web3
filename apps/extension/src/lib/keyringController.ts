@@ -6,7 +6,6 @@ import { Mutex } from 'await-semaphore'
 import { debounce } from 'lodash'
 import * as Connections from './keyringController.setup/connections'
 import * as Middlewares from '~/lib/middlewares'
-import LocalStore from './local-store'
 import ComposableObservableStore from './ComposableObservableStore'
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
@@ -39,7 +38,7 @@ export class DOIDController extends EventEmitter {
   networkController: any
   tokenListController: any
 
-  provider: Object
+  provider: any
   blockTracker: any
   walletMiddleware: any
   approvalController: any
@@ -47,6 +46,7 @@ export class DOIDController extends EventEmitter {
   doidNameController: DoidNameController
   sendUpdate: any
   initState: any
+  localStoreApiWrapper: any
 
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
@@ -65,6 +65,7 @@ export class DOIDController extends EventEmitter {
     this.createVaultMutex = new Mutex()
 
     let additionalKeyrings = [keyringBuilderFactory(QRHardwareKeyring)]
+    this.localStoreApiWrapper = opts.localStore
 
     //if (this.canUseHardwareWallets()) {
     //  const additionalKeyringTypes = [
@@ -96,6 +97,10 @@ export class DOIDController extends EventEmitter {
     })
 
     this.walletMiddleware = Middlewares.createDOIDMiddleware.bind(this)({
+      static: {
+        eth_syncing: false,
+        web3_clientVersion: '0.0.1'
+      },
       version: '0.0.1',
       // account mgmt
       getAccounts: async ({ origin: innerOrigin }, { suppressUnauthorizedError = true } = {}) => {
@@ -377,6 +382,10 @@ export class DOIDController extends EventEmitter {
     }
   }
 
+  isUnlocked() {
+    return this.keyringController.memStore.getState().isUnlocked
+  }
+
   async resetAccount() {
     //const selectedAddress = this.preferencesController.getSelectedAddress();
     //this.txController.wipeTransactions(selectedAddress);
@@ -603,8 +612,7 @@ class Migrator {
 }
 
 let versionedData
-//const localStore = inTest ? new ReadOnlyNetworkStore() : new LocalStore();
-const localStore = new LocalStore()
+const localStore = swGlobal.localStore
 
 export const loadStateFromPersistence = async function () {
   // migrations
@@ -662,7 +670,8 @@ export const loadStateFromPersistence = async function () {
 function setupController(initState: any, initLangCode: string) {
   swGlobal.controller = new DOIDController({
     initState,
-    initLangCode
+    initLangCode,
+    localStore: swGlobal.swGlobal
   })
   return swGlobal.controller
   //

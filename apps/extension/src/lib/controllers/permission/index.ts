@@ -1,7 +1,10 @@
+// deps: keyringController/approvalController/accountTracker
 import { PermissionController, PermissionsRequestNotFoundError } from '@metamask/permission-controller'
 import { getCaveatSpecifications, getPermissionSpecifications, unrestrictedMethods } from './permissions'
 
-const captureException = (err: any) => console.error(err)
+const captureException = (err: any) => {
+  throw err
+}
 
 export const setupPermissionController = function () {
   const { opts, initState } = this
