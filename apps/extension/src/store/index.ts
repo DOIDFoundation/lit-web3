@@ -9,8 +9,19 @@ class Store extends State {
   get key() {
     return ''
   }
+  updateDOIDState(data: any) {
+    console.log(data, 'state-----')
+  }
   async setBackgroundConnection(backgroundConnection: any) {
     this.promisifiedBackground = pify(backgroundConnection as Record<string, any>)
+    // backgroundConnection.onNotification((data: any) => {
+    //   if (data.method === 'sendUpdate') {
+    //     this.updateDOIDState(data.params[0])
+    //   } else {
+    //     throw new Error(`Internal JSON-RPC Notification Not Handled:\n\n ${JSON.stringify(data)}`)
+    //   }
+    //   console.log('update background')
+    // })
   }
   setState(state: any) {
     this.doidState = state
@@ -22,6 +33,13 @@ class Store extends State {
       })
     } catch (err: any) {
       throw err
+    } finally {
+      console.log(1121212)
+
+      await this.promisifiedBackground.getState((err: any, state: any) => {
+        this.setState(state)
+        console.log(this.doidState, 'doidState')
+      })
     }
   }
   async createNewVaultAndKeychain(...args: any) {
