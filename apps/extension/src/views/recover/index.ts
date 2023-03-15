@@ -2,11 +2,12 @@ import { TailwindElement, html, customElement, when, property, state } from '@li
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { getAddress, AddressType } from '~/lib/phrase'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
-import { keyringStore, StateController } from '~/store/keyring'
+import { keyringStore } from '~/store/keyring'
 import { accountStore } from '~/store/account'
 import { validateMnemonic } from 'ethereum-cryptography/bip39'
 import { initialize } from '~/lib/keyringController'
-import swGlobal from '~/ext.scripts/sw/swGlobal'
+// import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { StateController, walletStore } from '~/store'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -17,6 +18,7 @@ import '~/components/pwd_equal'
 import style from './recover.css?inline'
 @customElement('view-recover')
 export class ViewImport extends TailwindElement(style) {
+  state = new StateController(this, walletStore)
   bindStore: any = new StateController(this, keyringStore)
   bindAccount: any = new StateController(this, accountStore)
   @property() step?: any
@@ -48,23 +50,15 @@ export class ViewImport extends TailwindElement(style) {
     this.pwd = pwd
   }
 
-  async showAddress() {
-    const [firstAccount] = await swGlobal.controller.keyringController.getAccounts()
-    console.log(firstAccount, '------------')
-    if (!firstAccount) {
-      throw new Error('KeyringController - First Account not found.')
-    }
-    return firstAccount
-  }
-
   onCreateMainAddress = async () => {
     try {
       await initialize()
       console.log(this.mnemonic, this.pwd, '----------')
       const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
 
-      await swGlobal.controller.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
-      this.showAddress()
+      await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
+      let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
+      console.log(ethAddress, '---------')
       this.start = '4'
     } catch (err: any) {
       console.error(err)
