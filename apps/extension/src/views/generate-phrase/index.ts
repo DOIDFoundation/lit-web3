@@ -11,7 +11,6 @@ import './recovery'
 import '../unlock'
 
 import style from './phrase.css?inline'
-import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { StateController, walletStore } from '~/store'
 // const localStore = new LocalStore()
 
@@ -22,9 +21,6 @@ export class ViewPhrase extends TailwindElement(style) {
     super()
     // goto(`/unlock${location.pathname}`)
     // console.log(location.pathname, 'location.pathname')
-    if (walletStore.doidState.seedPhraseBackedUp) {
-      goto('/main')
-    }
   }
   @property() ROUTE?: any
   @property() steps = [
@@ -76,35 +72,27 @@ export class ViewPhrase extends TailwindElement(style) {
   }
   routeGoto = async (e: CustomEvent) => {
     if (e.detail.path === 'generate-addresses') {
-      walletStore.createNewVaultAndKeychain(e.detail.pwd)
+      if (e.detail.type && e.detail.type === 'unlock') {
+        // await walletStore.submitPassword(e.detail.pwd)
+      } else {
+        walletStore.createNewVaultAndKeychain(e.detail.pwd)
+      }
       this.phrase = await walletStore.verifySeedPhrase()
-      console.log(this.phrase, 'this.phrase')
     }
-    if (e.detail.path === 'unlock') {
-      await walletStore.submitPassword(e.detail.pwd)
-      this.phrase = await walletStore.verifySeedPhrase()
-    }
-    // const res = await swGlobal.controller.keyringController.memStore.getState()
-    // console.log(res, 'memStore')
+    console.log(this.phrase, 'parase')
+
     goto(`/generate-phrase/${e.detail.path}`)
   }
   getIsInitialized = async () => {
-    // console.log(await walletStore.executeBackgroundAction('submitPassword', 123), 'walletStore')
-    // const { vault } = await swGlobal.controller.keyringController.store.getState()
-    // const isInitialized = Boolean(vault)
-    // const { isUnlocked } = await swGlobal.controller.keyringController.memStore.getState()
-    // const storageData = await chrome.storage.local.get()
-    // if (isInitialized && !storageData.data.onboardingController.completedOnboarding) {
-    //   goto(`/generate-phrase/unlock`)
+    if (walletStore.doidState.seedPhraseBackedUp) {
+      goto('/main')
+    }
+    // if (!walletStore.doidState.seedPhraseBackedUp) {
+    //   goto('/generate-phrase/create-password')
     // }
-    // if (isUnlocked) {
-    //   goto('/main')
-    // } else {
-    //   goto('/unlock')
-    // }
-    // console.log(storageData, 'memStoreonboardingController')
-    // return swGlobal.controller.getState().isInitialized
-    // survey trick situate nature great under artist curious nasty profit decrease exotic
+    if (walletStore.doidState.isUnlocked) {
+      this.phrase = await walletStore.verifySeedPhrase()
+    }
   }
   submit() {}
   connectedCallback(): void {

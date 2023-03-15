@@ -37,18 +37,18 @@ export class AppMain extends TailwindElement('') {
         console.log(state, 'state----')
         walletStore.setState(state)
         await walletStore.setBackgroundConnection(backgroundConnection)
-        if (!walletStore.doidState.seedPhraseBackedUp && !walletStore.doidState.isInitialized) {
-          goto('/generate-phrase')
-          return
-        }
-        if (walletStore.doidState.isInitialized && !walletStore.doidState.seedPhraseBackedUp) {
-          goto('/generate-phrase/unlock')
-          return
-        }
-        if (!walletStore.doidState.isUnlocked) {
-          goto('/unlock')
-          return
-        }
+        // if (!walletStore.doidState.seedPhraseBackedUp && !walletStore.doidState.isInitialized) {
+        //   goto('/generate-phrase')
+        //   return
+        // }
+        // if (walletStore.doidState.isInitialized && !walletStore.doidState.seedPhraseBackedUp) {
+        //   goto('/generate-phrase/unlock')
+        //   return
+        // }
+        // if (!walletStore.doidState.isUnlocked) {
+        //   goto('/unlock')
+        //   return
+        // }
       })
     })
   }

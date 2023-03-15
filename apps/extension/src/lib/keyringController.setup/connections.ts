@@ -145,10 +145,13 @@ export const setupControllerConnection = function (outStream: any) {
   // report new active controller connection
   this.activeControllerConnections += 1
   this.emit('controllerConnectionChanged', this.activeControllerConnections)
+  console.log(outStream, 'outStream')
 
   // set up postStream transport
   outStream.on('data', createMetaRPCHandler(api, outStream, this.store, this.localStoreApiWrapper))
-  const handleUpdate = (update) => {
+  const handleUpdate = (update: any) => {
+    console.log(update, 'update---up')
+
     if (outStream._writableState.ended) {
       return
     }
