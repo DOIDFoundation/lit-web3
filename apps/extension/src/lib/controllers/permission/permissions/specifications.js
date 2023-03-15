@@ -177,6 +177,9 @@ function validateCaveatAccounts(accounts, getIdentities) {
  * "method not found" error.
  */
 export const unrestrictedMethods = Object.freeze([
+  // DOID
+  'DOID_setup',
+  // EVM
   'eth_blockNumber',
   'eth_call',
   'eth_chainId',

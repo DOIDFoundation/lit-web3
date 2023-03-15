@@ -8,7 +8,7 @@ import type { UnvalidatedJsonRpcRequest } from './BaseProvider'
 import { AbstractStreamProvider, StreamProviderOptions } from './StreamProvider'
 
 export interface SendSyncJsonRpcRequest extends JsonRpcRequest<unknown> {
-  method: 'DOID_account' | 'eth_accounts' | 'eth_coinbase' | 'eth_uninstallFilter' | 'net_version'
+  method: 'DOID_account' | 'eth_accounts' | 'net_version'
 }
 
 type WarningEventName = keyof SentWarningsState['events']

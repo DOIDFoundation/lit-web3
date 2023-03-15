@@ -31,6 +31,11 @@ export const PLATFORM_FIREFOX = 'Firefox'
 export const PLATFORM_OPERA = 'Opera'
 
 export const MESSAGE_TYPE = {
+  // DOID
+  DOID_SETUP: 'DOID_setup',
+  DOID_NAME: 'DOID_name',
+  DOID_ACCOUNT: 'DOID_account',
+  // EVM
   ADD_ETHEREUM_CHAIN: 'wallet_addEthereumChain',
   ETH_ACCOUNTS: RestrictedMethods.eth_accounts,
   ETH_DECRYPT: 'eth_decrypt',

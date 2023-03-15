@@ -4,6 +4,17 @@ import LocalStore from '~/ext.scripts/sw/localStore'
 import ReadOnlyNetworkStore from '~/ext.scripts/sw/networkStore'
 import ExtensionPlatform from '~/lib/keyringController.setup/platform'
 
+export const onCloseEnvironmentInstances = (environmentType: string) => {
+  if (isClientOpenStatus() === false) {
+    swGlobal.controller.onClientClosed()
+  } else {
+    if (environmentType === ENVIRONMENT_TYPE_FULLSCREEN && Boolean(Object.keys(swGlobal.openMetamaskTabsIDs).length)) {
+      return
+    }
+    swGlobal.controller.onEnvironmentTypeClosed(environmentType)
+  }
+}
+
 export const swGlobal: SWGlobal = {
   platform: new ExtensionPlatform(),
   popupIsOpen: false,
@@ -13,6 +24,7 @@ export const swGlobal: SWGlobal = {
   requestAccountTabIds: {},
   controller: null,
   WORKER_KEEP_ALIVE_MESSAGE: 'WORKER_KEEP_ALIVE_MESSAGE',
+  onCloseEnvironmentInstances,
   initialState: {
     config: {},
     PreferencesController: {
@@ -35,17 +47,6 @@ export const isClientOpenStatus = () => {
   return (
     swGlobal.popupIsOpen || Boolean(Object.keys(swGlobal.openMetamaskTabsIDs).length) || swGlobal.notificationIsOpen
   )
-}
-
-export const onCloseEnvironmentInstances = (environmentType: string) => {
-  if (isClientOpenStatus() === false) {
-    swGlobal.controller.onClientClosed()
-  } else {
-    if (environmentType === ENVIRONMENT_TYPE_FULLSCREEN && Boolean(Object.keys(swGlobal.openMetamaskTabsIDs).length)) {
-      return
-    }
-    swGlobal.controller.onEnvironmentTypeClosed(environmentType)
-  }
 }
 
 export const sendReadyMessageToTabs = async () => {
