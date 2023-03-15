@@ -6,7 +6,7 @@ import { triggerUi, openPopup } from '~/ext.scripts/sw/notificationManager'
 import { Mutex } from 'await-semaphore'
 import { debounce } from 'lodash'
 import * as Connections from './keyringController.setup/connections'
-import * as Middlewares from '~/lib/middlewares'
+import setupAllMiddlewares from '~/lib/middlewares'
 import ComposableObservableStore from './ComposableObservableStore'
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
@@ -44,7 +44,6 @@ export class DOIDController extends EventEmitter {
 
   provider: any
   blockTracker: any
-  walletMiddleware: any
   approvalController: any
   startUISync: boolean = false
   doidNameController: DoidNameController
@@ -98,6 +97,8 @@ export class DOIDController extends EventEmitter {
     setupAllControllers.bind(this)()
     // Setup all methods
     setupAllMethods.bind(this)()
+    // Setup all methods
+    setupAllMiddlewares.bind(this)()
 
     this.store = new ComposableObservableStore({
       controllerMessenger: this.controllerMessenger,
@@ -105,17 +106,6 @@ export class DOIDController extends EventEmitter {
       persist: true
     })
 
-    this.walletMiddleware = Middlewares.createDOIDMiddleware.bind(this)({
-      static: {
-        eth_syncing: false,
-        web3_clientVersion: '0.0.1'
-      },
-      version: '0.0.1',
-      // account mgmt
-      getAccounts: async ({ origin: innerOrigin }, { suppressUnauthorizedError = true } = {}) => {
-        return ['whoami']
-      }
-    })
     this.on('update', (memState) => {
       console.log(memState, '000000000')
     })
@@ -281,7 +271,7 @@ export class DOIDController extends EventEmitter {
       //// keyring's iframe and have the setting initialized properly
       //// Optimistically called to not block MetaMask login due to
       //// Ledger Keyring GitHub downtime
-      //const transportPreference =
+      // const transportPreference =
       //  this.preferencesController.getLedgerTransportPreference();
       //this.setLedgerTransportPreference(transportPreference);
 

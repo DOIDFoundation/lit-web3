@@ -1,4 +1,9 @@
-import { ENVIRONMENT_TYPE_POPUP, ENVIRONMENT_TYPE_NOTIFICATION, ENVIRONMENT_TYPE_FULLSCREEN } from '~/constants/app'
+import {
+  ENVIRONMENT_TYPE_POPUP,
+  ENVIRONMENT_TYPE_NOTIFICATION,
+  ENVIRONMENT_TYPE_FULLSCREEN,
+  ENVIRONMENT_TYPE_BACKGROUND
+} from '~/constants/app'
 
 import endOfStream from 'end-of-stream'
 import swGlobal, { isClientOpenStatus } from '~/ext.scripts/sw/swGlobal'

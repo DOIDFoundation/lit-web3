@@ -58,7 +58,7 @@ export default class NotificationManager extends EventEmitter {
       try {
         const lastFocused = await this.platform.getLastFocusedWindow()
         // Position window in top right corner of lastFocused window.
-        top = lastFocused.top
+        top = lastFocused.top + 7
         left = lastFocused.left + (lastFocused.width - NOTIFICATION_WIDTH)
       } catch (_) {
         // The following properties are more than likely 0, due to being
@@ -70,7 +70,7 @@ export default class NotificationManager extends EventEmitter {
       }
 
       const popupWindow = await this.platform.openWindow({
-        url: 'notification.html',
+        url: '/',
         type: 'popup',
         width: NOTIFICATION_WIDTH,
         height: NOTIFICATION_HEIGHT,

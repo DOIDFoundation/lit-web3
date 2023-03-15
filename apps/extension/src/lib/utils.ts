@@ -49,11 +49,11 @@ export const getPlatform = () => {
 
 const getEnvironmentTypeMemo = (url: string) => {
   const parsedUrl = new URL(url)
-  if (parsedUrl.pathname === '/popup.html') {
+  if (parsedUrl.pathname === '/popup') {
     return ENVIRONMENT_TYPE_POPUP
   } else if (parsedUrl.pathname.includes('generate')) {
     return ENVIRONMENT_TYPE_FULLSCREEN
-  } else if (parsedUrl.pathname === '/notification.html') {
+  } else if (parsedUrl.pathname === '/notification') {
     return ENVIRONMENT_TYPE_NOTIFICATION
   }
   return ENVIRONMENT_TYPE_BACKGROUND

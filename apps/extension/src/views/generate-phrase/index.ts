@@ -115,7 +115,10 @@ export class ViewPhrase extends TailwindElement(style) {
     return html`<div class="gen-phrase">
       <div class="dui-container">
         <div class="dui-container">
-          <a class="doid-logo mx-auto block w-96 h-20" href="https://doid.tech"></a>
+          <doid-symbol class="block my-4">
+            <span slot="h1" class="text-xl"></span>
+            <p slot="msg"></p>
+          </doid-symbol>
           <div class="max-w-lg mx-auto border-gray-400 border-2 rounded-md mt-10 p-6">
             ${when(
               this.ROUTE?.step !== 'unlock',

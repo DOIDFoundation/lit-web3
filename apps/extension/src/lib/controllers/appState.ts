@@ -282,6 +282,7 @@ export default class AppStateController extends EventEmitter {
       notificationGasPollTokens: [],
       fullScreenGasPollTokens: []
     })
+    // this.handleUnlock()
   }
 
   /**
