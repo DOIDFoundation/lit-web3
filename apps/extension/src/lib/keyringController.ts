@@ -568,12 +568,11 @@ export class DOIDController extends EventEmitter {
       createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
       createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this),
       setSeedPhraseBackedUp: onboardingController.setSeedPhraseBackedUp.bind(onboardingController),
+      completeOnboarding: onboardingController.completeOnboarding.bind(onboardingController),
       // KeyringController
-      setLocked: this.setLocked.bind(this),
+      setLocked: this.setLocked.bind(this)
       // permissions
       // approval controller
-      resolvePendingApproval: this.resolvePendingApproval,
-      rejectPendingApproval: this.rejectPendingApproval
     }
   }
   //=============================================================================
