@@ -14,8 +14,8 @@ import DoidNameController from './doidNameController'
 import { MILLISECOND } from '@lit-web3/core/src/constants/time'
 // import { setupMultiplex } from './stream-utils'
 // import createMetaRPCHandler from './createMetaRPCHandler'
-import OnboardingController from '@/lib/controllers/onBoarding'
-import setupPump from '@/lib/keyringController.setup/setupPump'
+import OnboardingController from '~/lib/controllers/onBoarding'
+import setupPump from '~/lib/keyringController.setup/setupPump'
 import { loadStateFromPersistence } from './keyringController.setup/loadStateFromPersistence'
 export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
@@ -567,7 +567,13 @@ export class DOIDController extends EventEmitter {
       verifyPassword: this.verifyPassword.bind(this),
       createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
       createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this),
-      setSeedPhraseBackedUp: onboardingController.setSeedPhraseBackedUp.bind(onboardingController)
+      setSeedPhraseBackedUp: onboardingController.setSeedPhraseBackedUp.bind(onboardingController),
+      // KeyringController
+      setLocked: this.setLocked.bind(this),
+      // permissions
+      // approval controller
+      resolvePendingApproval: this.resolvePendingApproval,
+      rejectPendingApproval: this.rejectPendingApproval
     }
   }
   //=============================================================================

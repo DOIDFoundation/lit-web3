@@ -2,6 +2,7 @@ import { getPermittedAccounts } from './getPermittedAccounts'
 import { getProviderNetworkState } from './getProviderNetworkState'
 import { getProviderState } from './getProviderState'
 import { onEnvironmentTypeClosed } from './onEnvironmentTypeClosed'
+import setupDOIDMethods from './DOID'
 
 // Init methods step by step
 export default function setupMethods() {
@@ -13,4 +14,7 @@ export default function setupMethods() {
   this.getProviderState = getProviderState.bind(this)
   // deps: appStateController/gasFeeController[@TODO: Not Implemented]
   this.onEnvironmentTypeClosed = onEnvironmentTypeClosed.bind(this)
+
+  // DOID-releated
+  setupDOIDMethods.bind(this)()
 }

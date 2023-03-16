@@ -24,7 +24,7 @@ self.addEventListener('push', function (event) {
 self.addEventListener('updated', function (event) {
   logger('updated')
 })
-browser.action.setPopup({ popup: './popup.html' })
+// browser.action.setPopup({ popup: './popup.html' })
 browser.action.onClicked.addListener((tab: typeof browser.tabs) => {
   logger('onClicked')
   browser.scripting.executeScript({

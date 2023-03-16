@@ -41,7 +41,7 @@ export class ViewStart extends TailwindElement(style) {
             Safer, faster and easier entrance to chains, contacts and dApps
           </div>
         </doid-symbol>
-        <div class="mt-48">
+        <div class="mt-24">
           ${when(
             this.pending,
             () => html`<div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,

@@ -1,6 +1,7 @@
 import { getAddress, AddressType } from '~/lib/phrase'
 import { MESSAGE_TYPE } from '~/constants/app'
 import { ethErrors } from 'eth-rpc-errors'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 
 const request = async () => {
   await 0
@@ -20,14 +21,13 @@ const DOIDSetupHandler = async function (
   res: any,
   next: Function,
   end: Function,
-  { origin, getAccounts, getUnlockPromise, hasPermission, requestAccountsPermission } = <any>{}
+  { origin, getDOIDName, getUnlockPromise, hasPermission, requestAccountsPermission } = <any>{}
 ) {
   //
   try {
     await getUnlockPromise(true)
-    // res.result = await getAccounts();
-    res.result = await request()
-    console.log(res.result)
+    res.result = await getDOIDName()
+    // res.result = await request()
     end()
   } catch (error) {
     end(error)
@@ -39,7 +39,7 @@ export const requestDOIDSetup = {
   implementation: DOIDSetupHandler,
   hookNames: {
     origin: true,
-    getAccounts: true,
+    getDOIDName: true,
     getUnlockPromise: true
   }
 }

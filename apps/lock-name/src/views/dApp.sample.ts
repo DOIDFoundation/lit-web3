@@ -15,7 +15,7 @@ export class ViewRestore extends TailwindElement('') {
     try {
       // const res = await window.DOID.request({ method: 'eth_requestAccounts' })
       // console.log(res)
-      this.nameAddresses = await window.DOID.request({ method: 'DOID_setup' })
+      this.nameAddresses = await window.DOID.request({ method: 'DOID_setup', params: ['zzzxxx.doid'] })
     } catch (e) {
       this.nameAddresses = { error: 'cancelled' }
     }
@@ -27,7 +27,7 @@ export class ViewRestore extends TailwindElement('') {
         <hr />
         <dui-button @click=${this.request}>DOID_requestName</dui-button>
         <hr />
-        <dui-button @click=${this.request}>DOID_setup</dui-button>
+        <dui-button @click=${this.request}>{ method: 'DOID_setup', params: ['zzzxxx.doid'] }</dui-button>
         <hr />
         <pre class="p-4 text-xs">${JSON.stringify(this.nameAddresses, null, '  ')}</pre>
       </div>

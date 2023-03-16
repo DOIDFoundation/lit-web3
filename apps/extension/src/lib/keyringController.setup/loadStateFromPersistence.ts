@@ -1,4 +1,4 @@
-import swGlobal from '@/ext.scripts/sw/swGlobal'
+import swGlobal from '~/ext.scripts/sw/swGlobal'
 import Migrator from '../Migrator'
 
 const localStore = swGlobal.localStore

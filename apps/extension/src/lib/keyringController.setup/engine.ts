@@ -51,6 +51,9 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
       origin,
       subjectType,
 
+      // DOID-related
+      getDOIDName: this.getPermittedDOIDName.bind(this, origin),
+
       // Miscellaneous
       addSubjectMetadata: this.subjectMetadataController.addSubjectMetadata.bind(this.subjectMetadataController),
       getProviderState: this.getProviderState.bind(this),

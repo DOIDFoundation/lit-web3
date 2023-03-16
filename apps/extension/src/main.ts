@@ -25,11 +25,11 @@ export class AppMain extends TailwindElement('') {
     this.showHeader ? style.removeProperty('--header-height') : style.setProperty('--header-height', `0px`)
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback()
     this.chkView()
     emitter.on('router-change', this.chkView)
-    const connectionStream = getConnectStream()
+    const connectionStream = await getConnectStream()
     connectToAccountManager(connectionStream, async (err: any, backgroundConnection: any) => {
       // console.log(backgroundConnection, 'backgroundConnection')
       await backgroundConnection.getState(async (err: any, state: any) => {

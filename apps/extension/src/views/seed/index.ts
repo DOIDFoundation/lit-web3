@@ -67,7 +67,6 @@ export class ViewSeed extends TailwindElement(style) {
     let keypair = Keypair.fromSeed(seed.slice(0, 32))
     console.log(`${keypair.publicKey.toBase58()}`) //
     // const derivedSeed = derivePath("m/44'/501'/0'/0'", this.seed).key
-    // // 得到私钥和地址
     // let privateKey = bs58.encode(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
     // let address = bs58.encode(nacl.sign.keyPair.fromSeed(derivedSeed).publicKey)
     this.solanaAddress = keypair.publicKey.toBase58()
