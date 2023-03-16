@@ -72,3 +72,11 @@ declare module 'eth-json-rpc-filters'
 declare module 'eth-json-rpc-filters/subscriptionManager'
 declare module 'debounce-stream'
 declare module 'promise-to-callback'
+
+declare type ChainNet = {
+  name: string
+  title: string
+  icon?: string
+  coin?: string
+  color?: string
+}

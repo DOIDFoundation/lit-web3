@@ -29,7 +29,7 @@ export class ViewHome extends TailwindElement(style) {
     return html`<div class="home">
       <div class="dui-container sparse">
         <div class="dui-container sparse">
-          <doid-symbol class="block mt-12">
+          <doid-symbol class="block mt-16">
             <span slot="h1" class="text-xl">Your decentralized openid</span>
             <p slot="msg">Safer, faster and easier entrance to chains, contacts and dApps</p>
           </doid-symbol>

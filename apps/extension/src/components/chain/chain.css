@@ -1,0 +1,21 @@
+:host {
+}
+.chain-icon {
+  @apply w-10 h-10 rounded-full bg-contain bg-center bg-no-repeat bg-white;
+  &.eth {
+    background-image: url('@/assets/ethereum.svg');
+  }
+  &.sol {
+    background-color: #000;
+    background-image: url('@/assets/solana.svg');
+  }
+  &.apt {
+    background-image: url('@/assets/aptos.svg');
+  }
+  &.bsc {
+    background-image: url('http://bscscan.com/images/svg/brands/bnb.svg?v=1.3');
+  }
+  &.btc {
+    background-image: url('@/assets/bitcoin.svg');
+  }
+}
