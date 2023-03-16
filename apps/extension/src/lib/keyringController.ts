@@ -2,17 +2,21 @@ import { EventEmitter } from 'events'
 import { KeyringController, keyringBuilderFactory, defaultKeyringBuilders } from '@metamask/eth-keyring-controller'
 import setupAllControllers from '~/lib/controllers'
 import setupAllMethods from '~/lib/keyringController.setup/methods'
+import { triggerUi, openPopup } from '~/ext.scripts/sw/notificationManager'
 import { Mutex } from 'await-semaphore'
 import { debounce } from 'lodash'
 import * as Connections from './keyringController.setup/connections'
-import * as Middlewares from '~/lib/middlewares'
+import setupAllMiddlewares from '~/lib/middlewares'
 import ComposableObservableStore from './ComposableObservableStore'
 import { MetaMaskKeyring as QRHardwareKeyring } from '@keystonehq/metamask-airgapped-keyring'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import DoidNameController from './doidNameController'
 import { MILLISECOND } from '@lit-web3/core/src/constants/time'
-import { setupMultiplex } from './stream-utils'
-import createMetaRPCHandler from './createMetaRPCHandler'
+// import { setupMultiplex } from './stream-utils'
+// import createMetaRPCHandler from './createMetaRPCHandler'
+import OnboardingController from '@/lib/controllers/onBoarding'
+import setupPump from '@/lib/keyringController.setup/setupPump'
+import { loadStateFromPersistence } from './keyringController.setup/loadStateFromPersistence'
 export const enum HardwareKeyringTypes {
   ledger = 'Ledger Hardware',
   trezor = 'Trezor Hardware',
@@ -40,13 +44,17 @@ export class DOIDController extends EventEmitter {
 
   provider: any
   blockTracker: any
-  walletMiddleware: any
   approvalController: any
   startUISync: boolean = false
   doidNameController: DoidNameController
   sendUpdate: any
   initState: any
   localStoreApiWrapper: any
+  onboardingController: OnboardingController
+  appStateController: any
+  permissionController: any
+  accountTracker: any
+  _isClientOpen: any
 
   //store : ComposableObservableStore
   constructor(opts: Record<string, any>) {
@@ -80,15 +88,17 @@ export class DOIDController extends EventEmitter {
     //}
     this.keyringController = new KeyringController({
       keyringBuilders: additionalKeyrings,
-      initState: initState.KeyringController
-      //encryptor: opts.encryptor || undefined,
-      //cacheEncryptionKey: isManifestV3,
+      initState: initState.KeyringController,
+      encryptor: opts.encryptor || undefined,
+      cacheEncryptionKey: true //isManifestV3,
     })
 
     // Setup all controllers
     setupAllControllers.bind(this)()
     // Setup all methods
     setupAllMethods.bind(this)()
+    // Setup all methods
+    setupAllMiddlewares.bind(this)()
 
     this.store = new ComposableObservableStore({
       controllerMessenger: this.controllerMessenger,
@@ -96,27 +106,26 @@ export class DOIDController extends EventEmitter {
       persist: true
     })
 
-    this.walletMiddleware = Middlewares.createDOIDMiddleware.bind(this)({
-      static: {
-        eth_syncing: false,
-        web3_clientVersion: '0.0.1'
-      },
-      version: '0.0.1',
-      // account mgmt
-      getAccounts: async ({ origin: innerOrigin }, { suppressUnauthorizedError = true } = {}) => {
-        return ['whoami']
-      }
+    this.on('update', (memState) => {
+      console.log(memState, '000000000')
     })
-
-    this.keyringController.on('update', () => {
-      const data = Object.assign(initState, {
-        KeyringController: this.keyringController.store.getState()
-      })
-      localStore.set(data)
-    })
+    // this.keyringController.on('update', () => {
+    //   const data = Object.assign(initState, {
+    //     KeyringController: this.keyringController.store.getState()
+    //   })
+    //   localStore.set(data)
+    // })
+    // this.keyringController.memStore.subscribe((state:any) =>
+    //   this._onKeyringControllerUpdate(state),
+    // );
+    // this.keyringController.on('unlock', () => this._onUnlock());
+    // this.keyringController.on('lock', () => this._onLock());
 
     this.doidNameController = new DoidNameController({
       initState: initState.doidNameController
+    })
+    this.onboardingController = new OnboardingController({
+      initState: initState.OnboardingController
     })
 
     /**
@@ -124,7 +133,7 @@ export class DOIDController extends EventEmitter {
      * On chrome profile re-start, they will be re-initialized.
      */
     const resetOnRestartStore = {
-      //      AccountTracker: this.accountTracker.store,
+      AccountTracker: this.accountTracker.store
       //      TxController: this.txController.memStore,
       //      TokenRatesController: this.tokenRatesController,
       //      MessageManager: this.messageManager.memStore,
@@ -138,7 +147,7 @@ export class DOIDController extends EventEmitter {
     }
 
     this.store.updateStructure({
-      //      AppStateController: this.appStateController.store,
+      AppStateController: this.appStateController.store,
       //      TransactionController: this.txController.store,
       KeyringController: this.keyringController.store,
       DoidController: this.doidNameController.store,
@@ -146,12 +155,12 @@ export class DOIDController extends EventEmitter {
       //      MetaMetricsController: this.metaMetricsController.store,
       //      AddressBookController: this.addressBookController,
       //      CurrencyController: this.currencyRateController,
-      //      NetworkController: this.networkController.store,
+      NetworkController: this.networkController.store,
       //      CachedBalancesController: this.cachedBalancesController.store,
       //      AlertController: this.alertController.store,
-      //      OnboardingController: this.onboardingController.store,
+      OnboardingController: this.onboardingController.store,
       //      IncomingTransactionsController: this.incomingTransactionsController.store,
-      //      PermissionController: this.permissionController,
+      PermissionController: this.permissionController,
       //      PermissionLogController: this.permissionLogController.store,
       //      SubjectMetadataController: this.subjectMetadataController,
       //      BackupController: this.backupController,
@@ -167,8 +176,8 @@ export class DOIDController extends EventEmitter {
 
     this.memStore = new ComposableObservableStore({
       config: {
-        //        AppStateController: this.appStateController.store,
-        //        NetworkController: this.networkController.store,
+        AppStateController: this.appStateController.store,
+        NetworkController: this.networkController.store,
         //        CachedBalancesController: this.cachedBalancesController.store,
         KeyringController: this.keyringController.memStore,
         DoidController: this.doidNameController.memStore,
@@ -177,16 +186,16 @@ export class DOIDController extends EventEmitter {
         //        AddressBookController: this.addressBookController,
         //        CurrencyController: this.currencyRateController,
         //        AlertController: this.alertController.store,
-        //        OnboardingController: this.onboardingController.store,
+        OnboardingController: this.onboardingController.store,
         //        IncomingTransactionsController:
         //          this.incomingTransactionsController.store,
-        //        PermissionController: this.permissionController,
+        PermissionController: this.permissionController,
         //        PermissionLogController: this.permissionLogController.store,
         //        SubjectMetadataController: this.subjectMetadataController,
         //        BackupController: this.backupController,
         //        AnnouncementController: this.announcementController,
         //        GasFeeController: this.gasFeeController,
-        //        TokenListController: this.tokenListController,
+        TokenListController: this.tokenListController,
         //        TokensController: this.tokensController,
         //        SmartTransactionsController: this.smartTransactionsController,
         //        NftController: this.nftController,
@@ -213,13 +222,13 @@ export class DOIDController extends EventEmitter {
       const { keyringController } = this
 
       // clear known identities
-      //this.preferencesController.setAddresses([]);
+      this.preferencesController.setAddresses([])
 
       // clear permissions
-      //this.permissionController.clearState();
+      this.permissionController.clearState()
 
       // clear accounts in accountTracker
-      //this.accountTracker.clearAccounts();
+      this.accountTracker.clearAccounts()
 
       // clear cachedBalances
       //this.cachedBalancesController.clearCachedBalances();
@@ -262,7 +271,7 @@ export class DOIDController extends EventEmitter {
       //// keyring's iframe and have the setting initialized properly
       //// Optimistically called to not block MetaMask login due to
       //// Ledger Keyring GitHub downtime
-      //const transportPreference =
+      // const transportPreference =
       //  this.preferencesController.getLedgerTransportPreference();
       //this.setLedgerTransportPreference(transportPreference);
 
@@ -355,7 +364,8 @@ export class DOIDController extends EventEmitter {
     const { vault } = this.keyringController.store.getState()
     const isInitialized = Boolean(vault)
     return {
-      isInitialized
+      isInitialized,
+      ...this.memStore.getFlatState()
     }
   }
   async verifySeedPhrase() {
@@ -382,8 +392,31 @@ export class DOIDController extends EventEmitter {
     }
   }
 
+  // Unlock
   isUnlocked() {
     return this.keyringController.memStore.getState().isUnlocked
+  }
+  setLocked() {
+    const [ledgerKeyring] = this.keyringController.getKeyringsByType(HardwareKeyringTypes.ledger)
+    ledgerKeyring?.destroy?.()
+    this.clearLoginArtifacts()
+    return this.keyringController.setLocked()
+  }
+  async clearLoginArtifacts() {
+    await browser.storage.session.remove(['loginToken', 'loginSalt'])
+  }
+  // Popup
+  set isClientOpen(open: boolean) {
+    this._isClientOpen = open
+    // this.detectTokensController.isOpen = open;
+  }
+  onClientClosed() {
+    try {
+      // this.gasFeeController.stopPolling()
+      this.appStateController.clearPollingTokens()
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   async resetAccount() {
@@ -432,39 +465,38 @@ export class DOIDController extends EventEmitter {
   // * @param {string} targetAccount - The address of the account to stop exposing
   // * to third parties.
   // */
-  //function removeAllAccountPermissions(targetAccount) {
-  //  this.permissionController.updatePermissionsByCaveat(
-  //    CaveatTypes.restrictReturnedAccounts,
-  //    (existingAccounts) =>
-  //      CaveatMutatorFactories[
-  //        CaveatTypes.restrictReturnedAccounts
-  //      ].removeAccount(targetAccount, existingAccounts),
-  //  );
-  //}
+  removeAllAccountPermissions(targetAccount: string) {
+    //  this.permissionController.updatePermissionsByCaveat(
+    //    CaveatTypes.restrictReturnedAccounts,
+    //    (existingAccounts) =>
+    //      CaveatMutatorFactories[
+    //        CaveatTypes.restrictReturnedAccounts
+    //      ].removeAccount(targetAccount, existingAccounts),
+    //  );
+  }
   //
   ///**
   // * Removes an account from state / storage.
   // *
   // * @param {string[]} address - A hex address
   // */
-  //async function removeAccount(address) {
-  //  // Remove all associated permissions
-  //  this.removeAllAccountPermissions(address);
-  //  // Remove account from the preferences controller
-  //  this.preferencesController.removeAddress(address);
-  //  // Remove account from the account tracker controller
-  //  this.accountTracker.removeAccount([address]);
-  //
-  //  const keyring = await this.keyringController.getKeyringForAccount(address);
-  //  // Remove account from the keyring
-  //  await this.keyringController.removeAccount(address);
-  //  const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {};
-  //  if (updatedKeyringAccounts?.length === 0) {
-  //    keyring.destroy?.();
-  //  }
-  //
-  //  return address;
-  //}
+  async removeAccount(address: string) {
+    // Remove all associated permissions
+    this.removeAllAccountPermissions(address)
+    // Remove account from the preferences controller
+    this.preferencesController.removeAddress(address)
+    // Remove account from the account tracker controller
+    this.accountTracker.removeAccount([address])
+    //
+    const keyring = await this.keyringController.getKeyringForAccount(address)
+    // Remove account from the keyring
+    await this.keyringController.removeAccount(address)
+    const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {}
+    if (updatedKeyringAccounts?.length === 0) {
+      keyring.destroy?.()
+    }
+    return address
+  }
   //
   ///**
   // * Imports an account with the specified import strategy.
@@ -492,10 +524,10 @@ export class DOIDController extends EventEmitter {
     await this.keyringController.submitPassword(password)
 
     try {
-      //await this.blockTracker.checkForLatestBlock();
+      await this.blockTracker.checkForLatestBlock()
       const allAccounts = await this.keyringController.getAccounts()
     } catch (error) {
-      //log.error('Error while unlocking extension.', error);
+      console.error('Error while unlocking extension.', error)
     }
 
     // This must be set as soon as possible to communicate to the
@@ -523,6 +555,7 @@ export class DOIDController extends EventEmitter {
     return keyring.mnemonic
   }
   getApi() {
+    const { onboardingController } = this
     return {
       getState: this.getState.bind(this),
       markPasswordForgotten: this.markPasswordForgotten.bind(this),
@@ -533,7 +566,8 @@ export class DOIDController extends EventEmitter {
       submitPassword: this.submitPassword.bind(this),
       verifyPassword: this.verifyPassword.bind(this),
       createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
-      createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this)
+      createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this),
+      setSeedPhraseBackedUp: onboardingController.setSeedPhraseBackedUp.bind(onboardingController)
     }
   }
   //=============================================================================
@@ -577,85 +611,7 @@ export class DOIDController extends EventEmitter {
   removeAllConnections = Connections.removeAllConnections.bind(this)
   notifyConnections = Connections.notifyConnections.bind(this)
   notifyAllConnections = Connections.notifyAllConnections.bind(this)
-}
-
-class Migrator {
-  //extends EventEmitter {
-  defaultVersion
-  constructor() {
-    //super()
-    this.defaultVersion = 0
-
-    //const migrations = opts.migrations || [];
-    //// sort migrations by version
-    //this.migrations = migrations.sort((a, b) => a.version - b.version);
-    //// grab migration with highest version
-    //const lastMigration = this.migrations.slice(-1)[0];
-    //// use specified defaultVersion or highest migration version
-    //this.defaultVersion =
-    //  opts.defaultVersion || (lastMigration && lastMigration.version) || 0;
-  }
-  /**
-   * Returns the initial state for the migrator
-   *
-   * @param {object} [data] - The data for the initial state
-   * @returns {{meta: {version: number}, data: any}}
-   */
-  generateInitialState(data: any) {
-    return {
-      meta: {
-        version: this.defaultVersion
-      },
-      data
-    }
-  }
-}
-
-let versionedData
-const localStore = swGlobal.localStore
-
-export const loadStateFromPersistence = async function () {
-  // migrations
-  const migrator = new Migrator()
-  //  migrator.on('error', console.warn);
-  //
-  // read from disk
-  // first from preferred, async API:
-  versionedData = (await localStore.get()) || migrator.generateInitialState(swGlobal.initialState)
-  //
-  //  // check if somehow state is empty
-  //  // this should never happen but new error reporting suggests that it has
-  //  // for a small number of users
-  //  // https://github.com/metamask/metamask-extension/issues/3919
-  //  if (versionedData && !versionedData.data) {
-  //    // unable to recover, clear state
-  //    versionedData = migrator.generateInitialState(firstTimeState);
-  //    sentry.captureMessage('MetaMask - Empty vault found - unable to recover');
-  //  }
-  //
-  //  // report migration errors to sentry
-  //  migrator.on('error', (err) => {
-  //    // get vault structure without secrets
-  //    const vaultStructure = getObjStructure(versionedData);
-  //    sentry.captureException(err, {
-  //      // "extra" key is required by Sentry
-  //      extra: { vaultStructure },
-  //    });
-  //  });
-  //
-  //  // migrate data
-  //  versionedData = await migrator.migrateData(versionedData);
-  //  if (!versionedData) {
-  //    throw new Error('MetaMask - migrator returned undefined');
-  //  }
-  // this initializes the meta/version data as a class variable to be used for future writes
-  localStore.setMetadata(versionedData.meta)
-
-  // write to disk
-  localStore.set(versionedData.data)
-
-  // return just the data
-  return versionedData.data
+  // _onKeyringControllerUpdate=
 }
 
 /**
@@ -671,34 +627,24 @@ function setupController(initState: any, initLangCode: string) {
   swGlobal.controller = new DOIDController({
     initState,
     initLangCode,
-    localStore: swGlobal.swGlobal
+    localStore: swGlobal.localStore,
+    // deps: notificationManager/appStateController
+    ...{ showUserConfirmation: triggerUi, openPopup },
+    browser: chrome,
+    getRequestAccountTabIds: () => {
+      return swGlobal.requestAccountTabIds
+    },
+    getOpenMetamaskTabsIds: () => {
+      return swGlobal.openMetamaskTabsIDs
+    }
   })
+  // stream error
+  setupPump()
   return swGlobal.controller
   //
   // MetaMask Controller
   //
   /*
-  controller = new DOIDController({
-    infuraProjectId: process.env.INFURA_PROJECT_ID,
-    // User confirmation callbacks:
-    showUserConfirmation: triggerUi,
-    openPopup,
-    // initial state
-    initState,
-    // initial locale code
-    initLangCode,
-    // platform specific api
-    platform,
-    notificationManager,
-    browser,
-    getRequestAccountTabIds: () => {
-      return requestAccountTabIds;
-    },
-    getOpenMetamaskTabsIds: () => {
-      return openMetamaskTabsIDs;
-    },
-    localStore,
-  });
 
   setupEnsIpfsResolver({
     getCurrentChainId: controller.networkController.getCurrentChainId.bind(
@@ -710,44 +656,7 @@ function setupController(initState: any, initLangCode: string) {
     provider: controller.provider,
   });
 
-  // setup state persistence
-  pump(
-    storeAsStream(controller.store),
-    debounce(1000),
-    createStreamSink((state) => localStore.set(state)),
-    (error) => {
-      log.error('MetaMask - Persistence pipeline failed', error);
-    },
-  );
-
   setupSentryGetStateGlobal(controller);
-
-  const isClientOpenStatus = () => {
-    return (
-      popupIsOpen ||
-      Boolean(Object.keys(openMetamaskTabsIDs).length) ||
-      notificationIsOpen
-    );
-  };
-  
-
-  const onCloseEnvironmentInstances = (isClientOpen, environmentType) => {
-    // if all instances of metamask are closed we call a method on the controller to stop gasFeeController polling
-    if (isClientOpen === false) {
-      controller.onClientClosed();
-      // otherwise we want to only remove the polling tokens for the environment type that has closed
-    } else {
-      // in the case of fullscreen environment a user might have multiple tabs open so we don't want to disconnect all of
-      // its corresponding polling tokens unless all tabs are closed.
-      if (
-        environmentType === ENVIRONMENT_TYPE_FULLSCREEN &&
-        Boolean(Object.keys(openMetamaskTabsIDs).length)
-      ) {
-        return;
-      }
-      controller.onEnvironmentTypeClosed(environmentType);
-    }
-  };
   */
 }
 
@@ -771,3 +680,4 @@ export async function initialize() {
   //const secondkeyring = await doidController.keyringController.addNewKeyring(HardwareKeyringTypes.hdKeyTree)
 }
 export const initController = initialize
+initialize() // incorrect entry

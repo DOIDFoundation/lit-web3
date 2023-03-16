@@ -6,7 +6,6 @@ const createMetaRPCHandler = (api, outStream, store, localStoreApiWrapper) => {
     if (outStream._writableState.ended) {
       return
     }
-    console.log(data, 'data')
     if (!api[data.method]) {
       outStream.write({
         jsonrpc: '2.0',

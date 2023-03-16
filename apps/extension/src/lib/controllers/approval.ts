@@ -1,10 +1,10 @@
 import { ApprovalController, ApprovalRequestNotFoundError } from '@metamask/approval-controller'
 
-export default function setupApproval() {
-  this.approvalController = new ApprovalController({
+export const setupApprovalController = function () {
+  return new ApprovalController({
     messenger: this.controllerMessenger.getRestricted({
       name: 'ApprovalController'
     }),
-    showApprovalRequest: opts.showUserConfirmation
+    showApprovalRequest: this.opts.showUserConfirmation
   })
 }

@@ -6,10 +6,11 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 
 import style from './unlock.css?inline'
-import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { StateController, walletStore } from '~/store'
 import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-unlock')
 export class ViewUnlock extends TailwindElement(style) {
+  state = new StateController(this, walletStore)
   @property() ROUTE?: any
   @property() placeholder = 'Password'
   @state() pwd = ''
@@ -28,11 +29,11 @@ export class ViewUnlock extends TailwindElement(style) {
 
   submitPwd = async () => {
     try {
+      await walletStore.submitPassword(this.pwd)
       if (location.pathname.includes('generate-phrase')) {
-        this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd })
+        this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd, type: 'unlock' })
         return
       }
-      await swGlobal.controller.submitPassword(this.pwd)
       goto(`/main`)
     } catch (error: any) {
       console.log(error.message, 'error')

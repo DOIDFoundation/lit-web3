@@ -68,7 +68,6 @@ async function initialize() {
 }
 initialize().catch(logger)
 // E
-
 // We use manifet.config.ts to inject inpage.js (see `src/ext.script/inpage.ts`), but Metamask said manifest has a bug due to:
 /*
  * This content script is injected programmatically because

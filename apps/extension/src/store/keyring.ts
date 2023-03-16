@@ -8,7 +8,7 @@ export { StateController } from '@lit-app/state'
 //   encryptor: opts.encryptor || undefined,
 //   cacheEncryptionKey: isManifestV3,
 // });
-console.log(KeyringController)
+// console.log(KeyringController)
 
 class Store extends State {
   @property({ value: false }) pending!: boolean

@@ -246,6 +246,7 @@ export abstract class BaseProvider extends SafeEventEmitter {
         payload.method === 'eth_accounts' ||
         payload.method === 'eth_requestAccounts' ||
         payload.method === 'DOID_account' ||
+        payload.method === 'DOID_name' ||
         payload.method === 'DOID_requestAccount'
       ) {
         // handle accounts changing

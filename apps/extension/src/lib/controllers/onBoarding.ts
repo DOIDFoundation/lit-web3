@@ -1,4 +1,4 @@
-import { ObservableStore } from '@metamask/obs-store'
+import { ObservableStore } from '~/lib/obs-store'
 import log from 'loglevel'
 
 /**

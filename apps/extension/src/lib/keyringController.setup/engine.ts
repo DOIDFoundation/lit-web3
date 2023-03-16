@@ -54,7 +54,7 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
       // Miscellaneous
       addSubjectMetadata: this.subjectMetadataController.addSubjectMetadata.bind(this.subjectMetadataController),
       getProviderState: this.getProviderState.bind(this),
-      // getUnlockPromise: this.appStateController.getUnlockPromise.bind(this.appStateController),
+      getUnlockPromise: this.appStateController.getUnlockPromise.bind(this.appStateController),
       // handleWatchAssetRequest: this.tokensController.watchAsset.bind(this.tokensController),
       requestUserApproval: this.approvalController.addAndShowApprovalRequest.bind(this.approvalController),
       // sendMetrics: this.metaMetricsController.trackEvent.bind(this.metaMetricsController),
@@ -70,25 +70,21 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
       ),
       requestPermissionsForOrigin: this.permissionController.requestPermissions.bind(this.permissionController, {
         origin
-      })
+      }),
 
       // Custom RPC-related
-      // addCustomRpc: async ({ chainId, blockExplorerUrl, ticker, chainName, rpcUrl } = {}) => {
-      //   await this.preferencesController.upsertToFrequentRpcList(rpcUrl, chainId, ticker, chainName, {
-      //     blockExplorerUrl
-      //   })
-      // },
+      addCustomRpc: async ({ chainId, blockExplorerUrl, ticker, chainName, rpcUrl } = {}) => {
+        await this.preferencesController.upsertToFrequentRpcList(rpcUrl, chainId, ticker, chainName, {
+          blockExplorerUrl
+        })
+      },
       // findCustomRpcBy: this.findCustomRpcBy.bind(this),
-      // getCurrentChainId: () => this.networkController.store.getState().provider.chainId,
-      // getCurrentRpcUrl: this.networkController.store.getState().provider.rpcUrl,
-      // setProviderType: this.networkController.setProviderType.bind(this.networkController),
-      // updateRpcTarget: ({ rpcUrl, chainId, ticker, nickname }) => {
-      //   this.networkController.setRpcTarget(rpcUrl, chainId, ticker, nickname)
-      // }
-
-      // Web3 shim-related
-      // getWeb3ShimUsageState: this.alertController.getWeb3ShimUsageState.bind(this.alertController),
-      // setWeb3ShimUsageRecorded: this.alertController.setWeb3ShimUsageRecorded.bind(this.alertController),
+      getCurrentChainId: () => this.networkController.store.getState().provider.chainId,
+      getCurrentRpcUrl: this.networkController.store.getState().provider.rpcUrl,
+      setProviderType: this.networkController.setProviderType.bind(this.networkController),
+      updateRpcTarget: ({ rpcUrl, chainId, ticker, nickname }) => {
+        this.networkController.setRpcTarget(rpcUrl, chainId, ticker, nickname)
+      }
     })
   )
 
@@ -102,6 +98,14 @@ export const setupProviderEngine = function ({ origin, subjectType, sender, tabI
   }
 
   engine.push(this.walletMiddleware)
+  // DOIDs
+  // engine.push(
+  //   Middlewares.createDOIDSetupMiddleware({
+  //     origin,
+  //     getAccounts: this.getPermittedAccounts.bind(this, origin),
+  //     getUnlockPromise: this.appStateController.getUnlockPromise.bind(this.appStateController)
+  //   })
+  // )
 
   // forward to metamask primary provider
   engine.push(providerAsMiddleware(provider))

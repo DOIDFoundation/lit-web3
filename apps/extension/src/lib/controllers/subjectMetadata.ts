@@ -2,7 +2,7 @@
 import { SubjectMetadataController } from '@metamask/subject-metadata-controller'
 
 // Init methods step by step
-export default function setupSubjectMetadataController() {
+export const setupSubjectMetadataController = function () {
   const { initState } = this
   return new SubjectMetadataController({
     messenger: this.controllerMessenger.getRestricted({

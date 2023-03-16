@@ -132,7 +132,6 @@ const setupExtensionStreams = () => {
 }
 
 function extensionStreamMessageListener(msg: any) {
-  console.log('ondata')
   if (EXTENSION_CONNECT_SENT && msg.data.method === 'DOID_chainChanged') {
     EXTENSION_CONNECT_SENT = false
     window.postMessage(
