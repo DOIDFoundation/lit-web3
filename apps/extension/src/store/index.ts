@@ -34,12 +34,9 @@ class Store extends State {
     } catch (err: any) {
       throw err
     } finally {
+      const state = await this.promisifiedBackground.getState()
+      this.setState(state)
       console.log(1121212)
-
-      await this.promisifiedBackground.getState((err: any, state: any) => {
-        this.setState(state)
-        console.log(this.doidState, 'doidState')
-      })
     }
   }
   async createNewVaultAndKeychain(...args: any) {
@@ -65,6 +62,12 @@ class Store extends State {
   }
   async createNewVaultAndRestore(...args: any) {
     return await this.executeBackgroundAction('createNewVaultAndRestore', ...args)
+  }
+  async setSeedPhraseBackedUp(...args: any) {
+    return await this.executeBackgroundAction('setSeedPhraseBackedUp', ...args)
+  }
+  async setCompletedOnboarding() {
+    return await this.executeBackgroundAction('completeOnboarding', [])
   }
 }
 

@@ -90,14 +90,23 @@ export class ViewPhrase extends TailwindElement(style) {
     // if (!walletStore.doidState.seedPhraseBackedUp) {
     //   goto('/generate-phrase/create-password')
     // }
+    if (
+      walletStore.doidState.isInitialized &&
+      !walletStore.doidState.seedPhraseBackedUp &&
+      !walletStore.doidState.isUnlocked
+    ) {
+      goto('/generate-phrase/unlock')
+      return
+    }
     if (walletStore.doidState.isUnlocked) {
       this.phrase = await walletStore.verifySeedPhrase()
     }
   }
-  submit() {}
-  connectedCallback(): void {
+  async connectedCallback() {
+    console.log('callback')
+
     super.connectedCallback()
-    this.getIsInitialized()
+    await this.getIsInitialized()
   }
   render() {
     return html`<div class="gen-phrase">

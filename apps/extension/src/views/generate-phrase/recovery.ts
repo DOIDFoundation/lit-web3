@@ -66,6 +66,7 @@ export class ViewAddress extends TailwindElement(style) {
   }
   submit = async () => {
     await walletStore.setSeedPhraseBackedUp(true)
+    await walletStore.setCompletedOnboarding()
     goto('/main')
     // const res = await swGlobal.Controller.keyringController.memStore.getState()
     // const storeData = await chrome.storage.local.get()

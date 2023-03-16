@@ -577,7 +577,8 @@ export class DOIDController extends EventEmitter {
       verifyPassword: this.verifyPassword.bind(this),
       createNewVaultAndKeychain: this.createNewVaultAndKeychain.bind(this),
       createNewVaultAndRestore: this.createNewVaultAndRestore.bind(this),
-      setSeedPhraseBackedUp: onboardingController.setSeedPhraseBackedUp.bind(onboardingController)
+      setSeedPhraseBackedUp: onboardingController.setSeedPhraseBackedUp.bind(onboardingController),
+      completeOnboarding: onboardingController.completeOnboarding.bind(onboardingController)
     }
   }
   //=============================================================================
