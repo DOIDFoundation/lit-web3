@@ -3,8 +3,9 @@ import { ethErrors } from 'eth-rpc-errors'
 import { flatten } from 'lodash'
 import { UNSUPPORTED_RPC_METHODS } from '~/constants/network'
 import localHandlers from './handlers'
+import DOIDHandlers from '../DOID'
 
-const allHandlers = [...localHandlers, ...permissionRpcMethods.handlers]
+const allHandlers = [...localHandlers, ...DOIDHandlers, ...permissionRpcMethods.handlers]
 
 const handlerMap = allHandlers.reduce((map, handler) => {
   for (const methodName of handler.methodNames) {

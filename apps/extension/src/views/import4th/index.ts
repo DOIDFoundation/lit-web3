@@ -1,9 +1,8 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { keyringStore, StateController } from '~/store/keyring'
-import { HardwareKeyringTypes } from '~/lib/keyringController'
+import { keyringStore } from '~/store/keyring'
 import { getAddress, AddressType } from '~/lib/phrase'
-import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { StateController, walletStore } from '~/store'
 import { accountStore } from '~/store/account'
 
 // Components
@@ -14,6 +13,7 @@ import '~/components/pwd_equal'
 import style from './import4th.css?inline'
 @customElement('import-4th')
 export class ViewImport extends TailwindElement(style) {
+  state = new StateController(this, walletStore)
   bindStore: any = new StateController(this, keyringStore)
   bindAccount: any = new StateController(this, accountStore)
   @property() placeholder = ''
@@ -37,11 +37,11 @@ export class ViewImport extends TailwindElement(style) {
 
   onCreateMainAddress = async () => {
     try {
-      // console.log(keyringStore.mnemonic, this.pwd, '----------')
+      console.log(this.account.name, keyringStore.mnemonic, this.pwd, '----------')
       let ethAddress = await getAddress(keyringStore.mnemonic, AddressType.eth)
       console.log('mainAddress:', ethAddress, '------------')
       const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
-      await swGlobal.controller.createNewVaultAndRestore(this.pwd, encodedSeedPhrase)
+      await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
       goto('/main')
     } catch (err: any) {
       console.error(err)

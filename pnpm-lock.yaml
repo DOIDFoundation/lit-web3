@@ -228,7 +228,7 @@ importers:
       webextension-polyfill: 0.10.0
     devDependencies:
       '@crxjs/vite-plugin': 2.0.0-beta.13
-      '@types/chrome': 0.0.223
+      '@types/chrome': 0.0.224
       '@types/end-of-stream': 1.4.1
       '@types/fs-extra': 9.0.13
       '@types/pump': 1.1.1
@@ -3666,8 +3666,8 @@ packages:
       '@types/har-format': 1.2.10
     dev: false
 
-  /@types/chrome/0.0.223:
-    resolution: {integrity: sha512-Z/wYh1K9ekdnv/uLSIU/vOF9s3PG8nP7Gn7mwsCdFlyKJUH3BMsOyj2qDv4pU6sF+b2bCHbxBpDjpGgvEqDPLg==}
+  /@types/chrome/0.0.224:
+    resolution: {integrity: sha512-YkL7q3KDV7OAKgVCBNIfH73rnjNMbIzAYHzTa2DKhSK/2z0Wf/n8yJnK/UoW+lvuYJJR4LtAkG3YvsIZTy7BOA==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.10
