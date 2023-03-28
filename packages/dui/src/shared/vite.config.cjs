@@ -1,4 +1,4 @@
-const { resolve } = require('path')
+const { resolve } = require('node:path')
 // const glob = require('glob')
 const { defineConfig, splitVendorChunkPlugin, normalizePath } = require('vite')
 //
@@ -42,7 +42,6 @@ const viteConfig = (options = {}) => {
       },
       resolve: {
         alias: {
-          '@': resolve(process.cwd(), './src'),
           '~': resolve(process.cwd(), './src'),
           // bugfix: crypto-addr-codec@0.1.7
           'crypto-addr-codec': 'crypto-addr-codec/dist/index.js'

@@ -12,6 +12,7 @@ import '~/components/account/switch'
 import { StateController, walletStore } from './store'
 import { connectToAccountManager, getConnectStream } from './lib/ui'
 import { goto } from '@lit-web3/dui/src/shared/router'
+import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {

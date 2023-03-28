@@ -63,6 +63,5 @@ export function setGlobalProvider(providerInstance: InpageProvider): void {
   window.dispatchEvent(new Event('DOID#initialized'))
 }
 export function injectProvider(providerInstance: InitializeProviderOptions) {
-  console.log('hh')
   if (shouldInjectProvider()) initializeProvider(providerInstance)
 }

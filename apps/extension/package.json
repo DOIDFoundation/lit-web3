@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development run-p dev:*",
-    "dev:inpage": "npm run build:inpage -- --mode development",
+    "dev:inpage": "npm run build:inpage -- --watch --mode development",
     "dev:app": "vite --host --mode development",
     "build": "cross-env NODE_ENV=production run-s build:*",
     "build:inpage": "vite build --config vite.config.inpage.ts",
@@ -63,14 +63,13 @@
     "process-nextick-args": "^2.0.1",
     "promise-to-callback": "^1.0.0",
     "pump": "^3.0.0",
-    "readable-stream": "^4.3.0",
     "reselect": "^4.1.7",
     "swappable-obj-proxy": "^1.1.0",
     "tweetnacl": "^1.0.3",
     "uuid": "^9.0.0",
     "w3name": "^1.0.8",
     "web3.storage": "^4.4.0",
-    "webextension-polyfill": "^0.10.0"
+    "webext-bridge": "^6.0.0-rc4"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.13",
@@ -78,7 +77,6 @@
     "@types/end-of-stream": "^1.4.1",
     "@types/fs-extra": "^9.0.13",
     "@types/pump": "^1.1.1",
-    "@types/readable-stream": "^2.3.15",
     "@types/uuid": "^9.0.1",
     "@types/webextension-polyfill": "^0.10.0",
     "chokidar": "^3.5.3",
@@ -86,7 +84,8 @@
     "crx": "^5.0.1",
     "kolorist": "^1.6.0",
     "rollup-plugin-polyfill-node": "^0.12.0",
-    "unplugin-auto-import": "^0.15.0"
+    "unplugin-auto-import": "^0.15.0",
+    "webextension-polyfill": "^0.10.0"
   },
   "license": "MIT"
 }
