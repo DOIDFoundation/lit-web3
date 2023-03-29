@@ -13,7 +13,11 @@ export class Messenger implements MESSENGER {
     this.log = logger(ExtContext[context])
   }
   send: MessengerSend = async (method, params, dest = this.dest) => {
-    return await this.emitter.sendMessage(method, params, dest)
+    const promise = this.emitter.sendMessage(method, params, dest)
+    console.log('dest', dest)
+    const res = await promise
+    console.log(res)
+    return res
   }
   on: typeof onMessage = (...args: any) => this.emitter.onMessage(...args)
 }

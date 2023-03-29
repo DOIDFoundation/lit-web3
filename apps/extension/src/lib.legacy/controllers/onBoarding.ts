@@ -1,4 +1,4 @@
-import { ObservableStore } from '~/lib/obs-store'
+import { ObservableStore } from '~/lib.legacy/obs-store'
 import log from 'loglevel'
 
 /**

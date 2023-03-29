@@ -1,5 +1,5 @@
 // !!! `this` must point to DOIDController with `bind()` method
-import { setupMultiplex } from '~/lib/stream-utils'
+import { setupMultiplex } from '~/lib.legacy/stream-utils'
 import { createEngineStream } from 'json-rpc-middleware-stream'
 import { ORIGIN_METAMASK } from '~/constants/app'
 import { nanoid } from 'nanoid'

@@ -8,7 +8,7 @@ export const inpageProvider = () => {
   return {
     request: async ({ method, params } = <Record<string, any>>{}) => {
       inpageLogger('requested', method, params)
-      const res = await inpageMessenger.emitter.sendMessage(method, params)
+      const res = await inpageMessenger.send(method, params)
       inpageLogger('response', res)
       return res
     }
@@ -22,7 +22,3 @@ export const injectInpageProvider = () => {
     inpageLogger('injected')
   }
 }
-
-inpageMessenger.on('DOID_setup', ({ data }) => {
-  inpageLogger(data)
-})

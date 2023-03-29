@@ -1,11 +1,11 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { getAddress, AddressType } from '~/lib/phrase'
+import { getAddress, AddressType } from '~/lib.legacy/phrase'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
 import { keyringStore } from '~/store/keyring'
 import { accountStore } from '~/store/account'
 import { validateMnemonic } from 'ethereum-cryptography/bip39'
-import { initialize } from '~/lib/keyringController'
+import { initialize } from '~/lib.legacy/keyringController'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { StateController, walletStore } from '~/store'
 

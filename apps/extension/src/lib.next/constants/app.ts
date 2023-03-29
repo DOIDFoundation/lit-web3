@@ -5,6 +5,7 @@ export enum ExtContext {
   background = 'background',
   popup = 'popup'
 }
+
 // Message context (https://github.com/zikaari/webext-bridge/tree/next#destination)
 export enum MessageContext {
   content = 'content-script',

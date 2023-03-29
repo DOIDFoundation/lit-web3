@@ -1,6 +1,5 @@
 // 1. Inject inpage.js
 // 2. Event-Mux: inpage(dest: background) <-> content <-> background(dest: inpage)
-
 import browser from 'webextension-polyfill'
 import { allowWindowMessaging } from 'webext-bridge/content-script'
 // @ts-expect-error
@@ -22,6 +21,8 @@ const inject = () => {
     target.appendChild(s)
   }
 }
+
+// TOD: why `openStream` is not working
 
 inject()
 contentLogger('started')

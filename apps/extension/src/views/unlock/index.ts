@@ -1,4 +1,5 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import popupMessenger from '~/lib.next/messenger/popup'
 
 // Components
 import '@lit-web3/dui/src/input/pwd'
@@ -19,15 +20,18 @@ export class ViewUnlock extends TailwindElement(style) {
   @state() disabled = true
 
   onInput = async (e: CustomEvent) => {
-    // const { val = '', error = '', msg = '' } = {}
-    // this.err = msg
-    // if (error) return
+    const { val = '', error = '', msg = '' } = {}
+    this.err = msg
+    if (error) return
     // this.pwd = val
     this.pwd = e.detail
     this.disabled = !Boolean(this.pwd)
   }
 
   submitPwd = async () => {
+    // S redirect to unlock for temporarily
+    popupMessenger.send('DOID_setup_reply', { publicKey: 'jaksdiuzoxdf', address: { BTC: 'd', ETH: 'dsad' } })
+    // E
     try {
       await walletStore.submitPassword(this.pwd)
       if (location.pathname.includes('generate-phrase')) {

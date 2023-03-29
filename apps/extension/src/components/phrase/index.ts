@@ -8,7 +8,7 @@ import {
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import '@lit-web3/dui/src/input/pwd'
-import { PHRASE_LEN_MAP, validatePhrase } from '~/lib/phrase'
+import { PHRASE_LEN_MAP, validatePhrase } from '~/lib.legacy/phrase'
 
 import style from './phrase.css?inline'
 @customElement('phrase-to-secret')

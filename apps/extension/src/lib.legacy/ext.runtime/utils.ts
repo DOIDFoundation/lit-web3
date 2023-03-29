@@ -2,7 +2,7 @@
  * Utility Functions to support browser.runtime JavaScript API
  */
 
-import browser from '~/lib/webextension-polyfill'
+import browser from '~/lib.legacy/webextension-polyfill'
 import log from 'loglevel'
 
 /**

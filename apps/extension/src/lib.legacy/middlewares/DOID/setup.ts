@@ -1,4 +1,4 @@
-import { getAddress, AddressType } from '~/lib/phrase'
+import { getAddress, AddressType } from '~/lib.legacy/phrase'
 import { MESSAGE_TYPE } from '~/constants/app'
 import { ethErrors } from 'eth-rpc-errors'
 import swGlobal from '~/ext.scripts/sw/swGlobal'

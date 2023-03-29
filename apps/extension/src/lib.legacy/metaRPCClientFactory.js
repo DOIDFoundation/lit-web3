@@ -1,7 +1,7 @@
 import { EthereumRpcError } from 'eth-rpc-errors'
 import SafeEventEmitter from '@metamask/safe-event-emitter'
 // import createRandomId from '../../../shared/modules/random-id';
-// import { TEN_SECONDS_IN_MILLISECONDS } from '../../../shared/lib/transactions-controller-utils';
+// import { TEN_SECONDS_IN_MILLISECONDS } from '../../../shared'~/lib.legacy/transactions-controller-utils';
 export const TEN_SECONDS_IN_MILLISECONDS = 10_000
 class DisconnectError extends Error {}
 const MAX = Number.MAX_SAFE_INTEGER

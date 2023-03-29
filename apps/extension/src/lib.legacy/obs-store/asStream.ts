@@ -1,5 +1,5 @@
 import { Duplex } from '@lit-web3/core/src/shims/node/stream'
-import { ObservableStore } from '~/lib/obs-store'
+import { ObservableStore } from '~/lib.legacy/obs-store'
 
 class ObservableStoreStream<T> extends Duplex {
   handler: (state: T) => void

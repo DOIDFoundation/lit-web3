@@ -6,7 +6,7 @@ import { ENVIRONMENT_TYPE_BACKGROUND } from '~/constants/app'
 import { METAMETRICS_ANONYMOUS_ID, METAMETRICS_BACKGROUND_PAGE_OBJECT, TRAITS } from '~/constants/metametrics'
 import { SECOND } from '@lit-web3/core/src/constants/time'
 import { METAMETRICS_FINALIZE_EVENT_FRAGMENT_ALARM } from '~/constants/alarms'
-import { checkAlarmExists, generateRandomId, isValidDate } from '../lib/util'
+import { checkAlarmExists, generateRandomId, isValidDate } from '../lib.legacy/util'
 
 const EXTENSION_UNINSTALL_URL = 'https://metamask.io/uninstalled'
 

@@ -1,9 +1,9 @@
 import { setupMultiplex } from './stream-utils'
 import metaRPCClientFactory from './metaRPCClientFactory'
 import { getEnvironmentType } from './utils'
-import { checkForLastErrorAndLog } from '~/lib/ext.runtime/utils'
+import { checkForLastErrorAndLog } from '~/lib.legacy/ext.runtime/utils'
 import { ENVIRONMENT_TYPE_POPUP } from '~/constants/app'
-import PortStream from '~/lib/ext.runtime/extension-port-stream'
+import PortStream from '~/lib.legacy/ext.runtime/extension-port-stream'
 
 export async function getConnectStream() {
   const windowType = getEnvironmentType()

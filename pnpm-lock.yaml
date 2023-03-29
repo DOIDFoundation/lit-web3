@@ -226,7 +226,7 @@ importers:
       webext-bridge: 6.0.0-rc4
     devDependencies:
       '@crxjs/vite-plugin': 2.0.0-beta.13
-      '@types/chrome': 0.0.225
+      '@types/chrome': 0.0.226
       '@types/end-of-stream': 1.4.1
       '@types/fs-extra': 9.0.13
       '@types/pump': 1.1.1
@@ -3754,8 +3754,8 @@ packages:
       '@types/har-format': 1.2.10
     dev: false
 
-  /@types/chrome/0.0.225:
-    resolution: {integrity: sha512-acSFQN7X0/fjF6PSP0Ki9TlwWsEeJeh5WclMYilJSHHp+ayLDMD/YeSIUzsodwLKPZQ9h8SyiL13/pPab8M4RA==}
+  /@types/chrome/0.0.226:
+    resolution: {integrity: sha512-cyl2Bt/P3xPH4arxHctNbzksO20hirQCL3Jcqz6mOZKgad7SkhqRqc7BL9EWVRvocs6hyo8bwkzKidTlM8WGUw==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.10

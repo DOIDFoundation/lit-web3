@@ -1,7 +1,7 @@
 // TODO: This should be a mixin class instead
 
 import { setupPreferencesController } from './preferences'
-import NetworkController from '~/lib/controllers/network'
+import NetworkController from '~/lib.legacy/controllers/network'
 import { ControllerMessenger } from '@metamask/base-controller'
 import { setupApprovalController } from './approval'
 import { setupOnBoardingController } from './onBoarding'

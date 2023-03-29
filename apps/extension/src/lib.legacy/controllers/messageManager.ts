@@ -4,7 +4,7 @@ import { bufferToHex } from 'ethereumjs-util'
 import { ethErrors } from 'eth-rpc-errors'
 import { MESSAGE_TYPE } from '~/constants/app'
 import { CONTROLLER_EVENTS } from './appState'
-import createId from '~/lib/random-id'
+import createId from '~/lib.legacy/random-id'
 import { EVENT } from '~/constants/metametrics'
 
 /**

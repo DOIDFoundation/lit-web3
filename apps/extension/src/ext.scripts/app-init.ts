@@ -1,9 +1,9 @@
 // ref: @metamask-extention/app/scripts/app-init.js
 import '@lit-web3/core/src/shims/node'
-import '~/lib/webextension-polyfill'
-// import { shouldInjectProvider } from '~/lib/providers/injection'
-import { deferredPromise } from '~/lib/utils'
-import { initController } from '~/lib/keyringController'
+import '~/lib.legacy/webextension-polyfill'
+// import { shouldInjectProvider } from '~/lib.legacy/providers/injection'
+import { deferredPromise } from '~/lib.legacy/utils'
+import { initController } from '~/lib.legacy/keyringController'
 import { sendReadyMessageToTabs } from '~/ext.scripts/sw/swGlobal'
 import { sleep } from '@lit-web3/ethers/src/utils'
 

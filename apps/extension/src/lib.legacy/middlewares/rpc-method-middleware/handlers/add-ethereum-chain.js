@@ -3,7 +3,7 @@ import { ethErrors, errorCodes } from 'eth-rpc-errors'
 import { omit } from 'lodash'
 import { MESSAGE_TYPE, UNKNOWN_TICKER_SYMBOL } from '~/constants/app'
 import { EVENT } from '~/constants/metametrics'
-import { isPrefixedFormattedHexString, isSafeChainId } from '~/lib/utils'
+import { isPrefixedFormattedHexString, isSafeChainId } from '~/lib.legacy/utils'
 import { jsonRpcRequest } from '@lit-web3/core/src/http/jsonRpcRequest'
 
 const addEthereumChain = {

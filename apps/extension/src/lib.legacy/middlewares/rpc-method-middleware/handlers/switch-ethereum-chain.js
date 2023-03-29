@@ -8,7 +8,7 @@ import {
   CURRENCY_SYMBOLS,
   NETWORK_TYPES
 } from '~/constants/network'
-import { isPrefixedFormattedHexString, isSafeChainId } from '~/lib/utils'
+import { isPrefixedFormattedHexString, isSafeChainId } from '~/lib.legacy/utils'
 
 const switchEthereumChain = {
   methodNames: [MESSAGE_TYPE.SWITCH_ETHEREUM_CHAIN],

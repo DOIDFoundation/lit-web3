@@ -8,7 +8,7 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/address'
 import '~/components/chain/list'
 import '~/components/chain/accounts'
-import { getAccount } from '~/lib/account'
+import { getAccount } from '~/lib.legacy/account'
 
 import style from './main.css?inline'
 @customElement('view-main')

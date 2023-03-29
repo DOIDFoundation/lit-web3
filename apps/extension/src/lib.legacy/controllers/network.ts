@@ -1,6 +1,6 @@
 // import { strict as assert } from 'assert'
 import EventEmitter from 'events'
-import { ComposedStore, ObservableStore } from '~/lib/obs-store'
+import { ComposedStore, ObservableStore } from '~/lib.legacy/obs-store'
 import { JsonRpcEngine } from 'json-rpc-engine'
 import { providerFromEngine, providerFromMiddleware } from '@metamask/eth-json-rpc-provider'
 import log from 'loglevel'
@@ -15,7 +15,7 @@ import {
   NETWORK_TYPES,
   INFURA_PROVIDER_TYPES
 } from '~/constants/network'
-import { isPrefixedFormattedHexString, isSafeChainId } from '~/lib/utils'
+import { isPrefixedFormattedHexString, isSafeChainId } from '~/lib.legacy/utils'
 // import getFetchWithTimeout from '@lit-web3/core/src/http/fetchWithTimeout'
 import createJsonRpcClient from '../middlewares/createJsonRpcClient'
 

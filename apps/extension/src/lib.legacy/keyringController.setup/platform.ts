@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill'
 
 import { getBlockExplorerLink } from '@metamask/etherscan-link'
 import { startCase, toLower } from 'lodash'
-import { getEnvironmentType } from '~/lib/utils'
+import { getEnvironmentType } from '~/lib.legacy/utils'
 import { ENVIRONMENT_TYPE_BACKGROUND } from '~/constants/app'
 import { TransactionStatus } from '~/constants/transaction'
 

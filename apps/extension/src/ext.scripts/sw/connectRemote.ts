@@ -7,7 +7,7 @@ import {
 
 import endOfStream from 'end-of-stream'
 import swGlobal, { isClientOpenStatus } from '~/ext.scripts/sw/swGlobal'
-import PortStream from '~/lib/ext.runtime/extension-port-stream'
+import PortStream from '~/lib.legacy/ext.runtime/extension-port-stream'
 
 const blockedPorts = ['trezor-connect']
 export const connectRemote = async (remotePort: chrome.runtime.Port) => {
