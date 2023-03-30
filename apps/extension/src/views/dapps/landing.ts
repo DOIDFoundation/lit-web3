@@ -4,7 +4,7 @@ import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/button'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { getAccount } from '~/lib/account'
+import { getAccount } from '~/lib.legacy/account'
 
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 

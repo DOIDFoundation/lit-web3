@@ -10,7 +10,7 @@ import {
 // Components
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/address/avatar'
-import { getAccounts, getAccountIdx } from '~/lib/account'
+import { getAccounts, getAccountIdx } from '~/lib.legacy/account'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
 import css from './menu.css?inline'

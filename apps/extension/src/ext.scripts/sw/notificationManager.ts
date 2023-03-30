@@ -2,7 +2,7 @@ import EventEmitter from '@metamask/safe-event-emitter'
 import { REJECT_NOTFICIATION_CLOSE, REJECT_NOTFICIATION_CLOSE_SIG } from '~/constants/metametrics'
 import { SECOND } from '@lit-web3/core/src/constants/time'
 import { ethErrors } from 'eth-rpc-errors'
-import ExtensionPlatform from '~/lib/keyringController.setup/platform'
+import ExtensionPlatform from '~/lib.legacy/keyringController.setup/platform'
 import swGlobal from './swGlobal'
 
 const NOTIFICATION_HEIGHT = 620

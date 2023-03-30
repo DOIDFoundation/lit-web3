@@ -1,5 +1,5 @@
 import '@lit-web3/core/src/shims/node'
-// import '~/lib/webextension-polyfill'
+// import '~/lib.legacy/webextension-polyfill'
 import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
@@ -10,8 +10,9 @@ import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
 import { StateController, walletStore } from './store'
-import { connectToAccountManager, getConnectStream } from './lib/ui'
+import { connectToAccountManager, getConnectStream } from './lib.legacy/ui'
 import { goto } from '@lit-web3/dui/src/shared/router'
+import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {

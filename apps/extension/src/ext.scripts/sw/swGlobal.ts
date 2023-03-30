@@ -1,8 +1,8 @@
 import { ENVIRONMENT_TYPE_FULLSCREEN, EXTENSION_MESSAGES } from '~/constants/app'
-import { checkForLastErrorAndLog } from '~/lib/ext.runtime/utils'
+import { checkForLastErrorAndLog } from '~/lib.legacy/ext.runtime/utils'
 import LocalStore from '~/ext.scripts/sw/localStore'
 import ReadOnlyNetworkStore from '~/ext.scripts/sw/networkStore'
-import ExtensionPlatform from '~/lib/keyringController.setup/platform'
+import ExtensionPlatform from '~/lib.legacy/keyringController.setup/platform'
 
 export const onCloseEnvironmentInstances = (environmentType: string) => {
   if (isClientOpenStatus() === false) {

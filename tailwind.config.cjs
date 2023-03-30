@@ -7,6 +7,6 @@ const config = {
   }
 }
 const relativeFile = `${process.env.PNPM_SCRIPT_SRC_DIR}/tailwind.config.js`
-if (require('fs').existsSync(relativeFile)) config.presets = [require(relativeFile)]
+if (require('node:fs').existsSync(relativeFile)) config.presets = [require(relativeFile)]
 
 module.exports = config

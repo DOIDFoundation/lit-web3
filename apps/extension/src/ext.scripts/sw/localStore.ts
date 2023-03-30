@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
 import log from 'loglevel'
 // import { captureException } from '@sentry/browser'
-import { checkForLastError } from '~/lib/ext.runtime/utils'
+import { checkForLastError } from '~/lib.legacy/ext.runtime/utils'
 
 /**
  * A wrapper around the extension's storage local API

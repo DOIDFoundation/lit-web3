@@ -6,7 +6,7 @@ import {
   state,
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
-import { getAccount } from '~/lib/account'
+import { getAccount } from '~/lib.legacy/account'
 
 // Components
 import '@lit-web3/dui/src/address'

@@ -5,30 +5,29 @@
 // 1. `public/inpage.js` will be regenerated & committed every time
 import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import { sharedConfig } from './vite.config'
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 
 // Use public path to trick public copies (https://github.com/vitejs/vite/issues/1492), it could be rewrite by @crxjs/vite-plugin
 const outDir = 'public'
 
 export default async ({ mode = '' }) => {
   const config: any = await sharedConfig(mode)
-  const isDev = mode === 'development'
-  // config.define['process.env.NODE_ENV'] = JSON.stringify(isDev ? 'development' : 'production')
-  Object.assign(config.build, {
+  config.build = {
+    outDir,
     emptyOutDir: false,
-    watch: isDev,
+    watch: { usePolling: true },
     cssCodeSplit: false,
     lib: {
-      entry: resolve(__dirname, 'src/ext.scripts/inpage.ts'),
+      entry: resolve(__dirname, 'src/ext.entries/inpage.ts'),
       name: 'inpage',
       formats: ['iife']
     },
-    outDir,
     rollupOptions: {
       output: {
-        entryFileNames: 'inpage.js'
+        entryFileNames: 'inpage.js',
+        extend: true
       }
     }
-  })
+  }
   return viteConfig(config)({ mode })
 }

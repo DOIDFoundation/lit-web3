@@ -31,10 +31,10 @@ export default defineManifest({
   ],
   host_permissions: [...matches, 'http://localhost:4813/'],
   background: {
-    service_worker: 'src/ext.scripts/app-init.ts',
+    service_worker: 'src/ext.entries/background.ts',
     type: 'module'
   },
-  content_scripts: [{ js: ['src/ext.scripts/contentscript.ts'], matches, run_at: 'document_start' }],
+  content_scripts: [{ js: ['src/ext.entries/contentscript.ts'], matches, run_at: 'document_start' }],
   content_security_policy: {
     extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; frame-ancestors 'none';"
   },
@@ -43,7 +43,7 @@ export default defineManifest({
     ids: ['*']
   },
   web_accessible_resources: [
-    { resources: ['public/inpage.js', 'src/ext.scripts/contentscript.ts'], matches },
+    { resources: ['public/inpage.js', 'src/ext.entries/contentscript.ts'], matches },
     defineDynamicResource({ matches })
   ],
   // web_accessible_resources: [defineDynamicResource({ matches })],

@@ -17,5 +17,7 @@
     "tsup": "^6"
   },
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/readable-stream": "^2.3.15"
+  }
 }

@@ -59,7 +59,7 @@ declare namespace browser {
   const windows: Windows.Static
 }
 
-declare interface Window {
+declare interface window {
   skipWaiting: any
   DOID: Record<string, any>
 }

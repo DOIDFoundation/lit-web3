@@ -6,10 +6,10 @@ import inpage from '/public/inpage.js?script&module'
 import { EXTENSION_MESSAGES, MESSAGE_TYPE } from '~/constants/app'
 import ObjectMultiplex from '@metamask/object-multiplex'
 import pump from 'pump'
-import PortStream from '~/lib/ext.runtime/extension-port-stream'
-import shouldInjectProvider from '~/lib/providers/injection'
+import PortStream from '~/lib.legacy/ext.runtime/extension-port-stream'
+import shouldInjectProvider from '~/lib.legacy/providers/injection'
 import { WindowPostMessageStream } from '@metamask/post-message-stream'
-import { checkForLastError } from '~/lib/ext.runtime/utils'
+import { checkForLastError } from '~/lib.legacy/ext.runtime/utils'
 
 const logger = (...args: any) => console.info(`[contentscript]`, ...args)
 
