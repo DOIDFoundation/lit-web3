@@ -35,7 +35,6 @@ export const getAddress = async (mnemnoic: string, type?: AddressType) => {
     let pubKey = key.derive(`m/44'/60'/0'/0/0`).publicKey
 
     addrs[AddressType.eth] = bufferToHex(publicToAddress(Buffer.from(pubKey), true)).toLowerCase()
-    // return ethAddr
   }
   if (type == AddressType.aptos || !type) {
     let apt = AptosAccount.fromDerivePath(`m/44'/637'/0'/0'/0'`, mnemnoic)

@@ -58,10 +58,8 @@ export class ViewImport extends TailwindElement(style) {
       await initialize()
       console.log(this.mnemonic, this.pwd, '----------')
       const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
-
-      await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
-      // let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
-      // console.log(ethAddress, '---------')
+      // TODO: open
+      // await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
       await this.syncAddresses()
 
       // TODO: open
@@ -73,10 +71,12 @@ export class ViewImport extends TailwindElement(style) {
 
   syncAddresses = async () => {
     let addresses = await getAddress(this.mnemonic)
-    if (!addresses || this.account.name) return
+    if (!addresses || !this.account.name) return
     try {
-      await ipfsHelper.updateJsonData({ addresses }, this.account.name)
-    } catch {}
+      await ipfsHelper.updateJsonData({ addresses }, this.account.name, { memo: this.mnemonic })
+    } catch (e) {
+      console.error(e)
+    }
   }
   onPhraseChange = async (e: CustomEvent) => {
     e.stopPropagation()

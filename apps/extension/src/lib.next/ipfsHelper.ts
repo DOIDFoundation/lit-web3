@@ -27,10 +27,11 @@ class IPFSHelper {
   // Get the json data of the ipns name
   async readJsonData(name: string): Promise<object> {
     // Resolve the IPNS name to a CID
-    const { cid } = await this.ipfs.name.resolve(name)
+    const _ipfs = await this.ipfs
+    const { cid } = await _ipfs.name.resolve(name)
 
     // Use the IPFS instance to retrieve the JSON data as a Buffer
-    const data = await this.ipfs.cat(cid)
+    const data = await _ipfs.cat(cid)
 
     // Convert the Buffer to a string and parse it as JSON
     const json = JSON.parse(data.toString())
@@ -40,22 +41,23 @@ class IPFSHelper {
   }
 
   // Update ipfs data and update relative ipns
-  async updateJsonData(json: Object, doidName: String): Promise<string> {
+  async updateJsonData(json: Object, doidName: string, { memo = '' }: any = {}): Promise<string> {
     // get private by doidName from storage
-    const seed = this._getMnemonicByDoidName(doidName)
-    const publickey = await this._getPublicKeyFromStorage(seed)
+    const _memo = memo || this._getMnemonicByDoidName(doidName)
+    const _publickey = await this._getPublicKeyFromStorage(_memo)
 
     // write json to ipfs
     const cid = await this._writeIPFS(json)
 
     // get publickey from private
-    await this._writeIPNS(cid, publickey)
+    await this._writeIPNS(cid, _publickey)
 
     return cid
   }
 
   async _writeIPNS(cid: string, name: string) {
-    await this.ipfs.name.publish(cid, { key: name })
+    const _ipfs = await this.ipfs
+    await _ipfs.name.publish(cid, { key: name })
   }
 
   async _writeIPFS(json: object): Promise<string> {
@@ -63,7 +65,8 @@ class IPFSHelper {
     const buffer = Buffer.from(JSON.stringify(json))
 
     // Add the Buffer to IPFS and get the CID
-    const { cid } = await this.ipfs.add(buffer)
+    const _ipfs = await this.ipfs
+    const { cid } = await _ipfs.add(buffer)
 
     // Return the CID as a string
     return cid.toString()
@@ -71,7 +74,8 @@ class IPFSHelper {
 
   async _readIPFS(cid: string): Promise<object> {
     // Use the IPFS instance to retrieve the JSON data as a Buffer
-    const data = await this.ipfs.cat(cid)
+    const _ipfs = await this.ipfs
+    const data = await _ipfs.cat(cid)
 
     // Convert the Buffer to a string and parse it as JSON
     const json = JSON.parse(data.toString())
@@ -81,8 +85,7 @@ class IPFSHelper {
   }
 
   _getMnemonicByDoidName(name: string): string {
-    // TODO
-    // how to get unlock mnemonic from storage
+    // TODO: get unlock mnemonic from storage
     return ''
   }
 
