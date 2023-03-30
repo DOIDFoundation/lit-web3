@@ -1,21 +1,24 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
-import { getAddress, AddressType } from '~/lib.legacy/phrase'
-import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
-import { keyringStore } from '~/store/keyring'
-import { accountStore } from '~/store/account'
-import { validateMnemonic } from 'ethereum-cryptography/bip39'
-import { initialize } from '~/lib.legacy/keyringController'
-// import swGlobal from '~/ext.scripts/sw/swGlobal'
-import { StateController, walletStore } from '~/store'
-
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '~/components/phrase'
 import '~/components/pwd_equal'
 
+import { validateMnemonic } from 'ethereum-cryptography/bip39'
+import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
+import { initialize } from '~/lib.legacy/keyringController'
+import { AddressType, getAddress } from '~/lib.legacy/phrase'
+import ipfsHelper from '~/lib.next/ipfsHelper'
+// import swGlobal from '~/ext.scripts/sw/swGlobal'
+import { StateController, walletStore } from '~/store'
+import { accountStore } from '~/store/account'
+import { keyringStore } from '~/store/keyring'
+
+import { goto } from '@lit-web3/dui/src/shared/router'
+import { customElement, html, property, state, TailwindElement, when } from '@lit-web3/dui/src/shared/TailwindElement'
+
 import style from './recover.css?inline'
+
 @customElement('view-recover')
 export class ViewImport extends TailwindElement(style) {
   state = new StateController(this, walletStore)
@@ -57,14 +60,24 @@ export class ViewImport extends TailwindElement(style) {
       const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
 
       await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
-      let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
-      console.log(ethAddress, '---------')
-      this.start = '4'
+      // let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
+      // console.log(ethAddress, '---------')
+      await this.syncAddresses()
+
+      // TODO: open
+      // this.start = '4'
     } catch (err: any) {
       console.error(err)
     }
   }
 
+  syncAddresses = async () => {
+    let addresses = await getAddress(this.mnemonic)
+    if (!addresses || this.account.name) return
+    try {
+      await ipfsHelper.updateJsonData({ addresses }, this.account.name)
+    } catch {}
+  }
   onPhraseChange = async (e: CustomEvent) => {
     e.stopPropagation()
     const { phrase } = e.detail as any
@@ -88,6 +101,9 @@ export class ViewImport extends TailwindElement(style) {
     goto(`${path}`)
   }
 
+  connectedCallback() {
+    super.connectedCallback()
+  }
   render() {
     return html`<div class="home">
       <div class="dui-container sparse">

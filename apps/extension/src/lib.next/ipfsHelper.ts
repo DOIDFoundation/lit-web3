@@ -1,10 +1,11 @@
-import IPFS from 'ipfs-core'
-import Wallet from 'ethereumjs-wallet'
 import { mnemonicToSeed, validateMnemonic } from 'ethereum-cryptography/bip39'
-import { toHex } from 'ethereum-cryptography/utils'
 import { HDKey } from 'ethereum-cryptography/hdkey'
-import { keys } from '@libp2p/crypto'
+// import { toHex } from 'ethereum-cryptography/utils'
+// import Wallet from 'ethereumjs-wallet'
+import * as IPFS from 'ipfs-core'
 import * as w3name from 'w3name'
+
+import { keys } from '@libp2p/crypto'
 
 class IPFSHelper {
   private ipfs: any
@@ -39,7 +40,7 @@ class IPFSHelper {
   }
 
   // Update ipfs data and update relative ipns
-  async updateJsonData(json: object, doidName: string): Promise<string> {
+  async updateJsonData(json: Object, doidName: String): Promise<string> {
     // get private by doidName from storage
     const seed = this._getMnemonicByDoidName(doidName)
     const publickey = await this._getPublicKeyFromStorage(seed)

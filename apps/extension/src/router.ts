@@ -1,6 +1,7 @@
 import { html } from 'lit'
+
+// import emitter from '@lit-web3/core/src/emitter'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
-import emitter from '@lit-web3/core/src/emitter'
 
 const homeView = {
   name: 'home',
@@ -8,7 +9,7 @@ const homeView = {
   render: () => html`<view-home></view-home>`,
   enter: async () => {
     // S redirect to unlock for temporarily
-    emitter.emit('router-goto', '/unlock')
+    // emitter.emit('router-goto', '/unlock')
     // E
     await import('~/views/home')
     return true
