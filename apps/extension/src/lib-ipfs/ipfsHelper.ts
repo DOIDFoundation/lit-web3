@@ -1,11 +1,12 @@
 import IPFS from 'ipfs-core'
-import { HDWallet } from 'ethereumjs-wallet'
-// import { mnemonicToSeed, validateMnemonic } from 'ethereum-cryptography/bip39'
-// import { toHex } from 'ethereum-cryptography/utils'
-// import { HDKey } from 'ethereum-cryptography/hdkey'
-// import { keys } from '@libp2p/crypto'
+import Wallet from 'ethereumjs-wallet'
+import { mnemonicToSeed, validateMnemonic } from 'ethereum-cryptography/bip39'
+import { toHex } from 'ethereum-cryptography/utils'
+import { HDKey } from 'ethereum-cryptography/hdkey'
+import { keys } from '@libp2p/crypto'
+import * as w3name from 'w3name'
 
-export class IPFSHelper {
+class IPFSHelper {
   private ipfs: any
 
   constructor() {
@@ -14,31 +15,13 @@ export class IPFSHelper {
     this.ipfs = IPFS.create()
   }
 
-  // helper function
-  // async generatePublicKeyFromMnemonic(mnemonic: string, password: string): Promise<string> {
-  //   let seed = await mnemonicToSeed(password)
-  //   let hexSeed = toHex(seed)
-  //   let key = HDKey.fromMasterSeed(seed)
-  //   let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
+  // async mnemonicToIPNSCid(mnemonic: string, password: string): Promise<string> {
+  //   // Create an Ethereum wallet instance from the mnemonic seed
 
-  //   const name = await w3name.from(ipfsKey.bytes)
-  //   this.ipnsCID = name.toString()
-  //   console.log('ipns: ', this.ipnsCID)
+  //   const privateKey = new Buffer('')
+  //   const wallet = new Wallet(privateKey)
+  //   return wallet.getPublicKeyString()
   // }
-
-  async mnemonicToIPNSCid(mnemonic: string, password: string): Promise<string> {
-    // Create an Ethereum wallet instance from the mnemonic seed
-    const wallet = HDWallet.fromMnemonic(mnemonic)
-
-    // Get the first account from the wallet
-    const account = wallet.derivePath("m/44'/60'/0'/0/0")
-
-    // Get the public key from the account
-    const publicKey = account.getPublicKeyString()
-
-    // Return the public key
-    return publicKey
-  }
 
   // Get the json data of the ipns name
   async readJsonData(name: string): Promise<object> {
@@ -56,9 +39,16 @@ export class IPFSHelper {
   }
 
   // Update ipfs data and update relative ipns
-  async updateJsonData(json: object, name: string): Promise<string> {
+  async updateJsonData(json: object, doidName: string): Promise<string> {
+    // get private by doidName from storage
+    const seed = this._getMnemonicByDoidName(doidName)
+    const publickey = await this._getPublicKeyFromStorage(seed)
+
+    // write json to ipfs
     const cid = await this._writeIPFS(json)
-    await this._writeIPNS(cid, name)
+
+    // get publickey from private
+    await this._writeIPNS(cid, publickey)
 
     return cid
   }
@@ -88,4 +78,22 @@ export class IPFSHelper {
     // Return the parsed JSON object
     return json
   }
+
+  _getMnemonicByDoidName(name: string): string {
+    // TODO
+    // how to get unlock mnemonic from storage
+    return ''
+  }
+
+  // get the publickey from a seedphase
+  async _getPublicKeyFromStorage(mnemonic: string): Promise<string> {
+    let seed = await mnemonicToSeed(mnemonic)
+    let key = HDKey.fromMasterSeed(seed)
+    let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
+    const name = await w3name.from(ipfsKey.bytes)
+    return name.toString()
+  }
 }
+
+const ipfsHelper = new IPFSHelper()
+export default ipfsHelper
