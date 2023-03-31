@@ -30,7 +30,7 @@ export class ViewUnlock extends TailwindElement(style) {
 
   submitPwd = async () => {
     // S redirect to unlock for temporarily
-    popupMessenger.send('DOID_setup_reply', { publicKey: 'jaksdiuzoxdf', address: { BTC: 'd', ETH: 'dsad' } })
+    popupMessenger.send('reply_DOID_setup', { publicKey: 'jaksdiuzoxdf', address: { BTC: 'd', ETH: 'dsad' } })
     // E
     try {
       await walletStore.submitPassword(this.pwd)

@@ -1,6 +1,7 @@
 // src: metamask-extension/app/scripts'~/lib.legacy/notification-manager
 import browser from 'webextension-polyfill'
 import { popupStore } from '~/lib.next/background/store/popupStore'
+import emitter from '@lit-web3/core/src/emitter'
 
 export const POPUP_HEIGHT = 620
 export const POPUP_WIDTH = 360
@@ -15,22 +16,18 @@ export const getPopup = async (): Promise<any> => {
 
 export const openPopup = async () => {
   const tabs = await browser.tabs.query({ active: true })
-  const currentlyActiveMetamaskTab = Boolean(tabs.find((tab) => popupStore.openTabsIDs[tab.id]))
-  // Vivaldi is not closing port connection on popup close, so popupStore.isOpen does not work correctly
-  // To be reviewed in the future if this behaviour is fixed - also the way we determine isVivaldi variable might change at some point
-  const isVivaldi = tabs[0]?.extData?.indexOf('vivaldi_tab') > -1
-  if (!uiIsTriggering && (isVivaldi || !popupStore.isOpen) && !currentlyActiveMetamaskTab) {
+  const currentlyActived = tabs.some(({ id }) => id && popupStore.openTabsIDs[id])
+  if (!uiIsTriggering && !popupStore.isOpen && !currentlyActived) {
     uiIsTriggering = true
     try {
       await showPopup(popupStore.currentPopupId)
-    } finally {
-      uiIsTriggering = false
-    }
+    } catch {}
+    uiIsTriggering = false
   }
 }
 
 export const closePopup = async () => {
-  browser.windows.remove(popupStore._popupId)
+  browser.windows.remove(popupStore._popupId as number)
 }
 
 const showPopup = async (currentPopupId?: number): Promise<any> => {
@@ -71,6 +68,9 @@ browser.windows.onRemoved.addListener((windowId: number) => {
   if (windowId !== popupStore._popupId) return
   popupStore.currentPopupId = undefined
   popupStore._popupId = undefined
+  emitter.emit('popup_closed', {
+    automaticallyClosed: popupStore._popupAutomaticallyClosed
+  })
   // process unapprovals
   // if (!popupStore._popupAutomaticallyClosed) {
   //   rejectUnapprovedNotifications();

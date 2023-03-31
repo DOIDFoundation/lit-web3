@@ -1,6 +1,13 @@
 // Global Event Emitter
 
-const emitter = {
+export type EventEmitter = {
+  on: Function
+  off: Function
+  once: Function
+  emit: Function
+}
+
+const emitter: EventEmitter = {
   on: (type: string, listener: EventListener, options = {}) => {
     globalThis.addEventListener(type, listener, options)
   },

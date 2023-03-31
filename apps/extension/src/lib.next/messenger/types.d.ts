@@ -1,7 +1,7 @@
 /// <reference types="webext-bridge" />
 /// <reference types="~/lib.next/constants" />
 
-declare interface Emitter {
+declare interface CrossContextMessenger {
   sendMessage: Function
   onMessage: Function
 }
@@ -10,7 +10,7 @@ declare interface MESSENGER {
   send: typeof sendMessage
   on: typeof onMessage
   log: Function
-  emitter: Emitter
+  messenger: CrossContextMessenger
 }
 
 declare type MessengerSend = (messageID: string, data: any, destination?: keyof typeof MessageContext) => Promise<any>
