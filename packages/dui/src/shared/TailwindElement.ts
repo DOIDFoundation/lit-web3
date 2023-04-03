@@ -21,6 +21,7 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
     constructor() {
       super()
       // Trick for external link, todo: use import svg instead
+      // Todo: support unocss/twind
       this.attachShadow({ mode: 'open' }).innerHTML = import.meta.env.VITE_APP_MDI
     }
     // classMap from arrayify

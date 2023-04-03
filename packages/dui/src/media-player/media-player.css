@@ -1,0 +1,12 @@
+.play-btn {
+  @apply text-white cursor-pointer;
+  background: rgba(159, 159, 159, 0.4);
+  backdrop-filter: blur(10px);
+  & svg {
+    @apply w-full h-full;
+    & path {
+      @apply origin-center;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+}

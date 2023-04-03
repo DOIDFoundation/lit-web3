@@ -9,7 +9,7 @@ import {
   keyed
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
-import { getColls } from '@/lib/query'
+import { getColls } from '~/lib/query'
 
 // Components
 import '@lit-web3/dui/src/loading/icon'

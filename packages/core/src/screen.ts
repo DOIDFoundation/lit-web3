@@ -17,12 +17,14 @@ type Screen = {
   md: boolean
   ratio: number
   ts: number
+  interacted: boolean
 }
 export const screen: Screen = {
   isMobi: match(breakpoints.lg),
   md: match(breakpoints.md),
   ratio: window.devicePixelRatio ?? 2,
-  ts: 1
+  ts: 1,
+  interacted: false
 }
 
 class ScreenStore extends State {
@@ -47,5 +49,13 @@ class ScreenStore extends State {
 export const screenStore = new ScreenStore()
 
 window.addEventListener('resize', () => (screen.ratio = window.devicePixelRatio), { passive: true })
+
+export const setInteracted = () => {
+  screen.interacted = true
+  window.removeEventListener('keydown', setInteracted)
+  window.removeEventListener('click', setInteracted)
+}
+window.addEventListener('keydown', setInteracted, { once: true })
+window.addEventListener('click', setInteracted, { once: true })
 
 export default screen

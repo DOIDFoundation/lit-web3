@@ -1,6 +1,6 @@
 import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
 import { TailwindElement, html, customElement, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { routes } from '@/router'
+import { routes } from '~/router'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
 // Components

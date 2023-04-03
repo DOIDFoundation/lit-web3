@@ -17,17 +17,17 @@ export class ConnectWalletBtn extends TailwindElement(style) {
   @state() menu = false
 
   get account() {
-    return bridgeStore.bridge.account
+    return bridgeStore.bridge?.account
   }
   get addr() {
-    return bridgeStore.bridge.shortAccount
+    return bridgeStore.bridge?.shortAccount
   }
   get scan() {
-    return `${bridgeStore.bridge.network.current.scan}/address/${bridgeStore.bridge.account}`
+    return `${bridgeStore.bridge?.network.current.scan}/address/${bridgeStore.bridge?.account}`
   }
 
   show = () => {
-    if (this.dropable && this.addr) {
+    if (this.dropable && this.account) {
       this.menu = !this.menu
     } else {
       this.dialog = true
@@ -38,19 +38,19 @@ export class ConnectWalletBtn extends TailwindElement(style) {
   }
 
   connectedCallback(): void {
-    emitter.on('connect-wallet', this.show)
     super.connectedCallback()
+    emitter.on('connect-wallet', this.show)
   }
   disconnectedCallback(): void {
-    emitter.off('connect-wallet', this.show)
     super.disconnectedCallback()
+    emitter.off('connect-wallet', this.show)
   }
 
   override render() {
     return html`<div class="connect-wallet-btn relative">
       <dui-button sm @click=${this.show} class="inline-flex items-center">
         ${when(
-          this.addr,
+          this.account,
           () =>
             html`<dui-address avatar short></dui-address>${when(
                 this.dropable,

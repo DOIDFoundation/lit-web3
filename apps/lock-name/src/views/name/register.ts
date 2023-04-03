@@ -107,9 +107,10 @@ export class ViewNameRegister extends TailwindElement(style) {
     } catch (err: any) {
       if (err.code !== 4001) {
         if (/( IC)/.test(err.message)) {
-          this.err = 'This name is already committed by someone else, please try again later'
+          this.err = 'Duplicate registration request, please try again'
+        } else {
+          this.err = err.message
         }
-        this.err = err.message
         clearCommitment(this.name)
       }
       this.tx = null

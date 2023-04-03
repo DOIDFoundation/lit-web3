@@ -1,3 +1,5 @@
+/// <reference types="@ethersproject/providers" />
+
 declare type Address = `0x${string}` | string
 declare type TokenID = string
 declare type TokenURI = string
@@ -6,12 +8,14 @@ declare interface Meta {
   name?: string
   description?: string
   image?: string
+  raw?: string
   creator?: string
+  owner?: string
   publisher?: string
-  external_url?: string
+  external_link?: string
+  background_color?: string
   properties?: Record<string, any>
-  slug?: string
-  sync?: boolean
+  mediaType?: string
 }
 
 declare interface NFTToken {
@@ -22,6 +26,7 @@ declare interface NFTToken {
   name?: string
   slugName?: string
   slugID?: string
+  slugURI?: string
   uri?: string // ERC1155 asis ERC721 tokenURI
   tokenURI?: string
   block?: number
@@ -66,4 +71,12 @@ declare type getContractOpts = {
   abiName?: string
   account?: Address
   requireAccount?: boolean
+}
+
+declare interface useBridgeOptions {
+  chainId?: ChainId
+  provider?: JsonRpcProvider | WebSocketProvider
+  rpc?: string
+  autoConnect?: boolean
+  persistent?: boolean // ignore injected ethereum
 }

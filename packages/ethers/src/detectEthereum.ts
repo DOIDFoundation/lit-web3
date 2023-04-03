@@ -1,4 +1,7 @@
-export const getChainId = (ethereum: any) => ethereum.request({ method: 'eth_chainId' })
+export const ensureMetaMaskInjected = () => window.ethereum?.isMetaMask && localStorage.getItem('metamask.injected')
+export const getChainId = async () => await window.ethereum?.request({ method: 'eth_chainId' })
+// !!! ethereum.chainId is deprecated, but this may make getter faster
+export const getChainIdSync = () => ensureMetaMaskInjected() && window.ethereum?.chainId
 export const getAccounts = (ethereum: any) => ethereum.request({ method: 'eth_accounts' })
 
 let resolved = false
@@ -13,7 +16,7 @@ const detectEthereum = (): Promise<any> => {
     let retryTimes = 0
     const detectChainId = async () => {
       // console.log('detect ether chainId', chainId, 'retry times:', retryTimes)
-      const chainId = await getChainId(window.ethereum)
+      const chainId = await getChainId()
       if (chainId) resolver()
       else if (retryTimes++ < 30) setTimeout(detectChainId, 10)
       else resolver()

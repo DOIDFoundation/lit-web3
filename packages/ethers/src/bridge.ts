@@ -27,7 +27,7 @@ export const Wallets: WalletList = [
     app: undefined,
     import: async () => {
       // const MetaMask = (await import(`./wallet/metamask`)).default
-      return new MetaMask(Provider)
+      return new MetaMask(Provider())
     }
   }
 ]
@@ -47,9 +47,9 @@ export class Bridge {
   public promise: any
   public Provider: any
   public store: any
-  constructor() {
+  constructor(options?: useBridgeOptions) {
     this.wallets = Wallets
-    this.Provider = Provider
+    this.Provider = Provider(options)
     this.wallet = walletStore.wallet
     this.selected = undefined
     this.promise = undefined
@@ -82,7 +82,7 @@ export class Bridge {
         console.error(err)
       }
     } else {
-      this.Provider.update(chainId)
+      this.Provider.update({ chainId })
     }
   }
   async regToken(token: Tokenish, { alt = false, ext = 'svg' } = {}) {
@@ -122,12 +122,13 @@ export class Bridge {
   }
   connecting: any = undefined
   connectedAccounts = []
-  async tryConnect(auto = false) {
+  async tryConnect(options: useBridgeOptions = {}) {
+    const { autoConnect = false } = options
     if (!this.connecting)
       this.connecting = (async () => {
         if (this.wallet?.inited) return
         let { ethereum } = window
-        if (auto || ethereum) ethereum = await detectEthereum()
+        if (autoConnect || ethereum) ethereum = await detectEthereum()
         if (ethereum?.isMetaMask && localStorage.getItem('metamask.injected')) {
           this.connectedAccounts = (await getAccounts(ethereum)) || []
           if (this.connectedAccounts[0]) await this.select(0)

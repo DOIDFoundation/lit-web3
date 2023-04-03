@@ -24,6 +24,7 @@ export class DuiLink extends TailwindElement(style) {
   @property({ type: Boolean }) disabled = false
   @property({ type: Boolean }) open = false
   @property({ type: Boolean }) link = false
+  @property({ type: Boolean }) back = false
   @property() click: any
   @property({ type: Boolean }) nav = false // as navigator
   @property({ type: Boolean }) text = false // as text with underline
@@ -56,10 +57,11 @@ export class DuiLink extends TailwindElement(style) {
   get _target() {
     return this.outsite ? '_blank' : ''
   }
-  block = (e: Event) => {
-    if (this.blocked) {
+  onClick = (e: Event) => {
+    if (this.blocked || this.back) {
       e.stopImmediatePropagation()
       e.preventDefault()
+      if (this.back) history.back()
     }
   }
 
@@ -88,7 +90,7 @@ export class DuiLink extends TailwindElement(style) {
       rel="${ifDefined(this.rel)}"
       href="${ifDefined(this.href)}"
       class="dui-link ${classMap(this.$c([{ 'router-active': this.active }, this.class]))}"
-      @click=${this.block}
+      @click=${this.onClick}
       ?disabled=${this.disabled}
       ><slot></slot>${when(this.open, () => html`<i class="ml-1 mdi mdi-open-in-new"></i>`)}</a
     >`

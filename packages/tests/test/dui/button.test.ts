@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { html, el, elInside } from '@/utils'
+import { html, el, elInside } from '~/utils'
 import '@lit-web3/dui/src/button'
 
 describe('Button', async () => {

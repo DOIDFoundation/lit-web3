@@ -12,7 +12,7 @@ import { ownerRecords } from '@lit-web3/ethers/src/nsResolver'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { ZERO } from '@lit-web3/ethers/src/utils'
 // Components
-import '@/components/address/item'
+import '~/components/address/item'
 
 import style from './details.css?inline'
 @customElement('view-name-details')

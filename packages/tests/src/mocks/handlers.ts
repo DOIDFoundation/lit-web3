@@ -1,6 +1,6 @@
 import { graphql, rest } from 'msw'
 
-import { mockApi } from '@/utils'
+import { mockApi } from '~/utils'
 
 export const posts = []
 

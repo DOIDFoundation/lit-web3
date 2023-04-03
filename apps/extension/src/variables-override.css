@@ -1,0 +1,6 @@
+:root {
+  --footer-height: 0px;
+}
+html {
+  @apply overflow-x-hidden;
+}

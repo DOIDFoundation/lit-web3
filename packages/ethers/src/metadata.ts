@@ -1,24 +1,34 @@
 import http from '@lit-web3/core/src/http'
-import { normalizeUri, isInstantUri, slugify } from '@lit-web3/core/src/uri'
+import { fetchNFTType } from '@lit-web3/core/src/MIMETypes'
+import { normalizeUri, isInstantUri } from '@lit-web3/core/src/uri'
 import { useStorage } from './useStorage'
-import { getChainId } from './useBridge'
 import { getOpenseaUri } from './constants/opensea'
 import { sleep, nowTs } from './utils'
+import { attachSlug } from './DOIDParser'
 
-export const normalize = (data: Record<string, any>): Meta => {
-  const { background_color, owner = '', external_link, asset_contract, collection } = data
-  const img = data.image_url || data.image || ''
-  const name = data.name || collection?.name
-  const meta = {
+export const normalize = async (data: Record<string, any>): Promise<Meta> => {
+  const { background_color, owner = '', external_link = '', asset_contract, collection = {} } = data
+  const name: string = data.name || collection.name
+  const poster: string =
+    data.image_preview_url ||
+    data.image_thumbnail_url ||
+    data.image_url ||
+    data.image ||
+    data.image_original_url ||
+    collection.image_url ||
+    ''
+  const raw: string = data.animation_url || data.animation_original_url || collection.large_image_url || poster
+  let mediaType = await fetchNFTType(raw)
+  const meta: Meta = {
     name,
-    description: data.description || collection?.description,
-    slug: slugify(name),
-    image: normalizeUri(data.image_preview_url || data.image_thumbnail_url || img),
-    raw: normalizeUri(data.image_original_url || img),
+    description: (data.description || collection.description) as string,
+    image: normalizeUri(poster),
+    raw: normalizeUri(raw),
     creator: data.creator?.address,
     owner,
     external_link,
-    background_color
+    background_color,
+    mediaType
   }
   return meta
 }
@@ -45,7 +55,10 @@ export const throttle = async (uri: string, interval = 1024): Promise<Meta> => {
   return meta
 }
 
-export const getMetaDataByOpenSea = async ({ address = '', tokenID = '' } = <NFTToken | Coll>{}): Promise<Meta> => {
+export const getMetaDataByOpenSea = async (
+  { address = '', tokenID = '' } = <NFTToken | Coll>{},
+  retry = true
+): Promise<Meta> => {
   let meta: Meta | undefined
   // 1. from cache
   const storage = await useStorage(`meta.${address}.${tokenID}`, storageOpt)
@@ -53,8 +66,17 @@ export const getMetaDataByOpenSea = async ({ address = '', tokenID = '' } = <NFT
   // 2. from api
   if (!meta) {
     try {
-      meta = normalize(await throttle(`${getOpenseaUri('api')}/${address}/${tokenID}/`))
-      if (meta) storage.set(meta)
+      const openseaUrl = `${getOpenseaUri('api')}/${address}/${tokenID}/`
+      meta = await normalize(await throttle(openseaUrl))
+      if (meta.name && meta.image) storage.set(meta)
+      else if (!meta.image) {
+        // Send a purge request to opensea
+        await throttle(`${openseaUrl}?force_update=true`)
+        if (retry) {
+          await sleep(10000)
+          meta = await getMetaDataByOpenSea({ address, tokenID }, false)
+        }
+      }
     } catch {}
   }
   return meta ?? {}
@@ -64,15 +86,15 @@ export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
   let meta: Meta | undefined
   if (!tokenURI) return {}
   // 0. instant data
-  if (isInstantUri(tokenURI)) meta = normalize(await http.get(tokenURI))
+  if (isInstantUri(tokenURI)) meta = await normalize(await http.get(tokenURI))
   // 1. from cache
   const storage = await useStorage(`meta.${tokenURI}`, storageOpt)
   if (!meta) meta = await storage.get()
   // 2. from tokenURI
   if (!meta) {
     try {
-      meta = normalize(await http.get(normalizeUri(tokenURI)))
-      if (meta) storage.set(meta)
+      meta = await normalize(await http.get(normalizeUri(tokenURI)))
+      if (meta.name && meta.image) storage.set(meta)
     } catch {}
   }
   return meta ?? {}
@@ -80,7 +102,7 @@ export const getMetaDataByTokenURI = async (tokenURI = ''): Promise<Meta> => {
 
 export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   let meta: Meta | undefined
-  const { tokenURI, address, tokenID, doid, minter } = token
+  const { tokenURI, address, tokenID } = token
   // 0. instant data
   if (isInstantUri(tokenURI)) meta = await getMetaDataByTokenURI(tokenURI)
   // 1. by cache
@@ -92,15 +114,10 @@ export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   }
   // 3. by tokenURI
   if (!meta && tokenURI) meta = await getMetaDataByTokenURI(tokenURI)
-  // Validate meta by slug
-  // if (meta && doid) {
-  //   try {
-  //     const chainId = await getChainId()
-  //     const addersses = await http.get(
-  //       `https://raw.githubusercontent.com/DOIDFoundation/artscan-slugs/main/${chainId}/${doid}/${meta.slug}.txt`
-  //     )
-  //     meta.sync = addersses.includes(minter)
-  //   } catch {}
-  // }
+  // Attach slug
+  if (meta) {
+    token.meta = meta
+    attachSlug(token as NFTToken)
+  }
   return meta ?? {}
 }

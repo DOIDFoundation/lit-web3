@@ -21,7 +21,7 @@ const resizePoints = [48, 64, 128, 256, 384, 512, 640, 750, 828, 1080, 1200, 192
 @customElement('img-loader')
 export class ImgLoader extends LazyElement(TailwindElement(style)) {
   el$: Ref<HTMLElement> = createRef()
-  @property({ type: String }) src = ''
+  @property({ type: String, attribute: true }) src?: string
   @property({ type: Boolean }) loaded = false
   @property({ type: Boolean }) stop = false
   @property({ type: String }) loading = 'eager'
@@ -40,7 +40,7 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
     return isInstantUri(this.src)
   }
   get isResizableSrc() {
-    return /\?(w|width)=/.test(this.src)
+    return this.src && /\?(w|width)=/.test(this.src)
   }
   get requireComporess() {
     return !this.isResizableSrc && !this.isInstantSrc && !this.blobSrc
@@ -53,7 +53,7 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
     return !(this.src || this.blobSrc) || !(this.uri || this.uriset)
   }
   get uriset() {
-    if (this.err || !this.show || !this.isResizableSrc) return
+    if (!this.src || this.err || !this.show || !this.isResizableSrc) return
     const { origin, pathname } = new URL(this.src)
     return resizePoints.map((r) => `${[origin + pathname]}?auto=format&w=${r}&width=${r} ${r}w`).join(',')
   }
@@ -75,7 +75,7 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
 
   protected shouldUpdate(props: Map<PropertyKey, unknown>): boolean {
     if (props.has('src') && this.requireComporess) {
-      comporess(this.src).then((src) => (this.blobSrc = src))
+      if (this.src) comporess(this.src).then((src) => (this.blobSrc = src))
     }
     return true
   }

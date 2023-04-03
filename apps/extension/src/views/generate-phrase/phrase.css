@@ -1,0 +1,28 @@
+.step-line {
+  @apply flex items-start;
+  counter-reset: step;
+  counter-increment: step 0;
+  & .step-item {
+    @apply relative flex items-center justify-center flex-1 flex-col text-center px-2;
+    &:before {
+      @apply flex items-center justify-center rounded-full border-2  text-lg font-bold w-10 h-10 border-gray-400 bg-gray-100 text-gray-400;
+      content: counter(step);
+      counter-increment: step;
+    }
+    &:not(:first-child)::after {
+      @apply bg-gray-400;
+      width: calc(100% - 40px);
+      height: 2px;
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: calc(-50% + 20px);
+    }
+    &.active::before {
+      @apply border-blue-800 bg-blue-200 text-blue-800;
+    }
+    &.finshed::before {
+      @apply border-blue-800 bg-blue-800 text-white;
+    }
+  }
+}

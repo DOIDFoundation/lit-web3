@@ -1,40 +1,45 @@
 import { JsonRpcProvider, Web3Provider, WebSocketProvider } from '@ethersproject/providers'
 import Network from './networks'
 import emitter from '@lit-web3/core/src/emitter'
+import { getChainIdSync } from './detectEthereum'
 
 class Provider {
   public provider: Web3Provider | JsonRpcProvider | WebSocketProvider | any
   public network: any
   public storage: any
-  constructor(chainId?: ChainId) {
-    this.storage = sessionStorage.getItem('chainId')
+  constructor(options: useBridgeOptions = {}) {
+    let { chainId } = options
+    const { provider, persistent } = options
+    if (!persistent) this.storage = sessionStorage.getItem('chainId')
     if (!chainId) {
       // !!! ethereum.chainId is deprecated, but this may make getter faster
-      if (window.ethereum?.chainId) chainId = window.ethereum.chainId
+      if (window.ethereum?.chainId) chainId = getChainIdSync()
       else if (this.storage) chainId = this.storage
     }
     this.network = new Network(chainId)
-    this.provider = this.update(chainId)
+    this.provider = this.update({ chainId })
   }
-  update(chainId?: ChainId) {
-    const { ethereum } = window
-    // !!! ethereum.chainId is deprecated, but this may make getter faster
-    if (ethereum?.chainId && chainId != ethereum.chainId) chainId = ethereum.chainId
+  update(options: useBridgeOptions = {}) {
+    let { chainId } = options
+    const { persistent, provider, rpc } = options
+    if (!persistent) {
+      const ethereumChainId = getChainIdSync()
+      if (ethereumChainId && chainId != ethereumChainId) chainId = ethereumChainId
+    }
+    // TODO: Allow update when options.rpc changed
     if (this.provider) {
       if (chainId == this.network.chainId) return
       this.provider.removeAllListeners()
     }
-
-    if (chainId) {
-      this.network.chainId = chainId
-      this.storage = sessionStorage.setItem('chainId', chainId)
-    }
-    if (ethereum) {
-      this.provider = new Web3Provider(ethereum)
+    if (!chainId) chainId = Network.defaultChainId
+    this.network.chainId = chainId
+    if (!persistent) this.storage = sessionStorage.setItem('chainId', chainId)
+    if (!persistent && window.ethereum) {
+      this.provider = new Web3Provider(window.ethereum)
     } else {
-      this.provider = this.network.providerWs
-        ? new WebSocketProvider(this.network.providerWs)
-        : new JsonRpcProvider(this.network.provider)
+      const _provider = provider || (this.network.providerWs ? WebSocketProvider : JsonRpcProvider)
+      const _rpc = rpc || (this.network.providerWs ? this.network.providerWs : this.network.provider)
+      this.provider = new _provider(_rpc)
     }
     emitter.emit('network-change', '')
     return this.provider
@@ -45,6 +50,8 @@ class Provider {
   }
 }
 
-const provider = new Provider()
+let provider: any
 
-export default provider
+export default function (options?: useBridgeOptions) {
+  return provider ?? (provider = new Provider(options))
+}

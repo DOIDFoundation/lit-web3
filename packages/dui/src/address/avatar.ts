@@ -12,6 +12,6 @@ export class DuiAddressAvatar extends TailwindElement(style) {
   }
 
   override render() {
-    return html`${this.svg}`
+    return html`${this.address ? this.svg : ''}`
   }
 }

@@ -1,3 +1,5 @@
+auto-imports.d.ts
+*.crx
 *.rdb
 
 node_modules

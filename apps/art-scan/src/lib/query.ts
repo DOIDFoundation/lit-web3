@@ -11,12 +11,12 @@ export const queryHoldlNums = async (account: string) => {
     const res = await graphQuery(
       'scan',
       `{
-        owner(id:"${acc}") {mints:totalTokensMinted,holders:totalTokenHolders}
+        doids(where:{address:"${acc}"}){address {id totalTokensMinted totalTokenHolders}}
       }`
     )
-    const { holders = [], mints = [] } = res.owner
+    const { address: { totalTokenHolders: holders = '', totalTokensMinted: minted = '' } = {} } = res.doids[0] || {}
     ownerNum = holders
-    mintNum = mints
+    mintNum = minted
   }
   return { ownerNum, mintNum }
 }

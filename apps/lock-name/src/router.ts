@@ -11,7 +11,7 @@ export const routes = [
     path: '/',
     render: () => html`<view-home></view-home>`,
     enter: async () => {
-      await import('@/views/home')
+      await import('~/views/home')
       return true
     }
   },
@@ -29,7 +29,7 @@ export const routes = [
         emitter.emit('router-goto', '/')
         return false
       }
-      await import('@/views/search')
+      await import('~/views/search')
       return true
     }
   },
@@ -48,7 +48,7 @@ export const routes = [
         emitter.emit('router-goto', '/')
         return false
       }
-      await import('@/views/name')
+      await import('~/views/name')
       return true
     }
   },
@@ -65,7 +65,7 @@ export const routes = [
         emitter.emit('router-goto', '/address')
         return false
       }
-      await import('@/views/address')
+      await import('~/views/address')
       return true
     }
   },
@@ -74,7 +74,7 @@ export const routes = [
     path: '/favorites',
     render: () => html`<view-favorites></view-favorites>`,
     enter: async () => {
-      await import('@/views/favorites')
+      await import('~/views/favorites')
       return true
     }
   },
@@ -83,7 +83,17 @@ export const routes = [
     path: '/faq',
     render: () => html`<view-faq></view-faq>`,
     enter: async () => {
-      await import('@/views/faq')
+      await import('~/views/faq')
+      return true
+    }
+  },
+  // dApp Sample
+  {
+    name: 'dApp',
+    path: '/dApp',
+    render: () => html`<view-dapp></view-dapp>`,
+    enter: async () => {
+      await import('~/views/dApp.sample')
       return true
     }
   }

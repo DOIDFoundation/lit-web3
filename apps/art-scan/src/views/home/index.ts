@@ -1,12 +1,12 @@
 import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
-import '@/components/search-bar'
+import '~/components/search-bar'
 import '@lit-web3/dui/src/doid-symbol'
 
 // Style
 import style from './index.css?inline'
-import logo from '@/assets/logo.svg'
+import logo from '~/assets/logo.svg'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
   goto = (e: CustomEvent) => {

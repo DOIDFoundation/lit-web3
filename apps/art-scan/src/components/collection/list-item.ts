@@ -5,7 +5,7 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
 import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/img/loader'
+import '@lit-web3/dui/src/media-player'
 import '@lit-web3/dui/src/loading/skeleton'
 // Styles
 import style from './list-item.css?inline'
@@ -15,7 +15,7 @@ export class DoidCollItem extends LazyElement(TailwindElement(style)) {
   @property() DOID?: DOIDObject
   @property() item: Coll = {}
   @state() cooked?: DOIDObject
-  @state() meta: Meta = {}
+  @state() meta?: Meta
 
   get doid() {
     return this.DOID?.doid
@@ -39,7 +39,6 @@ export class DoidCollItem extends LazyElement(TailwindElement(style)) {
 
   cook = async () => {
     this.meta = await getMetaData(this.item)
-
     this.cooked = await DOIDParser({ DOIDName: this.doid, token: this.token })
   }
 
@@ -58,17 +57,19 @@ export class DoidCollItem extends LazyElement(TailwindElement(style)) {
   render() {
     return html`<div class="item p-4">
       <div class="font-medium">
-        <loading-skeleton .expect=${this.tokenName}
+        <loading-skeleton .expect=${this.meta?.name}
           ><dui-link class="uri" href=${`/collection/${this.cookedUri}`}>${this.cookedUri}</dui-link></loading-skeleton
         >
       </div>
       <div class="flex gap-4 py-4">
-        <img-loader class="shrink-0 w-24 h-24" .src=${this.meta?.image} loading="lazy"></img-loader>
+        <div class="shrink-0 w-24 h-24">
+          <dui-media-player .meta=${this.meta}></dui-media-player>
+        </div>
         <div>
-          <loading-skeleton .expect=${this.meta.name} num="3">
+          <loading-skeleton .expect=${this.meta?.name} num="3">
             <div class="mb-2 flex items-center">
               <dui-link class="text-base" href=${`/collection/${this.cookedUri}`}
-                >${this.meta.name}<i class="mdi mdi-ethereum ml-1"></i
+                >${this.meta?.name}<i class="mdi mdi-ethereum ml-1"></i
               ></dui-link>
             </div>
             <p class="break-words break-all text-xs lg_text-sm text-gray-500">

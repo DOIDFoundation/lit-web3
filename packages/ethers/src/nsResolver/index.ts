@@ -41,6 +41,13 @@ export const nameInfo = async <T>(req: T, account?: string): Promise<NameInfoPar
     const nameInfo: NameInfo = { name, account }
     try {
       const res = await contract.statusOfName(bareTLD(name))
+      // TOOD: S need native support by contract
+      const res2 = await ownerRecords(name)
+      Object.assign(nameInfo, {
+        publicKey: '',
+        mainAddress: (res2?.find((r: any) => r.name === 'ETH') as any)?.address ?? ''
+      })
+      // E
       Object.assign(nameInfo, cookNameInfo(res, nameInfo))
     } catch {}
     return nameInfo

@@ -6,7 +6,7 @@ export const routes = [
     path: '/',
     render: () => html`<view-lock></view-lock>`,
     enter: async () => {
-      await import('@/views/lock')
+      await import('~/views/lock')
       return true
     }
   },
@@ -15,7 +15,7 @@ export const routes = [
     path: '/passes',
     render: () => html`<view-passes></view-passes>`,
     enter: async () => {
-      await import('@/views/passes')
+      await import('~/views/passes')
       return true
     }
   },
@@ -24,7 +24,7 @@ export const routes = [
     path: '/help',
     render: () => html`<view-help></view-help>`,
     enter: async () => {
-      await import('@/views/help')
+      await import('~/views/help')
       return true
     }
   }

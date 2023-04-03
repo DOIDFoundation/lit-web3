@@ -12,6 +12,11 @@ export class ViewHome extends TailwindElement(style) {
   }
   render() {
     return html`<div class="home">
+      <p class="my-4 text-center">
+        If you have locked a name with lockpass before, click&nbsp;<dui-link href="https://lockpass.doid.tech/passes"
+          >here</dui-link
+        >&nbsp;to redeem your DOID.
+      </p>
       <div class="dui-container">
         <doid-symbol>
           <span slot="h1">Your Decentralized OpenID</span>
@@ -20,9 +25,6 @@ export class ViewHome extends TailwindElement(style) {
         <div class="max-w-xl mx-auto">
           <dui-ns-search @search=${this.goto} placeholder="Search DOID names"></dui-ns-search>
         </div>
-        <p class="my-4 text-center">
-          <dui-link class="ml-1" href="https://lockpass.doid.tech/passes">👉 Claim locked names</dui-link>
-        </p>
       </div>
     </div>`
   }
