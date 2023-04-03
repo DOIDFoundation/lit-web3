@@ -20,12 +20,8 @@ backgroundMessenger.on('popup_closed', () => {
 })
 
 export const unlock: BackgroundMiddlware = async (ctx, next) => {
-  next()
   const keyringController = await getKeyringController()
   const isUnlocked = keyringController.memStore.getState().isUnlocked
-  console.log({ isUnlocked })
-  // if (keyringController.isUnlocked()) return next()
+  if (isUnlocked) return next()
   waitForUnlock(next)
 }
-
-export default unlock
