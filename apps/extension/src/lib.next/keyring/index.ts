@@ -19,7 +19,7 @@ export const getKeyringController = async () => {
   }
   return await promise
 }
-// Initialized directly
+// Initialize directly
 getKeyringController().then(() => {
   keyringController.on('unlock', () => emitter.emit('unlock'))
   keyringController.on('lock', () => emitter.emit('lock'))

@@ -5,7 +5,7 @@ export const connectRemote = async (remotePort: browser.Runtime.Port) => {
   let isInternalProcess = [`chrome`, 'edge']
     .map((r) => `${r}-extension://${browser.runtime.id}`)
     .includes(senderUrl?.origin ?? '')
-  console.log({ isInternalProcess })
   if (isInternalProcess) {
+    console.log({ isInternalProcess })
   }
 }

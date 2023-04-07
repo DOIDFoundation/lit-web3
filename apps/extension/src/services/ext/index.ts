@@ -17,3 +17,7 @@ browser.tabs.onActivated.addListener(async ({ tabId }) => {
   // eslint-disable-next-line no-console
   backgroundMessenger.send('tab-prev', { title: tab.title }, `window@${tabId}`)
 })
+
+backgroundMessenger.emitter.on('lock', () => {
+  backgroundMessenger.send('state_lock')
+})

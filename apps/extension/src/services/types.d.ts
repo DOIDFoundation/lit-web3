@@ -16,6 +16,7 @@ declare type Res = {
   end: Function
   responder: Promise<void>
   respond: boolean
+  err?: any
 }
 
 declare interface BackgroundMiddlwareCtx {

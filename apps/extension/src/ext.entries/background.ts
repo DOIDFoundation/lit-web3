@@ -9,6 +9,5 @@ loadAllServices() // Load all Background Services
 // App init (TODO: move to src'~/lib/background.scripts)
 browser.runtime.onConnect.addListener(async (port: browser.Runtime.Port) => {
   await 0
-  console.log('connectRemote')
   connectRemote(port)
 })

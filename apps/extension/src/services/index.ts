@@ -5,6 +5,7 @@ import { MiddlerwareEngine } from './middleware'
 import * as EVM from './EVM'
 import * as DOID from './DOID'
 import * as ext from './ext'
+import * as popup from './popup'
 
 export const loadService = (service: BackgroundService) => {
   const { method, middlewares, fn } = service
@@ -16,7 +17,8 @@ export const loadService = (service: BackgroundService) => {
       return res
     } catch (err) {
       const { ctx } = middleware
-      ctx.res.respond = ctx.res.err = true
+      ctx.res.respond = true
+      ctx.res.err = err
       backgroundMessenger.log('Finally error handler:', err)
       throw err
     }
@@ -24,7 +26,7 @@ export const loadService = (service: BackgroundService) => {
 }
 
 export const loadAllServices = () => {
-  Object.values({ ...DOID, ...EVM, ...ext }).forEach((service) => {
+  Object.values({ ...DOID, ...EVM, ...ext, ...popup }).forEach((service) => {
     loadService(service)
   })
 }

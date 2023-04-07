@@ -14,7 +14,7 @@ class BackgroundMessenger extends Messenger implements MESSENGER {
   // Response to destination by method
   // 'DOID_sth' -> popup & inpage
   // 'doid_sth' -> popup
-  send: MessengerSend = async (method, params, dest = this.dest) => {
+  send: MessengerSend = async (method, params = {}, dest = this.dest) => {
     let promise
     if (method in publicMethods) promise = backgroundToInpage.send(method, params)
     if (method in privateMethods) promise = backgroundToPopup.send(method, params)

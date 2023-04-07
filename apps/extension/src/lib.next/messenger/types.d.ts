@@ -13,4 +13,4 @@ declare interface MESSENGER {
   messenger: CrossContextMessenger
 }
 
-declare type MessengerSend = (messageID: string, data: any, destination?: keyof typeof MessageContext) => Promise<any>
+declare type MessengerSend = (messageID: string, data?: any, destination?: keyof typeof MessageContext) => Promise<any>

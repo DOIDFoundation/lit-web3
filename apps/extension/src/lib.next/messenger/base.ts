@@ -15,7 +15,7 @@ export class Messenger implements MESSENGER {
     this.log = logger(ExtContext[context])
     this.emitter = emitter
   }
-  send: MessengerSend = async (method, params, dest = this.dest) => {
+  send: MessengerSend = async (method, params = {}, dest = this.dest) => {
     return await this.messenger.sendMessage(method, params, dest)
   }
   on: typeof onMessage = (...args: any) => this.messenger.onMessage(...args)

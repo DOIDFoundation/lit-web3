@@ -20,6 +20,7 @@ const handleUnlock = async () => {
   backgroundMessenger.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
 }
 backgroundMessenger.emitter.on('unlock', handleUnlock)
+
 // Mostly ignored
 backgroundMessenger.emitter.on('popup_closed', handleUnlock)
 
