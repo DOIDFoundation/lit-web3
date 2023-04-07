@@ -16,6 +16,7 @@ import { keyringStore } from '~/store/keyring'
 
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { customElement, html, property, state, TailwindElement, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import popupMessenger from '~/lib.next/messenger/popup'
 
 import style from './recover.css?inline'
 
@@ -54,19 +55,27 @@ export class ViewImport extends TailwindElement(style) {
   }
 
   onCreateMainAddress = async () => {
-    try {
-      await initialize()
-      console.log(this.mnemonic, this.pwd, '----------')
-      const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
-      // TODO: open
-      // await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
-      await this.syncAddresses()
+    let addresses = await getAddress(this.mnemonic)
+    if (!addresses || !this.account.name) return
+    const res = await popupMessenger.send('internal_recovery', {
+      doid: this.account.name,
+      json: { addresses },
+      mnemonic: this.mnemonic
+    })
+    //
+    // try {
+    //   await initialize()
+    //   console.log(this.mnemonic, this.pwd, '----------')
+    //   const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
+    //   // TODO: open
+    //   // await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
+    //   await this.syncAddresses()
 
-      // TODO: open
-      // this.start = '4'
-    } catch (err: any) {
-      console.error(err)
-    }
+    //   // TODO: open
+    //   // this.start = '4'
+    // } catch (err: any) {
+    //   console.error(err)
+    // }
   }
 
   syncAddresses = async () => {

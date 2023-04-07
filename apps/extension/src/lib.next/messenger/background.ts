@@ -9,7 +9,7 @@ export const backgroundToInpage = new Messenger('background', 'inpage', Backgrou
 
 class BackgroundMessenger extends Messenger implements MESSENGER {
   constructor() {
-    super('background', 'popup', backgroundToPopup.emitter)
+    super('background', 'popup', backgroundToPopup.messenger)
   }
   // Response to destination by method
   // 'DOID_sth' -> popup & inpage

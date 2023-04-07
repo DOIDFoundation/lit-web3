@@ -1,23 +1,22 @@
 import type { onMessage } from 'webext-bridge/background'
 import { ExtContext, MessageContext } from '~/lib.next/constants'
+import emitter, { EventEmitter } from '@lit-web3/core/src/emitter'
 import { logger } from '~/lib.next/logger'
 
 export class Messenger implements MESSENGER {
   dest: string
-  emitter: Emitter
+  messenger: CrossContextMessenger
   log: Function
+  emitter: EventEmitter
   // subscriber = new Map()
-  constructor(context: keyof typeof ExtContext, dest: keyof typeof MessageContext, emitter: Emitter) {
+  constructor(context: keyof typeof ExtContext, dest: keyof typeof MessageContext, messenger: CrossContextMessenger) {
     this.dest = MessageContext[dest]
-    this.emitter = emitter
+    this.messenger = messenger
     this.log = logger(ExtContext[context])
+    this.emitter = emitter
   }
   send: MessengerSend = async (method, params, dest = this.dest) => {
-    const promise = this.emitter.sendMessage(method, params, dest)
-    console.log('dest', dest)
-    const res = await promise
-    console.log(res)
-    return res
+    return await this.messenger.sendMessage(method, params, dest)
   }
-  on: typeof onMessage = (...args: any) => this.emitter.onMessage(...args)
+  on: typeof onMessage = (...args: any) => this.messenger.onMessage(...args)
 }

@@ -35,7 +35,7 @@ class Store extends State {
     } catch (err: any) {
       throw err
     } finally {
-      const state = await this.promisifiedBackground.getState()
+      const state = await this.promisifiedBackground?.getState()
       this.setState(state)
       console.log(1121212)
     }
