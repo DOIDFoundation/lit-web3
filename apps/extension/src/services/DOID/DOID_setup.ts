@@ -12,8 +12,6 @@ export const DOID_setup: BackgroundService = {
   fn: async (ctx, next) => {
     const data = await mockApi()
     ctx.res.body = data
-    // backgroundMessenger.on('reply_DOID_setup', ({ data }) => {
-
-    // })
+    // backgroundMessenger.on('reply_DOID_setup', ({ data }) => {})
   }
 }

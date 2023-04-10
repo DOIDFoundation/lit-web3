@@ -35,6 +35,7 @@ export const MESSAGE_TYPE = {
   DOID_SETUP: 'DOID_setup',
   DOID_NAME: 'DOID_name',
   DOID_ACCOUNT: 'DOID_account',
+  DOID_ACCOUNT_UPDATE: 'DOID_account_update',
   // EVM
   ADD_ETHEREUM_CHAIN: 'wallet_addEthereumChain',
   ETH_ACCOUNTS: RestrictedMethods.eth_accounts,

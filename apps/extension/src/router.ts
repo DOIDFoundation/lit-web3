@@ -1,4 +1,6 @@
 import { html } from 'lit'
+
+// import emitter from '@lit-web3/core/src/emitter'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
