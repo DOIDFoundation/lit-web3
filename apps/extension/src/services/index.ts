@@ -15,7 +15,10 @@ export const loadService = (service: BackgroundService) => {
       const res = await middleware.resolve()
       return res
     } catch (err) {
-      return err
+      const { ctx } = middleware
+      ctx.res.respond = ctx.res.err = true
+      backgroundMessenger.log('Finally error handler:', err)
+      throw err
     }
   })
 }

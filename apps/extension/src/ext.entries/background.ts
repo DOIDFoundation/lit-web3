@@ -1,4 +1,5 @@
 // service worker entry for extension
+import '@lit-web3/core/src/shims/node'
 import browser from 'webextension-polyfill'
 import { connectRemote } from '~/lib.next/background/connectRemote'
 import { loadAllServices } from '~/services'

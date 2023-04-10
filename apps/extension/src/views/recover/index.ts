@@ -6,7 +6,6 @@ import '~/components/pwd_equal'
 
 import { validateMnemonic } from 'ethereum-cryptography/bip39'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
-import { initialize } from '~/lib.legacy/keyringController'
 import { AddressType, getAddress } from '~/lib.legacy/phrase'
 import ipfsHelper from '~/lib.next/ipfsHelper'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
@@ -57,11 +56,17 @@ export class ViewImport extends TailwindElement(style) {
   onCreateMainAddress = async () => {
     let addresses = await getAddress(this.mnemonic)
     if (!addresses || !this.account.name) return
-    const res = await popupMessenger.send('internal_recovery', {
-      doid: this.account.name,
-      json: { addresses },
-      mnemonic: this.mnemonic
-    })
+    try {
+      const res = await popupMessenger.send('internal_recovery', {
+        doid: this.account.name,
+        json: { addresses },
+        mnemonic: this.mnemonic
+      })
+      console.info('res:', res)
+      this.start = '4'
+    } catch (e) {
+      popupMessenger.log(e)
+    }
     //
     // try {
     //   await initialize()

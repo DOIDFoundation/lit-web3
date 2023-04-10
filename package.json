@@ -17,12 +17,12 @@
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "cross-env": "^7.0.3",
     "events": "^3.3.0",
-    "lit": "^2.7.0",
+    "lit": "^2.7.1",
     "lodash": "^4.17.21",
     "urlpattern-polyfill": "^6.0.2"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.42",
+    "@iconify/json": "^2.2.44",
     "@rollup/plugin-inject": "^5.0.3",
     "@rollup/plugin-terser": "^0.4.0",
     "@types/lodash": "^4.14.192",
@@ -34,7 +34,7 @@
     "postcss": "^8.4.21",
     "postcss-import": "^15.1.0",
     "postcss-nesting": "^11.2.2",
-    "postcss-preset-env": "^8.2.0",
+    "postcss-preset-env": "^8.3.0",
     "rollup": "^3.20.2",
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-polyfill-node": "^0.12.0",

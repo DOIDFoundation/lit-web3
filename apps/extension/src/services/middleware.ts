@@ -1,4 +1,5 @@
 // Simple middleware implementation
+import { isInternalEndpoint } from 'webext-bridge'
 
 export class MiddlerwareEngine {
   ctx: BackgroundMiddlwareCtx
@@ -7,32 +8,44 @@ export class MiddlerwareEngine {
   constructor(message: webextMessage, middlewares: BackgroundMiddlware[]) {
     this.ctx = {
       req: createReq(message),
-      res: createRes()
+      res: createRes(),
+      state: {}
     }
     this.middlewares = middlewares
     this.currentResolver = null
   }
-  settleAll = () => {
+  _settleAll = () => {
     if (this.ctx.res.respond) this.currentResolver.resolve()
     else this.currentResolver.reject()
   }
   resolve = async () => {
     // On body written
-    this.ctx.res.responder.finally(this.settleAll)
+    this.ctx.res.responder.finally(this._settleAll)
     //
-    for (let middleware of this.middlewares) {
-      await new Promise<void>((resolve, reject) => {
-        this.currentResolver = { resolve, reject }
-        if (this.ctx.res.respond) return resolve()
-        middleware(this.ctx, resolve)
-      })
+    try {
+      for (const _middleware of this.middlewares) {
+        await new Promise<void>((resolve, reject) => {
+          this.currentResolver = { resolve, reject }
+          if (this.ctx.res.respond) resolve()
+          else
+            _middleware(this.ctx, function (res: any, err: any) {
+              if (err) reject(err)
+              else resolve(res)
+            }).catch(reject)
+        })
+      }
+    } catch (err) {
+      throw err
     }
     return this.ctx.res.body
   }
 }
 
 const createReq = (message: webextMessage): Req => {
-  return { raw: message, headers: createHeaders() }
+  const { data: body, sender, id: method } = message
+  const { context: origin } = sender
+  const isInner = isInternalEndpoint(sender)
+  return { raw: message, method, body, headers: { origin, isInner } }
 }
 
 const createRes = (): Res => {
@@ -40,25 +53,21 @@ const createRes = (): Res => {
   const responder = new Promise<void>((resolve) => {
     _resolve = resolve
   })
+  let _data: any
   const res = {
     respond: false,
-    data: undefined,
     get body() {
-      return res.data
+      return _data
     },
     set body(content: any) {
-      if (res.respond) console.warn('Res body has already been used.')
-      else res.end(content)
+      res.end(content)
     },
     end: async (data: any) => {
+      if (res.respond) return console.warn('Res body has already been used.')
       res.respond = true
-      res.data = data
-      _resolve(data)
+      _resolve((_data = data))
     },
-    responder,
-    headers: createHeaders()
+    responder
   }
   return res
 }
-
-const createHeaders = (): Header => ({})
