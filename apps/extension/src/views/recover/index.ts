@@ -60,6 +60,7 @@ export class ViewImport extends TailwindElement(style) {
       const res = await popupMessenger.send('internal_recovery', {
         doid: this.account.name,
         json: { addresses },
+        pwd: this.pwd,
         mnemonic: this.mnemonic
       })
       console.info('res:', res)
