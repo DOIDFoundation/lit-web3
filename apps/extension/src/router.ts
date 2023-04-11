@@ -5,10 +5,7 @@ import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
 
-popupMessenger.on('state_lock', () => {
-  console.log('on lock2')
-  emitter.emit('router-goto', '/unlock')
-})
+popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
 popupMessenger.send('state_isunlock')
 
 const homeView = {
@@ -154,10 +151,8 @@ export const routes = [
   },
   {
     name: 'dAppLanding',
-    path: '/landing',
-    render: () => {
-      return html`<view-landing></view-landing>`
-    },
+    path: '/landing/:doid?',
+    render: ({ doid = '' }) => html`<view-landing .name=${safeDecodeURIComponent(doid)}></view-landing>`,
     enter: async () => {
       await import('~/views/dapps/landing')
       return true
