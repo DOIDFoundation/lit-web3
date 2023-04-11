@@ -27,7 +27,7 @@ export const openPopup = async () => {
 }
 
 export const closePopup = async () => {
-  browser.windows.remove(popupStore._popupId as number)
+  if (popupStore._popupId) browser.windows.remove(popupStore._popupId as number)
 }
 
 const showPopup = async (currentPopupId?: number): Promise<any> => {

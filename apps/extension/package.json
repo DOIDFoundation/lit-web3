@@ -69,7 +69,7 @@
     "uuid": "^9.0.0",
     "w3name": "^1.0.8",
     "web3.storage": "^4.4.0",
-    "webext-bridge": "^6.0.0-rc4"
+    "webext-bridge": "^6.0.1"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.13",

@@ -4,6 +4,8 @@ import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
+popupMessenger.on('popup_goto', ({ data }) => emitter.emit('router-goto', (data as any).path))
+
 const redirected = async (): Promise<boolean> => {
   const _isUnlock = await popupMessenger.send('state_isunlock')
   if (!_isUnlock) {
@@ -13,8 +15,6 @@ const redirected = async (): Promise<boolean> => {
   // const _account = await popupMessenger.send('state_account')
   return false
 }
-
-popupMessenger.send('state_isunlock')
 
 const homeView = {
   name: 'home',

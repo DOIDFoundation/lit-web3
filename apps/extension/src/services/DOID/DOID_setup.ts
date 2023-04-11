@@ -8,10 +8,12 @@ const mockApi = async () => {
 
 export const DOID_setup: BackgroundService = {
   method: 'DOID_setup',
-  middlewares: [unlock, getAccount, autoClosePopup],
-  fn: async (ctx, next) => {
+  middlewares: [autoClosePopup],
+  fn: async ({ req, res }, next) => {
+    backgroundMessenger.send('DOID_account_change', { bb: 1 })
+    const [doidName] = req.body
     const data = await mockApi()
-    ctx.res.body = data
+    res.body = data
     // backgroundMessenger.on('reply_DOID_setup', ({ data }) => {
 
     // })
