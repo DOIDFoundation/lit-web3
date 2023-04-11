@@ -33,7 +33,8 @@ export class ViewUnlock extends TailwindElement(style) {
     // popupMessenger.send('reply_DOID_setup', { publicKey: 'jaksdiuzoxdf', address: { BTC: 'd', ETH: 'dsad' } })
     // E
     try {
-      await walletStore.submitPassword(this.pwd)
+      await popupMessenger.send('unlock', this.pwd)
+      // await walletStore.submitPassword(this.pwd)
       if (location.pathname.includes('generate-phrase')) {
         this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd, type: 'unlock' })
         return

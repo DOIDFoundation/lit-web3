@@ -5,17 +5,10 @@ import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
 
-popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
-const redirected = async (): Promise<boolean> => {
-  const _isUnlock = await popupMessenger.send('state_isunlock')
-  if (!_isUnlock) {
-    emitter.emit('router-goto', '/unlock')
-    return true
-  }
-  // const _account = await popupMessenger.send('state_account')
-  return false
-}
-
+popupMessenger.on('state_lock', () => {
+  console.log('on lock2')
+  emitter.emit('router-goto', '/unlock')
+})
 popupMessenger.send('state_isunlock')
 
 const homeView = {
@@ -23,9 +16,19 @@ const homeView = {
   path: '/',
   render: () => html`<view-home></view-home>`,
   enter: async () => {
-    if (await redirected()) return false
-    await import('~/views/home')
-    return true
+    if (!(await popupMessenger.send('state_isinitialized'))) {
+      await import('~/views/home')
+      return true
+    }
+
+    if (!(await popupMessenger.send('state_isunlock'))) {
+      emitter.emit('router-goto', '/unlock')
+      return false
+    }
+
+    // const _account = await popupMessenger.send('state_account')
+    emitter.emit('router-goto', '/main')
+    return false
   }
 }
 
