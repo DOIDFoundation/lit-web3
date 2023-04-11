@@ -1,4 +1,6 @@
 import { html } from 'lit'
+
+// import emitter from '@lit-web3/core/src/emitter'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
@@ -6,24 +8,34 @@ import popupMessenger from '~/lib.next/messenger/popup'
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
 popupMessenger.on('popup_goto', ({ data }) => emitter.emit('router-goto', (data as any).path))
 
-const redirected = async (): Promise<boolean> => {
-  const _isUnlock = await popupMessenger.send('state_isunlock')
-  if (!_isUnlock) {
-    emitter.emit('router-goto', '/unlock')
-    return true
-  }
-  // const _account = await popupMessenger.send('state_account')
-  return false
-}
+// const beforeEachRedirected = async (): Promise<boolean> => {
+//   const _isUnlock = await popupMessenger.send('state_isunlock')
+//   if (!_isUnlock) {
+//     emitter.emit('router-goto', '/unlock')
+//     return true
+//   }
+//   // const _account = await popupMessenger.send('state_account')
+//   return false
+// }
 
 const homeView = {
   name: 'home',
   path: '/',
   render: () => html`<view-home></view-home>`,
   enter: async () => {
-    if (await redirected()) return false
-    await import('~/views/home')
-    return true
+    if (!(await popupMessenger.send('state_isinitialized'))) {
+      await import('~/views/home')
+      return true
+    }
+
+    if (!(await popupMessenger.send('state_isunlock'))) {
+      emitter.emit('router-goto', '/unlock')
+      return false
+    }
+
+    // const _account = await popupMessenger.send('state_account')
+    emitter.emit('router-goto', '/main')
+    return false
   }
 }
 
@@ -89,8 +101,9 @@ export const routes = [
   },
   {
     name: 'import2nd',
-    path: '/import2nd',
-    render: () => html`<import-2nd></import-2nd>`,
+    path: '/import2nd/:doid/:address',
+    render: ({ doid = '', address = '' }) =>
+      html`<import-2nd .name=${safeDecodeURIComponent(doid)} .address=${address}></import-2nd>`,
     enter: async () => {
       await import('~/views/import2nd')
       return true
@@ -149,10 +162,8 @@ export const routes = [
   },
   {
     name: 'dAppLanding',
-    path: '/landing',
-    render: () => {
-      return html`<view-landing></view-landing>`
-    },
+    path: '/landing/:doid?',
+    render: ({ doid = '' }) => html`<view-landing .name=${safeDecodeURIComponent(doid)}></view-landing>`,
     enter: async () => {
       await import('~/views/dapps/landing')
       return true

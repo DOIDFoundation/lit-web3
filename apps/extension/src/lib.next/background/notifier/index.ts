@@ -14,13 +14,13 @@ export const getPopup = async (): Promise<any> => {
   return windows.find((win) => win && win.type === 'popup' && win.id === popupStore._popupId)
 }
 
-export const openPopup = async () => {
+export const openPopup = async (path?: string) => {
   const tabs = await browser.tabs.query({ active: true })
   const currentlyActived = tabs.some(({ id }) => id && popupStore.openTabsIDs[id])
   if (!uiIsTriggering && !popupStore.isOpen && !currentlyActived) {
     uiIsTriggering = true
     try {
-      await showPopup(popupStore.currentPopupId)
+      await showPopup(popupStore.currentPopupId, path)
     } catch {}
     uiIsTriggering = false
   }
@@ -30,7 +30,7 @@ export const closePopup = async () => {
   if (popupStore._popupId) browser.windows.remove(popupStore._popupId as number)
 }
 
-const showPopup = async (currentPopupId?: number): Promise<any> => {
+const showPopup = async (currentPopupId?: number, path: string = '/'): Promise<any> => {
   if (currentPopupId) popupStore._popupId = currentPopupId
   const popup = await getPopup()
   if (popup?.id) return await browser.windows.update(popup.id, { focused: true })
@@ -47,7 +47,7 @@ const showPopup = async (currentPopupId?: number): Promise<any> => {
     left = Math.max(screenX + (outerWidth - POPUP_WIDTH), 0)
   }
   const popupWindow = await browser.windows.create({
-    url: '/',
+    url: path,
     type: 'popup',
     width: POPUP_WIDTH,
     height: POPUP_HEIGHT,

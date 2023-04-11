@@ -10,6 +10,12 @@ export const inpageProvider = () => {
       const res = await inpageMessenger.send(method, params)
       inpageLogger('response', res)
       return res
+    },
+    on: async (method: string, fn: any) => {
+      inpageLogger('on', method, fn)
+      const res = inpageMessenger.on(method, fn)
+      inpageLogger('response', res)
+      return res
     }
   }
 }

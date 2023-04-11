@@ -11,7 +11,7 @@ export const getKeyringController = async () => {
   if (!promise) {
     promise = new Promise(async (resolve) => {
       keyringController = new KeyringController({
-        initState: await loadStateFromPersistence(),
+        initState: (await loadStateFromPersistence()).KeyringController,
         cacheEncryptionKey: true
       })
       resolve(keyringController)
@@ -99,3 +99,4 @@ export const storedAddress = {
 }
 
 export const isUnlocked = async () => (await getKeyringController()).memStore.getState().isUnlocked
+export const isInitialized = async () => Boolean((await getKeyringController()).store.getState().vault)

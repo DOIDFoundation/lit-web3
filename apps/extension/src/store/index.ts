@@ -1,7 +1,8 @@
-import { State, property } from '@lit-app/state'
-export { StateController } from '@lit-app/state'
 import pify from 'pify'
 
+import { property, State } from '@lit-app/state'
+
+export { StateController } from '@lit-app/state'
 class Store extends State {
   @property({ value: false }) pending!: boolean
   @property() doidState: any

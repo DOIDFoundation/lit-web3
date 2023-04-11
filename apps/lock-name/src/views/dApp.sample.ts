@@ -12,6 +12,7 @@ const logger = (...args: any) => console.info(`[dApp]`, ...args)
 export class ViewRestore extends TailwindElement('') {
   @state() nameAddresses = {}
   @state() pending = false
+  @state() chainAddresses = {}
   request = async () => {
     this.pending = true
     this.nameAddresses = {}
@@ -20,6 +21,9 @@ export class ViewRestore extends TailwindElement('') {
       // console.log(res)
       this.nameAddresses = await window.DOID.request({ method: 'DOID_setup', params: ['zzzxxx.doid'] })
       console.log('resolved nameAddresses', this.nameAddresses)
+      await window.DOID.on('DOID_account_update', (e: any) => {
+        console.info('[chain addresses]: ', e)
+      })
     } catch (e) {
       this.nameAddresses = { error: 'cancelled' }
     }
