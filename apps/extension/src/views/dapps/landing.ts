@@ -4,10 +4,8 @@ import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/button'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { getAccount } from '~/lib.legacy/account'
 
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
-import popupMessenger from '~/lib.next/messenger/popup'
 import { accountStore, StateController } from '~/store/account'
 
 @customElement('view-landing')
@@ -16,7 +14,6 @@ export class ViewLanding extends TailwindElement(null) {
 
   @state() name = ''
   @state() ownerAddress = ''
-  @state() mainAddress = ''
   @state() pending = false
 
   get wrapName() {
@@ -27,10 +24,10 @@ export class ViewLanding extends TailwindElement(null) {
     if (!this.name) return
     this.pending = true
     const { owner, mainAddress } = await accountStore.search(this.name, true)
+    // uncomment this when mainAddress is read from IPFS
+    // if (mainAddress) goto(`/start/${this.wrapName}`)
     this.ownerAddress = owner
-    this.mainAddress = mainAddress
     this.pending = false
-    popupMessenger.send('reply_DOID_setup', { publicKey: 'jaksdiuzoxdf', address: { BTC: 'd', ETH: 'dsad' } })
   }
   connectedCallback() {
     this.getAddressesByName()
@@ -40,36 +37,31 @@ export class ViewLanding extends TailwindElement(null) {
     return html`<div class="dapp-landing">
       <div class="dui-container">
         <doid-symbol class="block mt-12"> </doid-symbol>
-        <div class="mt-24">
-          ${when(
-            this.pending,
-            () => html`<div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
-            () => html`<div class="my-4 text-md">
-                Setting up main address for
-                <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
-              </div>
-              <div class="mt-6 my-10 text-gray-400">
-                Main addresses are the default addresses of your DOID on all chains. They are generaged automatically
-                with one single easy setup and will not change until you modify them.
-              </div>
-
-              <dui-button class="outlined w-full my-2" @click=${() => goto('/generate-phrase/1')}
-                >Generate main address for all chains for me</dui-button
-              >
-              ${when(
-                this.ownerAddress && !this.mainAddress,
-                () => html`<dui-button class="outlined w-full my-2" @click=${() => goto('/import2nd')}
-                    >Use <dui-address class="mx-1" .address=${this.ownerAddress}></dui-address> as main address for ETH,
-                    main addresses for all other chains will be generated automaticaly
-                  </dui-button>
-                  <div class="my-2 text-center">or</div>`
-              )}
-
-              <dui-button class="outlined w-full my-2" @click=${() => goto(`/import3rd`)}
-                >Use a Secret Recovery Phrase to generate main addresses for all chains</dui-button
-              >`
-          )}
+        <div class="my-4 text-xs">
+          Setting up main addresses for
+          <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
         </div>
+        <div class="mt-6 my-10 text-xs text-gray-400">
+          Main addresses are the default addresses of your DOID on all chains. They are generated automatically with one
+          single easy setup and will not change until you modify them.
+        </div>
+        ${when(
+          this.pending,
+          () => html`<div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
+          () => html`<dui-button class="outlined w-full my-2" @click=${() => goto('/generate-phrase/1')}
+              >Generate main addresses for all chains for me</dui-button
+            >
+            <dui-button
+              class="outlined w-full my-2"
+              @click=${() => goto(`/import2nd?doid=${this.wrapName}&address=${this.ownerAddress}`)}
+              >Use owner address(<dui-address class="mx-1" .address=${this.ownerAddress}></dui-address>) as main address
+              for ETH, main addresses for all other chains will be generated automatically</dui-button
+            >
+            <div class="my-2 text-center">or</div>
+            <dui-button class="outlined w-full my-2" @click=${() => goto(`/import3rd`)}
+              >Use a Secret Recovery Phrase to generate main addresses for all chains</dui-button
+            >`
+        )}
       </div>
     </div>`
   }
