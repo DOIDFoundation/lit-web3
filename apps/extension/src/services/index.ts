@@ -7,6 +7,12 @@ import * as DOID from './DOID'
 import * as ext from './ext'
 import * as popup from './popup'
 
+export const loadAllServices = () => {
+  Object.values({ ...DOID, ...EVM, ...ext, ...popup }).forEach((service) => {
+    loadService(service)
+  })
+}
+
 export const loadService = (service: BackgroundService) => {
   const { method, middlewares, fn } = service
   if (!method) return backgroundMessenger.log('Service has no method:', service)
@@ -22,11 +28,5 @@ export const loadService = (service: BackgroundService) => {
       backgroundMessenger.log('Finally error handler:', err)
       throw err
     }
-  })
-}
-
-export const loadAllServices = () => {
-  Object.values({ ...DOID, ...EVM, ...ext, ...popup }).forEach((service) => {
-    loadService(service)
   })
 }

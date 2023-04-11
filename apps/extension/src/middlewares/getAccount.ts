@@ -1,11 +1,11 @@
 import { storedAddress } from '~/lib.next/keyring'
 
-export const getAccount: BackgroundMiddlware = async (ctx, next) => {
-  if (ctx.req.headers.isInner) {
-    ctx.state.account = await storedAddress.get()
+export const getAccount: BackgroundMiddlware = async ({ req, state }, next) => {
+  if (req.headers.isInner) {
+    state.account = await storedAddress.get()
     return next()
   }
   // TODO: get permitted account
-  ctx.state.account = await storedAddress.get()
+  state.account = await storedAddress.get()
   next()
 }

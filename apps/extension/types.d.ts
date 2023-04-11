@@ -59,9 +59,9 @@ declare namespace browser {
   const windows: Windows.Static
 }
 
-declare interface window {
+declare interface Window {
   skipWaiting: any
-  DOID: Record<string, any>
+  DOID: DOID
 }
 
 declare module globalThis {

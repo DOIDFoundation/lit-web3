@@ -1,6 +1,6 @@
 import { Messenger } from './base'
 import * as Background from 'webext-bridge/background'
-import { publicMethods, privateMethods } from '~/lib.next/constants'
+import { publicMethods } from '~/lib.next/constants'
 
 // background <-> popup
 export const backgroundToPopup = new Messenger('background', 'popup', Background)
@@ -12,12 +12,12 @@ class BackgroundMessenger extends Messenger implements MESSENGER {
     super('background', 'popup', backgroundToPopup.messenger)
   }
   // Response to destination by method
-  // 'DOID_sth' -> popup & inpage
-  // 'doid_sth' -> popup
+  // publicMethods -> popup & inpage
+  // privateMethods -> popup (Always pass private methods, so far)
   send: MessengerSend = async (method, params = {}, dest = this.dest) => {
     let promise
-    if (method in publicMethods) promise = backgroundToInpage.send(method, params)
-    if (method in privateMethods) promise = backgroundToPopup.send(method, params)
+    if (publicMethods.includes(method)) promise = backgroundToInpage.send(method, params)
+    promise = backgroundToPopup.send(method, params)
     return await promise
   }
 }

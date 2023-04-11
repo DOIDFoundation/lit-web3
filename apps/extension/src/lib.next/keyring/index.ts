@@ -21,13 +21,15 @@ export const getKeyringController = async () => {
 }
 // Initialize directly
 getKeyringController().then(() => {
-  keyringController.on('unlock', () => emitter.emit('unlock'))
-  keyringController.on('lock', () => emitter.emit('lock'))
+  // Re-emit keyring events
+  ;['unlock', 'lock'].forEach((evt) => {
+    keyringController.on(evt, () => emitter.emit(evt))
+  })
   keyringController.memStore.subscribe(async (state: any) => {
     const { keyrings, encryptionKey: loginToken, encryptionSalt: loginSalt } = state
     await browser.storage.session.set({ loginToken, loginSalt })
     const addresses = keyrings.reduce((acc: any, { accounts } = <any>{}) => acc.concat(accounts), [])
-    emitter.emit('keyring-state-change', addresses)
+    emitter.emit('keyring_update', addresses)
   })
 })
 
