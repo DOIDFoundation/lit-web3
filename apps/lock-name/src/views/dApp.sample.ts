@@ -29,9 +29,11 @@ export class ViewRestore extends TailwindElement('') {
     }
     this.pending = false
   }
-  connectedCallback(): void {
+  async connectedCallback() {
     super.connectedCallback()
-    window.DOID.subscribe('DOID_account_change', () => {
+    // TODO: Add onboarding service
+    await 0
+    window.DOID.on('DOID_account_change', () => {
       console.log('DOID_account_change')
     })
   }

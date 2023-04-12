@@ -28,7 +28,7 @@ export class MiddlerwareEngine {
           this.currentResolver = { resolve, reject }
           if (this.ctx.res.respond) resolve()
           else
-            _middleware(this.ctx, function (res: any, err: any) {
+            _middleware(this.ctx, function (res: any, err: Error) {
               if (err) reject(err)
               else resolve(res)
             }).catch(reject)
@@ -43,17 +43,18 @@ export class MiddlerwareEngine {
 
 const createReq = (message: webextMessage): Req => {
   const { data: body, sender, id: method } = message
-  const { context: origin } = sender
+  const { context, tabId } = sender
   const isInner = isInternalEndpoint(sender)
+  const origin = `${context}@${tabId}`
   return { raw: Object.freeze(message), method, body, headers: { origin, isInner } }
 }
 
 const createRes = (): Res => {
-  let _resolve: any
-  const responder = new Promise<void>((resolve) => {
-    _resolve = resolve
+  let [_resolve, _reject] = [undefined as any, undefined as any]
+  const responder = new Promise<void>((resolve, reject) => {
+    ;[_resolve, _reject] = [resolve, reject]
   })
-  let _data: any
+  let [_data, _err] = [undefined as any, undefined as any]
   const res = {
     respond: false,
     get body() {
@@ -62,10 +63,17 @@ const createRes = (): Res => {
     set body(content: any) {
       res.end(content)
     },
-    end: async (data: any) => {
+    get err() {
+      return _err
+    },
+    set err(_err: Error) {
+      res.end(null, _err)
+    },
+    end: async (data: any, err?: Error) => {
       if (res.respond) return console.warn('Res body has already been used.')
       res.respond = true
-      _resolve((_data = data))
+      if (err) _reject((_err = err))
+      else _resolve((_data = data))
     },
     responder
   }
