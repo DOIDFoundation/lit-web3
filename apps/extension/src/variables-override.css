@@ -3,4 +3,38 @@
 }
 html {
   @apply overflow-x-hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.24) rgba(0, 0, 0, 0.01);
+  overscroll-behavior: contain;
+  padding-right: 4px;
+  margin-right: -4px;
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar {
+    transition: background-color 0.3s;
+  }
+  /* Track */
+  &::-webkit-scrollbar-track {
+    border-radius: var(--radius);
+  }
+  /* Handle */
+  &::-webkit-scrollbar-thumb,
+  &::-webkit-scrollbar-thumb:window-inactive {
+    transition: background-color 0.3s;
+    background-color: rgba(0, 0, 0, 0);
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: var(--radius);
+  }
+  &::-webkit-scrollbar-thumb,
+  &::-webkit-scrollbar-thumb:window-inactive {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  &:hover {
+    &::-webkit-scrollbar-thumb,
+    &::-webkit-scrollbar-thumb:window-inactive {
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+  }
 }

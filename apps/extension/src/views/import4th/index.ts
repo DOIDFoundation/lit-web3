@@ -51,7 +51,7 @@ export class ViewImport extends TailwindElement(style) {
     return html`<div class="home">
       <div class="dui-container sparse">
         <div class="dui-container sparse">
-          <doid-symbol class="block mt-12">
+          <doid-symbol sm class="block mt-12">
             <span slot="h1" class="text-base">Create password for ${this.account.name}</span>
           </doid-symbol>
           <div class="max-w-xs mx-auto">

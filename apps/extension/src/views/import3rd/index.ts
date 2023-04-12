@@ -33,8 +33,8 @@ export class ViewImport extends TailwindElement(style) {
     return html`<div class="home">
       <div class="dui-container sparse">
         <div class="dui-container sparse">
-          <doid-symbol class="block mt-12">
-            <span slot="h1" class="text-xl">You are importing an address as Main Address for ${this.doidName}</span>
+          <doid-symbol sm class="block mt-12">
+            <span slot="h1" class="lg_text-xl">You are importing an address as Main Address for ${this.doidName}</span>
           </doid-symbol>
             <span slot="label">
               <slot name="label">Enter your Secret Recovery Phrase</slot>

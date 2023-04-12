@@ -36,7 +36,7 @@ export class ViewLanding extends TailwindElement(null) {
   render() {
     return html`<div class="dapp-landing">
       <div class="dui-container">
-        <doid-symbol class="block mt-12"> </doid-symbol>
+        <doid-symbol sm class="block mt-12"></doid-symbol>
         <div class="my-4 text-xs">
           Setting up main addresses for
           <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>

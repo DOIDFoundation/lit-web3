@@ -14,3 +14,5 @@ declare interface MESSENGER {
 }
 
 declare type MessengerSend = (messageID: string, data?: any, destination?: keyof typeof MessageContext) => Promise<any>
+
+declare type MessengerOn = (messageID: string, listener: EventListener) => any

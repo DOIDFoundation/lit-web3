@@ -72,7 +72,7 @@ export class PhraseToSecret extends TailwindElement(style) {
   render() {
     return html`<div class="my-4 ${classMap(this.$c([this.class]))}"></div>
       <slot name="tip"></slot>
-      <div class="grid grid-cols-3 gap-4 m-4">
+      <div class="grid grid-cols-2 lg_grid-cols-3 gap-4 my-4 lg_m-4">
         ${repeat(
           this.phrases,
           (phrases: string, idx: number) => html`<div class="flex items-center gap-2 lg_gap-4">
