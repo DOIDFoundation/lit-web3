@@ -67,9 +67,9 @@ export class AccountMenu extends TailwindElement(css) {
         <div class="flex items-center gap-2 px-4 py-2" @click=${() => goto('/create')}>
           <i class="text-xl mdi mdi-plus"></i> Create Account
         </div>
-        <div class="flex items-center gap-2 px-4 py-2">
+        <!-- <div class="flex items-center gap-2 px-4 py-2">
           <i class="text-xl mdi mdi-tray-arrow-down"></i> Import Account
-        </div>
+        </div> -->
       </div>
     `
   }

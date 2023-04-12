@@ -65,6 +65,14 @@ export const routes = [
     }
   },
   {
+    ...homeView,
+    path: '/create',
+    enter: async () => {
+      await import('~/views/home')
+      return true
+    }
+  },
+  {
     name: 'create',
     path: '/create/:doid?',
     render: ({ doid = '' }) => html`<view-create .doid=${safeDecodeURIComponent(doid)}></view-create>`,

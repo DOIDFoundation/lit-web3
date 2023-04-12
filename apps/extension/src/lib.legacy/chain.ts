@@ -16,15 +16,10 @@ export const enum ChainCoin {
 export const ChainsDefaultDef = (): ChainNet[] => {
   return [
     { name: ChainName.ethereum, title: 'Ethereum', coin: ChainCoin.ethereum },
-    { name: ChainName.solana, title: 'Solana', coin: ChainCoin.solana },
+    { name: ChainName.bitcoin, title: 'BitCoin', coin: ChainCoin.bitcoin },
+    { name: ChainName.bsc, title: 'BNB smart chain', coin: ChainCoin.bsc },
     { name: ChainName.aptos, title: 'Aptos', coin: ChainCoin.aptos },
-    {
-      name: ChainName.bsc,
-      title: 'BNB smart chain',
-      coin: ChainCoin.bsc,
-      icon: ''
-    },
-    { name: ChainName.bitcoin, title: 'BitCoin', coin: ChainCoin.bitcoin }
+    { name: ChainName.solana, title: 'Solana', coin: ChainCoin.solana }
   ].filter((r) => r.name != 'bitcoin')
 }
 
