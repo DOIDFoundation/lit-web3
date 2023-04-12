@@ -6,11 +6,12 @@ import { routes } from '~/router'
 import emitter from '@lit-web3/core/src/emitter'
 import '~/views/home'
 // Components
+import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
 import { StateController, walletStore } from './store'
 import { connectToAccountManager, getConnectStream } from './lib.legacy/ui'
-import doid_symbol from '@lit-web3/dui/src/i/doid.svg'
+import doid_icon from '@lit-web3/dui/src/i/doid.svg'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
@@ -58,7 +59,7 @@ export class AppMain extends TailwindElement('') {
           html`<dui-header logoHref="/">
             <div slot="left"><account-switch></account-switch></div>
             <div slot="right" class="block w-6 h-6 mx-auto">
-              <img class="w-full h-full object-contain select-none pointer-events-none" src="${doid_symbol}" />
+              <img class="w-full h-full object-contain select-none pointer-events-none" src="${doid_icon}" />
             </div>
             <div slot="logo"></div>
             <div slot="wallet"></div>
