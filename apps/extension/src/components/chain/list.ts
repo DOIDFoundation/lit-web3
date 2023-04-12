@@ -52,12 +52,12 @@ export class networkList extends TailwindElement(style) {
           </div>`
       )}
 
-      <div
+      <!-- <div
         class="m-2 w-10 h-10 rounded-full bg-gray-300 inline-flex justify-center items-center text-2xl text-white"
         @click=${this.addChain}
       >
         <i class="mdi mdi-plus"></i>
-      </div>
+      </div> -->
     </div>`
   }
 }
