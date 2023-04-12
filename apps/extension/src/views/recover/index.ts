@@ -63,7 +63,6 @@ export class ViewImport extends TailwindElement(style) {
         pwd: this.pwd,
         mnemonic: this.mnemonic
       })
-      console.info('res:', res)
       this.start = '4'
     } catch (e) {
       popupMessenger.log(e)
@@ -97,17 +96,14 @@ export class ViewImport extends TailwindElement(style) {
     e.stopPropagation()
     const { phrase } = e.detail as any
     this.mnemonic = phrase
-    console.log(this.mnemonic)
 
+    // menonic validate
     let error = validateMnemonic(this.mnemonic, wordlist)
     this.err = error ? '' : 'Bad mnemonic'
-    console.log(error)
     if (!error) return
-
+    // check main address match
     let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
-    console.log(ethAddress, '---------')
-
-    if (this.account.mainAddress != ethAddress) {
+    if (this.account.mainAddress.toLowerCase() != ethAddress) {
       this.start = '2'
     }
   }

@@ -91,9 +91,8 @@ export const routes = [
   },
   {
     name: 'import2nd',
-    path: '/import2nd/:doid/:address',
-    render: ({ doid = '', address = '' }) =>
-      html`<import-2nd .name=${safeDecodeURIComponent(doid)} .address=${address}></import-2nd>`,
+    path: '/import2nd',
+    render: () => html`<import-2nd></import-2nd>`,
     enter: async () => {
       await import('~/views/import2nd')
       return true
