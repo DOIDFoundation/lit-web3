@@ -14,10 +14,18 @@ class BackgroundMessenger extends Messenger implements MESSENGER {
   // Response to destination by method
   // publicMethods -> popup & inpage
   // privateMethods -> popup (Always pass private methods, so far)
-  send: MessengerSend = async (method, params = {}, dest = this.dest) => {
+  send: MessengerSend = async (method, params = {}, dest?) => {
     let promise
-    if (publicMethods.includes(method)) promise = backgroundToInpage.send(method, params)
-    promise = backgroundToPopup.send(method, params)
+    // To inpage
+    if (publicMethods.includes(method)) {
+      promise = backgroundToInpage.send(method, params, dest)
+    }
+    // To popup (TODO: if method no listener in popup, will be crashing here)
+    try {
+      const internalPromise = await backgroundToPopup.send(method, params)
+      if (promise) await internalPromise
+      else promise = internalPromise
+    } catch {}
     return await promise
   }
 }

@@ -9,11 +9,11 @@ export const internal_create: BackgroundService = {
   fn: async (ctx) => {
     // 1. save mnemonic
     // 2. save IPNS saveChainAddresses()
-    const { doid = '', pwd, mnemonic, json = {} } = ctx.req.body
+    const { doid = '', pwd, mnemonic, json = {}, reply = false } = ctx.req.body
     try {
       ;(await getKeyringController()).createNewVaultAndRestore(pwd, mnemonic)
-      const res = await ipfsHelper.updateJsonData(json, doid, { memo: mnemonic })
-      backgroundMessenger.send('DOID_account_update', { mainAddress: true })
+      await ipfsHelper.updateJsonData(json, doid, { memo: mnemonic })
+      if (reply) backgroundMessenger.send('DOID_account_update', { mainAddress: true })
       ctx.res.body = { success: 'ok' }
     } catch (e) {
       throw e
