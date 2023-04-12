@@ -1,5 +1,5 @@
 // Todo: ShadowRoot should be created as childNodes of document.body
-import { customElement, TailwindElement, html, property } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, property, classMap } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
 import style from './drop.css?inline'
@@ -7,6 +7,7 @@ import style from './drop.css?inline'
 export class DuiDrop extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean, reflect: true }) show = false
+  @property({ type: Boolean }) alignLeft = false
 
   hide() {
     this.unlisten()
@@ -39,6 +40,6 @@ export class DuiDrop extends TailwindElement(style) {
   }
 
   override render() {
-    return html`<div class="doid-drop"><slot></slot></div>`
+    return html`<div class="doid-drop ${classMap({ 'right-0': !this.alignLeft })}"><slot></slot></div>`
   }
 }
