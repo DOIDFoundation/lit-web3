@@ -51,9 +51,7 @@ export class ViewLanding extends TailwindElement(null) {
           () => html`<dui-button class="outlined w-full my-2" @click=${() => goto('/generate-phrase/1')}
               >Generate main addresses for all chains for me</dui-button
             >
-            <dui-button
-              class="outlined w-full my-2"
-              @click=${() => goto(`/import2nd?doid=${this.wrapName}&address=${this.ownerAddress}`)}
+            <dui-button class="outlined w-full my-2" @click=${() => goto(`/import2nd`)}
               >Use owner address(<dui-address class="mx-1" .address=${this.ownerAddress}></dui-address>) as main address
               for ETH, main addresses for all other chains will be generated automatically</dui-button
             >

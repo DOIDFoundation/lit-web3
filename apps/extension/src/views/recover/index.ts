@@ -14,49 +14,52 @@ import { accountStore } from '~/store/account'
 import { keyringStore } from '~/store/keyring'
 
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { customElement, html, property, state, TailwindElement, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  customElement,
+  html,
+  property,
+  state,
+  TailwindElement,
+  choose,
+  when
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import popupMessenger from '~/lib.next/messenger/popup'
 
-import style from './recover.css?inline'
-
 @customElement('view-recover')
-export class ViewImport extends TailwindElement(style) {
+export class ViewImport extends TailwindElement(null) {
   state = new StateController(this, walletStore)
   bindStore: any = new StateController(this, keyringStore)
   bindAccount: any = new StateController(this, accountStore)
-  @property() step?: any
   @property() doidName = ''
   @state() secretRecoveryPhrase = ''
   @state() err = ''
+  @state() btnNextDisabled = true
   @state() pending = false
   @state() mnemonic = ''
   @state() pwd = ''
 
-  @state() start = '1'
+  @state() step = 1
 
-  // @state() mainAddress = this.mainAddress
+  constructor() {
+    super()
+    if (!this.account.name) goto('/')
+  }
 
   get account() {
     return accountStore.account
   }
 
-  // get currentStep() {
-  //   return this.step ?? 1
-  // }
-
-  // next = () => {
-  //   goto(`/recover/${this.currentStep + 1}`)
-  // }
-
   onPwdChange = (e: CustomEvent) => {
     const { pwd, error } = e.detail
     this.pwd = pwd
+    this.btnNextDisabled = error
   }
 
   onCreateMainAddress = async () => {
     let addresses = await getAddress(this.mnemonic)
     if (!addresses || !this.account.name) return
     try {
+      this.pending = true
       const res = await popupMessenger.send('internal_recovery', {
         doid: this.account.name,
         json: { addresses },
@@ -64,9 +67,11 @@ export class ViewImport extends TailwindElement(style) {
         mnemonic: this.mnemonic
       })
       console.info('res:', res)
-      this.start = '4'
+      this.next()
     } catch (e) {
       popupMessenger.log(e)
+    } finally {
+      this.pending = false
     }
     //
     // try {
@@ -95,95 +100,99 @@ export class ViewImport extends TailwindElement(style) {
   }
   onPhraseChange = async (e: CustomEvent) => {
     e.stopPropagation()
-    const { phrase } = e.detail as any
-    this.mnemonic = phrase
-    console.log(this.mnemonic)
+    this.btnNextDisabled = true
+    const { phrase, error } = e.detail as any
+    if (error) return
 
-    let error = validateMnemonic(this.mnemonic, wordlist)
-    this.err = error ? '' : 'Bad mnemonic'
-    console.log(error)
-    if (!error) return
+    this.mnemonic = phrase
 
     let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
-    console.log(ethAddress, '---------')
 
     if (this.account.mainAddress != ethAddress) {
-      this.start = '2'
+      this.err = `The Secret Recovery Phrase entered does not match ${this.account.mainAddress}`
+      return
     }
+    this.btnNextDisabled = false
   }
 
-  routeGoto = (path: string) => {
-    goto(`${path}`)
+  back() {
+    if (this.step == 1) history.back()
+    else this.step--
+  }
+
+  next() {
+    this.step++
+    this.btnNextDisabled = true
   }
 
   connectedCallback() {
     super.connectedCallback()
   }
+
   render() {
     return html`<div class="home">
       <div class="dui-container sparse">
-        <div class="dui-container sparse">
-          ${when(
-            this.start == '1',
-            () => html`
-            <doid-symbol class="block mt-12">
-            <span slot="h1" class="text-xl">
-              <p>You are recovering</p>
-              <p>${this.account.name}</p>
-            </span>
-          </doid-symbol>
-              <span slot="label">
-              <slot name="label">Enter the Secret Recovery Phrase of ${this.account.mainAddress}</slot>
-           </span>
-           <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
-           <div class="mt-4 flex justify-between">
-          <dui-button @click=${() =>
-            this.routeGoto('/login')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-            ><i class="mdi mdi-arrow-left text-gray-500"></i></dui-button>
-          <dui-button @click=${() =>
-            (this.start = '3')} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
-        </div>
-            `
-          )}
-          ${when(
-            this.start == '2',
-            () => html`
-              <doid-symbol class="block mt-12">
-                <span slot="h1" class="text-xl">
-                  <p>You are recovering</p>
-                  <p>${this.account.name}</p>
-                </span>
-              </doid-symbol>
-              <span slot="label">
-                <slot name="label">The Secret Recovery Phrase entered does not match ${this.account.mainAddress}</slot>
-              </span>
-            `
-          )}
-          ${when(
-            this.start == '3',
-            () => html`
-           <doid-symbol class="block mt-12">
-            <span slot="h1" class="text-base">Create password</span>
-          </doid-symbol>
-          <div class="max-w-xs mx-auto">
-            <span slot="h1" class="text-sm"
-              >This password will unlock your DOID name(s) only on this device. DOID can not recover this
-              password.</span
-            >
-
-            <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
-
-            <div class="mt-4 flex justify-between">
-          <dui-button @click=${() => (this.start = '1')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-            ><i class="mdi mdi-arrow-left text-gray-500"></i></dui-button>
-          <dui-button @click=${() =>
-            this.onCreateMainAddress()} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
-          `
-          )}
-          ${when(
-            this.start == '4',
-            () => html`
-              <doid-symbol class="block mt-12">
+        ${choose(
+          this.step,
+          [
+            [
+              1,
+              () => html` <doid-symbol class="block mt-12"></doid-symbol>
+                <div class="my-4 text-xs">
+                  You are recovering
+                  <dui-link class="link ml-1 underline">${this.account.name}</dui-link>
+                </div>
+                <div class="my-4 text-xs">
+                  Enter the Secret Recovery Phrase of
+                  <dui-address class="mx-1" .address=${this.account.mainAddress}></dui-address>
+                </div>
+                <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
+                <div class="w-full text-red-500">${this.err}</div>
+                <div class="mt-4 flex justify-between">
+                  <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                    ><i class="mdi mdi-arrow-left text-gray-500"></i
+                  ></dui-button>
+                  <dui-button
+                    ?disabled=${this.btnNextDisabled}
+                    @click=${this.next}
+                    class="secondary !rounded-full h-12 w-12"
+                    ><i class="mdi mdi-arrow-right"></i
+                  ></dui-button>
+                </div>`
+            ],
+            [
+              2,
+              () =>
+                when(
+                  this.pending,
+                  () => html`<doid-symbol class="block mt-12">
+                      <span slot="h1" class="text-base">Recovering ${this.account.name}</span>
+                    </doid-symbol>
+                    <div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
+                  () => html`<doid-symbol class="block mt-12">
+                      <span slot="h1" class="text-base">Create password</span>
+                    </doid-symbol>
+                    <div class="my-4 text-xs">
+                      This password will unlock your DOID name(s) only on this device. DOID can not recover this
+                      password.
+                    </div>
+                    <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+                    <div class="mt-4 flex justify-between">
+                      <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                        ><i class="mdi mdi-arrow-left text-gray-500"></i
+                      ></dui-button>
+                      <dui-button
+                        ?disabled=${this.btnNextDisabled}
+                        @click=${this.onCreateMainAddress}
+                        class="secondary !rounded-full h-12 w-12"
+                        ><i class="mdi mdi-arrow-right"></i
+                      ></dui-button>
+                    </div> `
+                )
+            ]
+          ],
+          () =>
+            html` <doid-symbol class="block mt-12">
                 <span slot="h1" class="text-base"> DOID recovery successful </span>
               </doid-symbol>
               <div class="text-center text-sm">You’ve successfully recovered your DOID name.</div>
@@ -199,11 +208,9 @@ export class ViewImport extends TailwindElement(style) {
                 </ul>
               </div>
               <div class="mt-2 text-center">
-                <dui-button @click=${() => this.routeGoto('/start')} class="secondary h-30 w-30">GOT IT</dui-button>
-              </div>
-            `
-          )}
-        </div>
+                <dui-button @click=${() => goto('/main')} class="secondary h-30 w-30">GOT IT</dui-button>
+              </div>`
+        )}
       </div>
     </div>`
   }

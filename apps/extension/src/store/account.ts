@@ -8,12 +8,13 @@ class AccountStore extends State {
   // @property({ value: [] }) accounts!: NameInfo[]
   @property({ value: String }) name!: string
   @property({ value: String }) mainAddress!: string
+  @property({ value: String }) owner!: string
 
   get empty() {
     return !this.pending && (!this.name || !this.mainAddress)
   }
   get account() {
-    return { name: this.name, mainAddress: this.mainAddress }
+    return { name: this.name, mainAddress: this.mainAddress, owner: this.owner }
   }
 
   search = async (keyword: string, mark = false) => {
@@ -24,6 +25,7 @@ class AccountStore extends State {
       if (mark) {
         this.name = name
         this.mainAddress = mainAddress || ''
+        this.owner = owner ?? ''
       }
       res = { name, owner, mainAddress }
     }
