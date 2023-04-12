@@ -29,6 +29,12 @@ export class ViewRestore extends TailwindElement('') {
     }
     this.pending = false
   }
+  connectedCallback(): void {
+    super.connectedCallback()
+    window.DOID.subscribe('DOID_account_change', () => {
+      console.log('DOID_account_change')
+    })
+  }
   render() {
     return html`<div class="sample">
       <div class="dui-container">
