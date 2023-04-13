@@ -1,5 +1,6 @@
 // src: metamask-extension/app/scripts/platforms/extension.js
 import browser, { Tabs } from 'webextension-polyfill'
+import emitter from '@lit-web3/core/src/emitter'
 
 // Simple assert
 export const envType = /^\/service-worker.*\.js$/.test(location.pathname)
@@ -33,7 +34,8 @@ export const closeCurrentWindow = async () => {
   if (windowDetails.id) browser.windows.remove(windowDetails.id)
 }
 
-export const openInBrowser = (path = '', keepSelf = false) => {
+export const openInFullscreen = (path = '', keepSelf = false) => {
+  if (isFullscreen) return emitter.emit('router-goto', path)
   openTab({ url: browser.runtime.getURL(path) })
   if (!keepSelf) window.close()
 }
@@ -42,7 +44,9 @@ export const addOnRemovedListener = (listener: any) => browser.windows.onRemoved
 
 export const getAllWindows = async () => await browser.windows.getAll()
 
-export const getActiveTabs = async () => await browser.tabs.query({ active: true })
+export const getAllTabs = async (opts = {}) => await browser.tabs.query(opts)
+
+export const getActiveTabs = async () => await getAllTabs({ active: true })
 
 export const currentTab = async () => await browser.tabs.getCurrent()
 

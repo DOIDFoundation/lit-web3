@@ -1,6 +1,6 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import popupMessenger from '~/lib.next/messenger/popup'
-import { openInBrowser } from '~/lib.next/utils.ext'
+import { openInFullscreen } from '~/lib.next/utils.ext'
 
 // Components
 import '@lit-web3/dui/src/input/pwd'
@@ -29,26 +29,19 @@ export class ViewUnlock extends TailwindElement(style) {
     this.disabled = !Boolean(this.pwd)
   }
 
-  submitPwd = async () => {
-    // S redirect to unlock for temporarily
-    // popupMessenger.send('reply_DOID_setup', { publicKey: 'jaksdiuzoxdf', address: { BTC: 'd', ETH: 'dsad' } })
-    // E
+  unlock = async () => {
     try {
       await popupMessenger.send('unlock', this.pwd)
-      // await walletStore.submitPassword(this.pwd)
       if (location.pathname.includes('generate-phrase')) {
         this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd, type: 'unlock' })
         return
       }
-      goto(`/main`)
-    } catch (error: any) {
-      console.log(error.message, 'error')
-      this.err = error.message ?? error
+      goto(`/`)
+    } catch (err: any) {
+      this.err = err.message ?? err
     }
   }
-  forgot = () => {
-    openInBrowser('/restore')
-  }
+  forgot = () => openInFullscreen('/restore')
 
   render() {
     return html`<div class="unlock">
@@ -79,7 +72,7 @@ export class ViewUnlock extends TailwindElement(style) {
             <div class="my-2">
               <dui-button
                 class="block w-full secondary !rounded-full h-12"
-                @click=${this.submitPwd}
+                @click=${this.unlock}
                 ?disabled=${this.disabled}
                 block
                 >Unlock</dui-button

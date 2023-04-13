@@ -1,6 +1,7 @@
 import { Messenger } from './base'
 import * as Background from 'webext-bridge/background'
 import { publicMethods } from '~/lib.next/constants'
+import { getAllTabs } from '~/lib.next/utils.ext'
 
 // background <-> popup
 export const backgroundToPopup = new Messenger('background', 'popup', Background)
@@ -27,6 +28,17 @@ class BackgroundMessenger extends Messenger implements MESSENGER {
       else promise = internalPromise
     } catch {}
     return await promise
+  }
+  // TODO: This's not safe currently (ref: https://github.com/zikaari/webext-bridge/issues/37)
+  broadcast: MessengerSend = async (method, params = {}) => {
+    if (publicMethods.includes(method)) {
+      const allTabs = await getAllTabs()
+      allTabs.forEach(({ id: tabId }) => {
+        backgroundToInpage.send(method, params, `window@${tabId}`)
+      })
+    } else {
+      backgroundToPopup.send(method, params)
+    }
   }
 }
 
