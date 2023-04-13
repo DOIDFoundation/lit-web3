@@ -16,7 +16,7 @@ export class AccountSwitch extends TailwindElement(null) {
     return !this.name || !this.address
   }
   get dropable() {
-    return getAccounts().length > 1
+    return true //getAccounts().length > 1
   }
   get isUnlocked() {
     //TODO: get from keyring
@@ -49,8 +49,8 @@ export class AccountSwitch extends TailwindElement(null) {
   render() {
     if (this.empty) return ''
     return html`<div class="relative">
-      <dui-button sm @click=${this.show} class="inline-flex items-center !bg-gray-900 rounded">
-        <dui-name-address avatar .name=${this.name} .address=${this.address}></dui-name-address>${when(
+      <dui-button md @click=${this.show} text class="inline-flex items-center">
+        <dui-name-address avatar .name=${this.name} .address=${this.address} class="tex"></dui-name-address>${when(
           this.dropable,
           () =>
             html`<i
@@ -60,7 +60,7 @@ export class AccountSwitch extends TailwindElement(null) {
       </dui-button>
       ${when(
         this.menu,
-        () => html`<dui-drop show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
+        () => html`<dui-drop alignLeft show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
           <account-menu @switch=${this.onSwitch}></account-menu>
         </dui-drop>`
       )}

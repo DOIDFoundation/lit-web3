@@ -33,17 +33,6 @@ export class ViewMain extends TailwindElement(style) {
   }
   render() {
     return html`<div class="main">
-      <div class="py-2 flex justify-between items-center border-b">
-        <div></div>
-        <div class="flex flex-col items-center">
-          <span class="text-lg">${this.account.name}</span>
-          <dui-address class="text-xs text-gray-500" .address=${this.account.mainAddress}></dui-address>
-        </div>
-        <div>
-          <i class="text-2xl mdi mdi-dots-vertical"></i>
-        </div>
-      </div>
-
       ${when(
         this.address,
         () => html`<div class="flex gap-2">

@@ -5,6 +5,7 @@ import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
 
+popupMessenger.on('keyring_update', () => {})
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
 popupMessenger.on('popup_goto', ({ data }) => emitter.emit('router-goto', (data as any).path))
 
@@ -64,6 +65,14 @@ export const routes = [
     }
   },
   {
+    ...homeView,
+    path: '/create',
+    enter: async () => {
+      await import('~/views/home')
+      return true
+    }
+  },
+  {
     name: 'create',
     path: '/create/:doid?',
     render: ({ doid = '' }) => html`<view-create .doid=${safeDecodeURIComponent(doid)}></view-create>`,
@@ -74,7 +83,7 @@ export const routes = [
   },
   {
     name: 'restore',
-    path: '/restore/:doid',
+    path: '/restore/:doid?',
     render: ({ doid = '' }) => html`<view-restore .name=${safeDecodeURIComponent(doid)}></view-restore>`,
     enter: async () => {
       await import('~/views/restore')

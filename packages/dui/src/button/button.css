@@ -8,7 +8,7 @@
 }
 
 .dui-button {
-  @apply gap-1 text-white px-3 text-base rounded-md;
+  @apply gap-1 text-white px-3 leading-tight text-sm sm_text-base rounded-md;
   background: var(--btnBg);
   padding: 0.5rem 0.875rem;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;

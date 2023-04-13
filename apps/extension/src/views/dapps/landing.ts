@@ -36,12 +36,12 @@ export class ViewLanding extends TailwindElement(null) {
   render() {
     return html`<div class="dapp-landing">
       <div class="dui-container">
-        <doid-symbol class="block mt-12"> </doid-symbol>
+        <doid-symbol sm class="block mt-12"></doid-symbol>
         <div class="my-4 text-xs">
           Setting up main addresses for
           <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
         </div>
-        <div class="mt-6 my-10 text-xs text-gray-400">
+        <div class="mt-4 my-7 text-xs text-gray-400">
           Main addresses are the default addresses of your DOID on all chains. They are generated automatically with one
           single easy setup and will not change until you modify them.
         </div>
@@ -55,7 +55,7 @@ export class ViewLanding extends TailwindElement(null) {
               >Use owner address(<dui-address class="mx-1" .address=${this.ownerAddress}></dui-address>) as main address
               for ETH, main addresses for all other chains will be generated automatically</dui-button
             >
-            <div class="my-2 text-center">or</div>
+            <p class="my-1 text-center text-gray-500">or</p>
             <dui-button class="outlined w-full my-2" @click=${() => goto(`/import3rd`)}
               >Use a Secret Recovery Phrase to generate main addresses for all chains</dui-button
             >`

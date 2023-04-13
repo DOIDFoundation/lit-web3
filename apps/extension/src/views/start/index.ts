@@ -23,9 +23,17 @@ export class ViewStart extends TailwindElement(style) {
     if (!this.name) return
     this.pending = true
     const { owner, mainAddress } = await accountStore.search(this.name, true)
+    if (!owner || owner == '0x0000000000000000000000000000000000000000') {
+      goto(`/create/${this.wrapName}`)
+      return
+    }
     this.ownerAddress = owner
     this.mainAddress = mainAddress
     this.pending = false
+  }
+
+  cancel() {
+    history.back()
   }
 
   connectedCallback() {
@@ -82,7 +90,7 @@ export class ViewStart extends TailwindElement(style) {
                     () => html` with owner (<dui-address .address=${this.ownerAddress} short></dui-address>)`
                   )}</dui-button
                 >
-                <dui-button class="w-full outlined">Cancel</dui-button>
+                <dui-button @click=${this.cancel} class="w-full outlined">Cancel</dui-button>
               </div>
             `
           )}

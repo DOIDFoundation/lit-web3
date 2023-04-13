@@ -74,7 +74,9 @@ export class ViewRestore extends TailwindElement(style) {
           </div></phrase-to-secret
         >
 
-        <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+        <div class="lg_max-w-xs">
+          <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+        </div>
         ${when(
           this.err,
           () => html`<div class="-mt-4"></div><span class="text-red-500 text-xs">${this.err}</span></div>`

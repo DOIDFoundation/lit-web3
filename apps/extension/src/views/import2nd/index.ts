@@ -113,12 +113,12 @@ export class ViewImport extends TailwindElement(style) {
         ${when(
           this.step == 1,
           () => html`
-            <doid-symbol class="block mt-12">
+            <doid-symbol sm class="block mt-12">
               <div slot="h1">
                 <div class="text-lg">You are setting</div>
-                <span class="text-sm">${this.ownerAddr}</span>
+                <span class="text-xs">${this.ownerAddr}</span>
               </div>
-              <p slot="msg">as main addresses for EVM chains for ${this.wrapName}</p>
+              <p slot="msg">as main addresses for EVM chains for <b>${this.wrapName}</b></p>
             </doid-symbol>
 
             <span slot="label">
@@ -135,7 +135,7 @@ export class ViewImport extends TailwindElement(style) {
         ${when(
           this.step == 2,
           () => html`
-            <doid-symbol class="block mt-12">
+            <doid-symbol sm class="block mt-12">
               <span slot="h1" class="text-base">Create password</span>
             </doid-symbol>
             <div class="max-w-xs mx-auto">

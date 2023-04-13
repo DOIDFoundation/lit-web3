@@ -117,7 +117,7 @@ export class ViewPhrase extends TailwindElement(style) {
     return html`<div class="gen-phrase">
       <div class="dui-container">
         <div class="dui-container">
-          <doid-symbol class="block my-4">
+          <doid-symbol sm class="block my-4">
             <span slot="h1" class="text-xl"></span>
             <p slot="msg"></p>
           </doid-symbol>

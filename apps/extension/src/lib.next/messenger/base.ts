@@ -16,6 +16,8 @@ export class Messenger implements MESSENGER {
     this.emitter = emitter
   }
   send: MessengerSend = async (method, params = {}, dest = this.dest) => {
+    if (!(dest as string).includes(this.dest))
+      throw new Error(`Wrong destination: expected: ${this.dest}, currently: ${dest as string}`)
     return await this.messenger.sendMessage(method, params, dest)
   }
   on: typeof onMessage = (...args: any) => this.messenger.onMessage(...args)

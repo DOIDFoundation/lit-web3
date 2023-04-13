@@ -11,8 +11,7 @@ import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
 import { StateController, walletStore } from './store'
 import { connectToAccountManager, getConnectStream } from './lib.legacy/ui'
-import { goto } from '@lit-web3/dui/src/shared/router'
-import popupMessenger from '~/lib.next/messenger/popup'
+import doid_icon from '@lit-web3/dui/src/i/doid.svg'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
@@ -57,13 +56,16 @@ export class AppMain extends TailwindElement('') {
     return html`${when(
         this.showHeader,
         () =>
-          html`<dui-header logoHref="/"
-            ><div slot="wallet">
-              <account-switch></account-switch>
+          html`<dui-header logoHref="/">
+            <div slot="left"><account-switch></account-switch></div>
+            <div slot="right" class="block w-6 h-6 mx-auto">
+              <img class="w-full h-full object-contain select-none pointer-events-none" src="${doid_icon}" />
             </div>
+            <div slot="logo"></div>
+            <div slot="wallet"></div>
           </dui-header>`
       )}
-      <main class="dui-app-main py-0">
+      <main class="dui-app-main pt-4 pb-8">
         <slot></slot>
       </main>`
   }

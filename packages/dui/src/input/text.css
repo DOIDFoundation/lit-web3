@@ -2,7 +2,7 @@
   @apply flex w-full mx-auto relative py-5;
   & input[type] {
     font-family: var(--fontFamily);
-    @apply h-8 relative inline-flex w-full p-6 px-3 rounded-md text-base bg-white;
+    @apply h-8 relative inline-flex w-full p-5 sm_p-6 px-3 rounded-md text-sm sm_text-base bg-white;
     border: 1px solid #ccc;
   }
   &[disabled] {
@@ -14,7 +14,7 @@
   &.sm {
     @apply py-0;
     & input[type] {
-      @apply h-6 text-sm py-4;
+      @apply h-5 sm_h-6 text-sm py-4;
     }
     & .dui-input-right,
     & .dui-input-left {
@@ -37,7 +37,7 @@
   }
   & .dui-input-right,
   & .dui-input-left {
-    @apply h-6 absolute flex justify-center items-center p-6 pr-2 pl-2 rounded-r-md pointer-events-none;
+    @apply h-5 sm_h-6 absolute flex justify-center items-center p-5 sm_p-6 pr-1 sm_pr-2 pl-2 rounded-r-md pointer-events-none;
     min-width: 1.5rem;
     z-index: 1;
     right: 1px;

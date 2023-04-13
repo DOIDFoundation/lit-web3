@@ -134,7 +134,7 @@ export class ViewImport extends TailwindElement(null) {
           [
             [
               1,
-              () => html` <doid-symbol class="block mt-12"></doid-symbol>
+              () => html` <doid-symbol sm class="block mt-12"></doid-symbol>
                 <div class="my-4 text-xs">
                   You are recovering
                   <dui-link class="link ml-1 underline">${this.account.name}</dui-link>
@@ -162,11 +162,11 @@ export class ViewImport extends TailwindElement(null) {
               () =>
                 when(
                   this.pending,
-                  () => html`<doid-symbol class="block mt-12">
+                  () => html`<doid-symbol sm class="block mt-12">
                       <span slot="h1" class="text-base">Recovering ${this.account.name}</span>
                     </doid-symbol>
                     <div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
-                  () => html`<doid-symbol class="block mt-12">
+                  () => html`<doid-symbol sm class="block mt-12">
                       <span slot="h1" class="text-base">Create password</span>
                     </doid-symbol>
                     <div class="my-4 text-xs">
@@ -189,7 +189,7 @@ export class ViewImport extends TailwindElement(null) {
             ]
           ],
           () =>
-            html` <doid-symbol class="block mt-12">
+            html` <doid-symbol sm class="block mt-12">
                 <span slot="h1" class="text-base"> DOID recovery successful </span>
               </doid-symbol>
               <div class="text-center text-sm">You’ve successfully recovered your DOID name.</div>
