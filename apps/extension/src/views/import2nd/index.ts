@@ -116,9 +116,9 @@ export class ViewImport extends TailwindElement(style) {
             <doid-symbol sm class="block mt-12">
               <div slot="h1">
                 <div class="text-lg">You are setting</div>
-                <span class="text-sm">${this.ownerAddr}</span>
+                <span class="text-xs">${this.ownerAddr}</span>
               </div>
-              <p slot="msg">as main addresses for EVM chains for ${this.wrapName}</p>
+              <p slot="msg">as main addresses for EVM chains for <b>${this.wrapName}</b></p>
             </doid-symbol>
 
             <span slot="label">

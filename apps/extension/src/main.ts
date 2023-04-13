@@ -65,7 +65,7 @@ export class AppMain extends TailwindElement('') {
             <div slot="wallet"></div>
           </dui-header>`
       )}
-      <main class="dui-app-main py-0">
+      <main class="dui-app-main pt-4 pb-8">
         <slot></slot>
       </main>`
   }

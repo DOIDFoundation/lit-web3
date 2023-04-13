@@ -76,7 +76,7 @@ export class PhraseToSecret extends TailwindElement(style) {
         ${repeat(
           this.phrases,
           (phrases: string, idx: number) => html`<div class="flex items-center gap-2 lg_gap-4">
-            <b class="block w-4 shrink-0">${idx + 1}.</b>
+            <b class="block w-4 shrink-0 text-xs lg_text-base">${idx + 1}.</b>
             <dui-input-pwd
               .idx=${idx}
               dense

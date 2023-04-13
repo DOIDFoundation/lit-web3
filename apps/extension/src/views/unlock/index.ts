@@ -1,5 +1,6 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import popupMessenger from '~/lib.next/messenger/popup'
+import { openInBrowser } from '~/lib.next/utils.ext'
 
 // Components
 import '@lit-web3/dui/src/input/pwd'
@@ -45,6 +46,10 @@ export class ViewUnlock extends TailwindElement(style) {
       this.err = error.message ?? error
     }
   }
+  forgot = () => {
+    openInBrowser('/restore')
+  }
+
   render() {
     return html`<div class="unlock">
       <div class="dui-container">
@@ -80,7 +85,9 @@ export class ViewUnlock extends TailwindElement(style) {
                 >Unlock</dui-button
               >
             </div>
-            <p class="text-center my-4 text-xs"><dui-link href="/restore" class="link">Forgot?</dui-link></p>
+            <p class="text-center my-4 text-xs">
+              <dui-link @click=${this.forgot} class="link">Forgot?</dui-link>
+            </p>
           </div>
         </div>
       </div>
