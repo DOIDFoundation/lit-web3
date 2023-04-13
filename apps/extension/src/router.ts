@@ -4,13 +4,14 @@ import { html } from 'lit'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
+import { isUnlock } from '~/lib.next/popup'
 
 popupMessenger.on('keyring_update', () => {})
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
 popupMessenger.on('popup_goto', ({ data }) => emitter.emit('router-goto', (data as any).path))
 
 // const beforeEachRedirected = async (): Promise<boolean> => {
-//   const _isUnlock = await popupMessenger.send('state_isunlock')
+//   const _isUnlock = await isUnlock()
 //   if (!_isUnlock) {
 //     emitter.emit('router-goto', '/unlock')
 //     return true
@@ -29,7 +30,7 @@ const homeView = {
       return true
     }
 
-    if (!(await popupMessenger.send('state_isunlock'))) {
+    if (!(await isUnlock())) {
       emitter.emit('router-goto', '/unlock')
       return false
     }
@@ -56,10 +57,12 @@ export const routes = [
   {
     name: 'unlock',
     path: '/unlock',
-    render: () => {
-      return html`<view-unlock></view-unlock>`
-    },
+    render: () => html`<view-unlock></view-unlock>`,
     enter: async () => {
+      if (await isUnlock()) {
+        emitter.emit('router-goto', '/')
+        return false
+      }
       await import('~/views/unlock')
       return true
     }

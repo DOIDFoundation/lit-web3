@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -8,20 +8,26 @@ import '@lit-web3/dui/src/link'
 import style from './phrase.css?inline'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { StateController, walletStore } from '~/store'
+import { accountStore } from '~/store/account'
+import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('view-recovery')
 export class ViewAddress extends TailwindElement(style) {
-  constructor() {
-    super()
-    // this.initPhrase()
-  }
   state = new StateController(this, walletStore)
-
+  bindAccount: any = new StateController(this, accountStore)
   @property() phrase = ''
+  @property() pwd = ''
   @property() placeholder = 'Password'
   @state() phraseElements: string[] = []
   @state() validate = false
   @state() randomPhrase: { name: String; active: Boolean }[] = []
+
+  get account() {
+    return accountStore.account
+  }
+  get phraseArr() {
+    return this.phrase.split(' ')
+  }
 
   onInput = async (e: CustomEvent) => {
     const { val = '', error = '', msg = '' } = {}
@@ -29,24 +35,16 @@ export class ViewAddress extends TailwindElement(style) {
     if (error) return
     // this.pwd = val
   }
-  routeGoto = (path: string) => {
-    goto(`/generate-phrase/${path}`)
+  routeGoto = (step: string) => {
+    goto(`/generate-phrase/${step}`)
   }
   // gas punch sport hen claim click scene employ zoo catch luxury east
-  initPhrase = () => {
-    const _phrase = this.phrase.split(' ')
-    // ? this.phrase
-    // : 'report ill kick deer daughter spice puppy shine bean corn forget protec'.split(' ')
-    console.log(this.phrase, '_phrase')
-    const _randomPhrase = _phrase.sort(() => (Math.random() > 0.5 ? -1 : 1))
+  confuse = () => {
+    if (!this.phraseArr.length) return
+    const _randomPhrase = [...this.phraseArr].sort(() => (Math.random() > 0.5 ? -1 : 1))
     _randomPhrase.forEach((item: string) => {
       this.randomPhrase.push({ name: item, active: false })
     })
-    console.log(this.randomPhrase)
-  }
-  connectedCallback() {
-    super.connectedCallback()
-    this.initPhrase()
   }
   onRecovery = (item: any) => {
     if (!item.active) {
@@ -56,7 +54,6 @@ export class ViewAddress extends TailwindElement(style) {
       this.phraseElements.splice(idx, 1)
     }
     this.validate = this.phrase === this.phraseElements.join(' ')
-    console.log(this.phraseString)
     item.active = !item.active
     this.phraseElements = this.phraseElements.splice(0)
     // this.requestUpdate('phraseElements')
@@ -65,9 +62,20 @@ export class ViewAddress extends TailwindElement(style) {
     return this.phraseElements.join(' ')
   }
   submit = async () => {
-    await walletStore.setSeedPhraseBackedUp(true)
-    await walletStore.setCompletedOnboarding()
-    goto('/main')
+    try {
+      await popupMessenger.send('internal_create_vault', {
+        doid: this.account.name,
+        pwd: this.pwd,
+        mnemonic: this.phrase
+      })
+    } catch (e) {
+      console.error(e)
+    }
+    // await walletStore.createNewVaultAndKeychain(this.pwd)
+    // await walletStore.setSeedPhraseBackedUp(true)
+    // await walletStore.setCompletedOnboarding()
+    // goto('/main')
+
     // const res = await swGlobal.Controller.keyringController.memStore.getState()
     // const storeData = await chrome.storage.local.get()
     // const data = Object.assign(storeData.data, {
@@ -78,6 +86,12 @@ export class ViewAddress extends TailwindElement(style) {
     // await chrome.storage.local.set({ data })
     // console.log(await chrome.storage.local.get(), 'chrome')
   }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.confuse()
+  }
+
   render() {
     return html` <div class="dui-container">
       <div class="text-lg font-bold mt-2 text-center">Confirm Secret Recovery Phrase</div>
@@ -97,9 +111,7 @@ export class ViewAddress extends TailwindElement(style) {
       </div>
       <!-- <div>${this.phraseElements}----</div> -->
       <div class="mt-4 flex justify-between">
-        <dui-button
-          @click=${() => this.routeGoto('generate-addresses')}
-          class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+        <dui-button @click=${() => this.routeGoto('2')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
           ><i class="mdi mdi-arrow-left text-gray-500"></i
         ></dui-button>
         <dui-button

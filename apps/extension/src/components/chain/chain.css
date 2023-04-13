@@ -1,7 +1,7 @@
 :host {
 }
 .chain-icon {
-  @apply w-10 h-10 rounded-full bg-contain bg-center bg-no-repeat bg-white;
+  @apply w-10 h-10 rounded-full bg-contain bg-center bg-no-repeat bg-white cursor-pointer;
   &.eth {
     background-image: url('~/assets/ethereum.svg');
   }

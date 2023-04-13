@@ -57,7 +57,7 @@ export class ViewRestore extends TailwindElement(style) {
     return html`<div class="restore">
       <div class="dui-container">
         <div class="flex items-center">
-          <dui-link back class="link"><i class="mdi mdi-arrow-left"></i>Back</dui-link>
+          <dui-link href="/unlock" class="link"><i class="mdi mdi-arrow-left"></i>Back</dui-link>
         </div>
         <h1 class="my-4 text-4xl">Restore wallet</h1>
 
@@ -74,7 +74,9 @@ export class ViewRestore extends TailwindElement(style) {
           </div></phrase-to-secret
         >
 
-        <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+        <div class="lg_max-w-xs">
+          <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+        </div>
         ${when(
           this.err,
           () => html`<div class="-mt-4"></div><span class="text-red-500 text-xs">${this.err}</span></div>`

@@ -9,7 +9,7 @@ export const DOID_setup: BackgroundService = {
   middlewares: [DOIDBodyParser(), yieldPopup(`/landing/:DOIDName`), autoClosePopup],
   fn: async ({ req, res }) => {
     // S
-    backgroundMessenger.send('DOID_account_change', { bb: 8 }, req.headers.origin)
+    backgroundMessenger.broadcast('DOID_account_change', { bb: 8 })
     // E
     backgroundMessenger.on('reply_DOID_setup', ({ data }) => {
       res.body = data
