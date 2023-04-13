@@ -1,5 +1,4 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -99,11 +98,7 @@ export class ViewPwd extends TailwindElement(style) {
         </label>
       </div>
       <div class="mt-4 flex justify-between">
-        <div>
-          <!-- <dui-button @click=${() => history.back()} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-              ><i class="mdi mdi-arrow-left text-gray-500"></i
-            ></dui-button> -->
-        </div>
+        <div></div>
 
         <dui-button
           ?disabled=${this.btnDisabled}
