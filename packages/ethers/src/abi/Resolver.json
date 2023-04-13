@@ -300,9 +300,7 @@
   {
     "inputs": [
       { "internalType": "string", "name": "name", "type": "string" },
-      { "internalType": "address", "name": "owner", "type": "address" },
-      { "internalType": "bytes32", "name": "secret", "type": "bytes32" },
-      { "internalType": "bytes[]", "name": "data", "type": "bytes[]" }
+      { "internalType": "address", "name": "owner", "type": "address" }
     ],
     "name": "register",
     "outputs": [],

@@ -23,6 +23,7 @@ export const getCommitment = async (name: string): Promise<Commitment | undefine
 export const clearCommitment = async (name: string) => (await getStorage(name)).remove()
 
 export const makeCommitment = async (name: string, secret = seed, data = []): Promise<Commitment> => {
+  throw new Error('deprecated')
   const storage = await getStorage(name)
   const saved = await storage.get()
   if (saved) return saved
@@ -36,6 +37,7 @@ export const makeCommitment = async (name: string, secret = seed, data = []): Pr
 }
 
 export const commit = async (name: string) => {
+  throw new Error('deprecated')
   const commitment = await makeCommitment(name)
   const contract = await getResolverContract()
   const [method, overrides] = ['commit', {}]
@@ -61,7 +63,7 @@ export const commit = async (name: string) => {
 export const register = async (name: string, secret = seed, data = []) => {
   const contract = await getResolverContract()
   const [method, overrides] = ['register', {}]
-  const parameters = [bareTLD(name), await getAccount(), formatBytes32String(secret), data]
+  const parameters = [bareTLD(name), await getAccount()]
   await assignOverrides(overrides, contract, method, parameters)
   const call = contract[method](...parameters)
   const tx = new txReceipt(call, {
