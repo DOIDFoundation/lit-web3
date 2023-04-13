@@ -4,8 +4,6 @@ import '@lit-web3/dui/src/button'
 import '~/components/phrase'
 import '~/components/pwd_equal'
 
-import { validateMnemonic } from 'ethereum-cryptography/bip39'
-import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
 import { AddressType, getAddress } from '~/lib.legacy/phrase'
 import ipfsHelper from '~/lib.next/ipfsHelper'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
@@ -60,13 +58,12 @@ export class ViewImport extends TailwindElement(null) {
     if (!addresses || !this.account.name) return
     try {
       this.pending = true
-      const res = await popupMessenger.send('internal_recovery', {
+      await popupMessenger.send('internal_recovery', {
         doid: this.account.name,
         json: { addresses },
         pwd: this.pwd,
         mnemonic: this.mnemonic
       })
-      console.info('res:', res)
       this.next()
     } catch (e) {
       popupMessenger.log(e)

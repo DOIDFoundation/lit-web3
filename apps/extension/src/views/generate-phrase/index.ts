@@ -16,7 +16,7 @@ import { StateController, walletStore } from '~/store'
 
 @customElement('view-phrase')
 export class ViewPhrase extends TailwindElement(style) {
-  state = new StateController(this, walletStore)
+  // state = new StateController(this, walletStore)
   constructor() {
     super()
     // goto(`/unlock${location.pathname}`)
@@ -25,18 +25,18 @@ export class ViewPhrase extends TailwindElement(style) {
   @property() ROUTE?: any
   @property() steps = [
     {
-      title: 'Create password',
       id: 1,
+      title: 'Create password',
       pathName: 'create-password'
     },
     {
-      title: 'Generate Addresses',
       id: 2,
+      title: 'Generate SecretRecovery Phrase',
       pathName: 'generate-addresses'
     },
     {
-      title: 'Confirm secret recovery phrase',
       id: 3,
+      title: 'Confirm secret recovery phrase',
       pathName: 'recovery-phrase'
     }
   ]
@@ -46,24 +46,29 @@ export class ViewPhrase extends TailwindElement(style) {
   @state() pending = false
   @property() phrase = ''
 
+  get curStep() {
+    return this.ROUTE?.step ?? 1
+  }
+  get activeRoute() {
+    return this.steps.find((item) => item.id == this.curStep)
+  }
+  get activePathName() {
+    return this.activeRoute?.pathName
+  }
+
   onInput = async (e: CustomEvent) => {
     const { val = '', error = '', msg = '' } = {}
     this.err = msg
     if (error) return
     this.pwd = val
   }
-
-  get activeRoute() {
-    const pathName = this.ROUTE?.step === '' ? 'create-password' : this.ROUTE.step
-    return this.steps.find((item) => item.pathName === pathName)
-  }
   getStepPage() {
-    if (this.activeRoute?.pathName === 'create-password') {
+    if (this.activePathName === 'create-password') {
       return html`<view-create-pwd @routeGoto=${this.routeGoto}></view-create-pwd>`
-    } else if (this.activeRoute?.pathName === 'generate-addresses') {
-      return html`<view-create-addresses @routeGoto=${this.routeGoto} .phrase=${this.phrase}></view-create-addresses>`
-    } else if (this.activeRoute?.pathName === 'recovery-phrase') {
-      return html`<view-recovery .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-recovery>`
+    } else if (this.activePathName === 'generate-addresses') {
+      return html`<view-create-addresses @routeGoto=${this.routeGoto} .pwd=${this.pwd}></view-create-addresses>`
+    } else if (this.activePathName === 'recovery-phrase') {
+      return html`<view-recovery .pwd=${this.pwd} .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-recovery>`
     } else if (this.ROUTE?.step === 'unlock') {
       return html`<view-unlock .phrase=${this.phrase} @routeGoto=${this.routeGoto}></view-unlock>`
     } else {
@@ -71,40 +76,40 @@ export class ViewPhrase extends TailwindElement(style) {
     }
   }
   routeGoto = async (e: CustomEvent) => {
-    if (e.detail.path === 'generate-addresses') {
-      if (e.detail.type && e.detail.type === 'unlock') {
-        // await walletStore.submitPassword(e.detail.pwd)
+    const { path, step, type, pwd, phrase } = e.detail
+    if (path === 'generate-addresses' || step == 2) {
+      if (type && type === 'unlock') {
+        // await walletStore.submitPassword(pwd)
       } else {
-        walletStore.createNewVaultAndKeychain(e.detail.pwd)
+        this.pwd = pwd
       }
-      this.phrase = await walletStore.verifySeedPhrase()
+      // this.phrase = await walletStore.verifySeedPhrase()
+    } else if (step == 3) {
+      this.pwd = pwd
+      this.phrase = phrase
     }
-    console.log(this.phrase, 'parase')
 
-    goto(`/generate-phrase/${e.detail.path}`)
+    goto(`/generate-phrase/${step || path}`)
   }
+
   getIsInitialized = async () => {
-    if (walletStore.doidState.seedPhraseBackedUp) {
+    const { seedPhraseBackedUp, isInitialized, isUnlocked } = walletStore.doidState ?? {}
+    if (seedPhraseBackedUp) {
       goto('/main')
     }
-    // if (!walletStore.doidState.seedPhraseBackedUp) {
+    // if (!seedPhraseBackedUp) {
     //   goto('/generate-phrase/create-password')
     // }
-    if (
-      walletStore.doidState.isInitialized &&
-      !walletStore.doidState.seedPhraseBackedUp &&
-      !walletStore.doidState.isUnlocked
-    ) {
+    if (isInitialized && !seedPhraseBackedUp && !isUnlocked) {
       goto('/generate-phrase/unlock')
       return
     }
-    if (walletStore.doidState.isUnlocked) {
+    if (isUnlocked) {
       this.phrase = await walletStore.verifySeedPhrase()
     }
   }
-  async connectedCallback() {
-    console.log('callback')
 
+  async connectedCallback() {
     super.connectedCallback()
     await this.getIsInitialized()
   }
@@ -124,7 +129,7 @@ export class ViewPhrase extends TailwindElement(style) {
                   ${this.steps.map(
                     (item) =>
                       html`<li
-                        class="step-item ${item.pathName === this.activeRoute?.pathName ? 'active' : ''} 
+                        class="step-item ${item.pathName === this.activePathName ? 'active' : ''} 
                       ${this.activeRoute?.id && item.id < this.activeRoute.id ? 'finshed' : ''}"
                       >
                         ${item.title}
@@ -133,8 +138,6 @@ export class ViewPhrase extends TailwindElement(style) {
                 </ul>
               `
             )}
-
-            <!-- <div>${this.activeRoute}---</div> -->
             ${this.getStepPage()}
           </div>
         </div>
