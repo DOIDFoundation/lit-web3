@@ -193,16 +193,16 @@ export class ViewImport extends TailwindElement(null) {
           ],
           () =>
             html` <doid-symbol sm class="block mt-12">
-                <span slot="h1" class="text-base"> DOID recovery successful </span>
+                <span slot="h1" class="text-base">DOID recovery successful</span>
               </doid-symbol>
-              <div class="text-center text-sm">You’ve successfully recovered your DOID name.</div>
+              <div class="text-center text-sm">You've successfully recovered your DOID name.</div>
               <div class="text-sm text-center">
-                Keep your Secret Recovery Phrase safe and secret -- it’s your responsibility!
+                Keep your Secret Recovery Phrase safe and secret -- it's your responsibility!
               </div>
-              <div class="text-sm text-center">Remeber:</div>
-              <div class="text-sm text-center">
+              <div class="text-sm text-center my-2">Remeber:</div>
+              <div class="text-sm text-left my-2">
                 <ul>
-                  <li>DOID can’t recover your Secret Recovery Phrase.</li>
+                  <li>DOID can't recover your Secret Recovery Phrase.</li>
                   <li>DOID will never ask you for your Secret Recovery Phrase.</li>
                   <li>Never share your Secret Recovery Phrase with anyone or risk your funds being stolen</li>
                 </ul>
