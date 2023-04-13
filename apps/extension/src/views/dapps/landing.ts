@@ -25,7 +25,7 @@ export class ViewLanding extends TailwindElement(null) {
     this.pending = true
     const { owner, mainAddress } = await accountStore.search(this.name, true)
     // uncomment this when mainAddress is read from IPFS
-    // if (mainAddress) goto(`/start/${this.wrapName}`)
+    // if (mainAddress) goto(`/start`)
     this.ownerAddress = owner
     this.pending = false
   }

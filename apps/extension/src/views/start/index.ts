@@ -5,9 +5,8 @@ import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { accountStore, StateController } from '~/store/account'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
-import style from './start.css?inline'
 @customElement('view-start')
-export class ViewStart extends TailwindElement(style) {
+export class ViewStart extends TailwindElement(null) {
   bindStore: any = new StateController(this, accountStore)
 
   @state() name = ''
@@ -20,13 +19,10 @@ export class ViewStart extends TailwindElement(style) {
   }
 
   async getAddressesByName() {
-    if (!this.name) return
     this.pending = true
-    const { owner, mainAddress } = await accountStore.search(this.name, true)
-    if (!owner || owner == '0x0000000000000000000000000000000000000000') {
-      goto(`/create/${this.wrapName}`)
-      return
-    }
+    this.name = accountStore.account.name
+    if (!this.name) return
+    const { owner, mainAddress } = accountStore.account
     this.ownerAddress = owner
     this.mainAddress = mainAddress
     this.pending = false

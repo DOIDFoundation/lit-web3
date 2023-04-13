@@ -9,6 +9,8 @@ class AccountStore extends State {
   @property({ value: String }) name!: string
   @property({ value: String }) mainAddress!: string
   @property({ value: String }) owner!: string
+  @property({ value: false }) registered!: boolean
+  @property({ value: false }) available!: boolean
 
   get empty() {
     return !this.pending && (!this.name || !this.mainAddress)
@@ -21,13 +23,15 @@ class AccountStore extends State {
     let res = null
     this.pending = true
     if (keyword) {
-      const { name, owner, mainAddress } = (await nameInfo(keyword)) as NameInfo
+      const { name, owner, mainAddress, registered, available } = (await nameInfo(keyword)) as NameInfo
       if (mark) {
         this.name = name
         this.mainAddress = mainAddress || ''
         this.owner = owner ?? ''
+        this.registered = registered ?? false
+        this.available = available ?? false
       }
-      res = { name, owner, mainAddress }
+      res = { name, owner, mainAddress, registered, available }
     }
     this.ts++
     this.pending = false

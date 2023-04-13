@@ -104,8 +104,8 @@ export const routes = [
   },
   {
     name: 'start',
-    path: '/start/:doid?',
-    render: ({ doid = '' }) => html`<view-start .name=${safeDecodeURIComponent(doid)}></view-start>`,
+    path: '/start',
+    render: () => html`<view-start></view-start>`,
     enter: async () => {
       await import('~/views/start')
       return true
