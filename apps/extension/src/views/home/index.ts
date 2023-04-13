@@ -1,6 +1,7 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { keyringStore, StateController } from '~/store/keyring'
+import { accountStore } from '~/store/account'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
 // Components
@@ -10,6 +11,7 @@ import '@lit-web3/dui/src/button'
 import style from './home.css?inline'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
+  account: any = new StateController(this, accountStore)
   bindStore: any = new StateController(this, keyringStore)
   @property() placeholder = 'e.g. satoshi.doid'
   @state() doid = ''
@@ -17,12 +19,22 @@ export class ViewHome extends TailwindElement(style) {
   @state() pending = false
 
   onInput = async (e: CustomEvent) => {
+    this.err = ''
     this.doid = e.detail
   }
 
-  submit() {
+  async submit() {
     if (!this.doid) return
-    goto(`/start/${wrapTLD(this.doid)}`)
+    this.pending = true
+    const { registered, available } = await accountStore.search(this.doid, true)
+    if (registered) {
+      goto('/start')
+    } else if (available) {
+      goto(`/create/${wrapTLD(this.doid)}`)
+    } else {
+      this.err = 'Unavailable'
+      this.pending = false
+    }
   }
 
   render() {
@@ -43,17 +55,15 @@ export class ViewHome extends TailwindElement(style) {
               ?disabled=${this.pending}
             >
               <span slot="label"><slot name="label">Start with your desired DOID name</slot></span>
-              <span slot="msg">
-                ${when(
-                  this.err,
-                  () => html`<span class="text-red-500">${this.err}</span>`,
-                  () => html`<slot name="msg"></slot>`
-                )}
-              </span>
+              <span slot="msg"> ${when(this.err, () => html`<span class="text-red-500">${this.err}</span>`)} </span>
               <span slot="right" class="-mr-1">
-                <dui-button @click=${this.submit} icon sm
-                  ><i class="mdi mdi-arrow-right-bold-circle-outline text-xl"></i
-                ></dui-button>
+                ${when(
+                  this.pending,
+                  () => html`<i class="mdi mdi-loading text-xl"></i>`,
+                  () => html`<dui-button @click=${this.submit} icon sm
+                    ><i class="mdi mdi-arrow-right-bold-circle-outline text-xl"></i
+                  ></dui-button>`
+                )}
               </span>
             </dui-input-text>
           </div>
