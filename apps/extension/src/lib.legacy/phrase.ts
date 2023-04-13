@@ -1,5 +1,5 @@
 import { AptosAccount } from 'aptos'
-import { mnemonicToSeed, validateMnemonic } from 'ethereum-cryptography/bip39'
+import { mnemonicToSeed, validateMnemonic, generateMnemonic } from 'ethereum-cryptography/bip39'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { toHex } from 'ethereum-cryptography/utils'
@@ -15,6 +15,10 @@ export const enum AddressType {
   solana = 'solana'
 }
 
+export const genMnemonic = () => {
+  const phrase = generateMnemonic(wordlist, 128)
+  return phrase
+}
 export const validatePhrase = (phrase = '') => {
   return validateMnemonic(phrase, wordlist)
 }

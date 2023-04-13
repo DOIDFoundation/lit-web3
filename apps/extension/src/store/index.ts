@@ -37,7 +37,6 @@ class Store extends State {
     } finally {
       const state = await this.promisifiedBackground?.getState()
       this.setState(state)
-      console.log(1121212)
     }
   }
   async createNewVaultAndKeychain(...args: any) {
