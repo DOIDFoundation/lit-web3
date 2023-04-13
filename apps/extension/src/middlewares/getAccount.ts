@@ -1,4 +1,4 @@
-import { storedAddress } from '~/lib.next/keyring'
+import { storedAddress } from '~/lib.next/preferences'
 
 export const getAccount: BackgroundMiddlware = async ({ req, state }, next) => {
   if (req.headers.isInner) {

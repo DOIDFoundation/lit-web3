@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, state, repeat } from '@lit-web3/dui/src/shared/TailwindElement'
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/input/pwd'
@@ -10,45 +10,68 @@ const logger = (...args: any) => console.info(`[dApp]`, ...args)
 
 @customElement('view-dapp')
 export class ViewRestore extends TailwindElement('') {
-  @state() nameAddresses = {}
+  @state() err: any = null
+  @state() msgs: any[] = []
   @state() pending = false
-  @state() chainAddresses = {}
-  request = async () => {
+  @state() res_DOID_setup = null
+  @state() res_DOID_name = null
+
+  reset = () => {
+    this.err = null
     this.pending = true
-    this.nameAddresses = {}
+  }
+
+  req = window.DOID.request
+
+  req_DOID_setup = async () => {
+    this.reset()
     try {
-      // const res = await window.DOID.request({ method: 'eth_requestAccounts' })
-      // console.log(res)
-      this.nameAddresses = await window.DOID.request({ method: 'DOID_setup', params: ['zzzxxx.doid'] })
-      console.log('resolved nameAddresses', this.nameAddresses)
-      await window.DOID.on('DOID_account_update', (e: any) => {
-        console.info('[chain addresses]: ', e)
-      })
+      this.res_DOID_setup = await this.req({ method: 'DOID_setup', params: ['zzzxxx.doid'] })
     } catch (e) {
-      this.nameAddresses = { error: 'cancelled' }
+      this.err = e
     }
     this.pending = false
   }
+
+  req_DOID_name = async () => {
+    this.reset()
+    try {
+      this.res_DOID_name = await this.req({ method: 'DOID_name', params: [] })
+    } catch (e) {
+      this.err = e
+    }
+    this.pending = false
+  }
+
   async connectedCallback() {
     super.connectedCallback()
     // TODO: Add onboarding service
-    await 0
-    window.DOID.on('DOID_account_change', () => {
-      console.log('DOID_account_change')
+    ;['DOID_account_change', 'DOID_account_update'].forEach((_evt) => {
+      window.DOID.on(_evt, ({ id, data } = <any>{}) => {
+        this.msgs = this.msgs.concat([{ id, data }])
+      })
     })
   }
   render() {
     return html`<div class="sample">
-      <div class="dui-container">
-        <dui-button @click=${this.request}>DOID_name</dui-button>
+      <div class="dui-container text-sm">
+        <dui-button class="outlined minor" @click=${this.req_DOID_name}>{ method: 'DOID_name' }</dui-button>
+        <p class="my-2">Res: ${this.res_DOID_name || ''}</p>
+
         <hr class="my-2" />
-        <dui-button @click=${this.request}>DOID_requestName</dui-button>
-        <hr class="my-2" />
-        <dui-button @click=${this.request} .pending=${this.pending}
+        <dui-button class="outlined minor" @click=${this.req_DOID_setup} .pending=${this.pending}
           >{ method: 'DOID_setup', params: ['zzzxxx.doid'] }</dui-button
         >
+        <p class="my-2">Res: ${this.res_DOID_setup || ''}</p>
+
         <hr class="my-2" />
-        <pre class="p-4 text-xs">${JSON.stringify(this.nameAddresses, null, '  ')}</pre>
+        <div class="my-2">
+          <p class="my-2">Received messages:</p>
+          <textarea class="w-80 h-32 border">${repeat(this.msgs, (msg) => html`${JSON.stringify(msg)}`)}</textarea>
+        </div>
+
+        <hr class="my-2" />
+        <p class="my-2 text-red-600">${this.err}</p>
       </div>
     </div>`
   }

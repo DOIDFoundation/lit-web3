@@ -42,7 +42,7 @@ export const state2url = (state: Record<string, any>, url?: string) => {
 }
 
 // Authed requests
-export const unlock = (url?: string): BackgroundMiddlware => {
+export const unlock = (url = '/unlock'): BackgroundMiddlware => {
   return async ({ state }, next) => {
     if (await isUnlocked()) return next()
     waitingForUnlock.push(next)
