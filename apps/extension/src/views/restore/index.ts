@@ -64,7 +64,7 @@ export class ViewRestore extends TailwindElement(style) {
         <!-- doid name -->
         <div class="text-base mb-4">
           You are importing an address as Main Address for
-          <dui-link class="link ml-0.5 underline">${this.wrapName}</dui-link>
+          <dui-link class="uri ml-0.5 underline">${this.wrapName}</dui-link>
         </div>
 
         <h3 class="text-lg">Secret Recovery Phrase</h3>

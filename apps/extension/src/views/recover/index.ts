@@ -137,7 +137,7 @@ export class ViewImport extends TailwindElement(null) {
               () => html` <doid-symbol sm class="block mt-12"></doid-symbol>
                 <div class="my-4 text-xs">
                   You are recovering
-                  <dui-link class="link ml-1 underline">${this.account.name}</dui-link>
+                  <dui-link class="uri ml-1 underline">${this.account.name}</dui-link>
                 </div>
                 <div class="my-4 text-xs">
                   Enter the Secret Recovery Phrase of
