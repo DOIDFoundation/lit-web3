@@ -30,7 +30,7 @@
     background: #aaa !important;
   }
   &.outlined {
-    background-color: transparent;
+    background-color: transparent !important;
     color: var(--btnBg);
     border: 1px solid;
     &:not([disabled]) {
@@ -58,6 +58,13 @@
         border-color: var(--btnBgSecondaryActive);
       }
     }
+    &.outlined {
+      color: var(--btnBgSecondary);
+      &:hover,
+      &:active {
+        color: var(--btnBgSecondary);
+      }
+    }
   }
   &.minor {
     background: var(--btnBgSecondary);
@@ -69,6 +76,13 @@
       &:active {
         background: var(--btnBgSecondaryActive);
         border-color: var(--btnBgSecondaryActive);
+      }
+    }
+    &.outlined {
+      color: var(--btnBgSecondary);
+      &:hover,
+      &:active {
+        color: var(--btnBgSecondary);
       }
     }
   }
