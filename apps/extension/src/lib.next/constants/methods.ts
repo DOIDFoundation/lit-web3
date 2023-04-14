@@ -3,7 +3,13 @@
 
 /* Background Methods */
 // background <-> inpage
-export const publicMethods = Object.freeze(['DOID_setup', 'DOID_account', 'DOID_account_update', 'DOID_account_change'])
+export const publicMethods = Object.freeze([
+  'DOID_setup',
+  'DOID_account',
+  'DOID_account_recover',
+  'DOID_account_change',
+  'DOID_chain_address'
+])
 // background <-> popup (Always pass private methods, so far)
 // export const privateMethods = Object.freeze(['state_keyring', 'state_lock', 'state_isunlock', 'state_account'])
 
