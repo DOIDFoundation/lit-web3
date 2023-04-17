@@ -1,5 +1,6 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { getKeyringController, isInitialized, isUnlocked } from '~/lib.next/keyring'
+import { getAddress } from '~/lib.legacy/phrase'
 
 // Re-emit keyring events (emitted from ~/lib.next/keyring)
 const evtMap: Record<string, string> = {
@@ -43,5 +44,16 @@ export const lock: BackgroundService = {
   middlewares: [],
   fn: async ({ res }) => {
     res.body = await (await getKeyringController()).setLocked()
+  }
+}
+
+export const getAccounts: BackgroundService = {
+  method: 'getAccounts',
+  middlewares: [],
+  fn: async ({ res }) => {
+    const keyrings = (await getKeyringController()).keyrings
+    if (keyrings.length === 0) throw new Error('no keyring')
+    const mnemonic = new TextDecoder().decode(new Uint8Array((await keyrings[0].serialize()).mnemonic))
+    res.body = await getAddress(mnemonic)
   }
 }
