@@ -74,7 +74,7 @@ export class ViewImport extends TailwindElement(style) {
       if (!addrs || !this.account.name) return
       this.pending = true
       await popupMessenger.send('internal_recovery', {
-        doid: this.account.name,
+        DOIDName: this.account.name,
         json: { addrs },
         pwd: this.pwd,
         mnemonic: this.phrase,

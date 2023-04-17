@@ -1,5 +1,6 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { getKeyringController, isInitialized, isUnlocked } from '~/lib.next/keyring'
+import * as keyring from '~/lib.next/keyring'
+import { DOIDBodyParser } from '~/middlewares'
 
 // Re-emit keyring events (emitted from ~/lib.next/keyring)
 const evtMap: Record<string, string> = {
@@ -16,7 +17,7 @@ export const state_isunlock: BackgroundService = {
   method: 'state_isunlock',
   middlewares: [],
   fn: async ({ res }) => {
-    res.body = await isUnlocked()
+    res.body = await keyring.isUnlocked()
     backgroundMessenger.log('is unlocked:', res.body)
   }
 }
@@ -25,16 +26,16 @@ export const state_isinitialized: BackgroundService = {
   method: 'state_isinitialized',
   middlewares: [],
   fn: async ({ res }) => {
-    res.body = await isInitialized()
+    res.body = await keyring.isInitialized()
     backgroundMessenger.log('is initialized:', res.body)
   }
 }
 
 export const unlock: BackgroundService = {
   method: 'unlock',
-  middlewares: [],
-  fn: async ({ res, req }) => {
-    res.body = await (await getKeyringController()).submitPassword(req.raw.data)
+  middlewares: [DOIDBodyParser()],
+  fn: async ({ res, state }) => {
+    res.body = await keyring.unlock(state.pwd)
   }
 }
 
@@ -42,6 +43,6 @@ export const lock: BackgroundService = {
   method: 'lock',
   middlewares: [],
   fn: async ({ res }) => {
-    res.body = await (await getKeyringController()).setLocked()
+    res.body = await keyring.lock()
   }
 }

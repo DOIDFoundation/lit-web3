@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
-import log from 'loglevel'
+import { backgroundLogger } from '~/lib.next/logger'
 // import { captureException } from '@sentry/browser'
-import { checkForLastError } from '~/lib.legacy/ext.runtime/utils'
+import { checkForLastError } from '~/lib.next/utils.ext'
 
 /**
  * A wrapper around the extension's storage local API
@@ -13,7 +13,7 @@ export default class ExtensionStore {
   constructor() {
     this.isSupported = Boolean(browser.storage.local)
     if (!this.isSupported) {
-      log.error('Storage local API not available.')
+      backgroundLogger('Storage local API not available.')
     }
     // we use this flag to avoid flooding sentry with a ton of errors:
     // once data persistence fails once and it flips true we don't send further
@@ -48,7 +48,7 @@ export default class ExtensionStore {
         this.dataPersistenceFailing = true
         // captureException(err)
       }
-      log.error('error setting state in local store:', err)
+      backgroundLogger('error setting state in local store:', err)
     }
   }
 

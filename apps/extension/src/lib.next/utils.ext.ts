@@ -73,3 +73,10 @@ export const getVersion = () => {
   }
   return version
 }
+
+export const checkForLastError = () => {
+  const { lastError } = browser.runtime
+  if (!lastError) return
+  if ((lastError as any).stack && lastError.message) return lastError
+  return new Error(lastError.message)
+}

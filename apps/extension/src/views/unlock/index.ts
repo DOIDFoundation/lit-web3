@@ -31,7 +31,7 @@ export class ViewUnlock extends TailwindElement(style) {
 
   unlock = async () => {
     try {
-      await popupMessenger.send('unlock', this.pwd)
+      await popupMessenger.send('unlock', { pwd: this.pwd })
       if (location.pathname.includes('generate-phrase')) {
         this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd, type: 'unlock' })
         return

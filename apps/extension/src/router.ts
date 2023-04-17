@@ -8,7 +8,7 @@ import { isUnlock } from '~/lib.next/popup'
 
 popupMessenger.on('keyring_update', () => {})
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
-popupMessenger.on('popup_goto', ({ data }) => emitter.emit('router-goto', (data as any).path))
+popupMessenger.on('popup_goto', ({ data: r }) => r && emitter.emit('router-goto', r))
 
 // const beforeEachRedirected = async (): Promise<boolean> => {
 //   const _isUnlock = await isUnlock()
@@ -173,8 +173,8 @@ export const routes = [
   },
   {
     name: 'dAppLanding',
-    path: '/landing/:doid?',
-    render: ({ doid = '' }) => html`<view-landing .name=${safeDecodeURIComponent(doid)}></view-landing>`,
+    path: '/landing/:name?',
+    render: ({ name = '' }) => html`<view-landing .name=${safeDecodeURIComponent(name)}></view-landing>`,
     enter: async () => {
       await import('~/views/dapps/landing')
       return true

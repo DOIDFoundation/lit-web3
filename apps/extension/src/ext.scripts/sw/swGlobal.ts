@@ -27,6 +27,7 @@ export const swGlobal: SWGlobal = {
   onCloseEnvironmentInstances,
   initialState: {
     config: {},
+    legacy: true,
     PreferencesController: {
       frequentRpcListDetail: [
         {

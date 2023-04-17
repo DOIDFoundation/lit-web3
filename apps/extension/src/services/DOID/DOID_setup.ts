@@ -6,7 +6,7 @@ import { DOIDBodyParser, yieldPopup, autoClosePopup } from '~/middlewares'
 
 export const DOID_setup: BackgroundService = {
   method: 'DOID_setup',
-  middlewares: [DOIDBodyParser(), yieldPopup(`/landing/:DOIDName`), autoClosePopup],
+  middlewares: [DOIDBodyParser(), yieldPopup(`/landing/:name`), autoClosePopup],
   fn: async ({ req, res }) => {
     // S
     backgroundMessenger.broadcast('DOID_account_change', { bb: 8 })

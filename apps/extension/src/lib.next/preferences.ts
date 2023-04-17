@@ -1,13 +1,35 @@
-// MetaMask preferences
+// User's Preferences (deps: KeyringController)
 // src: metamask-extension/app/scripts/controllers/preferences.js
 import { getKeyringController } from './keyring'
 import { normalize as normalizeAddress } from '@metamask/eth-sig-util'
+import { localStore, loadStateFromPersistence } from '~/lib.next/background/store/localStore'
 
 type Address = number | string
+
+let preferencesController: any
+let promise: any
+class PreferencesController {
+  constructor() {}
+}
+export const preferences = new PreferencesController()
+export const getPreferencesController = async () => {
+  if (preferencesController) return preferencesController
+  if (!promise)
+    promise = new Promise(async (resolve) => {
+      const initState = (await loadStateFromPersistence()).PreferencesController
+      preferencesController = new PreferencesController()
+      resolve(preferencesController)
+    })
+  return await promise
+}
+
 export const storedAddress = {
   get: async () => {
-    const { store } = await getKeyringController()
-    return store.getState().selectedAddress
+    const keyring = await getKeyringController()
+    // const { store } = await getKeyringController()
+    // console.log(await getKeyringController())
+    // return store.getState().selectedAddress
+    return keyring.getAccounts()
   },
   set: async (_address: Address) => {
     const { store } = await getKeyringController()

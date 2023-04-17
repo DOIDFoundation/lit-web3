@@ -42,20 +42,27 @@ export const state2url = (state: Record<string, any>, url?: string) => {
 }
 
 // Authed requests
-export const unlock = (url = '/unlock'): BackgroundMiddlware => {
+export const unlock = (popupUrl?: string): BackgroundMiddlware => {
   return async ({ state }, next) => {
-    if (await isUnlocked()) return next()
-    waitingForUnlock.push(next)
-    backgroundMessenger.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
-    openPopup(state2url(state, url))
+    await new Promise(async (resolve, reject) => {
+      const _next = (_?: any, err?: any) => {
+        if (err) return reject(err)
+        resolve(next())
+        if (popupUrl) backgroundMessenger.send('popup_goto', state2url(state, popupUrl))
+      }
+      if (await isUnlocked()) return _next()
+      waitingForUnlock.push(_next)
+      backgroundMessenger.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
+      openPopup('/unlock')
+    })
   }
 }
 
 // Non-Authed requests
-export const yieldPopup = (url?: string): BackgroundMiddlware => {
+export const yieldPopup = (popupUrl?: string): BackgroundMiddlware => {
   return async (ctx, next) => {
     waitingForYieldPopup.push(ctx)
-    openPopup(state2url(ctx.state, url))
+    openPopup(state2url(ctx.state, popupUrl))
     return next()
   }
 }
