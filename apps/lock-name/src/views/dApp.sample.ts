@@ -15,6 +15,7 @@ export class ViewRestore extends TailwindElement('') {
   @state() pending = false
   @state() res_DOID_setup = null
   @state() res_DOID_name = null
+  @state() res_DOID_chain_addrs = null
 
   reset = () => {
     this.err = null
@@ -42,7 +43,15 @@ export class ViewRestore extends TailwindElement('') {
     }
     this.pending = false
   }
-
+  req_DOID_recover_reply = async () => {
+    window.DOID.on('DOID_account_recover', async (data: any) => {
+      const {
+        data: { cid }
+      } = data
+      const res = await window.DOID.request({ method: 'DOID_chain_address', params: { cid } })
+      this.res_DOID_chain_addrs = res
+    })
+  }
   async connectedCallback() {
     super.connectedCallback()
     // TODO: Add onboarding service
@@ -69,6 +78,14 @@ export class ViewRestore extends TailwindElement('') {
           <p class="my-2">Received messages:</p>
           <textarea class="w-80 h-32 border">${repeat(this.msgs, (msg) => html`${JSON.stringify(msg)}`)}</textarea>
         </div>
+        <hr class="my-2" />
+        <dui-button class="outlined minor" @click=${this.req_DOID_recover_reply}>on account recover</dui-button>
+        <p class="my-2">
+          Res:
+          <span class="p-4 text-xs text-blue-500 break-words whitespace-normal"
+            >${JSON.stringify(this.res_DOID_chain_addrs)}</span
+          >
+        </p>
 
         <hr class="my-2" />
         <p class="my-2 text-red-600">${this.err}</p>
