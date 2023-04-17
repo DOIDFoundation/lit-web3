@@ -10,21 +10,17 @@ import { getAccount } from '~/lib.legacy/account'
 
 // Components
 import '@lit-web3/dui/src/address'
+import popupMessenger from '~/lib.next/messenger/popup'
 
 interface UserDetail {
   addresses: UserAddresses
 }
 type UserAddresses = Record<string, string>[]
 const requestUserAddresses = async (): Promise<UserDetail> => {
-  await 0
+  const accounts = await popupMessenger.send('getAccounts')
+  popupMessenger.log('accounts', accounts)
   return {
-    addresses: [
-      { eth: '0xcd87b53363031a4411c2c2bca41f77bde02ff87d' },
-      { sol: '8XpocjZodGQiFdoh2P33EXF1dDCJErx5nAsnz81sK4wy' },
-      { apt: '0x7df5715b2ce06f421f74dea324a87c8ea301281dccbdeecbc40d12810c1efcfb' },
-      { bsc: '0xE9AE3261a475a27Bb1028f140bc2a7c843318afD' },
-      { btc: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh' }
-    ]
+    addresses: [{ eth: accounts.eth }, { sol: accounts.solana }, { apt: accounts.aptos }, { bsc: accounts.eth }]
   }
 }
 

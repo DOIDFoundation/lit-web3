@@ -4,6 +4,7 @@ import { HDKey } from 'ethereum-cryptography/hdkey'
 import * as IPFS from 'ipfs-core'
 import * as w3name from 'w3name'
 import { Web3Storage } from 'web3.storage'
+import http from '@lit-web3/core/src/http'
 
 import { keys } from '@libp2p/crypto'
 
@@ -18,17 +19,17 @@ class IPFSHelper {
   }
 
   // Get the json data of the ipns name
-  async readJsonData(name: string): Promise<object> {
-    // Resolve the IPNS name to a CID
+
+  async readJsonData({ key = '', cid = '' } = {}) {
     const _ipfs = await this.ipfs
-    const { cid } = await _ipfs.name.resolve(name)
-    if (cid === undefined) {
+    // Resolve the IPNS name(pbK) to a CID
+    const _cid = cid ?? (await _ipfs.name.resolve(key)).cid
+    if (_cid === undefined) {
       return new Promise<object>((resolve, reject) => {
         return resolve({})
       })
     }
-
-    return JSON.parse(await this._readIPFS(cid))
+    return await this._readIPFS(cid)
   }
 
   // Update ipfs data and update relative ipns
@@ -86,13 +87,15 @@ class IPFSHelper {
     return ipfsCID
   }
 
-  async _readIPFS(cid: string): Promise<string> {
-    let configFile = await fetch(`https://${cid}/ipfs.w3s.link/doid.json`)
-    if (!configFile.ok) {
-      console.error(`${cid}/doid.json not found`, configFile.status)
-      return new Promise((resolve, reject) => resolve)
-    }
-    return await configFile.text()
+  async _readIPFS(cid: string) {
+    const url = `https://${cid}.ipfs.w3s.link/doid.json`
+    const res = await http.get(url)
+    return res
+    // if (!configFile.ok) {
+    //   console.error(`${cid}/doid.json not found`, configFile.status)
+    //   return new Promise((resolve, reject) => resolve)
+    // }
+    // return await configFile.text()
   }
 
   // async _getPrivateKeyFromMnemoic(mnemonic: string): Promise<Uint8Array> {

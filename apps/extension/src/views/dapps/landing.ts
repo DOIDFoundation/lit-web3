@@ -39,7 +39,7 @@ export class ViewLanding extends TailwindElement(null) {
         <doid-symbol sm class="block mt-12"></doid-symbol>
         <div class="my-4 text-xs">
           Setting up main addresses for
-          <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
+          <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
         </div>
         <div class="mt-4 my-7 text-xs text-gray-400">
           Main addresses are the default addresses of your DOID on all chains. They are generated automatically with one

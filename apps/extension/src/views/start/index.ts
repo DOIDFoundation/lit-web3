@@ -51,7 +51,7 @@ export class ViewStart extends TailwindElement(null) {
             () => html`<div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
             () => html`
               <div class="flex justify-center">
-                <dui-link class="link underline mr-2">${this.wrapName}</dui-link>
+                <dui-link class="uri underline mr-2">${this.wrapName}</dui-link>
                 ${when(
                   this.ownerAddress,
                   () => html`

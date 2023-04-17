@@ -24,7 +24,8 @@ import {
   getABI,
   getBridgeProvider,
   getContracts,
-  getNativeBalance
+  getNativeBalance,
+  getNetwork
 } from '@lit-web3/ethers/src/useBridge'
 import { now } from '@lit-web3/ethers/src/nsResolver/registrar'
 import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
@@ -168,7 +169,7 @@ export class ViewHome extends TailwindElement(style) {
                   <p slot="msg">Safer, faster and easier entrance to chains, contacts and dApps</p>
                 </doid-symbol>
                 <div class="max-w-xs mx-auto mt-12">
-                  <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
+                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
                   <span slot="msg" class="ml-1"><slot name="msg">is available</slot></span>
                 </div>
                 <div class="max-w-xs mx-auto mt-6">
@@ -190,7 +191,7 @@ export class ViewHome extends TailwindElement(style) {
               () => html`<doid-symbol sm class="block mt-12"> </doid-symbol>
                 <div class="my-4 text-xs">
                   You are trying to create
-                  <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
+                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
                 </div>
                 <div class="my-4 text-xs">Enter your Secret Recovery Phrase</div>
                 <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
@@ -239,7 +240,7 @@ export class ViewHome extends TailwindElement(style) {
               () => html`<doid-symbol class="block mt-12"> </doid-symbol>
                 <div class="my-4 text-sm">
                   You are trying to create
-                  <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
+                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
                 </div>
                 <div class="my-4 text-sm">
                   With ETH account
@@ -277,7 +278,7 @@ export class ViewHome extends TailwindElement(style) {
               () => html`<doid-symbol class="block mt-12"> </doid-symbol>
                 <div class="my-4 text-sm">
                   You are creating
-                  <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
+                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
                 </div>
                 <div class="my-4 text-sm">With ETH account ${this.address}(${this.balance} ETH)</div>
                 <i class="mdi mdi-loading"></i>
@@ -285,7 +286,9 @@ export class ViewHome extends TailwindElement(style) {
                   this.transaction?.hash,
                   () => html`<div class="my-4 text-sm">Waiting for transaction confirmation...</div>
                     <div class="my-4 text-sm">
-                      View transaction:<dui-link class="link ml-1 underline" href="https://etherscan.io"
+                      View transaction:<dui-link
+                        class="link ml-1 underline"
+                        href="${async () => (await getNetwork()).scan}/tx/${this.transaction?.hash}"
                         >${this.transaction?.hash} <i class="mdi mdi-open-in-new"></i
                       ></dui-link>
                     </div>`
@@ -296,14 +299,16 @@ export class ViewHome extends TailwindElement(style) {
               () => html`<doid-symbol class="block mt-12"> </doid-symbol>
                 <div class="my-4 text-sm">
                   Failed to create
-                  <dui-link class="link ml-1 underline">${this.wrapName}</dui-link>
+                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
                 </div>
                 <div class="my-4 text-sm">With ETH account ${this.address}(${this.balance} ETH)</div>
                 <div class="my-4 text-sm"><span class="text-red-500">${this.err}</span></div>
                 ${when(
                   this.transaction?.hash,
                   () => html`<div class="my-4 text-sm">
-                    View transaction:<dui-link class="link ml-1 underline" href="https://etherscan.io"
+                    View transaction:<dui-link
+                      class="link ml-1 underline"
+                      href="${async () => (await getNetwork()).scan}/tx/${this.transaction?.hash}"
                       >${this.transaction?.hash} <i class="mdi mdi-open-in-new"></i
                     ></dui-link>
                   </div>`
