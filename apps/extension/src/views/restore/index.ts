@@ -7,7 +7,7 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
 import '~/components/phrase'
-import '~/components/pwd_equal'
+import '~/components/pwd-equal'
 import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
@@ -75,7 +75,7 @@ export class ViewRestore extends TailwindElement(style) {
         >
 
         <div class="lg_max-w-xs">
-          <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+          <pwd-equal class="mt-8" @change=${this.onPwdChange} @submit=${this.restore}></pwd-equal>
         </div>
         ${when(
           this.err,

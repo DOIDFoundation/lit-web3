@@ -2,7 +2,7 @@
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import '~/components/phrase'
-import '~/components/pwd_equal'
+import '~/components/pwd-equal'
 
 import { AddressType, getAddress } from '~/lib.legacy/phrase'
 import ipfsHelper from '~/lib.next/ipfsHelper'
@@ -173,7 +173,7 @@ export class ViewImport extends TailwindElement(null) {
                       This password will unlock your DOID name(s) only on this device. DOID can not recover this
                       password.
                     </div>
-                    <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+                    <pwd-equal class="mt-8" @change=${this.onPwdChange} @submit=${this.onCreateMainAddress}></pwd-equal>
                     <div class="mt-4 flex justify-between">
                       <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
                         ><i class="mdi mdi-arrow-left text-gray-500"></i

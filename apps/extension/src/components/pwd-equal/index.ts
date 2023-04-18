@@ -5,7 +5,10 @@ import {
   property,
   state,
   when,
-  classMap
+  classMap,
+  Ref,
+  ref,
+  createRef
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import '@lit-web3/dui/src/input/pwd'
 import { chkPwdValid } from '~/lib.legacy/utils'
@@ -14,6 +17,7 @@ import style from './confirm.css?inline'
 
 @customElement('pwd-equal')
 export class PwdEqual extends TailwindElement(style) {
+  confirm$: Ref<HTMLInputElement> = createRef()
   @property({ type: String }) class = ''
   @state() pwd = ''
   @state() confirm = ''
@@ -45,19 +49,41 @@ export class PwdEqual extends TailwindElement(style) {
   onInputConfirm = (e: CustomEvent) => {
     this.change(e.detail, 'confirm')
   }
+  // confirm new password
+  onConfirm = (e: CustomEvent) => {
+    // @ts-expect-error
+    this.confirm$.value?.el$?.value?.focus()
+  }
+  // submit password
+  onSubmit = (e: CustomEvent) => {
+    this.emit('submit', this.pwd)
+  }
 
   connectedCallback() {
     super.connectedCallback()
   }
   render() {
     return html`<div class="my-4 ${classMap(this.$c([this.class]))}">
-      <dui-input-pwd .value=${this.pwd} .toggle=${this.toggle.pwd} required @input=${this.onInput}>
+      <dui-input-pwd
+        .value=${this.pwd}
+        .toggle=${this.toggle.pwd}
+        required
+        @input=${this.onInput}
+        autoforce
+        @submit=${this.onConfirm}
+      >
         <span slot="label">New password</span>
         <span slot="msg">
           ${when(this.pwdErr, () => html`<span class="text-red-500">${this.pwdErr}</span>`)}
         </span></dui-input-pwd
       >
-      <dui-input-pwd .value=${this.confirm} .toggle=${this.toggle.confirm} required @input=${this.onInputConfirm}
+      <dui-input-pwd
+        ${ref(this.confirm$)}
+        .value=${this.confirm}
+        .toggle=${this.toggle.confirm}
+        required
+        @input=${this.onInputConfirm}
+        @submit=${this.onSubmit}
         ><span slot="label">Confirm password</span
         ><span slot="msg">
           ${when(this.confirmErr, () => html`<span class="text-red-500">${this.confirmErr}</span>`)}

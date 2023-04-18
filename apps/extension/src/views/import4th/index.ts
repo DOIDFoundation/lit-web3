@@ -8,7 +8,7 @@ import { accountStore } from '~/store/account'
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
-import '~/components/pwd_equal'
+import '~/components/pwd-equal'
 
 import style from './import4th.css?inline'
 @customElement('import-4th')
@@ -60,14 +60,15 @@ export class ViewImport extends TailwindElement(style) {
               password.</span
             >
 
-            <pwd-equal class="mt-8" @change=${this.onPwdChange}></pwd-equal>
+            <pwd-equal class="mt-8" @change=${this.onPwdChange} @submit=${this.onCreateMainAddress}></pwd-equal>
 
             <div class="mt-4 flex justify-between">
           <dui-button @click=${() =>
             this.routeGoto('/import3rd')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
             ><i class="mdi mdi-arrow-left text-gray-500"></i></dui-button>
-          <dui-button @click=${() =>
-            this.onCreateMainAddress()} class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
+          <dui-button @click=${
+            this.onCreateMainAddress
+          } class="secondary !rounded-full h-12 w-12"><i class="mdi mdi-arrow-right"></dui-button>
         </div>
 
           </div>

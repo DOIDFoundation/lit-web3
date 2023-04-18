@@ -56,6 +56,7 @@ export class ViewUnlock extends TailwindElement(style) {
               autoforce
               type="password"
               @input=${this.onInput}
+              @submit=${this.unlock}
               value=${this.pwd}
               placeholder=${this.placeholder}
               ?disabled=${this.pending}
