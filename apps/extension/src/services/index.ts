@@ -1,6 +1,7 @@
 // TOOD: move to controller or route
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { MiddlerwareEngine } from './middleware'
+import { publicMethods, ERR_METHOD_NOT_ALLOWED } from '~/lib.next/constants'
 
 import * as EVM from './EVM'
 import * as DOID from './DOID'
@@ -14,17 +15,17 @@ export const loadAllServices = () => {
 }
 
 export const loadService = (service: BackgroundService) => {
-  const { method, middlewares, fn } = service
-  if (!method) return backgroundMessenger.log('Service has no method:', service)
+  const { method, middlewares, allowInpage = false, fn } = service
+  if (!method) throw new Error('Service has no method')
   backgroundMessenger.on(method, async (message: webextMessage) => {
-    const middleware = new MiddlerwareEngine(message, middlewares.concat(fn))
+    // By default, inpage methods are not allowed
+    if (!allowInpage && publicMethods.includes(method)) throw new Error(`${ERR_METHOD_NOT_ALLOWED} (${method})`)
+    const middleware = new MiddlerwareEngine(message, [...middlewares, fn])
     try {
-      const res = await middleware.resolve()
-      return res
+      return await middleware.resolve()
     } catch (err) {
-      const { ctx } = middleware
-      ctx.res.respond = true
-      ctx.res.err = err
+      const { res } = middleware.ctx
+      res.err = err
       backgroundMessenger.log('Finally error handler:', err)
       throw err
     }

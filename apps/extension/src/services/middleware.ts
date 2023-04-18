@@ -44,9 +44,9 @@ export class MiddlerwareEngine {
 const createReq = (message: webextMessage): Req => {
   const { data: body, sender, id: method } = message
   const { context, tabId } = sender
-  const isInner = isInternalEndpoint(sender)
+  const isInternal = isInternalEndpoint(sender)
   const origin = `${context}@${tabId}`
-  return { raw: Object.freeze(message), method, body, headers: { origin, isInner } }
+  return { raw: Object.freeze(message), method, body, headers: Object.freeze({ origin, isInternal }) }
 }
 
 const createRes = (): Res => {

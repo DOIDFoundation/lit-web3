@@ -2,7 +2,7 @@
 declare type webextMessage = BridgeMessage<JsonValue>
 
 declare type Header = {
-  isInner: boolean // If request origin is content/background/popup
+  isInternal: boolean // If request origin is content/background/popup
   origin: string
 }
 declare type Req = {
@@ -16,7 +16,7 @@ declare type Res = {
   end: Function
   responder: Promise<void>
   respond: boolean
-  err?: Error
+  err?: Error | unknown
 }
 
 declare interface BackgroundMiddlwareCtx {
@@ -29,5 +29,6 @@ declare type BackgroundMiddlware = (ctx: BackgroundMiddlwareCtx, next: Promise) 
 declare interface BackgroundService {
   method: string
   middlewares: BackgroundMiddlware[]
+  allowInpage?: boolean
   fn: (ctx: BackgroundMiddlwareCtx, next?: Promise) => Promise<any>
 }
