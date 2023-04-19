@@ -52,7 +52,7 @@ export const getAccounts: BackgroundService = {
   method: 'getAccounts',
   middlewares: [],
   fn: async ({ res }) => {
-    const keyrings = (await keyring.getKeyringController()).keyrings
+    const keyrings = (await keyring.getKeyring()).keyrings
     if (keyrings.length === 0) throw new Error('no keyring')
     const mnemonic = new TextDecoder().decode(new Uint8Array((await keyrings[0].serialize()).mnemonic))
     res.body = await getAddress(mnemonic)
