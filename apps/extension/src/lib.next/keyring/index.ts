@@ -1,6 +1,5 @@
 // Only allowed in background environment
-import { KeyringController as MetaMaskKeyringController } from '@metamask/eth-keyring-controller'
-import DOIDNameController from './DOIDNameController'
+import { KeyringController } from '@metamask/eth-keyring-controller'
 import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
@@ -13,45 +12,45 @@ export const isUnlocked = async () => (await getMemState()).isUnlocked
 export const isInitialized = async () => Boolean((await getState()).vault)
 export const lock = async () => await (await getKeyring()).setLocked()
 export const unlock = async (pwd: string) => {
-  const keyringController = await getKeyring()
-  await keyringController.submitPassword(pwd)
-  return keyringController.fullUpdate()
+  const keyring = await getKeyring()
+  await keyring.submitPassword(pwd)
+  return keyring.fullUpdate()
 }
+export const getAccounts = async () => (await getKeyring()).getAccounts()
 
-class KeyringController extends MetaMaskKeyringController {
-  DOIDs = {}
+class Keyring extends KeyringController {
   constructor(keyringOpts: Record<string, any>) {
     super(keyringOpts)
-    this.DOID = new DOIDNameController(keyringOpts)
   }
   async createNewVaultAndRestore(DOIDName: string, password: string, encodedSeedPhrase: number[]) {
     if (!DOIDName || !password) return
     const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
-    // preferencesController.setAddresses([])
-    // permissionController.clearState()
-    // accountTracker.clearAccounts()
     const vault = await super.createNewVaultAndRestore(password, seedPhraseAsBuffer)
     const [primaryKeyring] = super.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
-    let accounts = await this.getAccounts()
-    // await this.addNewAccount(primaryKeyring)
-    accounts = await this.getAccounts()
-    console.log(accounts, 'accounts')
-    this.DOID.bindName(DOIDName, accounts[0])
-    //
-    // this.preferencesController.setAddresses(accounts)
-    // this.selectFirstIdentity()
+    let addresses = await this.getAddresses()
+    this.setOwner(addresses[0], DOIDName)
     return vault
   }
+  async createNewVaultAndKeychain(password: string) {
+    super.createNewVaultAndKeychain(password)
+  }
+  setOwner = async (address: string, DOIDName: string) => {
+    const { DOIDs = <VaultOwner>{} } = await this.store.getState()
+    DOIDs[DOIDName] = address // 1 address can be aliased to multiple DOIDs
+    this.store.updateState({ DOIDs })
+  }
+  getAddresses = () => super.getAccounts()
+  getAccounts = async () => (await this.store.getState()).DOIDs
 }
 
-let keyring: KeyringController
+let keyring: Keyring
 let promise: any
 export const getKeyring = async () => {
   if (keyring) return keyring
   if (!promise)
     promise = new Promise(async (resolve) => {
-      keyring = new KeyringController({
+      keyring = new Keyring({
         initState: await loadStateFromStorage(storageKey.keyring),
         cacheEncryptionKey: true
       })

@@ -3,10 +3,10 @@ import { getMemState, getState } from '~/lib.next/keyring'
 
 export const getAccount: BackgroundMiddlware = async ({ req, state }, next) => {
   if (req.headers.isInternal) {
-    state.account = await storedAccount.get()
+    state.account = await storedAccount.getSelectedAddress()
     return next()
   }
   // TODO: get permitted account
-  state.account = await storedAccount.get()
+  state.account = await storedAccount.getSelectedAddress()
   next()
 }

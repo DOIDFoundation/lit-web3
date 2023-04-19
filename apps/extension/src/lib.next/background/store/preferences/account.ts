@@ -6,13 +6,13 @@ import emitter from '@lit-web3/core/src/emitter'
 import { getPreferences } from './base'
 
 export const storedAccount = {
-  get: async () => {
+  getSelectedAddress: async () => {
     const {
       state: { selectedAddress }
     } = await getPreferences()
     return selectedAddress
   },
-  set: async (_address: Address) => {
+  setAddresses: async (_address: Address) => {
     const address = normalizeAddress(_address)
     const {
       state: { identities },
@@ -24,7 +24,7 @@ export const storedAccount = {
     updateState({ identities, selectedAddress: address })
   },
   // Add state from keyring
-  add: async (addresses: Address[]) => {
+  addAddresses: async (addresses: Address[]) => {
     const {
       state: { identities },
       updateState
@@ -37,7 +37,7 @@ export const storedAccount = {
     updateState({ identities })
   },
   // Sync state from keyring
-  sync: async (addresses: Address[]) => {
+  syncAddresses: async (addresses: Address[]) => {
     const {
       state: { identities = {}, lostIdentities = {} },
       updateState
@@ -61,14 +61,14 @@ export const storedAccount = {
     }
 
     updateState({ identities, lostIdentities })
-    storedAccount.add(addresses)
+    storedAccount.addAddresses(addresses)
 
     // If the selected account is no longer valid,
     // select an arbitrary other account:
-    let selectedAddress = await storedAccount.get()
+    let selectedAddress = await storedAccount.getSelectedAddress()
     if (!addresses.includes(selectedAddress)) {
       ;[selectedAddress] = addresses
-      storedAccount.set(selectedAddress)
+      storedAccount.setAddresses(selectedAddress)
     }
     return selectedAddress
   }
@@ -78,6 +78,6 @@ export const storedAccount = {
 getPreferences().then(() => {
   // Sync if keyring updated
   emitter.on(`keyring_update`, (e: CustomEvent) => {
-    storedAccount.sync(e.detail)
+    storedAccount.syncAddresses(e.detail)
   })
 })
