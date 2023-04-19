@@ -5,6 +5,8 @@ import { getAddress, AddressType } from '~/lib.legacy/phrase'
 import { StateController, walletStore } from '~/store'
 import { accountStore } from '~/store/account'
 
+import popupMessenger from '~/lib.next/messenger/popup'
+
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
@@ -35,18 +37,35 @@ export class ViewImport extends TailwindElement(style) {
     goto(`${path}`)
   }
 
+  // onCreateMainAddress = async () => {
+  //   try {
+  //     console.log(this.account.name, keyringStore.mnemonic, this.pwd, '----------')
+  //     let ethAddress = await getAddress(keyringStore.mnemonic, AddressType.eth)
+  //     console.log('mainAddress:', ethAddress, '------------')
+  //     const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
+  //     await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
+  //     goto('/main')
+  //   } catch (err: any) {
+  //     console.error(err)
+  //   }
+  // }
+
   onCreateMainAddress = async () => {
+    let addresses = await getAddress(keyringStore.mnemonic)
+    // if (!addresses || !this.account.name) return
     try {
-      console.log(this.account.name, keyringStore.mnemonic, this.pwd, '----------')
-      let ethAddress = await getAddress(keyringStore.mnemonic, AddressType.eth)
-      console.log('mainAddress:', ethAddress, '------------')
-      const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
-      await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
-      goto('/main')
-    } catch (err: any) {
-      console.error(err)
+      const res = await popupMessenger.send('internal_recovery', {
+        doid: this.account.name,
+        json: { addresses },
+        pwd: this.pwd,
+        mnemonic: keyringStore.mnemonic
+      })
+      console.info('res:', res)
+    } catch (e) {
+      popupMessenger.log(e)
     }
   }
+
   render() {
     return html`<div class="home">
       <div class="dui-container sparse">

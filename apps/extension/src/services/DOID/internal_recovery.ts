@@ -10,6 +10,7 @@ export const internal_create: BackgroundService = {
   fn: async ({ state, req, res }) => {
     // 1. save mnemonic
     // 2. save IPNS saveChainAddresses()
+    console.log('11111111')
     const { name, pwd, mnemonic } = state
     const { json = {}, reply = false } = req.body
     try {

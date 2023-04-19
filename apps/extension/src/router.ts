@@ -179,6 +179,17 @@ export const routes = [
       await import('~/views/dapps/landing')
       return true
     }
+  },
+  {
+    name: 'connect',
+    path: '/connect',
+    render: () => {
+      return html`<view-connect></view-connect>`
+    },
+    enter: async () => {
+      await import('~/views/connect')
+      return true
+    }
   }
 ]
 
