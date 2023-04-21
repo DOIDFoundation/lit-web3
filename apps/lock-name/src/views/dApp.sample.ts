@@ -44,7 +44,8 @@ export class ViewRestore extends TailwindElement('') {
     this.pending = false
   }
   req_DOID_recover_reply = async () => {
-    window.DOID.on('DOID_account_recover', async (data: any) => {
+    logger('listen DOID_account_update...')
+    window.DOID.on('DOID_account_update', async (data: any) => {
       const {
         data: { cid }
       } = data
