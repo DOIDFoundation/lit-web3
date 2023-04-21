@@ -12,7 +12,7 @@ import { accountStore } from '~/store/account'
 import { keyringStore, StateController } from '~/store/keyring'
 import { validateMnemonic } from 'ethereum-cryptography/bip39'
 import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
-import { AddressType, getAddress } from '~/lib.legacy/phrase'
+import { AddressType, getAddress } from '~/lib.next/keyring/phrase'
 import popupMessenger from '~/lib.next/messenger/popup'
 import ipfsHelper from '~/lib.next/ipfsHelper'
 

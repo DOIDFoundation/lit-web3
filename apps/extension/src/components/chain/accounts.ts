@@ -6,7 +6,6 @@ import {
   state,
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
-import { getAccount } from '~/lib.legacy/account'
 
 // Components
 import '@lit-web3/dui/src/address'
@@ -29,10 +28,6 @@ export class accountList extends TailwindElement(null) {
   @property() class = ''
   @property() chain = null as any
   @state() addresses: UserAddresses = []
-
-  get account() {
-    return getAccount()
-  }
 
   get mainAddress() {
     if (!this.chain?.coin) return ''

@@ -4,7 +4,7 @@ import '@lit-web3/dui/src/button'
 import '~/components/phrase'
 import '~/components/pwd-equal'
 
-import { AddressType, getAddress } from '~/lib.legacy/phrase'
+import { AddressType, getAddress } from '~/lib.next/keyring/phrase'
 import ipfsHelper from '~/lib.next/ipfsHelper'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { StateController, walletStore } from '~/store'

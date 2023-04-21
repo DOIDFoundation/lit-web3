@@ -2,7 +2,7 @@ import backgroundMessenger from '~/lib.next/messenger/background'
 import * as keyringCtrl from '~/lib.next/keyring'
 import { getKeyring } from '~/lib.next/keyring'
 import { DOIDBodyParser, getDOIDs } from '~/middlewares'
-import { getAddress } from '~/lib.legacy/phrase'
+import { getAddress } from '~/lib.next/keyring/phrase'
 
 // Re-emit keyring events (emitted from ~/lib.next/keyring)
 const evtMap: Record<string, string> = {

@@ -10,7 +10,8 @@ export const inpageProvider = () => {
       inpageLogger('response', res)
       return res
     },
-    on: inpageMessenger.on
+    on: inpageMessenger.on,
+    isConnected: async () => {}
   }
 }
 
