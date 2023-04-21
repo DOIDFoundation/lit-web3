@@ -9,37 +9,37 @@ export const EVM_request: BackgroundService = {
   allowInpage: true,
   middlewares: [],
   fn: async (ctx) => {
-    // const network = EvmNetworks.ganache
-    // const provider = new providers.StaticJsonRpcProvider(network.rpcUrl)
-    // const chainProvider = new EvmChainProvider(network, provider)
-    // const walletOptions = {
-    //   mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
-    //   derivationPath: `m/44'/${network.coinType}'/0'/0/0`
-    // }
-    // const walletProvider = new EvmWalletProvider(walletOptions, chainProvider)
-    // // console.log(walletProvider)
-    // console.log('---------------')
+    const network = EvmNetworks.ethereum_mainnet
 
-    const { method, param } = ctx.req.body
+    network.rpcUrl = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
+    const chainProvider = new EvmChainProvider(network)
+    const walletOptions = {
+      mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
+      derivationPath: `m/44'/${network.coinType}'/0'/0/0`,
+      network: network
+    }
+
+    const walletProvider = new EvmWalletProvider(walletOptions, chainProvider)
+
+    const { method, params } = ctx.req.body
+    console.log('method', method, 'params', params)
+
     var response: any = ''
     if (method === 'eth_accounts') {
-      // const addresses = await walletProvider.getAddresses()
-      // return addresses
-      response = ['0x70997970c51812dc3a010c7d01b50e0d17dc79c8']
+      const accounts = await walletProvider.getSigner().address
+      response = [accounts]
     } else if (method === 'eth_chainId') {
-      // response = '0x7a69'
-      response = '0x1'
+      const chainId = await walletProvider.getSigner().getChainId()
+      response = chainId
     } else if (method === 'eth_requestAccounts') {
-      response = ['0x70997970c51812dc3a010c7d01b50e0d17dc79c8']
+      const accounts = await walletProvider.getSigner().address
+      response = [accounts]
     } else if (method === 'eth_getBalance') {
-      response = '0x2710'
+      const balance = await walletProvider.getSigner().getBalance()
+      response = balance
+    } else if (method == 'personal_sign') {
+      response = await walletProvider.getSigner().signMessage(params[0])
     }
     ctx.res.body = response
   }
 }
-
-// backgroundMessenger.on('evm_request', ({ data }) => {
-//   return new Promise(async (resolve) => {
-//     resolve([])
-//   })
-// })
