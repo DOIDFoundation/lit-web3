@@ -79,9 +79,8 @@ class IPFSHelper {
 
   async _writeIPFS(content: string): Promise<string> {
     const files = [new File([content], 'doid.json')]
-    let storage = new Web3Storage({
-      token: import.meta.env.VITE_WEB3STORAGE_TOKEN
-    })
+    const token = import.meta.env.VITE_WEB3STORAGE_TOKEN
+    let storage = new Web3Storage({ token })
     const cid = await storage.put(files, { name: `testing files for ` })
     let ipfsCID = cid.toString()
     return ipfsCID

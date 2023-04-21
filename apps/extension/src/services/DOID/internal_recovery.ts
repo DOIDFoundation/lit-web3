@@ -15,8 +15,8 @@ export const internal_recovery: BackgroundService = {
     try {
       ;(await getKeyring()).createNewVaultAndRestore(name, pwd, mnemonic)
       const cid = await ipfsHelper.updateJsonData(json, name, { memo: mnemonic })
+      if (reply) backgroundMessenger.broadcast('DOID_account_update', { cid })
       res.body = { success: 'ok' }
-      if (reply) backgroundMessenger.send('DOID_account_update', { cid })
     } catch (e) {
       throw e
     }
