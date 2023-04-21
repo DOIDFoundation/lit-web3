@@ -3,6 +3,7 @@ import { Connection } from '@solana/web3.js'
 import { getKeyring } from '~/lib.next/keyring'
 import { AddressType, getAddress } from '~/lib.legacy/phrase'
 import { unlock, autoClosePopup } from '~/middlewares'
+import { ERR_NOT_IMPLEMENTED } from '~/lib.next/constants/errors'
 
 let connection: Connection
 let promise: any
@@ -37,15 +38,19 @@ export const solana_request: BackgroundService = {
         res.body = await getAddress(mnemonic, AddressType.solana)
         break
       case 'disconnect':
-        res.body = 'yes'
+        if (!res.respond) res.err = new Error(ERR_NOT_IMPLEMENTED)
         break
       case 'signAndSendTransaction':
+        if (!res.respond) res.err = new Error(ERR_NOT_IMPLEMENTED)
         break
       case 'signTransaction':
+        if (!res.respond) res.err = new Error(ERR_NOT_IMPLEMENTED)
         break
       case 'signAllTransaction':
+        if (!res.respond) res.err = new Error(ERR_NOT_IMPLEMENTED)
         break
       case 'signMessage':
+        if (!res.respond) res.err = new Error(ERR_NOT_IMPLEMENTED)
         break
     }
   }
