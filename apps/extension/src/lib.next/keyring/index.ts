@@ -5,9 +5,9 @@ import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
 import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/store/extStorage'
 
+// Shortcuts
 export const getMemState = async () => (await getKeyring()).memStore.getState()
 export const getState = async () => (await getKeyring()).store.getState()
-
 export const isUnlocked = async () => (await getMemState()).isUnlocked
 export const isInitialized = async () => Boolean((await getState()).vault)
 export const lock = async () => await (await getKeyring()).setLocked()
@@ -16,32 +16,65 @@ export const unlock = async (pwd: string) => {
   await keyring.submitPassword(pwd)
   return keyring.fullUpdate()
 }
-export const getAccounts = async () => (await getKeyring()).getAccounts()
+export const getDOIDs = async () => (await getKeyring()).getDOIDs()
+export const getSelected = async () => (await getState()).selectedDOID
+export const getSelectedAddress = async () => (await getSelected()).address
 
 class Keyring extends KeyringController {
   constructor(keyringOpts: Record<string, any>) {
     super(keyringOpts)
   }
-  async createNewVaultAndRestore(DOIDName: string, password: string, encodedSeedPhrase: number[]) {
-    if (!DOIDName || !password) return
+  // DOID methods
+  setDOIDs = async (name: string, address: string) => {
+    const DOID = { name, address }
+    const { DOIDs = { [name]: DOID }, selectedDOID = DOID } = this.store.getState()
+    this.store.updateState({ DOIDs, selectedDOID })
+  }
+  setSelected = async (DOIDish: VaultDOID | string | any) => {
+    const { name = DOIDish } = DOIDish
+    const selectedDOID = this.getDOIDs()[name]
+    if (!selectedDOID) throw new Error(`Identity for '${name} not found`)
+    this.store.updateState({ selectedDOID })
+  }
+  getDOIDs = () => this.store.getState().DOIDs
+  getAddresses = async () => await super.getAccounts()
+
+  // Overrides
+  removeAccount = async (DOID: VaultDOID) => {
+    let { DOIDs, selectedDOID } = this.store.getState()
+    const { name, address } = DOID
+    delete DOIDs[name]
+    if (selectedDOID?.name === name) [selectedDOID] = Object.values(DOIDs)
+    this.store.updateState({ DOIDs, selectedDOID })
+    await super.removeAccount(address)
+    // Destory
+    const keyring = await super.getKeyringForAccount(address)
+    const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {}
+    if (updatedKeyringAccounts?.length === 0) keyring.destroy?.()
+    return DOID
+  }
+
+  async createNewVaultAndRestore(name: string, password: string, encodedSeedPhrase: number[]) {
+    if (!name || !password) return
     const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
     const vault = await super.createNewVaultAndRestore(password, seedPhraseAsBuffer)
     const [primaryKeyring] = super.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
     let addresses = await this.getAddresses()
-    this.setOwner(addresses[0], DOIDName)
+    this.setDOIDs(name, addresses[0])
     return vault
   }
   async createNewVaultAndKeychain(password: string) {
-    super.createNewVaultAndKeychain(password)
+    let vault
+    const addresses = await this.getAddresses()
+    if (addresses.length) {
+      vault = await this.fullUpdate()
+    } else {
+      vault = await super.createNewVaultAndKeychain(password)
+      this.fullUpdate()
+    }
+    return vault
   }
-  setOwner = async (address: string, DOIDName: string) => {
-    const { DOIDs = <VaultOwner>{} } = await this.store.getState()
-    DOIDs[DOIDName] = address // 1 address can be aliased to multiple DOIDs
-    this.store.updateState({ DOIDs })
-  }
-  getAddresses = () => super.getAccounts()
-  getAccounts = async () => (await this.store.getState()).DOIDs
 }
 
 let keyring: Keyring
@@ -74,7 +107,8 @@ getKeyring().then(() => {
     if (!keyrings) return console.warn('[To be confirmed] keyring state.keyrings is undefined', state)
     // @ts-expect-error
     await browser.storage.session.set({ loginToken, loginSalt })
-    const addresses = keyrings.reduce((acc: any, { accounts } = <any>{}) => acc.concat(accounts), [])
+    // TODO: Is this necessary for now?
+    const addresses = keyrings.reduce((acc: any, { accounts: _addresses } = <any>{}) => acc.concat(_addresses), [])
     emitter.emit('keyring_update', addresses)
   })
 })

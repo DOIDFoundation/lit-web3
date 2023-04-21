@@ -38,15 +38,15 @@ export class networkList extends TailwindElement(style) {
   }
 
   render() {
-    return html`<div class="flex flex-col justify-start items-center ${classMap(this.$c([this.class]))}">
+    return html`<div class="flex flex-col justify-center items-center ${classMap(this.$c([this.class]))}">
       ${repeat(
         this.allChains,
         (net: any, idx) =>
-          html`<div class="p-2 ${classMap({ 'bg-white': net.name === this.chain.name })}">
-            <div
-              class="chain-icon inline-flex justify-center items-center ${net?.coin}"
-              @click=${() => this.switch(idx)}
-            >
+          html`<div
+            class="chain-tab ${classMap({ active: net.name === this.chain.name })}"
+            @click=${() => this.switch(idx)}
+          >
+            <div class="chain-icon inline-flex justify-center items-center ${net?.coin}">
               <!-- ${net.name.charAt(0)} -->
             </div>
           </div>`

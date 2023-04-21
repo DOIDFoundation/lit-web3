@@ -1,12 +1,13 @@
-import { storedAccount } from '~/lib.next/background/store/preferences'
-import { getMemState, getState } from '~/lib.next/keyring'
+import { getSelected } from '~/lib.next/keyring'
 
 export const getAccount: BackgroundMiddlware = async ({ req, state }, next) => {
+  const DOID = await getSelected()
+  console.log(DOID, 'DOID')
+  const { name, address } = DOID
+  Object.assign(state, { DOID, name, account: address })
   if (req.headers.isInternal) {
-    state.account = await storedAccount.getSelectedAddress()
     return next()
   }
   // TODO: get permitted account
-  state.account = await storedAccount.getSelectedAddress()
   next()
 }

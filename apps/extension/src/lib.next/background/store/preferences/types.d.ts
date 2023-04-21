@@ -1,10 +1,14 @@
-declare interface VaultOwner {
-  [DOIDName: string]: Address
+declare interface VaultDOID {
+  name: string
+  address: Address
 }
-declare interface Identity {
-  DOIDName: string
-  address: string // eth address due to metamask keyring
+declare interface VaultDOIDs {
+  [DOIDName: string]: VaultDOID
 }
-declare interface Identities {
-  [address: string]: Identity
-}
+// declare interface Identity {
+//   name: string
+//   address: Address // eth address due to metamask keyring
+// }
+// declare interface Identities {
+//   [address: Address]: Identity
+// }

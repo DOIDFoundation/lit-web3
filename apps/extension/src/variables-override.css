@@ -3,6 +3,7 @@
 }
 html {
   @apply overflow-x-hidden;
+  min-width: 357px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.24) rgba(0, 0, 0, 0.01);
   overscroll-behavior: contain;

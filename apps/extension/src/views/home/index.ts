@@ -56,7 +56,7 @@ export class ViewHome extends TailwindElement(style) {
             >
               <span slot="label"><slot name="label">Start with your desired DOID name</slot></span>
               <span slot="msg"> ${when(this.err, () => html`<span class="text-red-500">${this.err}</span>`)} </span>
-              <span slot="right" class="-mr-1">
+              <span slot="right">
                 ${when(
                   this.pending,
                   () => html`<i class="mdi mdi-loading text-xl"></i>`,

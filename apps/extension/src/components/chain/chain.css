@@ -1,7 +1,20 @@
 :host {
 }
+
+.chain-tab {
+  @apply flex w-14 h-14 justify-center items-center p-2 cursor-pointer;
+  transform-origin: bottom;
+  &:hover {
+    & > .chain-icon {
+      filter: contrast(120%);
+    }
+  }
+  &.active {
+    @apply bg-white;
+  }
+}
 .chain-icon {
-  @apply w-10 h-10 rounded-full bg-contain bg-center bg-no-repeat bg-white cursor-pointer;
+  @apply w-8 h-8 rounded-full bg-contain bg-center bg-no-repeat bg-white cursor-pointer;
   &.eth {
     background-image: url('~/assets/ethereum.svg');
   }
