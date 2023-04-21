@@ -4,6 +4,7 @@ import { WalletEvent, DOIDSolana } from '@lit-web3/solana-wallet-standard/src/wi
 import { PublicKey, Transaction, VersionedTransaction, SendOptions } from '@solana/web3.js'
 import inpageMessenger from '~/lib.next/messenger/inpage'
 import { EventEmitter } from 'eventemitter3'
+import base58 from 'bs58'
 
 class DOIDSolanaProvider implements DOIDSolana {
   emitter: EventEmitter
@@ -14,12 +15,14 @@ class DOIDSolanaProvider implements DOIDSolana {
   connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
     return inpageMessenger.send('solana_request', { method: 'connect', options }).then((address) => {
       this.publicKey = new PublicKey(address)
+      this.emitter.emit('connect')
       return { publicKey: this.publicKey }
     })
   }
   disconnect(): Promise<void> {
     return inpageMessenger.send('solana_request', { method: 'disconnect' }).then(() => {
       this.publicKey = null
+      this.emitter.emit('disconnect')
     })
   }
   signAndSendTransaction<T extends Transaction | VersionedTransaction>(
@@ -51,7 +54,11 @@ class DOIDSolanaProvider implements DOIDSolana {
       throw new Error('wallet not connected')
     }
 
-    return inpageMessenger.send('solana_request', { method: 'signMessage', message })
+    return inpageMessenger
+      .send('solana_request', { method: 'signMessage', message: base58.encode(message) })
+      .then((signature) => {
+        return { signature: base58.decode(signature) }
+      })
   }
   on<E extends keyof WalletEvent>(event: E, listener: WalletEvent[E], context?: any): void {
     this.emitter.on(event, listener, context)

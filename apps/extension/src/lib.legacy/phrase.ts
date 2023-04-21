@@ -6,6 +6,8 @@ import { toHex } from 'ethereum-cryptography/utils'
 import { arrToBufArr, bufferToHex, privateToPublic, publicToAddress } from 'ethereumjs-util'
 
 import { Keypair } from '@solana/web3.js'
+import { derivePath } from 'ed25519-hd-key'
+import nacl from 'tweetnacl'
 
 export const PHRASE_LEN_MAP = [12, 15, 18, 21, 24]
 
@@ -46,8 +48,10 @@ export const getAddress = async (mnemnoic: string, type?: AddressType) => {
   }
   if (type == AddressType.solana || !type) {
     let seed = await mnemonicToSeed(mnemnoic)
-    let keypair = Keypair.fromSeed(seed.slice(0, 32))
-    addrs[AddressType.solana] = keypair.publicKey.toBase58()
+    const derivedSeed = derivePath(`m/44'/501'/0'/0'`, Buffer.from(seed).toString('hex')).key
+    addrs[AddressType.solana] = Keypair.fromSecretKey(
+      nacl.sign.keyPair.fromSeed(derivedSeed).secretKey
+    ).publicKey.toBase58()
   }
   let all = null
   if (!type) all = Object.fromEntries(Object.keys(AddressType).map((key) => [key, addrs[AddressType[key]]]))
