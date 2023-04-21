@@ -37,12 +37,12 @@ export class resetByPhrase extends TailwindElement(null) {
     this.step > 1 && this.step--
     this.emit('stepChange', { step: this.step })
   }
-  goNext = () => {
+  goNext = async () => {
     if (this.step < STEP) {
       this.step++
       this.emit('stepChange', { step: this.step })
     } else {
-      this.doSubmit()
+      await this.doSubmit()
       this.emit('stepChange', { step: this.step, success: 'ok' })
     }
   }
@@ -56,7 +56,7 @@ export class resetByPhrase extends TailwindElement(null) {
         name: this.doid,
         json: { addrs },
         pwd: this.pwd,
-        mneonic: this.phrase,
+        mnemonic: this.phrase,
         reply: this.notify
       })
     } catch (e: any) {
