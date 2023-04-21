@@ -12,10 +12,15 @@ class DOIDSolanaProvider implements DOIDSolana {
     this.emitter = new EventEmitter()
   }
   connect(options?: { onlyIfTrusted?: boolean | undefined } | undefined): Promise<{ publicKey: PublicKey }> {
-    return inpageMessenger.send('solana_request', { method: 'connect', options })
+    return inpageMessenger.send('solana_request', { method: 'connect', options }).then((address) => {
+      this.publicKey = new PublicKey(address)
+      return { publicKey: this.publicKey }
+    })
   }
   disconnect(): Promise<void> {
-    return inpageMessenger.send('solana_request', { method: 'disconnect' })
+    return inpageMessenger.send('solana_request', { method: 'disconnect' }).then(() => {
+      this.publicKey = null
+    })
   }
   signAndSendTransaction<T extends Transaction | VersionedTransaction>(
     transaction: T,

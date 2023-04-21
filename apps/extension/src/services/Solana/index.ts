@@ -1,8 +1,8 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { openPopup, closePopup } from '~/lib.next/background/notifier'
 import { Connection } from '@solana/web3.js'
-import { getKeyringController } from '~/lib.next/keyring'
+import { getKeyring } from '~/lib.next/keyring'
 import { AddressType, getAddress } from '~/lib.legacy/phrase'
+import { unlock, autoClosePopup } from '~/middlewares'
 
 let connection: Connection
 let promise: any
@@ -23,21 +23,21 @@ const getConnection = async () => {
 export const solana_request: BackgroundService = {
   method: 'solana_request',
   allowInpage: true,
-  middlewares: [],
+  middlewares: [unlock(), autoClosePopup],
   fn: async ({ state, req, res }) => {
     const { method } = req.body
     backgroundMessenger.log(req, method)
     switch (method) {
-      case 'connect': {
+      case 'connect':
         const { options } = req.body
         getConnection()
-        const keyrings = (await getKeyringController()).keyrings
+        const keyrings = (await getKeyring()).keyrings
         if (keyrings.length === 0) throw new Error('no keyring')
         const mnemonic = new TextDecoder().decode(new Uint8Array((await keyrings[0].serialize()).mnemonic))
         res.body = await getAddress(mnemonic, AddressType.solana)
         break
-      }
       case 'disconnect':
+        res.body = 'yes'
         break
       case 'signAndSendTransaction':
         break
