@@ -1,20 +1,46 @@
-import { KeyringController, keyringBuilderFactory } from '@metamask/eth-keyring-controller'
-import { State, property } from '@lit-app/state'
 export { StateController } from '@lit-app/state'
+import popupMessenger from '~/lib.next/messenger/popup'
+import { State, property } from '@lit-app/state'
 
-// const keyringController = new KeyringController({
-//   keyringBuilders: additionalKeyrings,
-//   initState: initState.KeyringController,
-//   encryptor: opts.encryptor || undefined,
-//   cacheEncryptionKey: isManifestV3,
-// });
-// console.log(KeyringController)
-
-class Store extends State {
+// Sync ui's keyring state with backend
+class UIKeyring extends State {
   @property({ value: false }) pending!: boolean
-  @property({ value: [] }) names!: NameInfo[]
   @property({ value: 0 }) ts!: number
-  @property() mnemonic!: string
+  @property({ value: true }) locked!: boolean
+  // DOIDs
+  @property({ value: {} }) DOIDs!: VaultDOIDs
+  @property({ value: {} }) selectedDOID!: VaultDOID | undefined
+  @property({ value: '' }) mnemonic!: string
+
+  empty() {
+    Object.assign(this, { DOIDs: undefined, selectedDOID: {} })
+  }
+  sync = async (force = false) => {
+    if (this.locked && !force) return
+    this.pending = true
+    try {
+      const { DOIDs, selectedDOID } = await popupMessenger.send('internal_getDOIDs')
+      if (this.locked && !force) return
+      Object.assign(this, { DOIDs, selectedDOID })
+    } catch {}
+    this.ts++
+    this.pending = false
+  }
+  onLock = () => {
+    this.locked = true
+    this.empty()
+  }
+  onUnlock = () => {
+    this.locked = false
+  }
+
+  constructor() {
+    super()
+    this.sync(true)
+    popupMessenger.on('keyring_update', () => this.sync())
+    popupMessenger.on('lock', this.onLock)
+    popupMessenger.on('unlock', this.onUnlock)
+  }
 }
 
-export const keyringStore = new Store()
+export const uiKeyring = new UIKeyring()

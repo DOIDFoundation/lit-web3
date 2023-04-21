@@ -11,9 +11,14 @@ import {
   createRef
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import '@lit-web3/dui/src/input/pwd'
-import { chkPwdValid } from '~/lib.legacy/utils'
+import { between } from '@lit-web3/dui/src/validator/string'
 
 import style from './confirm.css?inline'
+
+enum StoreKey {
+  pwd = 'pwd',
+  confirm = 'confirm'
+}
 
 @customElement('pwd-equal')
 export class PwdEqual extends TailwindElement(style) {
@@ -32,8 +37,8 @@ export class PwdEqual extends TailwindElement(style) {
   checkPwdEqual = (val: string, val2: string) => {
     this.confirmErr = val === val2 ? '' : `Password don't match`
   }
-  change = (val: string, key = 'pwd') => {
-    const { error, msg } = chkPwdValid(val)
+  change = (val: string, key: keyof typeof StoreKey = 'pwd') => {
+    const { error, msg } = between(val)
     this[key] = val
     this[`${key}Err`] = error ? msg : ''
 

@@ -12,6 +12,7 @@ import style from './header.css?inline'
 export class DuiHeader extends TailwindElement(style) {
   bindScreen: any = new StateController(this, screenStore)
   @property({ type: Boolean }) menuable = false
+  @property({ type: Boolean }) fixed = false
   @property({ type: String }) logoHref = 'https://doid.tech'
   @state() menuActive = false
 
@@ -47,7 +48,8 @@ export class DuiHeader extends TailwindElement(style) {
   }
   render() {
     return html`
-      <header class="dui-header">
+      ${when(this.fixed, () => html`<div class="dui-header-placehodler"></div>`)}
+      <header class="dui-header ${classMap({ fixed: this.fixed })}">
         <div class="dui-container relative flex justify-between items-center">
           <div class="flex items-center gap-3 lg_gap-4 lg_w-40">
             <slot name="logo"><a class="doid-logo" href=${this.logoHref}></a><slot name="sublogo"></slot></slot>
