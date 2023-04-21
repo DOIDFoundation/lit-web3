@@ -3,7 +3,6 @@ import {
   TailwindElement,
   html,
   property,
-  state,
   repeat,
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
@@ -12,31 +11,34 @@ import {
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/address/avatar'
 import { goto } from '@lit-web3/dui/src/shared/router'
+import { uiKeyring, StateController } from '~/store/keyring'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 import css from './menu.css?inline'
 
 @customElement('account-menu')
 export class AccountMenu extends TailwindElement(css) {
-  @property({ type: Boolean }) show = false
-  @state() DOIDs: VaultDOID[] = []
-  @state() selected: VaultDOID | undefined
+  bindStore: any = new StateController(this, uiKeyring)
 
-  getDOIDs = async () => {
-    const { DOIDs, selectedDOID } = await popupMessenger.send('internal_getDOIDs')
-    this.DOIDs = Object.values(DOIDs)
-    this.selected = selectedDOID
+  @property({ type: Boolean }) show = false
+
+  get DOIDs() {
+    return Object.values(uiKeyring.DOIDs)
   }
+  get selected() {
+    return uiKeyring.selectedDOID
+  }
+
   lock = async () => {
     await popupMessenger.send('lock')
   }
   select = async (DOID: VaultDOID) => {
     await popupMessenger.send('internal_selectDOID', DOID)
+    this.emit('switch')
   }
 
   connectedCallback() {
     super.connectedCallback()
-    this.getDOIDs()
   }
 
   render() {
@@ -54,8 +56,8 @@ export class AccountMenu extends TailwindElement(css) {
               <div class="menu-list-left">
                 <i
                   class="menu-list-icon mdi mdi-check ${classMap(
-                    this.$c([this.selected?.name == DOID.name ? ' text-green-500 ' : 'invisible'])
-                  )} "
+                    this.$c([this.selected?.name == DOID.name ? 'text-green-500' : 'invisible'])
+                  )}"
                 ></i>
                 <dui-name-address avatar short .name=${DOID.name} .address=${DOID.address}></dui-name-address>
               </div>

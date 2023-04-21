@@ -9,7 +9,7 @@ import {
   styleMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 
-import { chainsDefault, ChainName, ChainCoin } from '~/lib.legacy/chain'
+import { chainsDefault, ChainName, ChainCoin } from '~/lib.next/chain'
 
 import style from './chain.css?inline'
 @customElement('network-list')

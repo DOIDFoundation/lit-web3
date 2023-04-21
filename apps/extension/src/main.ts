@@ -55,7 +55,7 @@ export class AppMain extends TailwindElement('') {
     return html`${when(
         this.showHeader,
         () =>
-          html`<dui-header logoHref="/">
+          html`<dui-header fixed logoHref="/">
             <div slot="left"><account-switch></account-switch></div>
             <div slot="right" class="block w-6 h-6 mx-auto">
               <img class="w-full h-full object-contain select-none pointer-events-none" src="${doid_icon}" />

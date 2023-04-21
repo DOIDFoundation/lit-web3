@@ -1,4 +1,4 @@
-// src: metamask-extension/app/scripts'~/lib.legacy/notification-manager
+// src: metamask-extension/app/scripts/lib/notification-manager
 import browser from 'webextension-polyfill'
 import { popupStore } from '~/lib.next/background/store/popupStore'
 import emitter from '@lit-web3/core/src/emitter'

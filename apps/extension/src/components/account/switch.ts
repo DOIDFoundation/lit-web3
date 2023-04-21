@@ -1,64 +1,44 @@
 import { customElement, TailwindElement, html, state, when, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
-
+import { uiKeyring, StateController } from '~/store/keyring'
 import '@lit-web3/dui/src/address/avatar'
 import '@lit-web3/dui/src/address/name'
 import '@lit-web3/dui/src/menu/drop'
 import './menu'
-import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('account-switch')
 export class AccountSwitch extends TailwindElement(null) {
-  @state() name = ''
-  @state() address = ''
+  bindStore: any = new StateController(this, uiKeyring)
+
   @state() menu = false
-  @state() selected: VaultDOID | undefined
 
-  get empty() {
-    return !this.selected
+  get selected() {
+    return uiKeyring.selectedDOID
   }
-  get dropable() {
-    return true //getAccounts().length > 1
+  get name() {
+    return this.selected?.name
+  }
+  get address() {
+    return this.selected?.address
   }
 
-  getSelected = async () => {
-    this.selected = await popupMessenger.send('internal_getSelected')
-    console.log(this.selected)
-  }
-  connectedCallback() {
-    super.connectedCallback()
-    this.getSelected()
-  }
   show = (e: CustomEvent) => {
     e.stopPropagation()
-    if (this.dropable) {
-      this.menu = !this.menu
-    }
+    this.menu = !this.menu
   }
-  onSwitch = (e: CustomEvent) => {
-    // const { idx } = e.detail
-    // setAccountIdx(idx)
-    // this.getCurrent()
-    // this.menu = false
+  onSwitch = () => {
+    this.menu = false
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
   }
 
   render() {
-    if (this.empty) return ''
+    if (!this.selected) return ''
     return html`<div class="relative">
       <dui-button md @click=${this.show} text class="inline-flex items-center">
-        <dui-name-address
-          avatar
-          .name=${this.selected?.name}
-          .address=${this.selected?.address}
-          class="tex"
-          wrap
-        ></dui-name-address
-        >${when(
-          this.dropable,
-          () =>
-            html`<i
-              class="text-xl mdi  ${classMap({ 'mdi-chevron-down': !this.menu, 'mdi-chevron-up': this.menu })}"
-            ></i>`
-        )}
+        <dui-name-address avatar .name=${this.name} .address=${this.address} class="tex" wrap></dui-name-address>
+        <i class="text-xl mdi  ${classMap({ 'mdi-chevron-down': !this.menu, 'mdi-chevron-up': this.menu })}"></i>
       </dui-button>
       ${when(
         this.menu,
