@@ -14,7 +14,7 @@ export class ViewRestore extends TailwindElement('') {
   @state() msgs: any[] = []
   @state() pending = false
   @state() res_DOID_setup = null
-  @state() res_DOID_name = null
+  @state() res_DOID_name = ''
   @state() res_DOID_chain_addrs = null
 
   reset = () => {
@@ -37,7 +37,7 @@ export class ViewRestore extends TailwindElement('') {
   req_DOID_name = async () => {
     this.reset()
     try {
-      this.res_DOID_name = await this.req({ method: 'DOID_name', params: [] })
+      this.res_DOID_name = JSON.stringify(await this.req({ method: 'DOID_name', params: [] }))
     } catch (e) {
       this.err = e
     }
@@ -76,7 +76,7 @@ export class ViewRestore extends TailwindElement('') {
         <hr class="my-2" />
         <div class="my-2">
           <p class="my-2">Received messages:</p>
-          <textarea class="w-80 h-32 border">${repeat(this.msgs, (msg) => html`${JSON.stringify(msg)}`)}</textarea>
+          <textarea class="w-80 h-32 border">${html`${this.msgs.map((msg) => JSON.stringify(msg))}`}</textarea>
         </div>
         <hr class="my-2" />
         <dui-button class="outlined minor" @click=${this.req_DOID_recover_reply}>on account recover</dui-button>

@@ -4,35 +4,30 @@ import '@lit-web3/dui/src/address/avatar'
 import '@lit-web3/dui/src/address/name'
 import '@lit-web3/dui/src/menu/drop'
 import './menu'
-import { getAccount, setAccountIdx, getAccounts } from '~/lib.legacy/account'
+import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('account-switch')
 export class AccountSwitch extends TailwindElement(null) {
   @state() name = ''
   @state() address = ''
   @state() menu = false
+  @state() selected: VaultDOID | undefined
 
   get empty() {
-    return !this.name || !this.address
+    return !this.selected
   }
   get dropable() {
     return true //getAccounts().length > 1
   }
-  get isUnlocked() {
-    //TODO: get from keyring
-    return false
-  }
 
-  getCurrent = () => {
-    const { name, mainAddress } = getAccount()
-    this.name = name
-    this.address = mainAddress
+  getSelected = async () => {
+    this.selected = await popupMessenger.send('internal_getSelected')
+    console.log(this.selected)
   }
   connectedCallback() {
-    this.getCurrent()
     super.connectedCallback()
+    this.getSelected()
   }
-
   show = (e: CustomEvent) => {
     e.stopPropagation()
     if (this.dropable) {
@@ -40,17 +35,24 @@ export class AccountSwitch extends TailwindElement(null) {
     }
   }
   onSwitch = (e: CustomEvent) => {
-    const { idx } = e.detail
-    setAccountIdx(idx)
-    this.getCurrent()
-    this.menu = false
+    // const { idx } = e.detail
+    // setAccountIdx(idx)
+    // this.getCurrent()
+    // this.menu = false
   }
 
   render() {
     if (this.empty) return ''
     return html`<div class="relative">
       <dui-button md @click=${this.show} text class="inline-flex items-center">
-        <dui-name-address avatar .name=${this.name} .address=${this.address} class="tex"></dui-name-address>${when(
+        <dui-name-address
+          avatar
+          .name=${this.selected?.name}
+          .address=${this.selected?.address}
+          class="tex"
+          wrap
+        ></dui-name-address
+        >${when(
           this.dropable,
           () =>
             html`<i
