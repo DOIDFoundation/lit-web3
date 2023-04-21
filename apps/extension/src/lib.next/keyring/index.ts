@@ -1,83 +1,116 @@
 // Only allowed in background environment
-import { KeyringController as MetaMaskKeyringController } from '@metamask/eth-keyring-controller'
-import DOIDNameController from './DOIDNameController'
+import { KeyringController } from '@metamask/eth-keyring-controller'
 import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
-import { localStore, loadStateFromPersistence } from '~/lib.next/background/store/localStore'
+import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/store/extStorage'
 
-export const getMemState = async () => (await getKeyringController()).memStore.getState()
-export const getState = async () => (await getKeyringController()).store.getState()
-
+// Shortcuts
+export const getMemState = async () => (await getKeyring()).memStore.getState()
+export const getState = async () => (await getKeyring()).store.getState()
 export const isUnlocked = async () => (await getMemState()).isUnlocked
 export const isInitialized = async () => Boolean((await getState()).vault)
-export const lock = async () => await (await getKeyringController()).setLocked()
+export const lock = async () => await (await getKeyring()).setLocked()
 export const unlock = async (pwd: string) => {
-  const keyringController = await getKeyringController()
-  await keyringController.submitPassword(pwd)
-  return keyringController.fullUpdate()
+  const keyring = await getKeyring()
+  await keyring.submitPassword(pwd)
+  return keyring.fullUpdate()
 }
-export const getAddress = async () => await (await getKeyringController()).setLocked()
+export const getDOIDs = async () => (await getKeyring()).getDOIDs()
+export const getSelected = async () => (await getState()).selectedDOID
+export const getSelectedAddress = async () => (await getSelected()).address
 
-type KeyringControllerArgs = Record<string, any>
-
-class KeyringController extends MetaMaskKeyringController {
-  DOIDs = {}
-  constructor(keyringOpts: KeyringControllerArgs) {
+class Keyring extends KeyringController {
+  constructor(keyringOpts: Record<string, any>) {
     super(keyringOpts)
-    this.DOID = new DOIDNameController(keyringOpts)
   }
-  async createNewVaultAndRestore(DOIDName: string, password: string, encodedSeedPhrase: number[]) {
-    if (!DOIDName || !password) return
+  // DOID methods
+  setDOIDs = async (name: string, address: string) => {
+    const DOID = { name, address }
+    const { DOIDs = { [name]: DOID }, selectedDOID = DOID } = this.store.getState()
+    this.store.updateState({ DOIDs, selectedDOID })
+  }
+  setSelected = async (DOIDish: VaultDOID | string | any) => {
+    const { name = DOIDish } = DOIDish
+    const selectedDOID = this.getDOIDs()[name]
+    if (!selectedDOID) throw new Error(`Identity for '${name} not found`)
+    this.store.updateState({ selectedDOID })
+  }
+  getDOIDs = () => this.store.getState().DOIDs
+  getAddresses = async () => await super.getAccounts()
+
+  // Overrides
+  removeAccount = async (DOID: VaultDOID) => {
+    let { DOIDs, selectedDOID } = this.store.getState()
+    const { name, address } = DOID
+    delete DOIDs[name]
+    if (selectedDOID?.name === name) [selectedDOID] = Object.values(DOIDs)
+    this.store.updateState({ DOIDs, selectedDOID })
+    await super.removeAccount(address)
+    // Destory
+    const keyring = await super.getKeyringForAccount(address)
+    const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {}
+    if (updatedKeyringAccounts?.length === 0) keyring.destroy?.()
+    return DOID
+  }
+
+  async createNewVaultAndRestore(name: string, password: string, encodedSeedPhrase: number[]) {
+    if (!name || !password) return
     const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
-    // preferencesController.setAddresses([])
-    // permissionController.clearState()
-    // accountTracker.clearAccounts()
     const vault = await super.createNewVaultAndRestore(password, seedPhraseAsBuffer)
     const [primaryKeyring] = super.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
     if (!primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
-    let accounts = await this.getAccounts()
-    await this.addNewAccount(primaryKeyring)
-    accounts = await this.getAccounts()
-    console.log(accounts, 'accounts')
-    this.DOID.bindName(DOIDName, accounts[0])
-    //
-    // this.preferencesController.setAddresses(accounts)
-    // this.selectFirstIdentity()
+    let addresses = await this.getAddresses()
+    this.setDOIDs(name, addresses[0])
+    return vault
+  }
+  async createNewVaultAndKeychain(password: string) {
+    let vault
+    const addresses = await this.getAddresses()
+    if (addresses.length) {
+      vault = await this.fullUpdate()
+    } else {
+      vault = await super.createNewVaultAndKeychain(password)
+      this.fullUpdate()
+    }
     return vault
   }
 }
 
-let keyringController: KeyringController
+let keyring: Keyring
 let promise: any
-export const getKeyringController = async () => {
-  if (keyringController) return keyringController
+export const getKeyring = async () => {
+  if (keyring) return keyring
   if (!promise)
     promise = new Promise(async (resolve) => {
-      const initState = (await loadStateFromPersistence()).KeyringController
-      keyringController = new KeyringController({ initState, cacheEncryptionKey: true })
-      resolve(keyringController)
+      keyring = new Keyring({
+        initState: await loadStateFromStorage(storageKey.keyring),
+        cacheEncryptionKey: true
+      })
+      resolve(keyring)
     })
   return await promise
 }
+
 // Initialize directly
-getKeyringController().then(() => {
+getKeyring().then(() => {
   // Re-emit keyring events
   ;['unlock', 'lock'].forEach((evt) => {
-    keyringController.on(evt, () => emitter.emit(evt))
+    keyring.on(evt, () => emitter.emit(evt))
   })
   // keyring does not persist state to storage @10.x
-  keyringController.store.subscribe(localStore.save('KeyringController'))
+  keyring.store.subscribe(saveStateToStorage(storageKey.keyring))
   // keyring memStore is not persistent
-  keyringController.memStore.subscribe(async (state: any) => {
+  keyring.memStore.subscribe(async (state: any) => {
     if (!state) return console.warn('[To be confirmed] keyring state is undefined', state)
     const { keyrings, encryptionKey: loginToken, encryptionSalt: loginSalt } = state
     if (!keyrings) return console.warn('[To be confirmed] keyring state.keyrings is undefined', state)
     // @ts-expect-error
     await browser.storage.session.set({ loginToken, loginSalt })
-    const addresses = keyrings.reduce((acc: any, { accounts } = <any>{}) => acc.concat(accounts), [])
+    // TODO: Is this necessary for now?
+    const addresses = keyrings.reduce((acc: any, { accounts: _addresses } = <any>{}) => acc.concat(_addresses), [])
     emitter.emit('keyring_update', addresses)
   })
 })
 
-export default getKeyringController
+export default getKeyring

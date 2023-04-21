@@ -25,4 +25,3 @@ const inject = () => {
 // TOD: why `openStream` is not working
 
 inject()
-contentLogger('started')

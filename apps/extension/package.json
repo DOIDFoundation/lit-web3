@@ -16,6 +16,7 @@
   },
   "keywords": [],
   "dependencies": {
+    "@chainify/evm": "^2.2.0",
     "@ethereumjs/util": "^8.0.5",
     "@keystonehq/metamask-airgapped-keyring": "^0.9.1",
     "@libp2p/crypto": "^1.0.7",

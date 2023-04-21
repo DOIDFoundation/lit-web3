@@ -1,7 +1,7 @@
 import { openPopup } from '~/lib.next/background/notifier'
 import { BACKGROUND_EVENTS, ERR_USER_DENIED } from '~/lib.next/constants'
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { isUnlocked, getKeyringController } from '~/lib.next/keyring'
+import { isUnlocked } from '~/lib.next/keyring'
 
 const waitingForUnlock: Function[] = []
 const waitingForYieldPopup: BackgroundMiddlwareCtx[] = []
