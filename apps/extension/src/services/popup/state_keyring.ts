@@ -1,5 +1,5 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import * as keyringCtrl from '~/lib.next/keyring'
+// import * as keyringCtrl from '~/lib.next/keyring'
 import { getKeyring } from '~/lib.next/keyring'
 import { DOIDBodyParser, getDOIDs } from '~/middlewares'
 import { getAddress } from '~/lib.next/keyring/phrase'
@@ -19,7 +19,7 @@ export const state_isunlock: BackgroundService = {
   method: 'state_isunlock',
   middlewares: [],
   fn: async ({ res }) => {
-    res.body = await keyringCtrl.isUnlocked()
+    res.body = (await getKeyring()).isUnlocked
     backgroundMessenger.log('is unlocked:', res.body)
   }
 }
@@ -28,7 +28,7 @@ export const state_isinitialized: BackgroundService = {
   method: 'state_isinitialized',
   middlewares: [],
   fn: async ({ res }) => {
-    res.body = await keyringCtrl.isInitialized()
+    res.body = (await getKeyring()).isInitialized
     backgroundMessenger.log('is initialized:', res.body)
   }
 }
@@ -37,7 +37,7 @@ export const unlock: BackgroundService = {
   method: 'unlock',
   middlewares: [DOIDBodyParser()],
   fn: async ({ res, state }) => {
-    res.body = await keyringCtrl.unlock(state.pwd)
+    res.body = (await getKeyring()).unlock(state.pwd)
   }
 }
 
@@ -45,7 +45,7 @@ export const lock: BackgroundService = {
   method: 'lock',
   middlewares: [],
   fn: async ({ res }) => {
-    res.body = await keyringCtrl.lock()
+    res.body = (await getKeyring()).lock()
   }
 }
 
@@ -80,11 +80,11 @@ export const internal_getSelected: BackgroundService = {
 
 export const internal_selectDOID: BackgroundService = {
   method: 'internal_selectDOID',
-  middlewares: [getDOIDs],
+  middlewares: [],
   fn: async ({ req, res }) => {
-    const keyring = await getKeyring()
     const { name, address } = req.body
-    await keyring.setSelected({ name, address })
+    const keyring = await getKeyring()
+    await keyring.selectDOID({ name, address })
     res.body = 'ok'
   }
 }
@@ -93,7 +93,7 @@ export const internal_keyring_state: BackgroundService = {
   method: 'internal_keyring_state',
   middlewares: [getDOIDs],
   fn: async ({ res, state }) => {
-    const { DOIDs, selectedDOID } = state
-    res.body = { DOIDs, selectedDOID }
+    const { DOIDs, selectedDOID, isInitialized, isUnlocked } = state
+    res.body = { DOIDs, selectedDOID, isInitialized, isUnlocked }
   }
 }
