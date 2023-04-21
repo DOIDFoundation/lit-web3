@@ -4,7 +4,7 @@ import { getKeyring } from '~/lib.next/keyring'
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { DOIDBodyParser, yieldPopup, autoClosePopup } from '~/middlewares'
 
-export const internal_create: BackgroundService = {
+export const internal_recovery: BackgroundService = {
   method: 'internal_recovery',
   middlewares: [DOIDBodyParser()],
   fn: async ({ state, req, res }) => {

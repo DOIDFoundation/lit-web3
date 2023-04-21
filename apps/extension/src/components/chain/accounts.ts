@@ -31,8 +31,8 @@ export class accountList extends TailwindElement(null) {
 
   get mainAddress() {
     if (!this.chain?.coin) return ''
-    const res = this.addresses.find((r) => Object.keys(r).indexOf(this.chain.coin) > -1)
-    return res![this.chain?.coin]
+    const res = this.addresses.find((r) => Object.keys(r).indexOf(this.chain?.coin) > -1)
+    return res ? res![this.chain?.coin] : ''
   }
   async connectedCallback() {
     const { addresses } = await requestUserAddresses()

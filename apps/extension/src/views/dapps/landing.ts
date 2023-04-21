@@ -56,7 +56,7 @@ export class ViewLanding extends TailwindElement(null) {
               for ETH, main addresses for all other chains will be generated automatically</dui-button
             >
             <p class="my-1 text-center text-gray-500">or</p>
-            <dui-button class="outlined w-full my-2" @click=${() => goto(`/import3rd`)}
+            <dui-button class="outlined w-full my-2" @click=${() => goto(`/import`)}
               >Use a Secret Recovery Phrase to generate main addresses for all chains</dui-button
             >`
         )}
