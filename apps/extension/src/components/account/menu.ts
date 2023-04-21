@@ -11,14 +11,14 @@ import {
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/address/avatar'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { uiKeyring, StateController } from '~/store/keyring'
+import { uiKeyring, StateController } from '~/store/keyringState'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 import css from './menu.css?inline'
 
 @customElement('account-menu')
 export class AccountMenu extends TailwindElement(css) {
-  bindStore: any = new StateController(this, uiKeyring)
+  bindKeyring: any = new StateController(this, uiKeyring)
 
   @property({ type: Boolean }) show = false
 

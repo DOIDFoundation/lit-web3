@@ -1,16 +1,16 @@
 import browser from 'webextension-polyfill'
-import { popupStore } from '~/lib.next/background/storage/popupStore'
+import { popupStorage } from '~/lib.next/background/storage/popupStorage'
 import backgroundMessenger from '~/lib.next/messenger/background'
 
 browser.tabs.onActivated.addListener(async ({ tabId }) => {
-  if (!popupStore.previousTabId) {
-    popupStore.previousTabId = tabId
+  if (!popupStorage.previousTabId) {
+    popupStorage.previousTabId = tabId
     return
   }
   let tab: browser.Tabs.Tab | undefined = undefined
   try {
-    tab = await browser.tabs.get(popupStore.previousTabId)
-    popupStore.previousTabId = tabId
+    tab = await browser.tabs.get(popupStorage.previousTabId)
+    popupStorage.previousTabId = tabId
   } catch {
     return
   }

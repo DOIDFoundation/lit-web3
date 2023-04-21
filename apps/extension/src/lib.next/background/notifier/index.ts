@@ -1,6 +1,6 @@
 // src: metamask-extension/app/scripts/lib/notification-manager
 import browser from 'webextension-polyfill'
-import { popupStore } from '~/lib.next/background/storage/popupStore'
+import { popupStorage } from '~/lib.next/background/storage/popupStorage'
 import emitter from '@lit-web3/core/src/emitter'
 
 export const POPUP_HEIGHT = 620
@@ -11,27 +11,27 @@ let uiIsTriggering = false
 export const getPopup = async (): Promise<any> => {
   const windows = await browser.windows.getAll()
   if (!windows?.length) return
-  return windows.find((win) => win && win.type === 'popup' && win.id === popupStore._popupId)
+  return windows.find((win) => win && win.type === 'popup' && win.id === popupStorage._popupId)
 }
 
 export const openPopup = async (url?: string): Promise<void> => {
   const tabs = await browser.tabs.query({ active: true })
-  const currentlyActived = tabs.some(({ id }) => id && popupStore.openTabsIDs[id])
-  if (!uiIsTriggering && !popupStore.isOpen && !currentlyActived) {
+  const currentlyActived = tabs.some(({ id }) => id && popupStorage.openTabsIDs[id])
+  if (!uiIsTriggering && !popupStorage.isOpen && !currentlyActived) {
     uiIsTriggering = true
     try {
-      await showPopup(popupStore.currentPopupId, url)
+      await showPopup(popupStorage.currentPopupId, url)
     } catch {}
     uiIsTriggering = false
   }
 }
 
 export const closePopup = async () => {
-  if (popupStore._popupId) browser.windows.remove(popupStore._popupId as number)
+  if (popupStorage._popupId) browser.windows.remove(popupStorage._popupId as number)
 }
 
 const showPopup = async (currentPopupId?: number, url = '/'): Promise<any> => {
-  if (currentPopupId) popupStore._popupId = currentPopupId
+  if (currentPopupId) popupStorage._popupId = currentPopupId
   const popup = await getPopup()
   if (popup?.id) return await browser.windows.update(popup.id, { focused: true })
   //
@@ -59,25 +59,25 @@ const showPopup = async (currentPopupId?: number, url = '/'): Promise<any> => {
   if (popupWindow.left !== left && popupWindow.state !== 'fullscreen') {
     await browser.windows.update(popupId, { left, top })
   }
-  popupStore.currentPopupId = popupId
-  popupStore._popupId = popupId
+  popupStorage.currentPopupId = popupId
+  popupStorage._popupId = popupId
 }
 
 // onWindowClosed
 browser.windows.onRemoved.addListener((windowId: number) => {
-  if (windowId !== popupStore._popupId) return
-  popupStore.currentPopupId = undefined
-  popupStore._popupId = undefined
+  if (windowId !== popupStorage._popupId) return
+  popupStorage.currentPopupId = undefined
+  popupStorage._popupId = undefined
   emitter.emit('popup_closed', {
-    automaticallyClosed: popupStore._popupAutomaticallyClosed
+    automaticallyClosed: popupStorage._popupAutomaticallyClosed
   })
   // process unapprovals
-  // if (!popupStore._popupAutomaticallyClosed) {
+  // if (!popupStorage._popupAutomaticallyClosed) {
   //   rejectUnapprovedNotifications();
   // } else if (getUnapprovedTransactionCount() > 0) {
   //   triggerUi();
   // }
-  popupStore._popupAutomaticallyClosed = undefined
+  popupStorage._popupAutomaticallyClosed = undefined
 })
 
 export default {

@@ -19,7 +19,7 @@ class UIKeyring extends State {
     if (this.locked && !force) return
     this.pending = true
     try {
-      const { DOIDs, selectedDOID } = await popupMessenger.send('internal_getDOIDs')
+      const { DOIDs, selectedDOID } = await popupMessenger.send('internal_keyring_state')
       if (this.locked && !force) return
       Object.assign(this, { DOIDs, selectedDOID })
     } catch {}

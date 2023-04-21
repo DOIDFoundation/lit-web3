@@ -1,5 +1,5 @@
 import { TailwindElement, html, customElement, when, state, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
-import { uiKeyring, StateController } from '~/store/keyring'
+import { uiKeyring, StateController } from '~/store/keyringState'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -11,7 +11,7 @@ import '~/components/chain/accounts'
 import style from './main.css?inline'
 @customElement('view-main')
 export class ViewMain extends TailwindElement(style) {
-  bindStore: any = new StateController(this, uiKeyring)
+  bindKeyring: any = new StateController(this, uiKeyring)
   @state() curChain = null as any
 
   get address() {

@@ -88,3 +88,12 @@ export const internal_selectDOID: BackgroundService = {
     res.body = 'ok'
   }
 }
+
+export const internal_keyring_state: BackgroundService = {
+  method: 'internal_keyring_state',
+  middlewares: [getDOIDs],
+  fn: async ({ res, state }) => {
+    const { DOIDs, selectedDOID } = state
+    res.body = { DOIDs, selectedDOID }
+  }
+}

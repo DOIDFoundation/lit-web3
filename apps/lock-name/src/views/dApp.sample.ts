@@ -1,4 +1,5 @@
 import { TailwindElement, html, customElement, state, repeat } from '@lit-web3/dui/src/shared/TailwindElement'
+import { sleep } from '@lit-web3/ethers/src/utils'
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/input/pwd'
@@ -22,12 +23,10 @@ export class ViewRestore extends TailwindElement('') {
     this.pending = true
   }
 
-  req = window.DOID.request
-
   req_DOID_setup = async () => {
     this.reset()
     try {
-      this.res_DOID_setup = await this.req({ method: 'DOID_setup', params: ['zzzxxx.doid'] })
+      this.res_DOID_setup = await window.DOID.request({ method: 'DOID_setup', params: ['zzzxxx.doid'] })
     } catch (e) {
       this.err = e
     }
@@ -37,25 +36,17 @@ export class ViewRestore extends TailwindElement('') {
   req_DOID_name = async () => {
     this.reset()
     try {
-      this.res_DOID_name = JSON.stringify(await this.req({ method: 'DOID_name', params: [] }))
+      this.res_DOID_name = JSON.stringify(await window.DOID.request({ method: 'DOID_name', params: [] }))
     } catch (e) {
       this.err = e
     }
     this.pending = false
   }
-  req_DOID_recover_reply = async () => {
-    logger('listen DOID_account_update...')
-    window.DOID.on('DOID_account_update', async (data: any) => {
-      const {
-        data: { cid }
-      } = data
-      const res = await window.DOID.request({ method: 'DOID_chain_address', params: { cid } })
-      this.res_DOID_chain_addrs = res
-    })
-  }
+
   async connectedCallback() {
     super.connectedCallback()
     // TODO: Add onboarding service
+    await sleep(500)
     ;['DOID_account_change', 'DOID_account_update'].forEach((_evt) => {
       window.DOID.on(_evt, ({ id, data } = <any>{}) => {
         this.msgs = this.msgs.concat([{ id, data }])
@@ -79,14 +70,6 @@ export class ViewRestore extends TailwindElement('') {
           <p class="my-2">Received messages:</p>
           <textarea class="w-80 h-32 border">${html`${this.msgs.map((msg) => JSON.stringify(msg))}`}</textarea>
         </div>
-        <hr class="my-2" />
-        <dui-button class="outlined minor" @click=${this.req_DOID_recover_reply}>on account recover</dui-button>
-        <p class="my-2">
-          Res:
-          <span class="p-4 text-xs text-blue-500 break-words whitespace-normal"
-            >${JSON.stringify(this.res_DOID_chain_addrs)}</span
-          >
-        </p>
 
         <hr class="my-2" />
         <p class="my-2 text-red-600">${this.err}</p>

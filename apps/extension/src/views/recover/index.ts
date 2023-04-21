@@ -9,7 +9,7 @@ import ipfsHelper from '~/lib.next/ipfsHelper'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { StateController, walletStore } from '~/store'
 import { accountStore } from '~/store/account'
-import { keyringStore } from '~/store/keyring'
+import { uiKeyring } from '~/store/keyringState'
 
 import { goto } from '@lit-web3/dui/src/shared/router'
 import {
@@ -26,7 +26,7 @@ import popupMessenger from '~/lib.next/messenger/popup'
 @customElement('view-recover')
 export class ViewImport extends TailwindElement(null) {
   state = new StateController(this, walletStore)
-  bindStore: any = new StateController(this, keyringStore)
+  bindKeyring: any = new StateController(this, uiKeyring)
   bindAccount: any = new StateController(this, accountStore)
   @property() doidName = ''
   @state() secretRecoveryPhrase = ''
