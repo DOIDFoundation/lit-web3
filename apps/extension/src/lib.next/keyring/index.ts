@@ -18,6 +18,7 @@ export const unlock = async (pwd: string) => {
 }
 export const getDOIDs = async () => (await getKeyring()).getDOIDs()
 export const getSelected = async () => (await getState()).selectedDOID
+export const getSelectedAddress = async () => (await getSelected()).address
 
 class Keyring extends KeyringController {
   constructor(keyringOpts: Record<string, any>) {

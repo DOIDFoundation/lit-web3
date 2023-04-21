@@ -1,0 +1,12 @@
+.menu-area {
+}
+.menu-list {
+  @apply flex justify-between items-center cursor-pointer hover_bg-gray-100 transition-colors;
+  & .menu-list-left {
+    @apply flex items-center p-2 pl-3;
+  }
+
+  & .menu-list-icon {
+    @apply flex items-center text-base w-5;
+  }
+}
