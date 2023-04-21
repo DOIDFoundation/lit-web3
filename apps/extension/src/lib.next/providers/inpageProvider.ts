@@ -19,6 +19,5 @@ export const injectInpageProvider = () => {
     // @ts-expect-error
     window.DOID = inpageProvider()
     dispatchEvent(new Event('DOID#initialized'))
-    inpageLogger('injected')
   }
 }
