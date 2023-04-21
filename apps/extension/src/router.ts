@@ -112,6 +112,15 @@ export const routes = [
     }
   },
   {
+    name: 'import',
+    path: '/import',
+    render: () => html`<view-import></view-import>`,
+    enter: async () => {
+      await import('~/views/import')
+      return true
+    }
+  },
+  {
     name: 'import2nd',
     path: '/import2nd',
     render: () => html`<import-2nd></import-2nd>`,

@@ -20,9 +20,18 @@ export const genMnemonic = () => {
   return phrase
 }
 export const validatePhrase = (phrase = '') => {
-  return validateMnemonic(phrase, wordlist)
+  const valid = validateMnemonic(phrase, wordlist)
+  const err = valid ? '' : 'Bad mnemonic'
+  return err
 }
-
+export const phraseMatch = async (phrase = '', target = '') => {
+  if (!phrase) return false
+  if (target) {
+    let ethAddr = await getAddress(phrase, AddressType.eth)
+    return target ? target === ethAddr : true
+  }
+  return true
+}
 export const getKey = async (phrase: string) => {
   const _seed = await mnemonicToSeed(phrase)
   const seed = toHex(_seed)
