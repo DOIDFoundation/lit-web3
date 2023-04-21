@@ -6,7 +6,7 @@ import { State, property } from '@lit-app/state'
 class UIKeyring extends State {
   @property({ value: false }) pending!: boolean
   @property({ value: 0 }) ts!: number
-  @property({ value: false }) locked!: boolean
+  @property({ value: true }) locked!: boolean
   // DOIDs
   @property({ value: {} }) DOIDs!: VaultDOIDs
   @property({ value: {} }) selectedDOID!: VaultDOID | undefined

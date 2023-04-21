@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill'
 import emitter from '@lit-web3/core/src/emitter'
 import { BACKGROUND_EVENTS } from '~/lib.next/constants/events'
 import { openPopup } from '~/lib.next/background/notifier'
-import { popupStore } from '~/lib.next/background/store/popupStore'
+import { popupStore } from '~/lib.next/background/storage/popupStore'
 
 emitter.on(BACKGROUND_EVENTS.UPDATE_BADGE, updateBadge)
 

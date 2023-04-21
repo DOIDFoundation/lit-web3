@@ -3,7 +3,7 @@ import { KeyringController } from '@metamask/eth-keyring-controller'
 import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
-import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/store/extStorage'
+import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
 
 // Shortcuts
 export const getMemState = async () => (await getKeyring()).memStore.getState()

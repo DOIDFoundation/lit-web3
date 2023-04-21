@@ -1,6 +1,6 @@
 // src: metamask-extension/app/scripts/lib/notification-manager
 import browser from 'webextension-polyfill'
-import { popupStore } from '~/lib.next/background/store/popupStore'
+import { popupStore } from '~/lib.next/background/storage/popupStore'
 import emitter from '@lit-web3/core/src/emitter'
 
 export const POPUP_HEIGHT = 620

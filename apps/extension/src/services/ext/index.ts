@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill'
-import { popupStore } from '~/lib.next/background/store/popupStore'
+import { popupStore } from '~/lib.next/background/storage/popupStore'
 import backgroundMessenger from '~/lib.next/messenger/background'
 
 browser.tabs.onActivated.addListener(async ({ tabId }) => {
