@@ -10,7 +10,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { accountStore } from '~/store/account'
 import { walletStore, StateController } from '~/store'
-import { genMnemonic } from '~/lib.legacy/phrase'
+import { genMnemonic } from '~/lib.next/keyring/phrase'
 import clipboard from '@lit-web3/dui/src/copy/clipboard'
 
 // Components

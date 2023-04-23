@@ -17,7 +17,7 @@ export const ChainsDefaultDef = (): ChainNet[] => {
   return [
     { name: ChainName.ethereum, title: 'Ethereum', coin: ChainCoin.ethereum },
     { name: ChainName.bitcoin, title: 'BitCoin', coin: ChainCoin.bitcoin },
-    { name: ChainName.bsc, title: 'BNB smart chain', coin: ChainCoin.bsc },
+    { name: ChainName.bsc, title: 'BNB Smart Chain', coin: ChainCoin.bsc },
     { name: ChainName.aptos, title: 'Aptos', coin: ChainCoin.aptos },
     { name: ChainName.solana, title: 'Solana', coin: ChainCoin.solana }
   ].filter((r) => r.name != 'bitcoin')

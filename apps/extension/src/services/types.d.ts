@@ -23,6 +23,7 @@ declare interface BackgroundMiddlwareCtx {
   req: Req
   res: Res
   state: JsonValue
+  end: Function
 }
 declare type BackgroundMiddlware = (ctx: BackgroundMiddlwareCtx, next: Promise) => Promise<any>
 

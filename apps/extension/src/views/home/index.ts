@@ -1,6 +1,6 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { keyringStore, StateController } from '~/store/keyring'
+import { uiKeyring, StateController } from '~/store/keyringState'
 import { accountStore } from '~/store/account'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
@@ -12,7 +12,7 @@ import style from './home.css?inline'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
   account: any = new StateController(this, accountStore)
-  bindStore: any = new StateController(this, keyringStore)
+  bindKeyring: any = new StateController(this, uiKeyring)
   @property() placeholder = 'e.g. satoshi.doid'
   @state() doid = ''
   @state() err = ''

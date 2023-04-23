@@ -3,7 +3,7 @@
 import { getKeyring } from '~/lib.next/keyring'
 import { normalize as normalizeAddress } from '@metamask/eth-sig-util'
 import emitter from '@lit-web3/core/src/emitter'
-import { saveStateToStorage, storageKey, loadStateFromStorage } from '~/lib.next/background/store/extStorage'
+import { saveStateToStorage, storageKey, loadStateFromStorage } from '~/lib.next/background/storage/extStorage'
 import { ObservableStore } from '@metamask/obs-store'
 
 class PreferencesController {

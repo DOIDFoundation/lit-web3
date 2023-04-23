@@ -4,7 +4,7 @@ import { getKeyring } from '~/lib.next/keyring'
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { DOIDBodyParser, yieldPopup, autoClosePopup } from '~/middlewares'
 
-export const internal_create: BackgroundService = {
+export const internal_recovery: BackgroundService = {
   method: 'internal_recovery',
   middlewares: [DOIDBodyParser()],
   fn: async ({ state, req, res }) => {
@@ -16,8 +16,8 @@ export const internal_create: BackgroundService = {
     try {
       ;(await getKeyring()).createNewVaultAndRestore(name, pwd, mnemonic)
       const cid = await ipfsHelper.updateJsonData(json, name, { memo: mnemonic })
+      if (reply) backgroundMessenger.broadcast('DOID_account_update', { cid })
       res.body = { success: 'ok' }
-      if (reply) backgroundMessenger.send('DOID_account_update', { cid })
     } catch (e) {
       throw e
     }

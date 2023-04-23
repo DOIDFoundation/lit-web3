@@ -3,45 +3,57 @@ import { KeyringController } from '@metamask/eth-keyring-controller'
 import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
-import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/store/extStorage'
-
-// Shortcuts
-export const getMemState = async () => (await getKeyring()).memStore.getState()
-export const getState = async () => (await getKeyring()).store.getState()
-export const isUnlocked = async () => (await getMemState()).isUnlocked
-export const isInitialized = async () => Boolean((await getState()).vault)
-export const lock = async () => await (await getKeyring()).setLocked()
-export const unlock = async (pwd: string) => {
-  const keyring = await getKeyring()
-  await keyring.submitPassword(pwd)
-  return keyring.fullUpdate()
-}
-export const getDOIDs = async () => (await getKeyring()).getDOIDs()
-export const getSelected = async () => (await getState()).selectedDOID
-export const getSelectedAddress = async () => (await getSelected()).address
+import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
 
 class Keyring extends KeyringController {
   constructor(keyringOpts: Record<string, any>) {
     super(keyringOpts)
   }
+  // Shortcuts
+  get state() {
+    return this.store.getState()
+  }
+  get memState() {
+    return this.memStore.getState()
+  }
+  get isInitialized() {
+    return Boolean(this.state.vault)
+  }
+  get isUnlocked() {
+    return this.memState.isUnlocked
+  }
+  get DOIDs() {
+    return this.state.DOIDs
+  }
+  get selectedDOID() {
+    return this.state.selectedDOID
+  }
+  get selectedAddress() {
+    return this.selectedDOID.address
+  }
+  lock = async () => await super.setLocked()
+  unlock = async (pwd: string) => {
+    await this.submitPassword(pwd)
+    return this.fullUpdate()
+  }
+  getAddresses = async () => await super.getAccounts()
+
   // DOID methods
   setDOIDs = async (name: string, address: string) => {
     const DOID = { name, address }
-    const { DOIDs = { [name]: DOID }, selectedDOID = DOID } = this.store.getState()
+    const { DOIDs = { [name]: DOID }, selectedDOID = DOID } = this.state
     this.store.updateState({ DOIDs, selectedDOID })
   }
-  setSelected = async (DOIDish: VaultDOID | string | any) => {
+  selectDOID = async (DOIDish: VaultDOID | string | any) => {
     const { name = DOIDish } = DOIDish
     const selectedDOID = this.getDOIDs()[name]
     if (!selectedDOID) throw new Error(`Identity for '${name} not found`)
     this.store.updateState({ selectedDOID })
   }
-  getDOIDs = () => this.store.getState().DOIDs
-  getAddresses = async () => await super.getAccounts()
 
   // Overrides
   removeAccount = async (DOID: VaultDOID) => {
-    let { DOIDs, selectedDOID } = this.store.getState()
+    let { DOIDs, selectedDOID } = this.state
     const { name, address } = DOID
     delete DOIDs[name]
     if (selectedDOID?.name === name) [selectedDOID] = Object.values(DOIDs)

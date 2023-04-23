@@ -18,7 +18,7 @@ import '~/components/phrase'
 import '~/components/pwd-equal'
 
 import style from './create.css?inline'
-import { AddressType, getAddress } from '~/lib.legacy/phrase'
+import { AddressType, getAddress } from '~/lib.next/keyring/phrase'
 import {
   assignOverrides,
   getABI,

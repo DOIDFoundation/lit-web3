@@ -5,7 +5,7 @@ type OpenTabsIDs = {
 }
 type PopupId = number | undefined
 
-// class PopupStore extends State {
+// class PopupStorage extends State {
 //   @property({ value: Number }) currentPopupId!: PopupId
 //   @property({ value: Boolean }) isOpen!: boolean
 //   @property({ value: Object }) openTabsIDs!: OpenTabsIDs
@@ -13,7 +13,7 @@ type PopupId = number | undefined
 //   @property({ value: Boolean }) _popupAutomaticallyClosed!: boolean | undefined
 // }
 
-export const popupStore = {
+export const popupStorage = {
   previousTabId: 0,
   currentPopupId: undefined as PopupId,
   isOpen: false,

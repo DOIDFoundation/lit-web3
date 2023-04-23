@@ -1,14 +1,14 @@
 import { openPopup } from '~/lib.next/background/notifier'
 import { BACKGROUND_EVENTS, ERR_USER_DENIED } from '~/lib.next/constants'
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { isUnlocked } from '~/lib.next/keyring'
+import { getKeyring } from '~/lib.next/keyring'
 
 const waitingForUnlock: Function[] = []
 const waitingForYieldPopup: BackgroundMiddlwareCtx[] = []
 
 const handleUnlock = async () => {
   if (!waitingForUnlock.length) return
-  const err = (await isUnlocked()) ? null : new Error(ERR_USER_DENIED)
+  const err = (await getKeyring()).isUnlocked ? null : new Error(ERR_USER_DENIED)
   while (waitingForUnlock.length) {
     waitingForUnlock.shift()!(true, err)
   }
@@ -50,10 +50,11 @@ export const unlock = (popupUrl?: string): BackgroundMiddlware => {
         resolve(next())
         if (popupUrl) backgroundMessenger.send('popup_goto', state2url(state, popupUrl))
       }
-      if (await isUnlocked()) return _next()
+      const { isInitialized, isUnlocked } = await getKeyring()
+      if (isUnlocked) return _next()
       waitingForUnlock.push(_next)
       backgroundMessenger.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
-      openPopup('/unlock')
+      openPopup(isInitialized ? '/unlock' : '/')
     })
   }
 }

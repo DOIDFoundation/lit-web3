@@ -4,19 +4,24 @@ import { html } from 'lit'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 import emitter from '@lit-web3/core/src/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
-import { isUnlock } from '~/lib.next/popup'
+import { isUnlock, isInit, keyringState } from '~/lib.next/popup'
 
 popupMessenger.on('keyring_update', () => {})
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
 popupMessenger.on('popup_goto', ({ data: r }) => r && emitter.emit('router-goto', r))
 
 // const beforeEachRedirected = async (): Promise<boolean> => {
-//   const _isUnlock = await isUnlock()
-//   if (!_isUnlock) {
+//   const { isInitialized, isUnlocked } = await keyringState()
+//   if (!isInitialized && !location.href.includes('/landing')) {
+//     // debugger
+//     // emitter.emit('router-goto', '/start')
+//     emitter.emit('router-goto', '/')
+//     return true
+//   }
+//   if (!isUnlocked) {
 //     emitter.emit('router-goto', '/unlock')
 //     return true
 //   }
-//   // const _account = await popupMessenger.send('state_account')
 //   return false
 // }
 
@@ -25,17 +30,15 @@ const homeView = {
   path: '/',
   render: () => html`<view-home></view-home>`,
   enter: async () => {
-    if (!(await popupMessenger.send('state_isinitialized'))) {
+    if (!(await isInit())) {
       await import('~/views/home')
       return true
     }
-
     if (!(await isUnlock())) {
       emitter.emit('router-goto', '/unlock')
       return false
     }
 
-    // const _account = await popupMessenger.send('state_account')
     emitter.emit('router-goto', '/main')
     return false
   }
@@ -112,6 +115,15 @@ export const routes = [
     }
   },
   {
+    name: 'import',
+    path: '/import',
+    render: () => html`<view-import></view-import>`,
+    enter: async () => {
+      await import('~/views/import')
+      return true
+    }
+  },
+  {
     name: 'import2nd',
     path: '/import2nd',
     render: () => html`<import-2nd></import-2nd>`,
@@ -120,24 +132,24 @@ export const routes = [
       return true
     }
   },
-  {
-    name: 'import3rd',
-    path: '/import3rd',
-    render: () => html`<import-3rd></import-3rd>`,
-    enter: async () => {
-      await import('~/views/import3rd')
-      return true
-    }
-  },
-  {
-    name: 'import4th',
-    path: '/import4th',
-    render: () => html`<import-4th></import-4th>`,
-    enter: async () => {
-      await import('~/views/import4th')
-      return true
-    }
-  },
+  // {
+  //   name: 'import3rd',
+  //   path: '/import3rd',
+  //   render: () => html`<import-3rd></import-3rd>`,
+  //   enter: async () => {
+  //     await import('~/views/import3rd')
+  //     return true
+  //   }
+  // },
+  // {
+  //   name: 'import4th',
+  //   path: '/import4th',
+  //   render: () => html`<import-4th></import-4th>`,
+  //   enter: async () => {
+  //     await import('~/views/import4th')
+  //     return true
+  //   }
+  // },
   {
     name: 'generatePhrase',
     path: '/generate-phrase/:step?',

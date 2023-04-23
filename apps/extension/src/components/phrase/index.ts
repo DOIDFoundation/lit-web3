@@ -8,7 +8,7 @@ import {
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import '@lit-web3/dui/src/input/pwd'
-import { PHRASE_LEN_MAP, validatePhrase } from '~/lib.legacy/phrase'
+import { PHRASE_LEN_MAP, validatePhrase } from '~/lib.next/keyring/phrase'
 
 import style from './phrase.css?inline'
 @customElement('phrase-to-secret')
@@ -28,7 +28,7 @@ export class PhraseToSecret extends TailwindElement(style) {
     return !this.phrases.some((r) => !r)
   }
   get wordInalid() {
-    return !validatePhrase(this.phrase)
+    return validatePhrase(this.phrase)
   }
   get err() {
     if (this.ts == 0) return ''
@@ -54,12 +54,14 @@ export class PhraseToSecret extends TailwindElement(style) {
     this.ts++
     e.preventDefault()
     const text = (e.clipboardData || (window as any).clipboardData).getData('text')
+    const ele = e.target as HTMLElement
     const phrases = text.split(' ')
     const limitLen = this.length
     const inputLen = phrases.length
     phrases.splice(limitLen)
     const gapLen = limitLen - inputLen
     this.phrases = [...phrases.concat(Array(gapLen).fill(''))]
+    ele.blur()
     this.chk()
   }
   submit() {

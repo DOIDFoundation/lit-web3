@@ -8,7 +8,8 @@
     display: none;
   }
 }
-.dui-header {
+.dui-header,
+.dui-header-placehodler {
   @apply float-left w-full;
   height: var(--headerH);
   background: var(--bg2);

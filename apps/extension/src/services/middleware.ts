@@ -6,10 +6,12 @@ export class MiddlerwareEngine {
   middlewares: BackgroundMiddlware[]
   currentResolver: any
   constructor(message: webextMessage, middlewares: BackgroundMiddlware[]) {
+    const res = createRes()
     this.ctx = {
       req: createReq(message),
-      res: createRes(),
-      state: {}
+      res,
+      state: {},
+      end: res.end
     }
     this.middlewares = middlewares
     this.currentResolver = null
