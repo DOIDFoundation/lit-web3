@@ -46,7 +46,7 @@ class Keyring extends KeyringController {
   }
   selectDOID = async (DOIDish: VaultDOID | string | any) => {
     const { name = DOIDish } = DOIDish
-    const selectedDOID = this.getDOIDs()[name]
+    const selectedDOID = this.DOIDs[name]
     if (!selectedDOID) throw new Error(`Identity for '${name} not found`)
     this.store.updateState({ selectedDOID })
   }

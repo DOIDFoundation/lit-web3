@@ -28,13 +28,6 @@ export class ViewMain extends TailwindElement(style) {
 
   render() {
     return html`<div class="main">
-      <!-- ${when(
-        this.address,
-        () => html`<div class="flex items-center px-4 gap-2">
-          <span>ETH Address:</span>
-          <dui-address .address=${this.address} copy></dui-address>
-        </div>`
-      )} -->
       <div class="w-full h-full flex items-stretch">
         <network-list class="bg-gray-200 shrink" @switch=${this.onSwitch}></network-list>
         ${keyed(

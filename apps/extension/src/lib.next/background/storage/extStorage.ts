@@ -2,7 +2,7 @@
 // `state` means `import { ObservableStore } from '@metamask/obs-store'`
 import browser from 'webextension-polyfill'
 import { checkForLastError } from '~/lib.next/utils.ext'
-import { debounce } from '@lit-web3/ethers/src/utils'
+import { throttle } from '@lit-web3/ethers/src/utils'
 import emitter from '@lit-web3/core/src/emitter'
 import Migrator from './Migrator'
 
@@ -13,10 +13,10 @@ export enum storageKey {
 
 // Save ObservableStore to storage.local by key
 export const saveStateToStorage = (key: storageKey) =>
-  debounce(async (state: any) => {
+  throttle(async (state: any) => {
     await extStorage.set({ ...(await extStorage.get()).data, [key]: state })
     emitter.emit(`state_${key.toString()}_persisted`, state)
-  }, 1000)
+  })
 
 /**
  * A wrapper around the extension's storage local API
