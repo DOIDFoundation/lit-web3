@@ -54,7 +54,7 @@ export class ViewHome extends TailwindElement(style) {
               placeholder=${this.placeholder}
               ?disabled=${this.pending}
             >
-              <span slot="label"><slot name="label">Start with your desired DOID name</slot></span>
+              <span slot="label"><slot name="label">Import or Register your DOID</slot></span>
               <span slot="msg"> ${when(this.err, () => html`<span class="text-red-500">${this.err}</span>`)} </span>
               <span slot="right">
                 ${when(

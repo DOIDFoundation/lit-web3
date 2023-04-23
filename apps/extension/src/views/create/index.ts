@@ -269,7 +269,7 @@ export class ViewHome extends TailwindElement(style) {
                   )}
                 </div>
                 <div class="my-2 text-center">or</div>
-                <dui-button text class="w-full my-2" @click=${() => this.stepTo(2)}
+                <dui-button text class="w-full my-2" @click=${() => this.stepTo(Steps.EnterPhrase)}
                   >Use other Secret Recovery Phrase</dui-button
                 >`
             ],
@@ -333,7 +333,7 @@ export class ViewHome extends TailwindElement(style) {
               <div class="text-sm text-center">
                 Keep your Secret Recovery Phrase safe and secret -- it's your responsibility!
               </div>
-              <div class="text-sm text-center my-2">Remeber:</div>
+              <div class="text-sm text-center my-2">Remember:</div>
               <div class="text-sm text-left my-2">
                 <ul>
                   <li>DOID can't recover your Secret Recovery Phrase.</li>
