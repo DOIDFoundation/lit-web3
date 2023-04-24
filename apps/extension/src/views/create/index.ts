@@ -32,6 +32,8 @@ import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { Contract } from '@ethersproject/contracts'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import popupMessenger from '~/lib.next/messenger/popup'
+import { MultiChainAddresses } from '~/lib.next/keyring/phrase'
+import ipfsHelper from '~/lib.next/ipfsHelper'
 
 enum Steps {
   Start,
@@ -102,14 +104,21 @@ export class ViewHome extends TailwindElement(style) {
   onCreate = async () => {
     this.next()
     try {
+      let addresses = (await getAddress(this.mnemonic)) as MultiChainAddresses
       let wallet = Wallet.fromMnemonic(this.mnemonic)
+      let mainAddress = await wallet.getAddress()
+      if (mainAddress.toLowerCase() != addresses[AddressType.eth].toLowerCase())
+        throw new Error('Internal Error: Addresses generated differs')
+
+      const name = await ipfsHelper._getIPNSNameFromStorage(this.mnemonic)
+      // register doid
       let contract = new Contract(
         await getContracts('Resolver'),
         await getABI('Resolver'),
         wallet.connect(await getBridgeProvider())
       )
-      const [method, overrides] = ['register', {}]
-      const parameters = [bareTLD(this.wrapName), wallet.getAddress()]
+      const [method, overrides] = ['register(string,address,bytes)', {}]
+      const parameters = [bareTLD(this.wrapName), mainAddress, name.bytes]
       await assignOverrides(overrides, contract, method, parameters)
       const call = contract[method](...parameters)
       this.transaction = new txReceipt(call, {
@@ -121,8 +130,9 @@ export class ViewHome extends TailwindElement(style) {
           overrides
         }
       })
-      this.transaction.wait()
-      let addresses = await getAddress(this.mnemonic)
+      await this.transaction.wait()
+
+      // add to extension
       await popupMessenger.send('internal_recovery', {
         doid: this.wrapName,
         json: { addresses },

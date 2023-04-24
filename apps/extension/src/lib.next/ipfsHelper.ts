@@ -56,10 +56,7 @@ class IPFSHelper {
   }
 
   async _writeIPNS(cid: string, mnemonic: string) {
-    let seed = await mnemonicToSeed(mnemonic)
-    let key = HDKey.fromMasterSeed(seed)
-    let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
-    const name = await w3name.from(ipfsKey.bytes)
+    const name = await this._getIPNSNameFromStorage(mnemonic)
     let res = await this._chkIPNSExist(name)
 
     const revision = res ? res : await w3name.v0(name, cid)
@@ -109,12 +106,11 @@ class IPFSHelper {
   }
 
   // get the publickey from a seedphase
-  async _getPublicKeyFromStorage(mnemonic: string): Promise<string> {
+  async _getIPNSNameFromStorage(mnemonic: string): Promise<w3name.WritableName> {
     let seed = await mnemonicToSeed(mnemonic)
     let key = HDKey.fromMasterSeed(seed)
     let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
-    const name = await w3name.from(ipfsKey.bytes)
-    return name.toString()
+    return await w3name.from(ipfsKey.bytes)
   }
 }
 
