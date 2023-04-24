@@ -196,7 +196,7 @@ export class ViewImport extends TailwindElement(null) {
               <div class="text-sm text-center">
                 Keep your Secret Recovery Phrase safe and secret -- it's your responsibility!
               </div>
-              <div class="text-sm text-center my-2">Remeber:</div>
+              <div class="text-sm text-center my-2">Remember:</div>
               <div class="text-sm text-left my-2">
                 <ul>
                   <li>DOID can't recover your Secret Recovery Phrase.</li>

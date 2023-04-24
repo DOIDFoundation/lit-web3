@@ -3,13 +3,14 @@ import backgroundMessenger from '~/lib.next/messenger/background'
 import { MiddlerwareEngine } from './middleware'
 import { publicMethods, ERR_METHOD_NOT_ALLOWED } from '~/lib.next/constants'
 
-import * as EVM from './EVM'
 import * as DOID from './DOID'
+import * as EVM from './EVM'
+import * as Solana from './Solana'
 import * as ext from './ext'
 import * as popup from './popup'
 
 export const loadAllServices = () => {
-  Object.values({ ...DOID, ...EVM, ...ext, ...popup }).forEach((service) => {
+  Object.values({ ...DOID, ...EVM, ...Solana, ...ext, ...popup }).forEach((service) => {
     loadService(service)
   })
 }
