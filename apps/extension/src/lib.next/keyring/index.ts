@@ -4,6 +4,7 @@ import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
 import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
+import { getAddress as getMultiChainAddress, getKey, AddressType } from '~/lib.next/keyring/phrase'
 
 class Keyring extends KeyringController {
   constructor(keyringOpts: Record<string, any>) {
@@ -31,18 +32,20 @@ class Keyring extends KeyringController {
   get selectedAddress() {
     return this.selectedDOID.address
   }
-  lock = async () => await super.setLocked()
-  unlock = async (pwd: string) => {
-    await this.submitPassword(pwd)
-    return this.fullUpdate()
+  get primaryKeyring() {
+    return this.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)[0]
+  }
+  get mnemonic() {
+    return this.primaryKeyring?.mnemonic
   }
   getAddresses = async () => await super.getAccounts()
 
   // DOID methods
   setDOIDs = async (name: string, address: string) => {
     const DOID = { name, address }
-    const { DOIDs = { [name]: DOID }, selectedDOID = DOID } = this.state
-    this.store.updateState({ DOIDs, selectedDOID })
+    const { DOIDs = {}, selectedDOID = DOID } = this.state
+    DOIDs[name] = DOID
+    return this.store.updateState({ DOIDs, selectedDOID })
   }
   selectDOID = async (DOIDish: VaultDOID | string | any) => {
     const { name = DOIDish } = DOIDish
@@ -50,8 +53,27 @@ class Keyring extends KeyringController {
     if (!selectedDOID) throw new Error(`Identity for '${name} not found`)
     this.store.updateState({ selectedDOID })
   }
+  lock = async () => await this.setLocked()
+  unlock = async (pwd: string) => {
+    await this.submitPassword(pwd)
+    return this.fullUpdate()
+  }
+
+  // MultiChain
+  getMultiChainAddress = async (type?: AddressType) => await getMultiChainAddress(await this.getMnemonic(), type)
+  getMnemonic = async () => {
+    if (!this.primaryKeyring) throw new Error(`No keyring found`)
+    return new TextDecoder().decode(new Uint8Array((await this.primaryKeyring.serialize()).mnemonic))
+  }
 
   // Overrides
+  addNewAccount = async (name: string) => {
+    if (!this.primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
+    const oldAddrs = await this.getAddresses()
+    await super.addNewAccount(this.primaryKeyring)
+    const newAddr = (await this.getAddresses()).find((addr: string) => !oldAddrs.has(addr))
+    this.setDOIDs(name, newAddr)
+  }
   removeAccount = async (DOID: VaultDOID) => {
     let { DOIDs, selectedDOID } = this.state
     const { name, address } = DOID
@@ -60,18 +82,17 @@ class Keyring extends KeyringController {
     this.store.updateState({ DOIDs, selectedDOID })
     await super.removeAccount(address)
     // Destory
-    const keyring = await super.getKeyringForAccount(address)
+    const keyring = await this.getKeyringForAccount(address)
     const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {}
     if (updatedKeyringAccounts?.length === 0) keyring.destroy?.()
     return DOID
   }
 
-  async createNewVaultAndRestore(name: string, password: string, encodedSeedPhrase: number[]) {
-    if (!name || !password) return
-    const seedPhraseAsBuffer = Buffer.from(encodedSeedPhrase)
-    const vault = await super.createNewVaultAndRestore(password, seedPhraseAsBuffer)
-    const [primaryKeyring] = super.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)
-    if (!primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
+  async createNewVaultAndRestore(name: string, password: string, mnemnoic: Uint8Array | string | number[]) {
+    if (!name || !password || !mnemnoic) return
+    if (typeof mnemnoic !== 'string') mnemnoic = new TextDecoder().decode(new Uint8Array(mnemnoic))
+    const vault = await super.createNewVaultAndRestore(password, mnemnoic)
+    if (!this.primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
     let addresses = await this.getAddresses()
     this.setDOIDs(name, addresses[0])
     return vault

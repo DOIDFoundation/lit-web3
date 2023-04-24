@@ -19,8 +19,8 @@ class AccountStore extends State {
     return { name: this.name, mainAddress: this.mainAddress, owner: this.owner }
   }
 
-  search = async (keyword: string, mark = false) => {
-    let res = null
+  search = async (keyword: string, mark = false): Promise<NameInfo> => {
+    let res: NameInfo = { name: '', registered: false, available: false }
     this.pending = true
     if (keyword) {
       const { name, owner, mainAddress, registered, available } = (await nameInfo(keyword)) as NameInfo

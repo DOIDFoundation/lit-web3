@@ -16,7 +16,7 @@ interface UserDetail {
 }
 type UserAddresses = Record<string, string>[]
 const requestUserAddresses = async (): Promise<UserDetail> => {
-  const accounts = await popupMessenger.send('getAccounts')
+  const accounts = await popupMessenger.send('internal_getMultiChainAddress')
   popupMessenger.log('accounts', accounts)
   return {
     addresses: [{ eth: accounts.eth }, { sol: accounts.solana }, { apt: accounts.aptos }, { bsc: accounts.eth }]
