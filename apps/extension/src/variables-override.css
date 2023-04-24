@@ -2,8 +2,9 @@
   --footer-height: 0px;
 }
 html {
-  @apply overflow-x-hidden;
+  @apply overflow-x-hidden overflow-y-scroll;
   min-width: 357px;
+  min-height: 600px;
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.24) rgba(0, 0, 0, 0.01);
   overscroll-behavior: contain;

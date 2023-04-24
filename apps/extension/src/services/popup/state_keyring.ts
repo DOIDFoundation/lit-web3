@@ -1,8 +1,7 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
 // import * as keyringCtrl from '~/lib.next/keyring'
 import { getKeyring } from '~/lib.next/keyring'
-import { DOIDBodyParser, getDOIDs } from '~/middlewares'
-import { getAddress } from '~/lib.next/keyring/phrase'
+import { DOIDBodyParser, getDOIDs, getMultiChainAddress } from '~/middlewares'
 
 // Re-emit keyring events (emitted from ~/lib.next/keyring)
 const evtMap: Record<string, string> = {
@@ -49,14 +48,11 @@ export const lock: BackgroundService = {
   }
 }
 
-export const getAccounts: BackgroundService = {
-  method: 'getAccounts',
-  middlewares: [],
-  fn: async ({ res }) => {
-    const keyrings = (await getKeyring()).keyrings
-    if (keyrings.length === 0) throw new Error('no keyring')
-    const mnemonic = new TextDecoder().decode(new Uint8Array((await keyrings[0].serialize()).mnemonic))
-    res.body = await getAddress(mnemonic)
+export const internal_getMultiChainAddress: BackgroundService = {
+  method: 'internal_getMultiChainAddress',
+  middlewares: [getMultiChainAddress()],
+  fn: async ({ res, state }) => {
+    res.body = state.addresses
   }
 }
 

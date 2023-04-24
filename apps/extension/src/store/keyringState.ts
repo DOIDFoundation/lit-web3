@@ -6,7 +6,7 @@ import { State, property } from '@lit-app/state'
 class UIKeyring extends State {
   @property({ value: false }) pending!: boolean
   @property({ value: 0 }) ts!: number
-  @property({ value: true }) locked!: boolean
+  @property({ value: false }) locked!: boolean
   // DOIDs
   @property({ value: {} }) DOIDs!: VaultDOIDs
   @property({ value: {} }) selectedDOID!: VaultDOID | undefined
@@ -15,12 +15,11 @@ class UIKeyring extends State {
   empty() {
     Object.assign(this, { DOIDs: undefined, selectedDOID: {} })
   }
-  sync = async (force = false) => {
-    if (this.locked && !force) return
+  sync = async () => {
     this.pending = true
     try {
-      const { DOIDs, selectedDOID } = await popupMessenger.send('internal_keyring_state')
-      if (this.locked && !force) return
+      const { DOIDs, selectedDOID } = await popupMessenger.send('internal_getDOIDs')
+      if (this.locked) return
       Object.assign(this, { DOIDs, selectedDOID })
     } catch {}
     this.ts++
@@ -36,11 +35,11 @@ class UIKeyring extends State {
 
   constructor() {
     super()
-    this.sync(true)
-    popupMessenger.on('keyring_update', () => this.sync())
-    popupMessenger.on('lock', this.onLock)
-    popupMessenger.on('unlock', this.onUnlock)
+    this.sync()
   }
 }
 
 export const uiKeyring = new UIKeyring()
+popupMessenger.on('keyring_update', uiKeyring.sync)
+popupMessenger.on('lock', uiKeyring.onLock)
+popupMessenger.on('unlock', uiKeyring.onUnlock)

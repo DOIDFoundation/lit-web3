@@ -9,10 +9,13 @@ import { Keypair } from '@solana/web3.js'
 
 export const PHRASE_LEN_MAP = [12, 15, 18, 21, 24]
 
-export const enum AddressType {
+export enum AddressType {
   eth = 'eth',
   aptos = 'aptos',
   solana = 'solana'
+}
+export type MultiChainAddresses = {
+  [key in AddressType]: string
 }
 
 export const genMnemonic = () => {
@@ -32,8 +35,8 @@ export const phraseMatch = async (phrase = '', target = '') => {
   }
   return true
 }
-export const getKey = async (phrase: string) => {
-  const _seed = await mnemonicToSeed(phrase)
+export const getKey = async (mnemnoic: string) => {
+  const _seed = await mnemonicToSeed(mnemnoic)
   const seed = toHex(_seed)
   const key = HDKey.fromMasterSeed(_seed)
   const pbK = toHex(key.derive(`m/44'/60'/0'/0`).publicKey!)
@@ -41,25 +44,22 @@ export const getKey = async (phrase: string) => {
 }
 
 export const getAddress = async (mnemnoic: string, type?: AddressType) => {
-  let addrs = { eth: '', solana: '', aptos: '' }
+  const addrs = Object.fromEntries(Object.keys(AddressType).map((key) => [key, ''])) as MultiChainAddresses
   if (type == AddressType.eth || !type) {
-    let seed = await mnemonicToSeed(mnemnoic)
-    let key = HDKey.fromMasterSeed(seed)
-    let pubKey = key.derive(`m/44'/60'/0'/0/0`).publicKey
-
+    const seed = await mnemonicToSeed(mnemnoic)
+    const key = HDKey.fromMasterSeed(seed)
+    const pubKey = key.derive(`m/44'/60'/0'/0/0`).publicKey!
     addrs[AddressType.eth] = bufferToHex(publicToAddress(Buffer.from(pubKey), true)).toLowerCase()
   }
   if (type == AddressType.aptos || !type) {
-    let apt = AptosAccount.fromDerivePath(`m/44'/637'/0'/0'/0'`, mnemnoic)
+    const apt = AptosAccount.fromDerivePath(`m/44'/637'/0'/0'/0'`, mnemnoic)
     addrs[AddressType.aptos] = apt.address().hex()
   }
   if (type == AddressType.solana || !type) {
-    let seed = await mnemonicToSeed(mnemnoic)
-    let keypair = Keypair.fromSeed(seed.slice(0, 32))
+    const seed = await mnemonicToSeed(mnemnoic)
+    const keypair = Keypair.fromSeed(seed.slice(0, 32))
     addrs[AddressType.solana] = keypair.publicKey.toBase58()
   }
-  let all = null
-  if (!type) all = Object.fromEntries(Object.keys(AddressType).map((key) => [key, addrs[AddressType[key]]]))
 
-  return type ? addrs[type] : all
+  return type ? addrs[type] : addrs
 }

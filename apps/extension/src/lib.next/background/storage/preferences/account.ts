@@ -5,7 +5,7 @@ import emitter from '@lit-web3/core/src/emitter'
 
 import { getPreferences } from './base'
 
-// export const storedAccount = {
+// export const AccountStorage = {
 //   getSelected: async (): Promise<VaultDOID> => {
 //     const {
 //       state: { selectedAddress }
@@ -26,7 +26,7 @@ import { getPreferences } from './base'
 //   },
 //   set: async (DOIDs: VaultDOIDs) => {
 //     const { updateState } = await getPreferences()
-//     updateState({ identities: storedAccount.toIdentities(DOIDs) })
+//     updateState({ identities: AccountStorage.toIdentities(DOIDs) })
 //   },
 //   remove: async (DOID: VaultDOID) => {
 //     const { name, address } = DOID
@@ -46,7 +46,7 @@ import { getPreferences } from './base'
 //   // Add state from keyring
 //   add: async (DOIDs: VaultDOIDs) => {
 //     const { updateState } = await getPreferences()
-//     updateState({ identities: storedAccount.toIdentities(DOIDs) })
+//     updateState({ identities: AccountStorage.toIdentities(DOIDs) })
 //   },
 //   // Sync state from keyring
 //   sync: async (DOIDs: VaultDOIDs) => {
@@ -68,13 +68,13 @@ import { getPreferences } from './base'
 //       lostIdentities[address] = newlyLost[address] // store lost accounts
 //     }
 //     updateState({ identities, lostIdentities })
-//     storedAccount.add(DOIDs)
+//     AccountStorage.add(DOIDs)
 //     // If the selected account is no longer valid,
 //     // select an arbitrary other account:
-//     let selected = await storedAccount.getSelected()
-//     if (!storedAccount.find(selected, DOIDs)) {
+//     let selected = await AccountStorage.getSelected()
+//     if (!AccountStorage.find(selected, DOIDs)) {
 //       ;[selected] = Object.values(DOIDs)
-//       storedAccount.setSelected(selected)
+//       AccountStorage.setSelected(selected)
 //     }
 //     return selected
 //   },
@@ -95,6 +95,6 @@ import { getPreferences } from './base'
 // getPreferences().then(() => {
 //   // Sync if keyring updated
 //   emitter.on(`keyring_update`, (e: CustomEvent) => {
-//     storedAccount.sync(e.detail.DOIDs)
+//     AccountStorage.sync(e.detail.DOIDs)
 //   })
 // })
