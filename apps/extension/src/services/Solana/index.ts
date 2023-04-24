@@ -1,5 +1,5 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { Connection, Keypair } from '@solana/web3.js'
+import { Keypair } from '@solana/web3.js'
 import { getKeyring } from '~/lib.next/keyring'
 import { AddressType, getAddress } from '~/lib.next/keyring/phrase'
 import { unlock, autoClosePopup } from '~/middlewares'
@@ -8,22 +8,7 @@ import base58 from 'bs58'
 import nacl from 'tweetnacl'
 import { mnemonicToSeed } from 'ethereum-cryptography/bip39'
 import { derivePath } from 'ed25519-hd-key'
-
-let connection: Connection
-let promise: any
-const getConnection = async () => {
-  if (connection) return connection
-  if (!promise)
-    promise = new Promise(async (resolve) => {
-      connection = new Connection('https://www.sollet.io', {
-        confirmTransactionInitialTimeout: 120000,
-        commitment: 'confirmed'
-      })
-
-      resolve(connection)
-    })
-  return await promise
-}
+import { getSolanaProvider } from './daemon'
 
 export const solana_request: BackgroundService = {
   method: 'solana_request',
@@ -35,7 +20,7 @@ export const solana_request: BackgroundService = {
     switch (method) {
       case 'connect': {
         const { options } = req.body
-        getConnection()
+        const provider = await getSolanaProvider()
         const keyrings = (await getKeyring()).keyrings
         if (keyrings.length === 0) throw new Error('no keyring')
         const mnemonic = new TextDecoder().decode(new Uint8Array((await keyrings[0].serialize()).mnemonic))

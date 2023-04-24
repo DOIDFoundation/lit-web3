@@ -10,6 +10,7 @@ export const inpageProvider = () => {
       inpageLogger('response', res)
       return res
     },
+    addListener: inpageMessenger.on,
     on: inpageMessenger.on,
     chainId: '0x1',
     isMetaMask: true
