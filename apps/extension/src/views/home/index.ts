@@ -30,7 +30,7 @@ export class ViewHome extends TailwindElement(style) {
     if (!this.doid) return
     this.pending = true
     const { DOIDs } = await popupMessenger.send('internal_getDOIDs')
-    if (bareTLD(this.doid) in DOIDs) {
+    if (DOIDs && bareTLD(this.doid) in DOIDs) {
       this.err = 'Already imported'
       this.pending = false
       return

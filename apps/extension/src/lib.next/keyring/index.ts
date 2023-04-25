@@ -37,6 +37,7 @@ class Keyring extends KeyringController {
     return this.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)[0]
   }
   get mnemonic() {
+    throw new Error('deprecated, should use getMnemonic')
     return this.primaryKeyring?.mnemonic
   }
   getAddresses = async () => await super.getAccounts()
@@ -68,7 +69,8 @@ class Keyring extends KeyringController {
   getMultiChainAddress = async (type?: AddressType) => await getMultiChainAddress(await this.getMnemonic(), type)
   getMnemonic = async () => {
     if (!this.primaryKeyring) throw new Error(`No keyring found`)
-    return new TextDecoder().decode(new Uint8Array((await this.primaryKeyring.serialize()).mnemonic))
+    const keyring = await this.getKeyringForAccount(this.selectedAddress)
+    return new TextDecoder().decode(new Uint8Array((await keyring.serialize()).mnemonic))
   }
 
   // Overrides
@@ -93,7 +95,7 @@ class Keyring extends KeyringController {
     return DOID
   }
 
-  addNewKeyring = async (name: string, mnemnoic: Uint8Array | string | number[]) => {
+  addDOID = async (name: string, mnemnoic: Uint8Array | string | number[]) => {
     if (!name || !mnemnoic) return
     if (typeof mnemnoic !== 'string') mnemnoic = new TextDecoder().decode(new Uint8Array(mnemnoic))
     const keyring = await super.addNewKeyring('HD Key Tree', {

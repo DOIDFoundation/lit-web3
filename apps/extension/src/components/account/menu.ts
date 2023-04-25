@@ -34,6 +34,7 @@ export class AccountMenu extends TailwindElement(css) {
   }
   select = async (DOID: VaultDOID) => {
     await popupMessenger.send('internal_selectDOID', DOID)
+    uiKeyring.sync()
     this.emit('switch')
   }
 
