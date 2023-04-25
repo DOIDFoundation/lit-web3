@@ -6,6 +6,12 @@ import { NAMESPACE } from '~/lib.next/constants'
 Window.setNamespace(NAMESPACE)
 
 // inpage <-> background
-export const inpageMessenger = new Messenger('inpage', 'background', Window)
+class InpageMessenger extends Messenger implements MESSENGER {
+  constructor() {
+    super('inpage', 'background', Window)
+  }
+}
+
+export const inpageMessenger = new InpageMessenger()
 
 export default inpageMessenger

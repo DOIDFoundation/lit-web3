@@ -15,6 +15,7 @@ export const internal_recovery: BackgroundService = {
     const { json = {}, reply = false } = req.body
     try {
       ;(await getKeyring()).createNewVaultAndRestore(name, pwd, mnemonic)
+      // TODO: move to keyring.setDOIDs
       const cid = await ipfsHelper.updateJsonData(json, name, { memo: mnemonic })
       if (reply) backgroundMessenger.broadcast('DOID_account_update', { cid })
       res.body = { success: 'ok' }

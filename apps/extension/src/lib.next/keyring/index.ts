@@ -5,6 +5,7 @@ import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
 import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
 import { getAddress as getMultiChainAddress, getKey, AddressType } from '~/lib.next/keyring/phrase'
+import ipfsHelper from '~/lib.next/ipfsHelper'
 
 class Keyring extends KeyringController {
   constructor(keyringOpts: Record<string, any>) {
@@ -45,7 +46,11 @@ class Keyring extends KeyringController {
     const DOID = { name, address }
     const { DOIDs = {}, selectedDOID = DOID } = this.state
     DOIDs[name] = DOID
-    return this.store.updateState({ DOIDs, selectedDOID })
+    this.store.updateState({ DOIDs, selectedDOID })
+    // write ipfs
+    // TODO: do not use mnemonic as parameter
+    // const mnemonic = await this.getMnemonic()
+    // const cid = await ipfsHelper.updateJsonData({addresses}, name, { memo: mnemonic })
   }
   selectDOID = async (DOIDish: VaultDOID | string | any) => {
     const { name = DOIDish } = DOIDish
@@ -72,7 +77,7 @@ class Keyring extends KeyringController {
     const oldAddrs = await this.getAddresses()
     await super.addNewAccount(this.primaryKeyring)
     const newAddr = (await this.getAddresses()).find((addr: string) => !oldAddrs.has(addr))
-    this.setDOIDs(name, newAddr)
+    await this.setDOIDs(name, newAddr)
   }
   removeAccount = async (DOID: VaultDOID) => {
     let { DOIDs, selectedDOID } = this.state
@@ -94,7 +99,7 @@ class Keyring extends KeyringController {
     const vault = await super.createNewVaultAndRestore(password, mnemnoic)
     if (!this.primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
     let addresses = await this.getAddresses()
-    this.setDOIDs(name, addresses[0])
+    await this.setDOIDs(name, addresses[0])
     return vault
   }
   async createNewVaultAndKeychain(password: string) {

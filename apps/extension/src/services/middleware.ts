@@ -47,8 +47,12 @@ const createReq = (message: webextMessage): Req => {
   const { data: body, sender, id: method } = message
   const { context, tabId } = sender
   const isInternal = isInternalEndpoint(sender)
-  const origin = `${context}@${tabId}`
-  return { raw: Object.freeze(message), method, body, headers: Object.freeze({ origin, isInternal }) }
+  return {
+    raw: Object.freeze(message),
+    method,
+    body,
+    headers: { extOrigin: `${context}@${tabId}`, tabId, isInternal }
+  }
 }
 
 const createRes = (): Res => {
