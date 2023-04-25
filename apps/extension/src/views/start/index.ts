@@ -45,18 +45,18 @@ export class ViewStart extends TailwindElement(null) {
             Safer, faster and easier entrance to chains, contacts and dApps
           </div>
         </doid-symbol>
-        <div class="mt-24">
+        <div class="mt-16">
           ${when(
             this.pending,
             () => html`<div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
             () => html`
               <div class="flex justify-center">
-                <dui-link class="uri underline mr-2">${this.wrapName}</dui-link>
+                <dui-link text class="uri">${this.wrapName}</dui-link>
                 ${when(
                   this.ownerAddress,
                   () => html`
                     <div>
-                      <span class="text-gray-400 mr-2">is owned by</span>
+                      <span class="text-gray-400 mx-2">is owned by</span>
                       <dui-address .address=${this.ownerAddress} short></dui-address>
                     </div>
                   `

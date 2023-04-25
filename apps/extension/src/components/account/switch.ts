@@ -34,7 +34,7 @@ export class AccountSwitch extends TailwindElement(null) {
   }
 
   render() {
-    if (!this.selected) return ''
+    if (!this.name) return ''
     return html`<div class="relative">
       <dui-button md @click=${this.show} text class="inline-flex items-center">
         <dui-name-address avatar .name=${this.name} .address=${this.address} class="tex" wrap></dui-name-address>

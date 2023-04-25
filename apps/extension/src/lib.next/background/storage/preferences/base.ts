@@ -35,7 +35,6 @@ export const getPreferences = async () => {
 
 // Initialize directly
 getPreferences().then(() => {
-  // emitter.on(`state_${storageKey.preferences}_persisted`, () => preferences.store.updateState())
-  // Save if store is already updated
+  emitter.on(`state_${storageKey.preferences}_persisted`, () => {})
   preferences.store.subscribe(saveStateToStorage(storageKey.preferences))
 })

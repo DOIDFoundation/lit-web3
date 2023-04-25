@@ -6,7 +6,7 @@ import '@lit-web3/dui/src/input/pwd'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
-import { ipnsBytes, setMainAddrAndIPNS, mainAddressByName, address } from '@lit-web3/ethers/src/nsResolver'
+import { ipnsBytes, setMainAddrAndIPNS, mainAddressByName } from '@lit-web3/ethers/src/nsResolver'
 
 const logger = (...args: any) => console.info(`[dApp]`, ...args)
 
@@ -23,9 +23,10 @@ export class ViewRestore extends TailwindElement('') {
   completeRegist = async (bytes: Array<number | string>, address: string) => {
     const name = this.name
     const mainAddr = address || (await mainAddressByName(name)).toLowerCase()
-    debugger
     const res = await setMainAddrAndIPNS(name, mainAddr, bytes)
     logger('set main address and ipns:\n', res)
+    const ipns = ipnsBytes(name)
+    logger('query ipns:>>', ipns)
   }
 
   reset = () => {

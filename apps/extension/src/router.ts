@@ -202,6 +202,17 @@ export const routes = [
       await import('~/views/connect')
       return true
     }
+  },
+  {
+    name: 'notification',
+    path: '/notification/:msg?',
+    render: ({ msg = '' }) => {
+      return html`<view-notification .ROUTE=${{ msg }}></view-notification>`
+    },
+    enter: async () => {
+      await import('~/views/notification')
+      return true
+    }
   }
 ]
 

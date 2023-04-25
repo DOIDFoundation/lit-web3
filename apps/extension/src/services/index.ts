@@ -1,4 +1,5 @@
 // TOOD: move to controller or route
+import browser from 'webextension-polyfill'
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { MiddlerwareEngine } from './middleware'
 import { publicMethods, ERR_METHOD_NOT_ALLOWED } from '~/lib.next/constants'
@@ -21,7 +22,7 @@ export const loadService = (service: BackgroundService) => {
   backgroundMessenger.on(method, async (message: webextMessage) => {
     // By default, inpage methods are not allowed
     if (!allowInpage && publicMethods.includes(method)) throw new Error(`${ERR_METHOD_NOT_ALLOWED} (${method})`)
-    const middleware = new MiddlerwareEngine(message, [...middlewares, fn])
+    const middleware = new MiddlerwareEngine(message, [getHeaders, ...middlewares, fn])
     try {
       return await middleware.resolve()
     } catch (err) {
@@ -31,4 +32,15 @@ export const loadService = (service: BackgroundService) => {
       throw err
     }
   })
+}
+
+const getHeaders: BackgroundMiddlware = async ({ req: { headers } }, next) => {
+  const { isInternal, tabId } = headers
+  if (!isInternal) {
+    const { url } = await browser.tabs.get(tabId!)
+    const { host, origin } = new URL(url!)
+    Object.assign(headers, { host, origin })
+    Object.freeze(headers)
+  }
+  next()
 }

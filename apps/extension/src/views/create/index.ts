@@ -32,9 +32,10 @@ import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { Contract } from '@ethersproject/contracts'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import popupMessenger from '~/lib.next/messenger/popup'
+import { MultiChainAddresses } from '~/lib.next/keyring/phrase'
+import ipfsHelper from '~/lib.next/ipfsHelper'
 
 enum Steps {
-  Start,
   EnterPhrase,
   EnterPassword,
   CheckBalance,
@@ -54,7 +55,7 @@ export class ViewHome extends TailwindElement(style) {
   @state() address = ''
   @state() balance = ''
   @state() transaction: any = null
-  @state() step: Steps = Steps.Start
+  @state() step: Steps = Steps.EnterPhrase
   @state() timer: NodeJS.Timeout | null = null
 
   get wrapName() {
@@ -81,13 +82,20 @@ export class ViewHome extends TailwindElement(style) {
     this.btnNextDisabled = error
   }
 
-  onConfirmCreation = async () => {
-    this.address = ''
-    this.balance = ''
-    this.next()
+  onConfirmPhrase = async () => {
     let address = await getAddress(this.mnemonic, AddressType.eth)
     if (!address || typeof address != 'string' || !this.doid) return
     this.address = address
+    this.balance = ''
+    if (await popupMessenger.send('state_isinitialized')) {
+      this.stepTo(Steps.CheckBalance)
+      this.checkBalance()
+    } else this.next()
+  }
+
+  onConfirmCreation = async () => {
+    this.balance = ''
+    this.next()
     this.checkBalance()
   }
 
@@ -102,14 +110,21 @@ export class ViewHome extends TailwindElement(style) {
   onCreate = async () => {
     this.next()
     try {
+      let addresses = (await getAddress(this.mnemonic)) as MultiChainAddresses
       let wallet = Wallet.fromMnemonic(this.mnemonic)
+      let mainAddress = await wallet.getAddress()
+      if (mainAddress.toLowerCase() != addresses[AddressType.eth].toLowerCase())
+        throw new Error('Internal Error: Addresses generated differs')
+
+      const name = await ipfsHelper._getIPNSNameFromStorage(this.mnemonic)
+      // register doid
       let contract = new Contract(
         await getContracts('Resolver'),
         await getABI('Resolver'),
         wallet.connect(await getBridgeProvider())
       )
-      const [method, overrides] = ['register', {}]
-      const parameters = [bareTLD(this.wrapName), wallet.getAddress()]
+      const [method, overrides] = ['register(string,address,bytes)', {}]
+      const parameters = [bareTLD(this.wrapName), mainAddress, name.bytes]
       await assignOverrides(overrides, contract, method, parameters)
       const call = contract[method](...parameters)
       this.transaction = new txReceipt(call, {
@@ -121,8 +136,9 @@ export class ViewHome extends TailwindElement(style) {
           overrides
         }
       })
-      this.transaction.wait()
-      let addresses = await getAddress(this.mnemonic)
+      await this.transaction.wait()
+
+      // add to extension
       await popupMessenger.send('internal_recovery', {
         doid: this.wrapName,
         json: { addresses },
@@ -138,13 +154,12 @@ export class ViewHome extends TailwindElement(style) {
   }
 
   next() {
-    this.step++
-    this.btnNextDisabled = true
+    this.stepTo(this.step + 1)
   }
 
   back() {
-    if (this.step == Steps.Start) history.back()
-    else this.step--
+    if (this.step == Steps.EnterPhrase) history.back()
+    else this.stepTo(this.step - 1)
   }
 
   stepTo(step: Steps) {
@@ -162,30 +177,6 @@ export class ViewHome extends TailwindElement(style) {
         ${choose(
           this.step,
           [
-            [
-              Steps.Start,
-              () => html`<doid-symbol class="block mt-12">
-                  <span slot="h1" class="text-xl">Your decentralized openid</span>
-                  <p slot="msg">Safer, faster and easier entrance to chains, contacts and dApps</p>
-                </doid-symbol>
-                <div class="max-w-xs mx-auto mt-12">
-                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
-                  <span slot="msg" class="ml-1"><slot name="msg">is available</slot></span>
-                </div>
-                <div class="max-w-xs mx-auto mt-6">
-                  <dui-button class="outlined w-full my-2 block" @click=${this.next}
-                    >Create in DOID for chrome</dui-button
-                  >
-                </div>
-                <div class="my-2 text-center">or</div>
-                <div class="max-w-xs mx-auto my-2">
-                  <dui-link
-                    class="outlined w-full my-2 block text-center"
-                    href="https://app.doid.tech/search/${this.doid}"
-                    >Create with an Ethereum wallet <i class="mdi mdi-open-in-new"></i
-                  ></dui-link>
-                </div>`
-            ],
             [
               Steps.EnterPhrase,
               () => html`<doid-symbol sm class="block mt-12"> </doid-symbol>
@@ -208,7 +199,7 @@ export class ViewHome extends TailwindElement(style) {
                   ></dui-button>
                   <dui-button
                     ?disabled=${this.btnNextDisabled}
-                    @click=${this.next}
+                    @click=${this.onConfirmPhrase}
                     class="secondary !rounded-full h-12 w-12"
                     ><i class="mdi mdi-arrow-right"></i
                   ></dui-button>
@@ -244,7 +235,7 @@ export class ViewHome extends TailwindElement(style) {
                 </div>
                 <div class="my-4 text-sm">
                   With ETH account
-                  ${until(this.address, html`<i class="mdi mdi-loading"></i>`)}(${when(
+                  ${this.address}(${when(
                     this.balance,
                     () => html`${this.balance} ETH`,
                     () => html`<i class="mdi mdi-loading"></i>`
