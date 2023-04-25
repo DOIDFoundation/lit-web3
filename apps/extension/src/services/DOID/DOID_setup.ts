@@ -7,7 +7,8 @@ export const DOID_setup: BackgroundService = {
   middlewares: [DOIDBodyParser(), gotoPopup(`/landing/:name`), autoClosePopup],
   fn: async ({ res }) => {
     backgroundMessenger.on('reply_DOID_setup', ({ data }) => {
-      res.body = data
+      const bytes = data?.bytes as Uint8Array
+      res.body = { bytes: bytes.toString() }
     })
   }
 }

@@ -34,6 +34,7 @@ export class AccountMenu extends TailwindElement(css) {
   }
   select = async (DOID: VaultDOID) => {
     await popupMessenger.send('internal_selectDOID', DOID)
+    uiKeyring.sync()
     this.emit('switch')
   }
 
@@ -67,7 +68,7 @@ export class AccountMenu extends TailwindElement(css) {
 
         <div class="border-t py-1">
           <div class="menu-list" @click=${() => goto('/create')}>
-            <div class="menu-list-left"><i class="menu-list-icon mdi mdi-plus"></i> Create Account</div>
+            <div class="menu-list-left"><i class="menu-list-icon mdi mdi-plus"></i> Import or Create DOID</div>
           </div>
         </div>
 

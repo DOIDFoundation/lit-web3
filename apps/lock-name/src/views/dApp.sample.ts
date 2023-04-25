@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, state, repeat } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, state, property } from '@lit-web3/dui/src/shared/TailwindElement'
 import { sleep } from '@lit-web3/ethers/src/utils'
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -6,17 +6,28 @@ import '@lit-web3/dui/src/input/pwd'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
+import { ipnsBytes, setMainAddrAndIPNS, mainAddressByName } from '@lit-web3/ethers/src/nsResolver'
 
 const logger = (...args: any) => console.info(`[dApp]`, ...args)
 
 @customElement('view-dapp')
 export class ViewRestore extends TailwindElement('') {
+  @property() name = 'zzzxxx.doid'
   @state() err: any = null
   @state() msgs: any[] = []
   @state() pending = false
   @state() res_DOID_setup = null
   @state() res_DOID_name = ''
   @state() res_DOID_chain_addrs = null
+
+  completeRegist = async (bytes: Array<number | string>, address: string) => {
+    const name = this.name
+    const mainAddr = address || (await mainAddressByName(name)).toLowerCase()
+    const res = await setMainAddrAndIPNS(name, mainAddr, bytes)
+    logger('set main address and ipns:\n', res)
+    const ipns = ipnsBytes(name)
+    logger('query ipns:>>', ipns)
+  }
 
   reset = () => {
     this.err = null
@@ -26,7 +37,7 @@ export class ViewRestore extends TailwindElement('') {
   req_DOID_setup = async () => {
     this.reset()
     try {
-      this.res_DOID_setup = await window.DOID.request({ method: 'DOID_setup', params: ['zzzxxx.doid'] })
+      this.res_DOID_setup = await window.DOID.request({ method: 'DOID_setup', params: [this.name] })
     } catch (e) {
       this.err = e
     }
@@ -47,9 +58,13 @@ export class ViewRestore extends TailwindElement('') {
     super.connectedCallback()
     // TODO: Add onboarding service
     await sleep(500)
-    ;['DOID_account_change', 'DOID_account_update'].forEach((_evt) => {
-      window.DOID.on(_evt, ({ id, data } = <any>{}) => {
+    ;['DOID_account_change', 'DOID_account_update', 'reply_DOID_setup'].forEach((_evt) => {
+      window.DOID?.on(_evt, ({ id, data } = <any>{}) => {
         this.msgs = this.msgs.concat([{ id, data }])
+        if (_evt === 'reply_DOID_setup') {
+          const { bytes, address } = data
+          this.completeRegist(Object.values(bytes), address)
+        }
       })
     })
   }
@@ -61,7 +76,7 @@ export class ViewRestore extends TailwindElement('') {
 
         <hr class="my-2" />
         <dui-button class="outlined minor" @click=${this.req_DOID_setup} .pending=${this.pending}
-          >{ method: 'DOID_setup', params: ['zzzxxx.doid'] }</dui-button
+          >{ method: 'DOID_setup', params: ['${this.name}'] }</dui-button
         >
         <p class="my-2">Res: ${this.res_DOID_setup || ''}</p>
 
