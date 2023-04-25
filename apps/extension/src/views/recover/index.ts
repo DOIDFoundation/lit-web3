@@ -53,6 +53,14 @@ export class ViewImport extends TailwindElement(null) {
     this.btnNextDisabled = error
   }
 
+  onConfirmPhrase = async () => {
+    if (await popupMessenger.send('state_isinitialized')) {
+      this.pending = true
+      this.next()
+      this.onCreateMainAddress()
+    } else this.next()
+  }
+
   onCreateMainAddress = async () => {
     let addresses = await getAddress(this.mnemonic)
     if (!addresses || !this.account.name) return
@@ -95,6 +103,7 @@ export class ViewImport extends TailwindElement(null) {
       console.error(e)
     }
   }
+
   onPhraseChange = async (e: CustomEvent) => {
     e.stopPropagation()
     this.btnNextDisabled = true
@@ -108,7 +117,7 @@ export class ViewImport extends TailwindElement(null) {
     if (this.account.mainAddress != ethAddress) {
       this.err = `The Secret Recovery Phrase entered does not match ${this.account.mainAddress}`
       return
-    }
+    } else this.err = ''
     this.btnNextDisabled = false
   }
 
@@ -151,7 +160,7 @@ export class ViewImport extends TailwindElement(null) {
                   ></dui-button>
                   <dui-button
                     ?disabled=${this.btnNextDisabled}
-                    @click=${this.next}
+                    @click=${this.onConfirmPhrase}
                     class="secondary !rounded-full h-12 w-12"
                     ><i class="mdi mdi-arrow-right"></i
                   ></dui-button>

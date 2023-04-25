@@ -16,10 +16,12 @@ export class ViewHome extends TailwindElement(style) {
   @property() placeholder = 'e.g. satoshi.doid'
   @state() doid = ''
   @state() err = ''
+  @state() showRegister = false
   @state() pending = false
 
   onInput = async (e: CustomEvent) => {
     this.err = ''
+    this.showRegister = false
     this.doid = e.detail
   }
 
@@ -30,11 +32,14 @@ export class ViewHome extends TailwindElement(style) {
     if (registered) {
       goto('/start')
     } else if (available) {
-      goto(`/create/${wrapTLD(this.doid)}`)
+      // goto(`/create/${wrapTLD(this.doid)}`)
+      this.err = 'Available for registration'
+      this.showRegister = true
     } else {
-      this.err = 'Unavailable'
-      this.pending = false
+      if (this.doid.length < 6) this.err = 'Unavailable, name should be more than 6 characters'
+      else this.err = 'Unavailable, this name is reserved'
     }
+    this.pending = false
   }
 
   render() {
@@ -54,8 +59,11 @@ export class ViewHome extends TailwindElement(style) {
               placeholder=${this.placeholder}
               ?disabled=${this.pending}
             >
-              <span slot="label"><slot name="label">Import or Register your DOID</slot></span>
-              <span slot="msg"> ${when(this.err, () => html`<span class="text-red-500">${this.err}</span>`)} </span>
+              <span slot="label"><slot name="label">Import or Create your DOID</slot></span>
+              <span slot="msg">
+                ${when(this.err, () => html`<span class="text-red-500">${this.err}</span>`)}
+                ${when(this.showRegister, () => html`<dui-link href="/create/${this.doid}">Register</dui-link>`)}</span
+              >
               <span slot="right">
                 ${when(
                   this.pending,
