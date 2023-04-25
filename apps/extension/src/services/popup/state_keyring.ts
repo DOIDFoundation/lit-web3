@@ -14,8 +14,8 @@ const evtMap: Record<string, string> = {
   })
 })
 
-export const state_isunlock: BackgroundService = {
-  method: 'state_isunlock',
+export const internal_isunlock: BackgroundService = {
+  method: 'internal_isunlock',
   middlewares: [],
   fn: async ({ res }) => {
     res.body = (await getKeyring()).isUnlocked
@@ -23,8 +23,8 @@ export const state_isunlock: BackgroundService = {
   }
 }
 
-export const state_isinitialized: BackgroundService = {
-  method: 'state_isinitialized',
+export const internal_isinitialized: BackgroundService = {
+  method: 'internal_isinitialized',
   middlewares: [],
   fn: async ({ res }) => {
     res.body = (await getKeyring()).isInitialized

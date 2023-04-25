@@ -5,29 +5,26 @@ import popupMessenger from '~/lib.next/messenger/popup'
 // import '@lit-web3/dui/src/menu'
 
 import style from './connect.css?inline'
-import { AddressType, getAddress } from '~/lib.legacy/phrase'
 
 @customElement('view-connect')
 export class ViewUnlock extends TailwindElement(style) {
   @property()
-  mnemonic = 'oven busy immense pitch embrace same edge leave bubble focus denial ripple'
-
   @property()
   doidName = 'zzzxxx'
 
-  onConnect = async () => {
-    let addresses = await getAddress(this.mnemonic)
-    console.log(addresses)
-    // if (!addresses || !this.account.name) return
-    try {
-      const res = await popupMessenger.send('internal_connect', {
-        doid: this.doidName,
-        mnemonic: this.mnemonic
-      })
-      console.info('res:', res)
-    } catch (e) {
-      popupMessenger.log(e)
-    }
+  connect = async () => {
+    // let addresses = await getAddress(this.mnemonic)
+    // console.log(addresses)
+    // // if (!addresses || !this.account.name) return
+    // try {
+    //   const res = await popupMessenger.send('internal_connect', {
+    //     doid: this.doidName,
+    //     mnemonic: this.mnemonic
+    //   })
+    //   console.info('res:', res)
+    // } catch (e) {
+    //   popupMessenger.log(e)
+    // }
   }
 
   render() {
@@ -68,8 +65,7 @@ export class ViewUnlock extends TailwindElement(style) {
           <div>Only connect with sites you trust</div>
           <div class="mt-2 flex">
             <dui-button class="outlined">Cancel</dui-button>
-            <!-- <dui-button class="ml-2" onclick="${() => this.onConnect()}">Connect</dui-button> -->
-            <dui-button class="ml-2" @click=${() => this.onConnect()}>Connect</dui-button>
+            <dui-button class="ml-2" @click=${this.connect}>Connect</dui-button>
           </div>
         </div>
       </div>

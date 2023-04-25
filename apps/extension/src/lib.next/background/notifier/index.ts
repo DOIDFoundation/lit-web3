@@ -2,6 +2,7 @@
 import browser from 'webextension-polyfill'
 import { popupStorage } from '~/lib.next/background/storage/popupStorage'
 import emitter from '@lit-web3/core/src/emitter'
+import { backgroundToPopup } from '~/lib.next/messenger/background'
 
 export const POPUP_HEIGHT = 620
 export const POPUP_WIDTH = 360
@@ -15,15 +16,15 @@ export const getPopup = async (): Promise<any> => {
 }
 
 export const openPopup = async (url?: string): Promise<void> => {
-  const tabs = await browser.tabs.query({ active: true })
-  const currentlyActived = tabs.some(({ id }) => id && popupStorage.openTabsIDs[id])
-  if (!uiIsTriggering && !popupStorage.isOpen && !currentlyActived) {
-    uiIsTriggering = true
-    try {
-      await showPopup(popupStorage.currentPopupId, url)
-    } catch {}
-    uiIsTriggering = false
-  }
+  // const tabs = await browser.tabs.query({ active: true })
+  // const currentlyActived = tabs.some(({ id }) => id && popupStorage.openTabsIDs[id])
+  // if (!uiIsTriggering && !popupStorage.isOpen && !currentlyActived) {
+  uiIsTriggering = true
+  try {
+    await showPopup(popupStorage.currentPopupId, url)
+  } catch {}
+  uiIsTriggering = false
+  // }
 }
 
 export const closePopup = async () => {
@@ -33,7 +34,10 @@ export const closePopup = async () => {
 const showPopup = async (currentPopupId?: number, url = '/'): Promise<any> => {
   if (currentPopupId) popupStorage._popupId = currentPopupId
   const popup = await getPopup()
-  if (popup?.id) return await browser.windows.update(popup.id, { focused: true })
+  if (popup?.id) {
+    if (url) backgroundToPopup.send('popup_replace', url)
+    return await browser.windows.update(popup.id, { focused: true })
+  }
   //
   let left = 0
   let top = 0
@@ -54,6 +58,7 @@ const showPopup = async (currentPopupId?: number, url = '/'): Promise<any> => {
     left,
     top
   })
+  popupStorage.isOpen = true
   const { id: popupId = 0 } = popupWindow
   // Firefox currently ignores left/top for create, but it works for update
   if (popupWindow.left !== left && popupWindow.state !== 'fullscreen') {
@@ -65,6 +70,7 @@ const showPopup = async (currentPopupId?: number, url = '/'): Promise<any> => {
 
 // onWindowClosed
 browser.windows.onRemoved.addListener((windowId: number) => {
+  popupStorage.isOpen = false
   if (windowId !== popupStorage._popupId) return
   popupStorage.currentPopupId = undefined
   popupStorage._popupId = undefined

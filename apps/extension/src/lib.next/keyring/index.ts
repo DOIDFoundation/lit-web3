@@ -25,13 +25,13 @@ class Keyring extends KeyringController {
     return this.memState.isUnlocked
   }
   get DOIDs() {
-    return this.state.DOIDs
+    return this.isUnlocked ? this.state.DOIDs : {}
   }
   get selectedDOID() {
-    return this.state.selectedDOID
+    return this.isUnlocked ? this.state.selectedDOID : {}
   }
   get selectedAddress() {
-    return this.selectedDOID.address
+    return this.selectedDOID?.address
   }
   get primaryKeyring() {
     return this.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)[0]

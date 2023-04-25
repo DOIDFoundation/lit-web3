@@ -51,7 +51,7 @@ const createReq = (message: webextMessage): Req => {
     raw: Object.freeze(message),
     method,
     body,
-    headers: { extOrigin: `${context}@${tabId}`, tabId, isInternal }
+    headers: { extOrigin: `${context}@${tabId}`, origin: '', tabId, isInternal }
   }
 }
 
