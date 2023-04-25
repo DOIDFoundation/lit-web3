@@ -5,6 +5,7 @@ import * as IPFS from 'ipfs-core'
 import * as w3name from 'w3name'
 import { Web3Storage } from 'web3.storage'
 import http from '@lit-web3/core/src/http'
+import type { Uint8Array } from 'web3.storage'
 
 import { keys } from '@libp2p/crypto'
 
@@ -33,14 +34,16 @@ class IPFSHelper {
   }
 
   // Update ipfs data and update relative ipns
-  async updateJsonData(json: Object, doidName: string, { memo = '' }: any = {}): Promise<string> {
+  async updateJsonData(json: Object, doidName: string, { memo = '' }: any = {}): Promise<Record<string, any>> {
     // get private by doidName from storage
     const _memo = memo || this._getMnemonicByDoidName(doidName)
     // write json to ipfs
     const cid = await this._writeIPFS(JSON.stringify(json))
     // get publickey from private
     await this._writeIPNS(cid, _memo)
-    return cid
+    // bytes
+    const { bytes } = await this._getPublicKeyFromStorage(memo)
+    return { cid, bytes }
   }
 
   async _chkIPNSExist(name: Name) {
@@ -109,12 +112,12 @@ class IPFSHelper {
   }
 
   // get the publickey from a seedphase
-  async _getPublicKeyFromStorage(mnemonic: string): Promise<string> {
+  async _getPublicKeyFromStorage(mnemonic: string): Promise<Record<string, any>> {
     let seed = await mnemonicToSeed(mnemonic)
     let key = HDKey.fromMasterSeed(seed)
     let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
     const name = await w3name.from(ipfsKey.bytes)
-    return name.toString()
+    return { key: name.toString(), bytes: name.bytes }
   }
 }
 
