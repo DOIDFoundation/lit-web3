@@ -8,13 +8,13 @@ import popupMessenger from '~/lib.next/messenger/popup'
 // import '@lit-web3/dui/src/link'
 @customElement('view-notification')
 export class ViewStart extends TailwindElement(null) {
-  @state() message = ''
+  // @state() message = ''
+  @property() ROUTE?: any
   constructor() {
     super()
-    popupMessenger.on('popup_personal_sign', ({ data }: { data: any }) => {
-      this.message = this.msgHexToText(data)
-      console.log(data, 'data', this.message)
-    })
+  }
+  get message() {
+    return this.msgHexToText(this.ROUTE.msg)
   }
   onReject() {
     popupMessenger.send('reply_personal_sign', false)
@@ -52,7 +52,7 @@ export class ViewStart extends TailwindElement(null) {
         <div class="font-bold">Message:</div>
         <div class="mt-2">${this.message}</div>
       </div>
-      <div class="grid grid-cols-2 gap-3 px-4 fixed bottom-0 w-full pb-4">
+      <div class="grid grid-cols-2 gap-3 px-4 fixed bottom-0 w-full pb-4 pt-2 bg-white">
         <dui-button class="block w-full secondary outlined !rounded-full h-12" @click=${this.onReject} block
           >Reject</dui-button
         >
