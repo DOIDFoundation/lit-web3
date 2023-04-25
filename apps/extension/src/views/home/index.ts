@@ -2,13 +2,14 @@ import { TailwindElement, html, customElement, when, property, state } from '@li
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { accountStore } from '~/store/account'
-import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
+import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
 // Components
 import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 
 import style from './home.css?inline'
+import popupMessenger from '~/lib.next/messenger/popup'
 @customElement('view-home')
 export class ViewHome extends TailwindElement(style) {
   account: any = new StateController(this, accountStore)
@@ -28,6 +29,13 @@ export class ViewHome extends TailwindElement(style) {
   async submit() {
     if (!this.doid) return
     this.pending = true
+    const { DOIDs } = await popupMessenger.send('internal_getDOIDs')
+    if (bareTLD(this.doid) in DOIDs) {
+      this.err = 'Already imported'
+      this.pending = false
+      return
+    }
+
     const { registered, available } = await accountStore.search(this.doid, true)
     if (registered) {
       goto('/start')
