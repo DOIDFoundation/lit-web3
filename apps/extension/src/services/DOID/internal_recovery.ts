@@ -14,7 +14,11 @@ export const internal_recovery: BackgroundService = {
     const { name, pwd, mnemonic } = state
     const { json = {}, reply = false } = req.body
     try {
-      ;(await getKeyring()).createNewVaultAndRestore(name, pwd, mnemonic)
+      const keyring = await getKeyring()
+      if (keyring.isInitialized) {
+        if (!keyring.isUnlocked) throw new Error('keyring locked')
+        await keyring.addNewKeyring(name, mnemonic)
+      } else keyring.createNewVaultAndRestore(name, pwd, mnemonic)
       const cid = await ipfsHelper.updateJsonData(json, name, { memo: mnemonic })
       if (reply) backgroundMessenger.broadcast('DOID_account_update', { cid })
       res.body = { success: 'ok' }

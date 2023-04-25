@@ -1,5 +1,5 @@
 // Only allowed in background environment
-import { KeyringController } from '@metamask/eth-keyring-controller'
+import { KeyringController, KeyringControllerError } from '@metamask/eth-keyring-controller'
 import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
@@ -86,6 +86,23 @@ class Keyring extends KeyringController {
     const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {}
     if (updatedKeyringAccounts?.length === 0) keyring.destroy?.()
     return DOID
+  }
+
+  addNewKeyring = async (name: string, mnemnoic: Uint8Array | string | number[]) => {
+    if (!name || !mnemnoic) return
+    if (typeof mnemnoic !== 'string') mnemnoic = new TextDecoder().decode(new Uint8Array(mnemnoic))
+    const keyring = await super.addNewKeyring('HD Key Tree', {
+      mnemonic: mnemnoic,
+      numberOfAccounts: 1
+    })
+
+    const [firstAccount] = await keyring.getAccounts()
+
+    if (!firstAccount) {
+      throw new Error(KeyringControllerError.NoFirstAccount)
+    }
+    this.fullUpdate()
+    this.setDOIDs(name, firstAccount)
   }
 
   async createNewVaultAndRestore(name: string, password: string, mnemnoic: Uint8Array | string | number[]) {
