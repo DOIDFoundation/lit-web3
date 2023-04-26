@@ -1,4 +1,12 @@
-import { TailwindElement, html, customElement, state, property } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  state,
+  property,
+  when,
+  repeat
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import { sleep } from '@lit-web3/ethers/src/utils'
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -18,15 +26,35 @@ export class ViewRestore extends TailwindElement('') {
   @state() pending = false
   @state() res_DOID_setup = null
   @state() res_DOID_name = ''
-  @state() res_DOID_chain_addrs = null
+  @state() res_DOID_chain_addrs = {}
+  @state() tx: any = null
+  @state() success = false
+  @state() ipns = ''
 
-  completeRegist = async (bytes: Array<number | string>, address: string) => {
+  get txPending() {
+    return this.tx && !this.tx?.ignored
+  }
+
+  completeRegist = async (bytes: Array<number | string>, address: string, cid?: string) => {
     const name = this.name
     const mainAddr = address || (await mainAddressByName(name)).toLowerCase()
-    const res = await setMainAddrAndIPNS(name, mainAddr, bytes)
-    logger('set main address and ipns:\n', res)
-    const ipns = ipnsBytes(name)
-    logger('query ipns:>>', ipns)
+    try {
+      logger('set main address and IPNS:>>', this.ipns)
+      this.tx = await setMainAddrAndIPNS(name, mainAddr, bytes)
+      const success = await this.tx.wait()
+      this.success = success
+      logger(this.success)
+
+      logger(`query ipns of ${name}:>>`)
+      this.ipns = (await ipnsBytes(name)) as string
+      if (cid) {
+        logger('query chain address:>>', cid)
+        const res = await window.DOID.request({ method: 'DOID_chain_address', params: { cid } })
+        this.res_DOID_chain_addrs = res
+      }
+    } catch (e) {
+      this.err = e
+    }
   }
 
   reset = () => {
@@ -62,8 +90,8 @@ export class ViewRestore extends TailwindElement('') {
       window.DOID?.on(_evt, ({ id, data } = <any>{}) => {
         this.msgs = this.msgs.concat([{ id, data }])
         if (_evt === 'reply_DOID_setup') {
-          const { bytes, address } = data
-          this.completeRegist(Object.values(bytes), address)
+          const { bytes, address, cid } = data
+          this.completeRegist(Object.values(bytes), address, cid)
         }
       })
     })
@@ -84,6 +112,17 @@ export class ViewRestore extends TailwindElement('') {
         <div class="my-2">
           <p class="my-2">Received messages:</p>
           <textarea class="w-80 h-32 border">${html`${this.msgs.map((msg) => JSON.stringify(msg))}`}</textarea>
+          ${when(this.ipns, () => html`<p class="text-blue-500">${this.ipns}</p>`)}
+          ${repeat(
+            Object.keys(this.res_DOID_chain_addrs),
+            (key) =>
+              html`<div class="mt-2 flex flex-col">
+                <div>${key}:</div>
+                <div class="text-xs text-gray-500 break-normal whitespace-normal">
+                  ${this.res_DOID_chain_addrs[key]}
+                </div>
+              </div>`
+          )}
         </div>
 
         <hr class="my-2" />

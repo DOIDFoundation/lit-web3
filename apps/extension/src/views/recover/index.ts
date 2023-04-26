@@ -54,7 +54,7 @@ export class ViewImport extends TailwindElement(null) {
   }
 
   onConfirmPhrase = async () => {
-    if (await popupMessenger.send('state_isinitialized')) {
+    if (await popupMessenger.send('internal_isinitialized')) {
       this.pending = true
       this.onCreateMainAddress()
         .then(() => {
