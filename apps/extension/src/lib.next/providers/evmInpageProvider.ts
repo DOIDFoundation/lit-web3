@@ -19,10 +19,12 @@ export const inpageProvider = () => {
 
 export const injectEvmInpageProvider = () => {
   if (!('ethereum' in window)) {
-    // @ts-expect-error
-    // window.DOID = inpageProvider()
-    window.ethereum = inpageProvider()
-    dispatchEvent(new Event('ethereum#initialized'))
-    inpageLogger('injected-opensea')
+    if (!location.href.includes('localhost')) {
+      // @ts-expect-error
+      // window.DOID = inpageProvider()
+      window.ethereum = inpageProvider()
+      dispatchEvent(new Event('ethereum#initialized'))
+      inpageLogger('injected-opensea')
+    }
   }
 }

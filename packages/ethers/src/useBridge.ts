@@ -145,7 +145,8 @@ export const getNetworkSync = () => Networks[Network.chainId]
 export const getChainId = async () => (await getNetwork()).chainId
 export const getEnvKey = async (key = '', withoutAddr = false) =>
   (withoutAddr ? await getChainId() : (await useBridgeAsync()).envKey) + (key ? `.${key}` : '')
-export const getSigner = async () => (await getBridge()).provider.getSigner(await getAccount())
+export const getSigner = async (account: string) =>
+  (await getBridge()).provider.getSigner(account || (await getAccount()))
 export const getBlockNumber = async () => {
   const { blockNumber } = await useBridgeAsync()
   return bridgeStore.blockNumber ?? blockNumber
