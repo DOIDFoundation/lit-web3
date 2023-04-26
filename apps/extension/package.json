@@ -21,6 +21,7 @@
   "keywords": [],
   "dependencies": {
     "@chainify/evm": "^2.2.0",
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@ethereumjs/util": "^8.0.5",
     "@keystonehq/metamask-airgapped-keyring": "^0.9.1",
     "@libp2p/crypto": "^1.0.7",
@@ -67,7 +68,6 @@
     "json-rpc-middleware-stream": "^4.2.1",
     "lodash": "^4.17.21",
     "nanoid": "^4.0.1",
-    "obj-multiplex": "^1.0.0",
     "pify": "^6.1.0",
     "process-nextick-args": "^2.0.1",
     "promise-to-callback": "^1.0.0",

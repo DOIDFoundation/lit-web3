@@ -2,7 +2,7 @@
 import { inpageLogger } from '~/lib.next/logger'
 import inpageMessenger from '~/lib.next/messenger/inpage'
 
-export const inpageProvider = () => {
+export const DOIDInpageProvider = () => {
   return {
     request: async ({ method, params } = <Record<string, any>>{}) => {
       inpageLogger('requested', method, params)
@@ -15,10 +15,10 @@ export const inpageProvider = () => {
   }
 }
 
-export const injectInpageProvider = () => {
+export const injectDOIDInpageProvider = () => {
   if (!('DOID' in window)) {
     // @ts-expect-error
-    window.DOID = inpageProvider()
+    window.DOID = DOIDInpageProvider()
     dispatchEvent(new Event('DOID#initialized'))
   }
 }

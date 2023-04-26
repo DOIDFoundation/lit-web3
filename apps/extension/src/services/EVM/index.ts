@@ -3,11 +3,11 @@ import { openPopup, closePopup } from '~/lib.next/background/notifier'
 import { getEVMProvider } from './daemon'
 import { toAscii } from 'ethereumjs-util'
 import base58 from 'bs58'
-import { autoClosePopup, unlock } from '~/middlewares'
+// import { autoClosePopup, unlock } from '~/middlewares'
 export const EVM_request: BackgroundService = {
   method: 'evm_request',
   allowInpage: true,
-  middlewares: [unlock(), autoClosePopup],
+  middlewares: [],
   fn: async (ctx) => {
     const provider = await getEVMProvider()
     const { method, params } = ctx.req.body
