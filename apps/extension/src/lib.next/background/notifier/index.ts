@@ -56,13 +56,14 @@ const showPopup = async (currentPopupId?: number, url = '/'): Promise<any> => {
     width: POPUP_WIDTH,
     height: POPUP_HEIGHT,
     left,
-    top
+    top,
+    focused: true
   })
   popupStorage.isOpen = true
   const { id: popupId = 0 } = popupWindow
   // Firefox currently ignores left/top for create, but it works for update
   if (popupWindow.left !== left && popupWindow.state !== 'fullscreen') {
-    await browser.windows.update(popupId, { left, top })
+    await browser.windows.update(popupId, { left, top, focused: true })
   }
   popupStorage.currentPopupId = popupId
   popupStorage._popupId = popupId
@@ -85,6 +86,8 @@ browser.windows.onRemoved.addListener((windowId: number) => {
   // }
   popupStorage._popupAutomaticallyClosed = undefined
 })
+
+export { popupStorage }
 
 export default {
   openPopup

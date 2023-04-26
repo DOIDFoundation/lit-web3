@@ -11,11 +11,11 @@ import { resolve } from 'node:path'
 const outDir = 'public'
 
 export default async ({ mode = '' }) => {
+  const isDev = mode === 'development'
   const config: any = await sharedConfig(mode)
   config.build = {
     outDir,
     emptyOutDir: false,
-    watch: { usePolling: true },
     cssCodeSplit: false,
     lib: {
       entry: resolve(__dirname, 'src/ext.entries/inpage.ts'),
@@ -29,5 +29,7 @@ export default async ({ mode = '' }) => {
       }
     }
   }
+  config.viteConfigOptions.html = false
+  if (isDev) config.build.watch = { usePolling: true }
   return viteConfig(config)({ mode })
 }
