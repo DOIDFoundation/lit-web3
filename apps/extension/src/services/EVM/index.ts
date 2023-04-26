@@ -1,26 +1,13 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { openPopup, closePopup } from '~/lib.next/background/notifier'
 import { getEVMProvider } from './daemon'
-import { isHexPrefixed } from 'ethereumjs-util'
-const stripHexPrefix = (str: string) => {
-  if (typeof str !== 'string') {
-    return str
-  }
-  return isHexPrefixed(str) ? str.slice(2) : str
-}
-const msgHexToText = (hex: string) => {
-  try {
-    const stripped = stripHexPrefix(hex)
-    const buff = Buffer.from(stripped, 'hex')
-    return buff.length === 32 ? hex : buff.toString('utf8')
-  } catch (e) {
-    return hex
-  }
-}
+import { toAscii } from 'ethereumjs-util'
+import base58 from 'bs58'
+import { autoClosePopup, unlock } from '~/middlewares'
 export const EVM_request: BackgroundService = {
   method: 'evm_request',
   allowInpage: true,
-  middlewares: [],
+  middlewares: [unlock(), autoClosePopup],
   fn: async (ctx) => {
     const provider = await getEVMProvider()
     const { method, params } = ctx.req.body
@@ -40,11 +27,10 @@ export const EVM_request: BackgroundService = {
       ctx.res.body = balance
     } else if (method == 'personal_sign') {
       // ctx.res.body = await provider.getSigner().signMessage(params[0])
-      await openPopup(`/notification/${params[0]}`)
+      const msg = toAscii(params[0])
+      await openPopup(`/notification/${base58.encode(new TextEncoder().encode(msg))}`)
       backgroundMessenger.on('reply_personal_sign', async ({ data }) => {
-        console.log(data, 'signMessage')
         if (!data) return closePopup()
-        const msg = msgHexToText(params[0])
         ctx.res.body = '0x' + (await provider.signMessage(msg, params[1]))
         ctx.res.responder.finally(() => {
           if (ctx.res.respond) closePopup()
