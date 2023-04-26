@@ -2,7 +2,7 @@
 import ipfsHelper from '~/lib.next/ipfsHelper'
 import { getKeyring } from '~/lib.next/keyring'
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { DOIDBodyParser, gotoPopup, autoClosePopup } from '~/middlewares'
+import { DOIDBodyParser, popupGoto, autoClosePopup } from '~/middlewares'
 
 export const internal_recovery: BackgroundService = {
   method: 'internal_recovery',

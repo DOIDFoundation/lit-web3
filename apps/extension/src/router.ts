@@ -191,9 +191,9 @@ export const routes = [
   },
   {
     name: 'connect',
-    path: '/connect',
-    render: () => {
-      return html`<view-connect></view-connect>`
+    path: '/connect/:origin?',
+    render: ({ origin = '' }) => {
+      return html`<view-connect .origin=${safeDecodeURIComponent(origin)}></view-connect>`
     },
     enter: async () => {
       // if (await isConnected()) {

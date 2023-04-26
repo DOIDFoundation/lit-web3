@@ -1,7 +1,7 @@
 import { getKeyring } from '~/lib.next/keyring'
 import { ConnectsStorage } from '~/lib.next/background/storage/preferences'
-import { backgroundToPopup } from '~/lib.next/messenger/background'
-import { gotoPopup } from '~/middlewares/unlock'
+import { popupGoto } from '~/middlewares/unlock'
+import emitter from '@lit-web3/core/src/emitter'
 
 export const getAccount = (): BackgroundMiddlware => {
   return async (ctx, next) => {
@@ -18,13 +18,15 @@ export const getAccount = (): BackgroundMiddlware => {
 
 export const connectAccount = (): BackgroundMiddlware => {
   return async (ctx, next) => {
-    const { req } = ctx
-    const { origin } = req.headers
-    await ConnectsStorage.set('asdasd', origin)
-    console.log(await ConnectsStorage.get(origin))
-    // gotoPopup('/connect')(ctx,next)
-    // backgroundToPopup.send('popup_goto', '/connect')
-    // backgroundToPopup.on('connect-change', () => {})
-    // next()
+    const { origin } = ctx.req.headers
+    const connected = await ConnectsStorage.has(origin)
+    if (connected) return next()
+    await new Promise((_next) => {
+      popupGoto(`/connect/${encodeURIComponent(origin)}`)(ctx, _next)
+    })
+    emitter.on('connect_change', async (e: CustomEvent) => {
+      const { origin: _origin, has } = e.detail
+      if (has && _origin === origin) return next()
+    })
   }
 }

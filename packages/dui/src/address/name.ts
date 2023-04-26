@@ -9,21 +9,29 @@ import './avatar'
 export class DuiNameAddress extends TailwindElement(null) {
   @property() name = ''
   @property() address = ''
+  @property() DOID?: DOIDObject
   @property({ type: Boolean }) avatar = false
   @property({ type: Boolean }) wrap = false
   @property({ type: Boolean }) short = false
 
+  get #address() {
+    return this.DOID?.address ?? this.address
+  }
+  get #name() {
+    return this.DOID?.name ?? this.name
+  }
+
   get empty() {
-    return !this.name || !this.address
+    return !this.#name || !this.#address
   }
   get addr() {
-    return this.address ?? ''
+    return this.#address ?? ''
   }
   get showName() {
-    return this.wrap ? wrapTLD(this.name) : this.name
+    return this.wrap ? wrapTLD(this.#name) : this.#name
   }
   get showAddress() {
-    return this.short ? shortAddress(this.address) : ''
+    return this.short ? shortAddress(this.#address) : ''
   }
 
   override render() {

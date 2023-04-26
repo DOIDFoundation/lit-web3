@@ -4,7 +4,7 @@ import { backgroundToPopup } from '~/lib.next/messenger/background'
 import { getKeyring } from '~/lib.next/keyring'
 
 const waitingForUnlock: Function[] = []
-const waitingForGotoPopup: BackgroundMiddlwareCtx[] = []
+const waitingForPopupGoto: BackgroundMiddlwareCtx[] = []
 
 const handleUnlock = async () => {
   if (!waitingForUnlock.length) return
@@ -14,10 +14,10 @@ const handleUnlock = async () => {
   }
   backgroundToPopup.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
 }
-const onGotoPopupClosed = () => {
-  if (!waitingForGotoPopup.length) return
-  while (waitingForGotoPopup.length) {
-    let { res } = waitingForGotoPopup.shift()!
+const onPopupGotoClosed = () => {
+  if (!waitingForPopupGoto.length) return
+  while (waitingForPopupGoto.length) {
+    let { res } = waitingForPopupGoto.shift()!
     if (!res.respond) res.err = new Error(ERR_USER_DENIED)
   }
 }
@@ -26,7 +26,7 @@ backgroundToPopup.emitter.on('unlock', handleUnlock)
 // Mostly ignored
 backgroundToPopup.emitter.on('popup_closed', () => {
   handleUnlock()
-  onGotoPopupClosed()
+  onPopupGotoClosed()
 })
 
 // eg. /landing/:DOIDName + req.state.DOIDName >> /landing/vitalik
@@ -60,9 +60,9 @@ export const unlock = (popupUrl?: string): BackgroundMiddlware => {
 }
 
 // Non-Authed requests
-export const gotoPopup = (popupUrl = '/'): BackgroundMiddlware => {
+export const popupGoto = (popupUrl = '/'): BackgroundMiddlware => {
   return async (ctx, next) => {
-    waitingForGotoPopup.push(ctx)
+    waitingForPopupGoto.push(ctx)
     await openPopup(state2url(ctx.state, popupUrl))
     return next()
   }

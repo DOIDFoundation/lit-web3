@@ -1,11 +1,9 @@
 import { getPreferences } from '~/lib.next/background/storage/preferences'
 
-export const internal_isconnected: BackgroundService = {
-  method: 'internal_isconnected',
+export const internal_preferences: BackgroundService = {
+  method: 'internal_preferences',
   middlewares: [],
   fn: async ({ res }) => {
-    const preferences = await getPreferences()
-    console.log(preferences)
-    // res.body = (await getPreferences()).isUnlocked
+    res.body = await getPreferences()
   }
 }

@@ -6,7 +6,6 @@ declare type Header = {
   extOrigin: string
   origin: string
   tabId?: number
-  tabId?: number
 }
 declare type Req = {
   method: string

@@ -42,6 +42,6 @@ class BackgroundMessenger extends Messenger implements MESSENGER {
   }
 }
 
-export const backgroundMessenger = new BackgroundMessenger()
+const backgroundMessenger = new BackgroundMessenger()
 
 export default backgroundMessenger
