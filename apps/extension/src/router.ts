@@ -50,15 +50,6 @@ export const routes = [
   // Alias of home view
   { ...homeView, path: '/popup' },
   {
-    name: 'ipfs',
-    path: '/ipfs',
-    render: () => html`<view-ipfs></view-ipfs>`,
-    enter: async () => {
-      await import('~/views/ipfs')
-      return true
-    }
-  },
-  {
     name: 'unlock',
     path: '/unlock/:dest?',
     render: ({ dest = '/main' }) => html`<view-unlock .dest=${safeDecodeURIComponent(dest)}></view-unlock>`,
