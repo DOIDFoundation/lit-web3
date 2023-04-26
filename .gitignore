@@ -1,6 +1,9 @@
 auto-imports.d.ts
 *.crx
+*.zip
+*.xpi
 *.rdb
+*.pem
 
 node_modules
 .DS_Store

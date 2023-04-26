@@ -78,12 +78,18 @@ export default async ({ mode = '' }) => {
   config.build = {
     emptyOutDir: !isDev,
     // so annoying, here will break in build stage
-    rollupOptions: {
-      input: {
-        background: 'index.html',
-        popup: 'popup.html'
-      }
-    }
+    ...(isDev
+      ? {
+          rollupOptions: {
+            input: {
+              index: 'index.html'
+            },
+            output: {
+              entryFileNames: '[name].html'
+            }
+          }
+        }
+      : {})
   }
 
   return viteConfig(config)({ mode })

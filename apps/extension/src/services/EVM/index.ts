@@ -2,7 +2,6 @@ import backgroundMessenger from '~/lib.next/messenger/background'
 import { openPopup, closePopup } from '~/lib.next/background/notifier'
 import { getEVMProvider } from './daemon'
 import { isHexPrefixed } from 'ethereumjs-util'
-import { autoClosePopup, unlock } from '~/middlewares'
 const stripHexPrefix = (str: string) => {
   if (typeof str !== 'string') {
     return str
@@ -21,7 +20,7 @@ const msgHexToText = (hex: string) => {
 export const EVM_request: BackgroundService = {
   method: 'evm_request',
   allowInpage: true,
-  middlewares: [unlock(), autoClosePopup],
+  middlewares: [],
   fn: async (ctx) => {
     const provider = await getEVMProvider()
     const { method, params } = ctx.req.body
