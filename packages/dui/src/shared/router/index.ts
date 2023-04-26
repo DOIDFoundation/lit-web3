@@ -5,7 +5,7 @@ import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 const bareOrigin = (url: string) => url.replace(location.origin, '')
 const match = (url: any) => bareOrigin(safeDecodeURIComponent(location.href)) === bareOrigin(url)
 
-export const scrollTop = (y = 0) => setTimeout(() => window.scrollTo(0, y))
+export const scrollTop = (y = 0) => setTimeout(() => globalThis.scrollTo(0, y))
 
 // Trick for @lit-labs/router
 export const routerGuard = {
@@ -29,14 +29,14 @@ export const routerGuard = {
       replaceState.apply(history, [state, key, url])
       emitRouterChange(url)
     }
-    window.addEventListener('popstate', () => emitRouterChange(location.href))
-    window.addEventListener('pushstate', () => emitRouterChange(location.href))
+    globalThis.addEventListener('popstate', () => emitRouterChange(location.href))
+    globalThis.addEventListener('pushstate', () => emitRouterChange(location.href))
     // Listener
-    emitter.on('router-goto', (e: Event) => {
-      setTimeout(() => routerGuard.goto((e as CustomEvent).detail))
+    emitter.on('router-goto', (e: CustomEvent) => {
+      setTimeout(() => routerGuard.goto(e.detail))
     })
-    emitter.on('router-replace', (e: Event) => {
-      setTimeout(() => routerGuard.replace((e as CustomEvent).detail))
+    emitter.on('router-replace', (e: CustomEvent) => {
+      setTimeout(() => routerGuard.replace(e.detail))
     })
   },
   goto: (url: string) => {

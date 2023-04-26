@@ -11,10 +11,11 @@ export const publicMethods = Object.freeze([
   'DOID_account_change',
   'DOID_account_recover',
   'DOID_chain_address',
-  'evm_request'
+  'evm_request',
+  'reply_DOID_setup'
 ])
 // background <-> popup (Always pass private methods, so far)
-// export const privateMethods = Object.freeze(['state_keyring', 'state_lock', 'state_isunlock', 'state_account'])
+// export const privateMethods = Object.freeze(['state_keyring', 'state_lock', 'internal_isunlock', 'state_account'])
 
 /* Popup Methods */
 // popup -> background (Always pass private methods, so far)
