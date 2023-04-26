@@ -48,10 +48,8 @@ export const solana_request: BackgroundService = {
             res.err = new Error(ERR_USER_DENIED)
             return
           }
-          const keyrings = (await getKeyring()).keyrings
-          if (keyrings.length === 0) throw new Error('no keyring')
-          const mnemonic = new TextDecoder().decode(new Uint8Array((await keyrings[0].serialize()).mnemonic))
-          let seed = await mnemonicToSeed(mnemonic)
+          const keyring = await getKeyring()
+          let seed = await mnemonicToSeed(await keyring.getMnemonic())
           const derivedSeed = derivePath(`m/44'/501'/0'/0'`, Buffer.from(seed).toString('hex')).key
           const keypair = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
           const decodedMsg = base58.decode(message)
