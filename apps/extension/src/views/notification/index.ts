@@ -41,7 +41,7 @@ export class ViewStart extends TailwindElement(null) {
   render() {
     return html`<div class="view-notification">
       <div class="text-center px-8">
-        <div class="border rounded-full p-2 inline-block">www.opensea.io</div>
+        <div class="border rounded-full p-2 inline-block">${this.ROUTE.origin}</div>
         <div class="text-xl font-bold mt-2">Signature request</div>
         <div class="mt-2">
           Only sign this message if you fully understand the content and trust the requesting site.

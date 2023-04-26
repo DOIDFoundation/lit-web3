@@ -22,6 +22,8 @@ export const EVM_request: BackgroundService = {
   allowInpage: true,
   middlewares: [],
   fn: async (ctx) => {
+    console.log(ctx, 'ctx')
+
     const provider = await getEVMProvider()
     const { method, params } = ctx.req.body
     console.log('method', method, 'params', params)
@@ -40,7 +42,7 @@ export const EVM_request: BackgroundService = {
       ctx.res.body = balance
     } else if (method == 'personal_sign') {
       // ctx.res.body = await provider.getSigner().signMessage(params[0])
-      await openPopup(`/notification/${params[0]}`)
+      await openPopup(`/notification/${params[0]}/${ctx.req.headers.origin}`)
       backgroundMessenger.on('reply_personal_sign', async ({ data }) => {
         console.log(data, 'signMessage')
         if (!data) return closePopup()
