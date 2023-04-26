@@ -2,22 +2,22 @@ export enum ChainName {
   ethereum = 'ethereum',
   solana = 'solana',
   aptos = 'aptos',
-  bnb = 'bnb',
+  bsc = 'bsc',
   bitcoin = 'bitcoin'
 }
 export enum ChainCoin {
   ethereum = 'eth',
   solana = 'sol',
   aptos = 'apt',
-  bnb = 'bnb',
+  bsc = 'bnb',
   bitcoin = 'btc'
 }
 
 export const ChainsDefaultDef = (): ChainNet[] => {
   return [
     { name: ChainName.ethereum, title: 'Ethereum', coin: ChainCoin.ethereum },
-    { name: ChainName.bitcoin, title: 'BitCoin', coin: ChainCoin.bitcoin },
-    { name: ChainName.bnb, title: 'BNB Smart Chain', coin: ChainCoin.bnb },
+    // { name: ChainName.bitcoin, title: 'BitCoin', coin: ChainCoin.bitcoin },
+    { name: ChainName.bsc, title: 'BNB Smart Chain', coin: ChainCoin.bsc },
     { name: ChainName.aptos, title: 'Aptos', coin: ChainCoin.aptos },
     { name: ChainName.solana, title: 'Solana', coin: ChainCoin.solana }
   ].filter((r) => r.name != 'bitcoin')
@@ -43,7 +43,7 @@ export const chainNetworks: ChainNetwork = Object.freeze({
     { name: 'Ethereum Goerli', id: '0x5' },
     { name: 'Ethereum Sepolia', id: '0xaa36a7' }
   ],
-  [ChainName.bnb]: [
+  [ChainName.bsc]: [
     { name: 'BNB Smart Chain', id: '0x38' },
     { name: 'BNB Smart Chain Testnet', id: '0x61' }
   ],
