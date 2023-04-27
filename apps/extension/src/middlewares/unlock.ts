@@ -1,4 +1,4 @@
-import { openPopup } from '~/lib.next/background/notifier'
+import { openPopup, popupStorage } from '~/lib.next/background/notifier'
 import { BACKGROUND_EVENTS, ERR_USER_DENIED } from '~/lib.next/constants'
 import { backgroundToPopup } from '~/lib.next/messenger/background'
 import { getKeyring } from '~/lib.next/keyring'
@@ -54,7 +54,7 @@ export const unlock = (popupUrl?: string): BackgroundMiddlware => {
       if (isUnlocked) return _next()
       waitingForUnlock.push(_next)
       backgroundToPopup.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
-      await openPopup(isInitialized ? `/unlock/${encodeURIComponent(dest)}` : dest)
+      await openPopup(isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/import')
     })
   }
 }
@@ -62,8 +62,16 @@ export const unlock = (popupUrl?: string): BackgroundMiddlware => {
 // Non-Authed requests
 export const popupGoto = (popupUrl = '/'): BackgroundMiddlware => {
   return async (ctx, next) => {
+    const dest = state2url(ctx.state, popupUrl)
+    // internal
+    if (ctx.req.headers.isInternal) {
+      backgroundToPopup.send('popup_goto', dest)
+      return next()
+    }
+    // inpage
+    if (popupStorage.isOpen) return next()
     waitingForPopupGoto.push(ctx)
-    await openPopup(state2url(ctx.state, popupUrl))
+    await openPopup(dest)
     return next()
   }
 }

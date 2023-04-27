@@ -8,7 +8,7 @@ import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/link'
 import '~/components/phrase'
 import '~/components/pwd-equal'
-import swGlobal from '~/ext.scripts/sw/swGlobal'
+// import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
 import style from './restore.css?inline'
@@ -41,8 +41,8 @@ export class ViewRestore extends TailwindElement(style) {
 
   restore = async () => {
     try {
-      const encodedSeedPhrase = Array.from(Buffer.from(this.phrase, 'utf8').values())
-      await swGlobal.controller.createNewVaultAndRestore(this.name, this.pwd, encodedSeedPhrase)
+      // const encodedSeedPhrase = Array.from(Buffer.from(this.phrase, 'utf8').values())
+      // await swGlobal.controller.createNewVaultAndRestore(this.name, this.pwd, encodedSeedPhrase)
       goto('/unlock')
     } catch (err: any) {
       this.err = err.message || err

@@ -1,6 +1,6 @@
 // service worker entry for extension
 if (!('window' in globalThis)) Object.defineProperty(globalThis, 'window', { value: globalThis })
-import '@lit-web3/core/src/shims/node'
+// import '@lit-web3/core/src/shims/node'
 import browser from 'webextension-polyfill'
 import { connectRemote } from '~/lib.next/background/connectRemote'
 import { loadAllServices } from '~/services'

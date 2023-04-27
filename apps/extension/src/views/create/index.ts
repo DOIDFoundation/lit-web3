@@ -87,7 +87,7 @@ export class ViewHome extends TailwindElement(style) {
     if (!address || typeof address != 'string' || !this.doid) return
     this.address = address
     this.balance = ''
-    if (await popupMessenger.send('state_isinitialized')) {
+    if (await popupMessenger.send('internal_isinitialized')) {
       this.stepTo(Steps.CheckBalance)
       this.checkBalance()
     } else this.next()

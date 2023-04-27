@@ -101,8 +101,9 @@ export const getSignerMessage = async (name: string, account: string, coinType: 
   return { name, dest: account, timestamp, nonce: nonce._hex, message }
 }
 
-export const signMessage = async (msg: string) => {
-  const signature = await (await getSigner()).signMessage(msg)
+export const signMessage = async (msg: string, address: string) => {
+  const signer = await getSigner(address)
+  const signature = await signer.signMessage(msg)
   return { signature }
 }
 
@@ -201,10 +202,10 @@ export const setMainAddrAndIPNS = async (name: string, address: string, bytes: a
     const method = 'setMainAddrAndIPNS'
     const overrides = {}
     const { name: name1, timestamp, nonce, message } = await getSignerMessageByMainAddress(_name, address)
-    const { signature } = await signMessage(message)
+    const { signature } = await signMessage(message, address)
     const parameters = [name1, address, +timestamp, nonce, signature, bytes]
 
-    console.log('---setMainAddrAndIPNS---\n', name1, address, timestamp, nonce, signature, bytes, '\n')
+    console.log('---setMainAddrAndIPNS---\n', { name1, address, timestamp, nonce, signature, bytes }, '\n')
     await assignOverrides(overrides, contract, method, parameters)
     const call = contract[method](...parameters)
     return new txReceipt(call, {

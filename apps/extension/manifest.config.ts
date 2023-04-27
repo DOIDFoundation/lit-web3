@@ -18,6 +18,11 @@ export default defineManifest({
     default_popup: 'popup.html',
     default_icon: 'public/doid.png'
   },
+  icons: {
+    16: 'public/doid.png',
+    48: 'public/doid.png',
+    128: 'public/doid.png'
+  },
   permissions: [
     'activeTab',
     'alarms',

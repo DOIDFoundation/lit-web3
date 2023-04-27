@@ -22,19 +22,19 @@ try {
 import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import manifest from './manifest.config'
 import { dirname, relative, resolve } from 'node:path'
-import nodePolyfills from 'rollup-plugin-polyfill-node'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 import AutoImport from 'unplugin-auto-import/vite'
 
-export const sharedConfig = async (mode = ''): Promise<any> => {
-  const shimNode = (s: string) => resolve(__dirname, '../../packages/core/src/shims/node', s)
+type viteConfig = Record<string, any>
+export const sharedConfig = async (mode?: string): Promise<viteConfig> => {
+  // const shimNode = (s: string) => resolve(__dirname, '../../packages/core/src/shims/node', s)
   return {
     resolve: {
       alias: {
-        stream: shimNode('stream.ts'),
-        util: shimNode('util.js'),
-        assert: shimNode('assert.js'),
-        'obj-multiplex': '@metamask/object-multiplex'
+        // stream: shimNode('stream.ts')
+        // util: shimNode('util.js'),
+        // assert: shimNode('assert.js')
       }
     },
     plugins: [
@@ -49,7 +49,7 @@ export const sharedConfig = async (mode = ''): Promise<any> => {
       }
     ],
     optimizeDeps: {
-      include: ['webextension-polyfill', 'rollup-plugin-polyfill-node', 'readable-stream']
+      include: ['webextension-polyfill']
     },
     viteConfigOptions: {
       pwa: false,
@@ -59,30 +59,33 @@ export const sharedConfig = async (mode = ''): Promise<any> => {
   }
 }
 
+export const sharedExtConfig = async (mode?: string): Promise<viteConfig> => {
+  const config = await sharedConfig(mode)
+  const [isDev] = [mode === 'development']
+  config.plugins.push(
+    ...[
+      nodePolyfills(),
+      AutoImport({
+        imports: [{ 'webextension-polyfill': [['*', 'browser']] }],
+        dts: resolve(__dirname, 'src/auto-imports.d.ts')
+      })
+    ]
+  )
+  config.build = {
+    emptyOutDir: !isDev
+  }
+  return config
+}
+
 export default async ({ mode = '' }) => {
   const [port, isDev] = [4831, mode === 'development']
-  const config = await sharedConfig(mode)
-  await 0
+  const config = await sharedExtConfig(mode)
   const { crx } = await import('@crxjs/vite-plugin')
-  config.plugins.push(
-    ...([
-      // nodePolyfills({ include: null }),
-      // AutoImport({
-      //   imports: [{ 'webextension-polyfill': [['*', 'browser']] }],
-      //   dts: resolve(__dirname, 'src/auto-imports.d.ts')
-      // }),
-      crx({ manifest })
-    ] as any[])
-  )
+  config.plugins.push(...([crx({ manifest })] as any[]))
   config.server = { port, https: false, hmr: { port } }
-  config.build = {
-    emptyOutDir: !isDev,
-    // so annoying, here will break in build stage
-    rollupOptions: {
-      input: {
-        background: 'index.html',
-        popup: 'popup.html'
-      }
+  config.build.rollupOptions = {
+    input: {
+      index: 'index.html'
     }
   }
 

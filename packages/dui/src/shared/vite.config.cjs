@@ -48,7 +48,7 @@ const viteConfig = (options = {}) => {
         }
       },
       build: {
-        ...(isDev ? { minify: false, sourcemap: 'inline' } : {}),
+        ...(1 == 1 || isDev ? { minify: false, sourcemap: 'inline' } : {}),
         rollupOptions: {
           // external: /^lit/
           // input: {
@@ -64,10 +64,13 @@ const viteConfig = (options = {}) => {
         ...(https ? [mkcert()] : []),
         minifyHTMLLiterals(),
         splitVendorChunkPlugin(),
-        createHtmlPlugin({
-          inject: {
-            data: {
-              HEAD: `<meta charset="UTF-8" />
+        ...(viteConfigOptions.html === false
+          ? []
+          : [
+              createHtmlPlugin({
+                inject: {
+                  data: {
+                    HEAD: `<meta charset="UTF-8" />
                 <link rel="icon" href="/favicon.ico" />
                 <meta
                   name="viewport"
@@ -86,7 +89,7 @@ const viteConfig = (options = {}) => {
                 ${mdi}
                 <script type="module" src="/src/main.ts"></script>
               `,
-              BODY: `
+                    BODY: `
               <app-root></app-root>
               ${
                 isDev || !env.VITE_APP_GA
@@ -94,10 +97,11 @@ const viteConfig = (options = {}) => {
                   : `<script async src="https://www.googletagmanager.com/gtag/js?id=${env.VITE_APP_GA}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config', '${env.VITE_APP_GA}')</script>`
               }
               `
-            }
-          },
-          minify: true
-        }),
+                  }
+                },
+                minify: true
+              })
+            ]),
         ...(isDev || !viteConfigOptions.copies?.length
           ? []
           : [

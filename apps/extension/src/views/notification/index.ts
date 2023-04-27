@@ -1,6 +1,5 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 // import { goto } from '@lit-web3/dui/src/shared/router/index'
-import { isHexPrefixed } from 'ethereumjs-util'
 // Components
 // import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
@@ -28,21 +27,6 @@ export class ViewStart extends TailwindElement(null) {
   onSign() {
     popupMessenger.send('reply_personal_sign', true)
   }
-  stripHexPrefix(str: string) {
-    if (typeof str !== 'string') {
-      return str
-    }
-    return isHexPrefixed(str) ? str.slice(2) : str
-  }
-  msgHexToText = (hex: string) => {
-    try {
-      const stripped = this.stripHexPrefix(hex)
-      const buff = Buffer.from(stripped, 'hex')
-      return buff.length === 32 ? hex : buff.toString('utf8')
-    } catch (e) {
-      return hex
-    }
-  }
 
   render() {
     return html`<div class="view-notification">
@@ -56,7 +40,7 @@ export class ViewStart extends TailwindElement(null) {
       </div>
       <div class="mt-2 border-t pt-4 px-4 pb-8">
         <div class="font-bold">Message:</div>
-        <div class="mt-2">${this.message}</div>
+        <pre class="mt-2">${this.message}</pre>
       </div>
       <div class="grid grid-cols-2 gap-3 px-4 fixed bottom-0 w-full pb-4 pt-2 bg-white">
         <dui-button class="block w-full secondary outlined !rounded-full h-12" @click=${this.onReject} block

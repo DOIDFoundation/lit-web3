@@ -1,4 +1,4 @@
-import '@lit-web3/core/src/shims/node'
+// import '@lit-web3/core/src/shims/node'
 import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
