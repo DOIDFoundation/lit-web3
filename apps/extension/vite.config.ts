@@ -26,8 +26,9 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 import AutoImport from 'unplugin-auto-import/vite'
 
-export const sharedConfig = async (mode = ''): Promise<any> => {
-  const shimNode = (s: string) => resolve(__dirname, '../../packages/core/src/shims/node', s)
+type viteConfig = Record<string, any>
+export const sharedConfig = async (mode?: string): Promise<viteConfig> => {
+  // const shimNode = (s: string) => resolve(__dirname, '../../packages/core/src/shims/node', s)
   return {
     resolve: {
       alias: {
@@ -58,29 +59,33 @@ export const sharedConfig = async (mode = ''): Promise<any> => {
   }
 }
 
-export default async ({ mode = '' }) => {
-  const [port, isDev] = [4831, mode === 'development']
+export const sharedExtConfig = async (mode?: string): Promise<viteConfig> => {
   const config = await sharedConfig(mode)
-  await 0
-  const { crx } = await import('@crxjs/vite-plugin')
+  const [isDev] = [mode === 'development']
   config.plugins.push(
-    ...([
+    ...[
       nodePolyfills(),
       AutoImport({
         imports: [{ 'webextension-polyfill': [['*', 'browser']] }],
         dts: resolve(__dirname, 'src/auto-imports.d.ts')
-      }),
-      crx({ manifest })
-    ] as any[])
+      })
+    ]
   )
-  config.server = { port, https: false, hmr: { port } }
   config.build = {
-    emptyOutDir: !isDev,
-    // so annoying, here will break in build stage
-    rollupOptions: {
-      input: {
-        index: 'index.html'
-      }
+    emptyOutDir: !isDev
+  }
+  return config
+}
+
+export default async ({ mode = '' }) => {
+  const [port, isDev] = [4831, mode === 'development']
+  const config = await sharedExtConfig(mode)
+  const { crx } = await import('@crxjs/vite-plugin')
+  config.plugins.push(...([crx({ manifest })] as any[]))
+  config.server = { port, https: false, hmr: { port } }
+  config.build.rollupOptions = {
+    input: {
+      index: 'index.html'
     }
   }
 

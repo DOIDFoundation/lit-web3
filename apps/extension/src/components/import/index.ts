@@ -74,7 +74,6 @@ export class resetByPhrase extends TailwindElement(null) {
     this.invalid = error ?? ''
     if (error) return
     const match = await phraseMatch(phrase, this.address)
-    debugger
     if (match) {
       this.phrase = phrase
     } else {
