@@ -38,9 +38,9 @@ export class ViewStart extends TailwindElement(null) {
         </div>
         <div class="mt-3">You are signing:</div>
       </div>
-      <div class="mt-2 border-t pt-4 px-4 pb-8">
+      <div class="mt-2 border-t pt-4 px-4 pb-12">
         <div class="font-bold">Message:</div>
-        <pre class="mt-2">${this.message}</pre>
+        <pre class="mt-2 whitespace-pre-line">${this.message}</pre>
       </div>
       <div class="grid grid-cols-2 gap-3 px-4 fixed bottom-0 w-full pb-4 pt-2 bg-white">
         <dui-button class="block w-full secondary outlined !rounded-full h-12" @click=${this.onReject} block
