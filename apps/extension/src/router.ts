@@ -196,9 +196,9 @@ export const routes = [
   },
   {
     name: 'notification',
-    path: '/notification/:msg?',
-    render: ({ msg = '' }) => {
-      return html`<view-notification .ROUTE=${{ msg }}></view-notification>`
+    path: '/notification/:msg?/:origin?',
+    render: ({ msg = '', origin = '' }) => {
+      return html`<view-notification .ROUTE=${{ msg, origin }}></view-notification>`
     },
     enter: async () => {
       await import('~/views/notification')
