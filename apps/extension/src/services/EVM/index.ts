@@ -17,6 +17,20 @@ const msgHexToText = (hex: string) => {
     return hex
   }
 }
+const isHex = (str: string) => {
+  return Boolean(str.match(/^[0-9a-f]+$/i))
+}
+const hexToAscii = (hex: string) => {
+  hex = hex.replace('0x', '')
+  if (!isHex(hex)) return hex
+
+  let str = ''
+  for (let i = 0; i < hex.length; i += 2) {
+    var code = parseInt(hex.substr(i, 2), 16)
+    str += String.fromCharCode(code)
+  }
+  return str
+}
 export const EVM_request: BackgroundService = {
   method: 'evm_request',
   allowInpage: true,
@@ -42,16 +56,19 @@ export const EVM_request: BackgroundService = {
       ctx.res.body = balance
     } else if (method == 'personal_sign') {
       // ctx.res.body = await provider.getSigner().signMessage(params[0])
-      await openPopup(`/notification/${params[0]}/${ctx.req.headers.origin}`)
+      const msg = hexToAscii(params[0])
+      backgroundMessenger.on('get_personal_sign', async ({ data }) => {
+        return { msg, origin: ctx.req.headers.origin }
+      })
       backgroundMessenger.on('reply_personal_sign', async ({ data }) => {
-        console.log(data, 'signMessage')
         if (!data) return closePopup()
-        const msg = msgHexToText(params[0])
-        ctx.res.body = await provider.signMessage(msg, params[1])
+        const signmsg = await provider.signMessage(msg, params[1])
+        ctx.res.body = signmsg.toString().startsWith('0x') ? signmsg : '0x' + signmsg
         ctx.res.responder.finally(() => {
           if (ctx.res.respond) closePopup()
         })
       })
+      openPopup(`/notification`)
     }
   }
 }

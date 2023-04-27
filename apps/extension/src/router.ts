@@ -61,7 +61,7 @@ export const routes = [
   {
     name: 'unlock',
     path: '/unlock/:dest?',
-    render: ({ dest = undefined }) => html`<view-unlock .dest=${safeDecodeURIComponent(dest)}></view-unlock>`,
+    render: ({ dest = '' }) => html`<view-unlock .dest=${safeDecodeURIComponent(dest)}></view-unlock>`,
     enter: async () => {
       await import('~/views/unlock')
       return true

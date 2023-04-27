@@ -8,14 +8,20 @@ import popupMessenger from '~/lib.next/messenger/popup'
 // import '@lit-web3/dui/src/link'
 @customElement('view-notification')
 export class ViewStart extends TailwindElement(null) {
-  // @state() message = ''
+  @state() message = ''
+  @state() origin = ''
   @property() ROUTE?: any
   constructor() {
     super()
   }
-  get message() {
-    return this.msgHexToText(this.ROUTE.msg)
+  async connectedCallback() {
+    super.connectedCallback()
+    const { msg, origin } = await popupMessenger.send('get_personal_sign', '')
+    console.log(msg, 'msg')
+    this.message = msg
+    this.origin = origin
   }
+
   onReject() {
     popupMessenger.send('reply_personal_sign', false)
   }
@@ -41,7 +47,7 @@ export class ViewStart extends TailwindElement(null) {
   render() {
     return html`<div class="view-notification">
       <div class="text-center px-8">
-        <div class="border rounded-full p-2 inline-block">${this.ROUTE.origin}</div>
+        <div class="border rounded-full p-2 px-4 inline-block text-blue-600">${this.origin}</div>
         <div class="text-xl font-bold mt-2">Signature request</div>
         <div class="mt-2">
           Only sign this message if you fully understand the content and trust the requesting site.
