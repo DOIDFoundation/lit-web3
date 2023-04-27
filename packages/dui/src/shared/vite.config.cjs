@@ -63,7 +63,7 @@ const viteConfig = (options = {}) => {
       plugins: [
         ...(https ? [mkcert()] : []),
         minifyHTMLLiterals(),
-        splitVendorChunkPlugin(),
+        ...(viteConfigOptions.splitChunk === false ? [] : [splitVendorChunkPlugin()]),
         ...(viteConfigOptions.html === false
           ? []
           : [

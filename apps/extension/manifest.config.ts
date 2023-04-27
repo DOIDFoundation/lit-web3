@@ -18,6 +18,10 @@ export default defineManifest({
     default_popup: 'popup.html',
     default_icon: 'public/doid.png'
   },
+  options_ui: {
+    page: 'index.html',
+    open_in_tab: true
+  },
   icons: {
     16: 'public/doid.png',
     48: 'public/doid.png',
@@ -34,7 +38,7 @@ export default defineManifest({
     'webRequest',
     ...(isDev ? ['webNavigation'] : [])
   ],
-  host_permissions: [...matches, 'http://localhost:4813/'],
+  host_permissions: ['*://*/*'],
   background: {
     service_worker: 'src/ext.entries/background.ts',
     type: 'module'

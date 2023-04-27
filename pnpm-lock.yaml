@@ -70,7 +70,7 @@ importers:
         version: 4.14.194
       '@vitejs/plugin-legacy':
         specifier: ^3.0.2
-        version: 3.0.2(terser@5.17.1)(vite@4.3.2)
+        version: 3.0.2(terser@5.17.1)(vite@4.3.3)
       autoprefixer:
         specifier: ^10.4.14
         version: 10.4.14(postcss@8.4.23)
@@ -123,20 +123,20 @@ importers:
         specifier: ^0.15.3
         version: 0.15.3(rollup@3.21.0)
       vite:
-        specifier: ^4.3.2
-        version: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+        specifier: ^4.3.3
+        version: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
       vite-plugin-html:
         specifier: ^3.2.0
-        version: 3.2.0(vite@4.3.2)
+        version: 3.2.0(vite@4.3.3)
       vite-plugin-mkcert:
-        specifier: ^1.14.0
-        version: 1.14.0(vite@4.3.2)
+        specifier: ^1.14.1
+        version: 1.14.1(vite@4.3.3)
       vite-plugin-pwa:
         specifier: ^0.14.7
-        version: 0.14.7(vite@4.3.2)(workbox-build@6.5.4)(workbox-window@6.5.4)
+        version: 0.14.7(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4)
       vite-plugin-static-copy:
         specifier: ^0.13.1
-        version: 0.13.1(vite@4.3.2)
+        version: 0.13.1(vite@4.3.3)
 
   apps/art-scan:
     dependencies:
@@ -371,7 +371,7 @@ importers:
         version: 0.15.3(rollup@3.21.0)
       vite-plugin-node-polyfills:
         specifier: ^0.8.2
-        version: 0.8.2(rollup@3.21.0)(vite@4.3.2)
+        version: 0.8.2(rollup@3.21.0)(vite@4.3.3)
       webextension-polyfill:
         specifier: ^0.10.0
         version: 0.10.0
@@ -5692,7 +5692,7 @@ packages:
     resolution: {integrity: sha512-MVEJ4vWAPNbrGLjz7ITnHYg+YXZ6ijAqtH5/cHwSoCpbvuJ98aLXwFfPKAUfZpJMQR5uXB58UJajbY130IRF/w==}
     dev: false
 
-  /@vitejs/plugin-legacy@3.0.2(terser@5.17.1)(vite@4.3.2):
+  /@vitejs/plugin-legacy@3.0.2(terser@5.17.1)(vite@4.3.3):
     resolution: {integrity: sha512-9BT2mXunC7kQGKHP70BIbNZ/85P/KUMGKBS9CiV+XKNDZGNBjUnyrh3ofgtqgObmxKaEP2xJsEIRNIFJ+hjI8w==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -5705,7 +5705,7 @@ packages:
       regenerator-runtime: 0.13.11
       systemjs: 6.14.1
       terser: 5.17.1
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
     dev: true
 
   /@vitest/expect@0.28.5:
@@ -6512,7 +6512,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001481
-      electron-to-chromium: 1.4.372
+      electron-to-chromium: 1.4.374
       node-releases: 2.0.10
       update-browserslist-db: 1.0.11(browserslist@4.21.5)
     dev: true
@@ -7634,8 +7634,8 @@ packages:
       encoding: 0.1.13
     dev: false
 
-  /electron-to-chromium@1.4.372:
-    resolution: {integrity: sha512-MrlFq/j+TYHOjeWsWGYfzevc25HNeJdsF6qaLFrqBTRWZQtWkb1myq/Q2veLWezVaa5OcSZ99CFwTT4aF4Mung==}
+  /electron-to-chromium@1.4.374:
+    resolution: {integrity: sha512-dNP9tQNTrjgVlSXMqGaj0BdrCS+9pcUvy5/emB6x8kh0YwCoDZ0Z4ce1+7aod+KhybHUd5o5LgKrc5al4kVmzQ==}
     dev: true
 
   /elliptic@6.5.4:
@@ -14070,7 +14070,7 @@ packages:
       picocolors: 1.0.0
       source-map: 0.6.1
       source-map-support: 0.5.21
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -14081,7 +14081,7 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-html@3.2.0(vite@4.3.2):
+  /vite-plugin-html@3.2.0(vite@4.3.3):
     resolution: {integrity: sha512-2VLCeDiHmV/BqqNn5h2V+4280KRgQzCFN47cst3WiNK848klESPQnzuC3okH5XHtgwHH/6s1Ho/YV6yIO0pgoQ==}
     peerDependencies:
       vite: '>=2.0.0'
@@ -14098,11 +14098,11 @@ packages:
       html-minifier-terser: 6.1.0
       node-html-parser: 5.4.2
       pathe: 0.2.0
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
     dev: true
 
-  /vite-plugin-mkcert@1.14.0(vite@4.3.2):
-    resolution: {integrity: sha512-TXLqRYeKKv2kGIpDVMXPLAlTQLXfZ5/VtC4VVhV0ky2vKt5W/TDvFKpmelQPmn0IB7uz9KXvQj8Op+pkT9Ln9A==}
+  /vite-plugin-mkcert@1.14.1(vite@4.3.3):
+    resolution: {integrity: sha512-s/TmH62VA3DYXaqX2230PomrHXSRwfYyXur1c8hN5fGEUrT+w9KnXHnurZ53AMSUc/bI7RF6bQ1K5J+hZQTjoQ==}
     engines: {node: '>=v16.7.0'}
     peerDependencies:
       vite: '>=3'
@@ -14111,25 +14111,25 @@ packages:
       axios: 1.3.6(debug@4.3.4)
       debug: 4.3.4
       picocolors: 1.0.0
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
     transitivePeerDependencies:
       - encoding
       - supports-color
     dev: true
 
-  /vite-plugin-node-polyfills@0.8.2(rollup@3.21.0)(vite@4.3.2):
+  /vite-plugin-node-polyfills@0.8.2(rollup@3.21.0)(vite@4.3.3):
     resolution: {integrity: sha512-amOUVWwNvcuKxfWM9vpS8sAqvew28KXyR597OHO7BXWJFxr+QX4qB3XTDhWoRivj89TIZe4JTJTZwBHtIJ3ygQ==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0
     dependencies:
       '@rollup/plugin-inject': 5.0.3(rollup@3.21.0)
       node-stdlib-browser: 1.2.0
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
     transitivePeerDependencies:
       - rollup
     dev: true
 
-  /vite-plugin-pwa@0.14.7(vite@4.3.2)(workbox-build@6.5.4)(workbox-window@6.5.4):
+  /vite-plugin-pwa@0.14.7(vite@4.3.3)(workbox-build@6.5.4)(workbox-window@6.5.4):
     resolution: {integrity: sha512-dNJaf0fYOWncmjxv9HiSa2xrSjipjff7IkYE5oIUJ2x5HKu3cXgA8LRgzOwTc5MhwyFYRSU0xyN0Phbx3NsQYw==}
     peerDependencies:
       vite: ^3.1.0 || ^4.0.0
@@ -14141,14 +14141,14 @@ packages:
       fast-glob: 3.2.12
       pretty-bytes: 6.1.0
       rollup: 3.21.0
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
       workbox-build: 6.5.4
       workbox-window: 6.5.4
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /vite-plugin-static-copy@0.13.1(vite@4.3.2):
+  /vite-plugin-static-copy@0.13.1(vite@4.3.3):
     resolution: {integrity: sha512-KwIcGBT1aOxSq+laK3VmSngoEa3HXWj/6ZEXdv+y59eZ7p/XSuPahoDo+CfYW22JjTdnstgeKWiX+78KNgDu6g==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -14158,11 +14158,11 @@ packages:
       fast-glob: 3.2.12
       fs-extra: 11.1.1
       picocolors: 1.0.0
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
     dev: true
 
-  /vite@4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1):
-    resolution: {integrity: sha512-9R53Mf+TBoXCYejcL+qFbZde+eZveQLDYd9XgULILLC1a5ZwPaqgmdVpL8/uvw2BM/1TzetWjglwm+3RO+xTyw==}
+  /vite@4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1):
+    resolution: {integrity: sha512-MwFlLBO4udZXd+VBcezo3u8mC77YQk+ik+fbc0GZWGgzfbPP+8Kf0fldhARqvSYmtIWoAJ5BXPClUbMTlqFxrA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -14241,7 +14241,7 @@ packages:
       tinybench: 2.4.0
       tinypool: 0.3.1
       tinyspy: 1.1.1
-      vite: 4.3.2(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
+      vite: 4.3.3(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
       vite-node: 0.28.5(@types/node@18.15.13)(sass@1.62.1)(terser@5.17.1)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:

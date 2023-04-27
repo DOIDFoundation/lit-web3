@@ -6,8 +6,8 @@
 // 4. `inpage.js` will be injected to "main world" aka real browser environment
 import { injectDOIDInpageProvider } from '~/lib.next/providers/inpageProvider'
 import { injectEVMInpageProvider } from '~/lib.next/providers/evmInpageProvider'
-// import { injectSolanaInpageProvider } from '~/lib.next/providers/solanaInpageProvider'
+import { injectSolanaInpageProvider } from '~/lib.next/providers/solanaInpageProvider'
 
 injectDOIDInpageProvider()
 injectEVMInpageProvider()
-// injectSolanaInpageProvider()
+injectSolanaInpageProvider()

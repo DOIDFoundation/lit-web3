@@ -54,6 +54,7 @@ export const sharedConfig = async (mode?: string): Promise<viteConfig> => {
     viteConfigOptions: {
       pwa: false,
       legacy: false,
+      splitChunk: false,
       copies: []
     }
   }
