@@ -32,7 +32,7 @@ export const phraseMatch = async (phrase = '', target = '') => {
   if (!phrase) return false
   if (target) {
     let ethAddr = await getAddress(phrase, AddressType.eth)
-    return target ? target === ethAddr : true
+    return target ? target === String(ethAddr).toLowerCase() : true
   }
   return true
 }

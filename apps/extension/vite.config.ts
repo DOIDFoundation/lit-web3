@@ -22,8 +22,7 @@ try {
 import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import manifest from './manifest.config'
 import { dirname, relative, resolve } from 'node:path'
-import polyfillNode from 'rollup-plugin-polyfill-node'
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 import AutoImport from 'unplugin-auto-import/vite'
 
@@ -49,7 +48,7 @@ export const sharedConfig = async (mode = ''): Promise<any> => {
       }
     ],
     optimizeDeps: {
-      include: ['webextension-polyfill', 'rollup-plugin-polyfill-node', 'readable-stream']
+      include: ['webextension-polyfill']
     },
     viteConfigOptions: {
       pwa: false,
@@ -66,11 +65,11 @@ export default async ({ mode = '' }) => {
   const { crx } = await import('@crxjs/vite-plugin')
   config.plugins.push(
     ...([
-      polyfillNode({ include: ['buffer', 'process'] }),
-      // AutoImport({
-      //   imports: [{ 'webextension-polyfill': [['*', 'browser']] }],
-      //   dts: resolve(__dirname, 'src/auto-imports.d.ts')
-      // }),
+      nodePolyfills(),
+      AutoImport({
+        imports: [{ 'webextension-polyfill': [['*', 'browser']] }],
+        dts: resolve(__dirname, 'src/auto-imports.d.ts')
+      }),
       crx({ manifest })
     ] as any[])
   )
@@ -79,30 +78,10 @@ export default async ({ mode = '' }) => {
     emptyOutDir: !isDev,
     // so annoying, here will break in build stage
     rollupOptions: {
-      ...(isDev
-        ? {
-            input: {
-              index: 'index.html'
-            },
-            output: {
-              entryFileNames: '[name].html'
-            }
-          }
-        : {})
+      input: {
+        index: 'index.html'
+      }
     }
-  }
-  config.optimizeDeps.esbuildOptions = {
-    define: {
-      global: 'globalThis',
-      process: 'globalThis'
-    },
-    // Enable esbuild polyfill plugins
-    plugins: [
-      NodeGlobalsPolyfillPlugin({
-        buffer: true,
-        process: true
-      })
-    ]
   }
 
   return viteConfig(config)({ mode })
