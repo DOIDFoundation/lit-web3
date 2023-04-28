@@ -13,9 +13,9 @@
     "build:inpage": "vite build --config vite.config.inpage.ts",
     "build:app": "vite build",
     "bundle": "cross-env NODE_ENV=production run-p clear && run-p build && run-p bundle:*",
-    "bundle:zip": "rimraf DOID.zip && jszip-cli add ./dist/* -o ./DOID.zip",
-    "bundle:crx": "crx pack ./dist -o ./DOID.crx",
-    "clear": "rimraf ./DOID.zip && rimraf ./DOID.crx",
+    "bundle:zip": "rimraf DOID.$npm_package_version.zip && jszip-cli add ./dist/* -o ./DOID.$npm_package_version.zip",
+    "bundle:crx": "crx pack ./dist -o ./DOID.$npm_package_version.crx",
+    "clear": "rimraf ./DOID.$npm_package_version.zip && rimraf ./DOID.$npm_package_version.crx",
     "preinstall": "npx only-allow pnpm"
   },
   "keywords": [],
