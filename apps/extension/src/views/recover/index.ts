@@ -121,7 +121,7 @@ export class ViewImport extends TailwindElement(null) {
 
     let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
 
-    if (this.account.mainAddress != ethAddress) {
+    if (this.account.mainAddress.toLowerCase() != String(ethAddress).toLowerCase()) {
       this.err = `The Secret Recovery Phrase entered does not match ${this.account.mainAddress}`
       return
     } else this.err = ''
