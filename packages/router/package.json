@@ -1,0 +1,9 @@
+{
+  "name": "@lit-web3/router",
+  "version": "0.1.1",
+  "description": "A router for Lit with hash mode.",
+  "homepage": "https://lit.dev/",
+  "peerDependencies": {
+    "lit": "^2"
+  }
+}

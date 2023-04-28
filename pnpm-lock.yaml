@@ -430,12 +430,18 @@ importers:
 
   packages/dui:
     dependencies:
+      '@lit-labs/router':
+        specifier: ^0.1
+        version: 0.1.1
       '@lit-web3/core':
         specifier: workspace:latest
         version: link:../core
       '@lit-web3/ethers':
         specifier: workspace:latest
         version: link:../ethers
+      '@lit-web3/router':
+        specifier: workspace:latest
+        version: link:../router
       '@metamask/jazzicon':
         specifier: ^2
         version: 2.0.0
@@ -503,6 +509,12 @@ importers:
       '@types/tr46':
         specifier: ^3.0.0
         version: 3.0.0
+
+  packages/router:
+    dependencies:
+      lit:
+        specifier: ^2
+        version: 2.7.3
 
   packages/solana-wallet-standard:
     dependencies:
