@@ -55,12 +55,12 @@ export const APTOS_request: BackgroundService = {
     } else if (method === 'getAccount') {
     } else if (method === 'network') {
       // const chainId = await client.getChainId()
-      const name = provider.network
+      const name = 'devnet'
 
       response = {
         name,
         chainId: 'TESTING',
-        url: provider.nodeUrl
+        url: 'https://fullnode.devnet.aptoslabs.com/v1'
       }
     } else if (method === 'signAndSubmitTransaction') {
     } else if (method === 'signMessage') {
@@ -68,7 +68,7 @@ export const APTOS_request: BackgroundService = {
       let sign = account.signHexString(stringToHex(params.message))
       response = {
         address: account.address().hex(),
-        fullMessage: sign.hex(),
+        fullMessage: params.message,
         message: params.message,
         nonce: params.nonce,
         prefix: 'APTOS',
