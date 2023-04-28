@@ -7,7 +7,9 @@
 import { injectInpageProvider } from '~/lib.next/providers/inpageProvider'
 import { injectEvmInpageProvider } from '~/lib.next/providers/evmInpageProvider'
 import { injectSolanaInpageProvider } from '~/lib.next/providers/solanaInpageProvider'
+import { injectAptosInpageProvider } from '~/lib.next/providers/aptosInpageProvider'
 
 injectInpageProvider()
 injectEvmInpageProvider()
 injectSolanaInpageProvider()
+injectAptosInpageProvider()

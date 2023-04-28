@@ -8,9 +8,10 @@ import * as EVM from './EVM'
 import * as Solana from './Solana'
 import * as ext from './ext'
 import * as popup from './popup'
+import * as APTOS from './APTOS'
 
 export const loadAllServices = () => {
-  Object.values({ ...DOID, ...EVM, ...Solana, ...ext, ...popup }).forEach((service) => {
+  Object.values({ ...DOID, ...EVM, ...Solana, ...ext, ...popup, ...APTOS }).forEach((service) => {
     loadService(service)
   })
 }

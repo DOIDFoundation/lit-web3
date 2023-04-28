@@ -22,6 +22,6 @@ export const injectEvmInpageProvider = () => {
     // window.DOID = inpageProvider()
     window.ethereum = inpageProvider()
     dispatchEvent(new Event('ethereum#initialized'))
-    inpageLogger('injected-opensea')
+    inpageLogger('injected-etheruem')
   }
 }

@@ -21,7 +21,8 @@
     "events": "^3.3.0",
     "lit": "^2.7.2",
     "lodash": "^4.17.21",
-    "urlpattern-polyfill": "^6.0.2"
+    "urlpattern-polyfill": "^6.0.2",
+    "@aptos-labs/wallet-adapter-core": "2.0.1"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.54",
