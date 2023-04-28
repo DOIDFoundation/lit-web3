@@ -1,4 +1,3 @@
-import { AptosAccount, AptosClient } from 'aptos'
 import type {
   AccountInfo,
   AdapterPlugin,
@@ -8,7 +7,9 @@ import type {
   WalletName
 } from '@aptos-labs/wallet-adapter-core'
 
-import { Provider, Network } from 'aptos'
+import { AptosAccount, AptosClient } from 'aptos'
+
+import { getAptosProvider } from './daemon'
 
 import { getKeyring } from '~/lib.next/keyring'
 
@@ -39,7 +40,7 @@ export const APTOS_request: BackgroundService = {
       mnemonic,
       derivationPath: `m/44'/637'/0'/0'/0'`
     }
-    const provider = new Provider(Network.DEVNET, { BASE: 'https://fullnode.devnet.aptoslabs.com/v1' })
+    const provider = getAptosProvider()
 
     const { method, params } = ctx.req.body
     console.log('method', method, 'params', params)
@@ -54,9 +55,7 @@ export const APTOS_request: BackgroundService = {
     } else if (method === 'isConnected') {
     } else if (method === 'getAccount') {
     } else if (method === 'network') {
-      // const chainId = await client.getChainId()
       const name = 'devnet'
-
       response = {
         name,
         chainId: 'TESTING',
