@@ -56,11 +56,12 @@ export const APTOS_request: BackgroundService = {
     } else if (method === 'getAccount') {
     } else if (method === 'network') {
       const name = 'devnet'
-      response = {
-        name,
-        chainId: 'TESTING',
-        url: 'https://fullnode.devnet.aptoslabs.com/v1'
-      }
+      response = name
+      // {
+      //   name,
+      //   chainId: 'TESTING',
+      //   url: 'https://fullnode.devnet.aptoslabs.com/v1'
+      // }
     } else if (method === 'signAndSubmitTransaction') {
     } else if (method === 'signMessage') {
       let account = AptosAccount.fromDerivePath(walletOptions.derivationPath, walletOptions.mnemonic)
