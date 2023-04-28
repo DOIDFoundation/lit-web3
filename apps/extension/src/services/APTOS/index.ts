@@ -48,7 +48,7 @@ export const APTOS_request: BackgroundService = {
     if (method === 'connect') {
       let apt = AptosAccount.fromDerivePath(walletOptions.derivationPath, walletOptions.mnemonic)
       const accounts = apt.address().hex()
-      const info = { address: accounts, publicKey: apt.pubKey() }
+      const info = { address: accounts, publicKey: apt.pubKey().hex() }
       response = info
     } else if (method === 'disconnect') {
     } else if (method === 'isConnected') {
