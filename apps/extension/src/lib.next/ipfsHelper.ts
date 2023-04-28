@@ -33,14 +33,16 @@ class IPFSHelper {
   }
 
   // Update ipfs data and update relative ipns
-  async updateJsonData(json: Object, doidName: string, { memo = '' }: any = {}): Promise<string> {
+  async updateJsonData(json: Object, doidName: string, { memo = '' }: any = {}): Promise<Record<string, any>> {
     // get private by doidName from storage
     const _memo = memo || this._getMnemonicByDoidName(doidName)
     // write json to ipfs
     const cid = await this._writeIPFS(JSON.stringify(json))
     // get publickey from private
     await this._writeIPNS(cid, _memo)
-    return cid
+    // bytes
+    const bytes = (await this._getIPNSNameFromStorage(memo)).bytes
+    return { cid, bytes }
   }
 
   async _chkIPNSExist(name: Name) {
@@ -56,10 +58,7 @@ class IPFSHelper {
   }
 
   async _writeIPNS(cid: string, mnemonic: string) {
-    let seed = await mnemonicToSeed(mnemonic)
-    let key = HDKey.fromMasterSeed(seed)
-    let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
-    const name = await w3name.from(ipfsKey.bytes)
+    const name = await this._getIPNSNameFromStorage(mnemonic)
     let res = await this._chkIPNSExist(name)
 
     const revision = res ? res : await w3name.v0(name, cid)
@@ -109,12 +108,12 @@ class IPFSHelper {
   }
 
   // get the publickey from a seedphase
-  async _getPublicKeyFromStorage(mnemonic: string): Promise<string> {
+
+  async _getIPNSNameFromStorage(mnemonic: string): Promise<w3name.WritableName> {
     let seed = await mnemonicToSeed(mnemonic)
     let key = HDKey.fromMasterSeed(seed)
     let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
-    const name = await w3name.from(ipfsKey.bytes)
-    return name.toString()
+    return await w3name.from(ipfsKey.bytes)
   }
 }
 

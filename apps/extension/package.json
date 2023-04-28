@@ -12,6 +12,10 @@
     "build": "cross-env NODE_ENV=production run-s build:*",
     "build:inpage": "vite build --config vite.config.inpage.ts",
     "build:app": "vite build",
+    "bundle": "cross-env NODE_ENV=production run-p clear && run-p build && run-p bundle:*",
+    "bundle:zip": "rimraf DOID.$npm_package_version.zip && jszip-cli add ./dist/* -o ./DOID.$npm_package_version.zip",
+    "bundle:crx": "crx pack ./dist -o ./DOID.$npm_package_version.crx",
+    "clear": "rimraf ./DOID.$npm_package_version.zip && rimraf ./DOID.$npm_package_version.crx",
     "preinstall": "npx only-allow pnpm"
   },
   "keywords": [],
@@ -63,7 +67,6 @@
     "json-rpc-middleware-stream": "^4.2.1",
     "lodash": "^4.17.21",
     "nanoid": "^4.0.1",
-    "obj-multiplex": "^1.0.0",
     "pify": "^6.1.0",
     "process-nextick-args": "^2.0.1",
     "promise-to-callback": "^1.0.0",
@@ -78,7 +81,8 @@
     "@aptos-labs/wallet-adapter-core": "2.0.1"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "2.0.0-beta.13",
+    "@crxjs/vite-plugin": "2.0.0-beta.16",
+    "@ffflorian/jszip-cli": "^3.4.0",
     "@types/chrome": "latest",
     "@types/end-of-stream": "^1.4.1",
     "@types/fs-extra": "^9.0.13",
@@ -89,8 +93,9 @@
     "cross-env": "^7.0.3",
     "crx": "^5.0.1",
     "kolorist": "^1.6.0",
-    "rollup-plugin-polyfill-node": "^0.12.0",
+    "rimraf": "^5.0.0",
     "unplugin-auto-import": "^0.15.0",
+    "vite-plugin-node-polyfills": "^0.8.2",
     "webextension-polyfill": "^0.10.0"
   },
   "license": "MIT"

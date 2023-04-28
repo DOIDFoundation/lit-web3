@@ -17,7 +17,9 @@ export class networkList extends TailwindElement(style) {
   @property() class = ''
   @state() index = 0
 
-  @state() userChains = [{ name: ChainName.bitcoin, title: 'Bitcoin', coin: ChainCoin.bitcoin }] as ChainNet[]
+  @state() userChains = [
+    // { name: ChainName.bitcoin, title: 'Bitcoin', coin: ChainCoin.bitcoin }
+  ] as ChainNet[]
 
   get allChains() {
     return chainsDefault.concat(this.userChains)

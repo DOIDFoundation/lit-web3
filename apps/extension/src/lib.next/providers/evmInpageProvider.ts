@@ -2,7 +2,7 @@
 import { inpageLogger } from '~/lib.next/logger'
 import inpageMessenger from '~/lib.next/messenger/inpage'
 
-export const inpageProvider = () => {
+export const EVMInpageProvider = () => {
   return {
     request: async ({ method, params } = <Record<string, any>>{}) => {
       inpageLogger('requested', method, params)
@@ -10,18 +10,21 @@ export const inpageProvider = () => {
       inpageLogger('response', res)
       return res
     },
+    addListener: inpageMessenger.on,
     on: inpageMessenger.on,
     chainId: '0x1',
     isMetaMask: true
   }
 }
 
-export const injectEvmInpageProvider = () => {
+export const injectEVMInpageProvider = () => {
   if (!('ethereum' in window)) {
-    // @ts-expect-error
-    // window.DOID = inpageProvider()
-    window.ethereum = inpageProvider()
-    dispatchEvent(new Event('ethereum#initialized'))
-    inpageLogger('injected-etheruem')
+    if (!location.href.includes('localhost')) {
+      // @ts-expect-error
+      // window.DOID = inpageProvider()
+      window.ethereum = EVMInpageProvider()
+      dispatchEvent(new Event('ethereum#initialized'))
+      inpageLogger('injected-opensea')
+    }
   }
 }

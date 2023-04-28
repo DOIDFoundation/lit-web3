@@ -1,6 +1,7 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { openInFullscreen } from '~/lib.next/utils.ext'
+import { isUnlock } from '~/lib.next/popup'
 
 // Components
 import '@lit-web3/dui/src/input/pwd'
@@ -13,11 +14,11 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 @customElement('view-unlock')
 export class ViewUnlock extends TailwindElement(style) {
   state = new StateController(this, walletStore)
-  @property() ROUTE?: any
+  @property() dest = '/'
   @property() placeholder = 'Password'
   @state() pwd = ''
   @state() err = ''
-  @state() pending = false
+  @state() pending = true
   @state() disabled = true
 
   onInput = async (e: CustomEvent) => {
@@ -32,23 +33,34 @@ export class ViewUnlock extends TailwindElement(style) {
   unlock = async () => {
     try {
       await popupMessenger.send('unlock', { pwd: this.pwd })
-      if (location.pathname.includes('generate-phrase')) {
-        this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd, type: 'unlock' })
-        return
-      }
-      goto(`/`)
+      // if (location.pathname.includes('generate-phrase')) {
+      //   this.emit('routeGoto', { path: 'generate-addresses', pwd: this.pwd, type: 'unlock' })
+      //   return
+      // }
+      goto(this.dest)
     } catch (err: any) {
       this.err = err.message ?? err
     }
   }
   forgot = () => openInFullscreen('/restore')
 
+  chk = async () => {
+    this.pending = true
+    if (await isUnlock()) return goto(this.dest)
+    this.pending = false
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.chk()
+  }
+
   render() {
     return html`<div class="unlock">
       <div class="dui-container">
         <div class="dui-container">
           <doid-symbol class="block mt-24">
-            <span slot="h1" class="text-xl">Welcom back!</span>
+            <span slot="h1" class="text-xl">Welcome back!</span>
             <p slot="msg">Your decentralized openid</p>
           </doid-symbol>
           <div class="max-w-xs mx-auto">

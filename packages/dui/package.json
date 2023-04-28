@@ -8,9 +8,11 @@
   "dependencies": {
     "@lit-web3/core": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
+    "@lit-web3/router": "workspace:latest",
     "@metamask/jazzicon": "^2"
   },
   "peerDependencies": {
+    "@lit-labs/router": "^0.1",
     "tsup": "^6"
   },
   "license": "MIT"

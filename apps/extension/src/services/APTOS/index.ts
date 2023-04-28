@@ -10,6 +10,8 @@ import type {
 
 import { Provider, Network } from 'aptos'
 
+import { getKeyring } from '~/lib.next/keyring'
+
 function stringToHex(str: string): string {
   let hex = ''
   for (let i = 0; i < str.length; i++) {
@@ -25,12 +27,18 @@ export const APTOS_request: BackgroundService = {
   middlewares: [],
 
   fn: async (ctx) => {
+    let mnemonic!: string
+    try {
+      const keyring = await getKeyring()
+      mnemonic = await keyring.getMnemonic()
+    } catch (err) {
+      throw err
+    }
+
     const walletOptions = {
-      mnemonic: 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
+      mnemonic,
       derivationPath: `m/44'/637'/0'/0'/0'`
     }
-    const NODE_URL = process.env.APTOS_NODE_URL || 'https://fullnode.devnet.aptoslabs.com'
-    const client = new AptosClient(NODE_URL)
     const provider = new Provider(Network.DEVNET, { BASE: 'https://fullnode.devnet.aptoslabs.com/v1' })
 
     const { method, params } = ctx.req.body
@@ -38,7 +46,7 @@ export const APTOS_request: BackgroundService = {
 
     var response: any = ''
     if (method === 'connect') {
-      let apt = AptosAccount.fromDerivePath(`m/44'/637'/0'/0'/0'`, walletOptions.mnemonic)
+      let apt = AptosAccount.fromDerivePath(walletOptions.derivationPath, walletOptions.mnemonic)
       const accounts = apt.address().hex()
       const info = { address: accounts, publicKey: apt.pubKey }
       response = info
@@ -52,11 +60,11 @@ export const APTOS_request: BackgroundService = {
       response = {
         name,
         chainId: 'TESTING',
-        url: NODE_URL
+        url: provider.nodeUrl
       }
     } else if (method === 'signAndSubmitTransaction') {
     } else if (method === 'signMessage') {
-      let account = AptosAccount.fromDerivePath(`m/44'/637'/0'/0'/0'`, walletOptions.mnemonic)
+      let account = AptosAccount.fromDerivePath(walletOptions.derivationPath, walletOptions.mnemonic)
       let sign = account.signHexString(stringToHex(params.message))
       response = {
         address: account.address().hex(),

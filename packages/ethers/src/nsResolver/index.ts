@@ -62,9 +62,13 @@ export const ownerNames = async (owner: string, account?: string) => {
   try {
     const res = await contract.namesOfOwner(owner)
     names.push(...res.map((ref: any) => cookNameInfo(ref, { owner, account, status: 'registered' })))
-  } catch {}
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
   return names
 }
+
 export const ownerTokens = async (address: string) => {
   const contract = await getResolverContract()
   return await contract.tokensOfOwner(address)
@@ -92,12 +96,14 @@ export const getSignerMessage = async (name: string, account: string, coinType: 
   const blockNum = await provider.getBlockNumber()
   const timestamp = (await provider.getBlock(blockNum)).timestamp
   const nonce = BigNumber.from(randomBytes(32))
+  // const contract.makeMainAddrMessage(_name)
   const message = await contract.makeAddrMessage(_name, coinType, account, timestamp, nonce)
   return { name, dest: account, timestamp, nonce: nonce._hex, message }
 }
 
-export const signMessage = async (msg: string) => {
-  const signature = await (await getSigner()).signMessage(msg)
+export const signMessage = async (msg: string, address: string) => {
+  const signer = await getSigner(address)
+  const signature = await signer.signMessage(msg)
   return { signature }
 }
 
@@ -165,4 +171,68 @@ export const burn = async (tokenId: number): Promise<boolean> => {
 export const mintWithPass = async (tokenId: number, passes: number[]): Promise<boolean> => {
   const method = passes.length > 1 ? 'mintWithPassIds' : 'mintWithPassId'
   return false
+}
+
+export const ipnsBytes = async (name = '') => {
+  if (!name) return
+  try {
+    const _name = bareTLD(name)
+    const contract = await getResolverContract()
+    return await contract.ipnsOfName(_name)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export const mainAddressByName = async (name: string) => {
+  if (!name) return
+  try {
+    const _name = bareTLD(name)
+    const contract = await getResolverContract()
+    return await contract.mainAddrOfName(_name)
+  } catch (e: any) {
+    console.error(e)
+  }
+}
+
+export const setMainAddrAndIPNS = async (name: string, address: string, bytes: any) => {
+  const _name = bareTLD(name)
+  try {
+    let contract = await getResolverContract()
+    const method = 'setMainAddrAndIPNS'
+    const overrides = {}
+    const { name: name1, timestamp, nonce, message } = await getSignerMessageByMainAddress(_name, address)
+    const { signature } = await signMessage(message, address)
+    const parameters = [name1, address, +timestamp, nonce, signature, bytes]
+
+    console.log('---setMainAddrAndIPNS---\n', { name1, address, timestamp, nonce, signature, bytes }, '\n')
+    await assignOverrides(overrides, contract, method, parameters)
+    const call = contract[method](...parameters)
+    return new txReceipt(call, {
+      errorCodes: 'Resolver',
+      allowAlmostSuccess: true,
+      seq: {
+        type: 'setMainAddrAndIPNS',
+        title: `set main address ${address} and ipns`,
+        ts: new Date().getTime(),
+        overrides
+      }
+    })
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export const getSignerMessageByMainAddress = async (name: string, account: string) => {
+  let contract = await getResolverContract()
+  const provider = await getBridgeProvider()
+  //input: node, coinType, account, timestamp, nonce
+  //
+  const _name = bareTLD(name)
+  const blockNum = await provider.getBlockNumber()
+  const timestamp = (await provider.getBlock(blockNum)).timestamp
+  const nonce = BigNumber.from(randomBytes(32))
+  const message = await contract.makeMainAddrMessage(_name, account, timestamp, nonce)
+  // const message = await contract.makeAddrMessage(_name, coinType, account, timestamp, nonce)
+  return { name, dest: account, timestamp, nonce: nonce._hex, message }
 }

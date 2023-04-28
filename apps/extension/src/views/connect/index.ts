@@ -1,75 +1,105 @@
-import { TailwindElement, html, customElement, property } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, repeat } from '@lit-web3/dui/src/shared/TailwindElement'
 import popupMessenger from '~/lib.next/messenger/popup'
+import { uiKeyring, StateController } from '~/store/keyringState'
 
 // Components
 // import '@lit-web3/dui/src/menu'
+import '@lit-web3/dui/src/address/name'
+import '@lit-web3/dui/src/link'
 
 import style from './connect.css?inline'
-import { AddressType, getAddress } from '~/lib.legacy/phrase'
 
 @customElement('view-connect')
 export class ViewUnlock extends TailwindElement(style) {
-  @property()
-  mnemonic = 'oven busy immense pitch embrace same edge leave bubble focus denial ripple'
+  bindKeyring: any = new StateController(this, uiKeyring)
+  @property() origin = ''
 
-  @property()
-  doidName = 'zzzxxx'
+  @state() headers: any
 
-  onConnect = async () => {
-    let addresses = await getAddress(this.mnemonic)
-    console.log(addresses)
-    // if (!addresses || !this.account.name) return
+  get DOIDs() {
+    return Object.values(uiKeyring.DOIDs ?? {})
+  }
+  get selectedDOID() {
+    return uiKeyring.selectedDOID
+  }
+  get favicon() {
+    return `${this.origin}/favicon.ico`
+  }
+
+  get = async () => {
+    this.headers = await popupMessenger.send('internal_headers')
+  }
+
+  connect = async () => {
     try {
-      const res = await popupMessenger.send('internal_connect', {
-        doid: this.doidName,
-        mnemonic: this.mnemonic
-      })
-      console.info('res:', res)
-    } catch (e) {
-      popupMessenger.log(e)
-    }
+      const res = await popupMessenger.send('internal_connect', { ...this.selectedDOID, origin: this.origin })
+      if (res === 'ok') this.close()
+    } catch (e) {}
+  }
+
+  select = (e: Event) => {
+    e.stopImmediatePropagation()
+    e.preventDefault()
+  }
+
+  close = () => {
+    window.close()
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.get()
   }
 
   render() {
     return html`
       <div class="connect">
-        <div class="border-b">
-          <div class="relative px-4">
+        <div class="dui-container sparse">
+          <!-- Origin -->
+          <div class="text-center">
             <div
-              class="h-10 border cursor-pointer border-gray-300 rounded-md text-base bg-white px-4  flex justify-between items-center"
+              class="border border-gray-300 rounded-full bg-white p-3 px-4 gap-2 inline-flex justify-center items-center"
             >
-              <span>https://opensea.io</span>
-              <i class="mdi mdi-chevron-down"></i>
+              <img class="w-5 h-5" src=${this.favicon} />
+              <span>${this.origin}</span>
             </div>
             <!-- <dui-button class="inline-flex items-center">ethers</dui-button> -->
           </div>
-          <div class="py-3 text-center">Connect with DOID</div>
-        </div>
-        <div class="dui-container px-4">
-          <div class="font-bold py-4 text-lg">Select DOID to use on this site</div>
-          <div class="font-bold text-lg">Chain:</div>
-          <div
-            class="h-10 border cursor-pointer border-gray-300 rounded-md text-base bg-white px-4 flex justify-between items-center mt-1"
-          >
-            <span class="">Ehtereum</span>
-            <i class="mdi mdi-chevron-down"></i>
+          <!-- Title -->
+          <div class="mt-4 mb-8 text-center">
+            <strong class="text-xl font-bold">Connect with DOID</strong>
+            <div class="mt-1 text-xs">Select DOID to use on this site</div>
           </div>
-          <div class="font-bold text-lg mt-4">DOID:</div>
-          <div
-            class="h-10 border cursor-pointer border-gray-300 rounded-md text-base bg-white px-4 flex justify-between items-center mt-1"
-          >
-            <span class="">satoshi.doid</span>
-            <i class="mdi mdi-chevron-down"></i>
+          <!-- Accounts -->
+          <p class="mt-4 flex justify-between">
+            <span>Select:</span>
+            <dui-link href="/create">New Account</dui-link>
+          </p>
+          <ul class="border rounded-md mt-2 mb-4">
+            ${repeat(
+              this.DOIDs,
+              (DOID) =>
+                html`<li @click=${this.select} class="flex items-center p-4 gap-4 cursor-pointer">
+                  <input type="checkbox" class="cursor-pointer" checked readonly /><dui-name-address
+                    .DOID=${DOID}
+                    short
+                  ></dui-name-address>
+                </li>`
+            )}
+          </ul>
+          <!-- Chain -->
+          <div>
+            <strong class="my-4 font-semibold">Chain:</strong>
+            <span class="">Ethereum</span>
           </div>
         </div>
 
-        <!-- bottom -->
-        <div class="p-4 fixed bottom-0">
-          <div>Only connect with sites you trust</div>
-          <div class="mt-2 flex">
-            <dui-button class="outlined">Cancel</dui-button>
-            <!-- <dui-button class="ml-2" onclick="${() => this.onConnect()}">Connect</dui-button> -->
-            <dui-button class="ml-2" @click=${() => this.onConnect()}>Connect</dui-button>
+        <!-- Actions -->
+        <div class="py-2 fixed w-full bottom-0 text-center">
+          <p class="text-xs">Only connect with sites you trust</p>
+          <div class="mt-2 border-t p-4 flex justify-center gap-8">
+            <dui-button @click=${this.close} class="outlined minor">Cancel</dui-button>
+            <dui-button class="secondary" @click=${this.connect}>Connect</dui-button>
           </div>
         </div>
       </div>

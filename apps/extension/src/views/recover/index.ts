@@ -53,6 +53,19 @@ export class ViewImport extends TailwindElement(null) {
     this.btnNextDisabled = error
   }
 
+  onConfirmPhrase = async () => {
+    if (await popupMessenger.send('internal_isinitialized')) {
+      this.pending = true
+      this.onCreateMainAddress()
+        .then(() => {
+          this.next()
+        })
+        .finally(() => {
+          this.pending = false
+        })
+    } else this.next()
+  }
+
   onCreateMainAddress = async () => {
     let addresses = await getAddress(this.mnemonic)
     if (!addresses || !this.account.name) return
@@ -65,8 +78,10 @@ export class ViewImport extends TailwindElement(null) {
         mnemonic: this.mnemonic
       })
       this.next()
-    } catch (e) {
+    } catch (e: any) {
       popupMessenger.log(e)
+      this.err = e
+      throw e
     } finally {
       this.pending = false
     }
@@ -95,6 +110,7 @@ export class ViewImport extends TailwindElement(null) {
       console.error(e)
     }
   }
+
   onPhraseChange = async (e: CustomEvent) => {
     e.stopPropagation()
     this.btnNextDisabled = true
@@ -105,10 +121,10 @@ export class ViewImport extends TailwindElement(null) {
 
     let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
 
-    if (this.account.mainAddress != ethAddress) {
+    if (this.account.mainAddress.toLowerCase() != String(ethAddress).toLowerCase()) {
       this.err = `The Secret Recovery Phrase entered does not match ${this.account.mainAddress}`
       return
-    }
+    } else this.err = ''
     this.btnNextDisabled = false
   }
 
@@ -134,28 +150,36 @@ export class ViewImport extends TailwindElement(null) {
           [
             [
               1,
-              () => html` <doid-symbol sm class="block mt-12"></doid-symbol>
-                <div class="my-4 text-xs">
-                  You are recovering
-                  <dui-link class="uri ml-1 underline">${this.account.name}</dui-link>
-                </div>
-                <div class="my-4 text-xs">
-                  Enter the Secret Recovery Phrase of
-                  <dui-address class="mx-1" .address=${this.account.mainAddress}></dui-address>
-                </div>
-                <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
-                <div class="w-full text-red-500">${this.err}</div>
-                <div class="mt-4 flex justify-between">
-                  <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-                    ><i class="mdi mdi-arrow-left text-gray-500"></i
-                  ></dui-button>
-                  <dui-button
-                    ?disabled=${this.btnNextDisabled}
-                    @click=${this.next}
-                    class="secondary !rounded-full h-12 w-12"
-                    ><i class="mdi mdi-arrow-right"></i
-                  ></dui-button>
-                </div>`
+              () =>
+                when(
+                  this.pending,
+                  () => html`<doid-symbol sm class="block mt-12">
+                      <span slot="h1" class="text-base">Recovering ${this.account.name}</span>
+                    </doid-symbol>
+                    <div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
+                  () => html` <doid-symbol sm class="block mt-12"></doid-symbol>
+                    <div class="my-4 text-xs">
+                      You are recovering
+                      <dui-link class="uri ml-1 underline">${this.account.name}</dui-link>
+                    </div>
+                    <div class="my-4 text-xs">
+                      Enter the Secret Recovery Phrase of
+                      <dui-address class="mx-1" .address=${this.account.mainAddress}></dui-address>
+                    </div>
+                    <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
+                    <div class="w-full text-red-500">${this.err}</div>
+                    <div class="mt-4 flex justify-between">
+                      <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                        ><i class="mdi mdi-arrow-left text-gray-500"></i
+                      ></dui-button>
+                      <dui-button
+                        ?disabled=${this.btnNextDisabled}
+                        @click=${this.onConfirmPhrase}
+                        class="secondary !rounded-full h-12 w-12"
+                        ><i class="mdi mdi-arrow-right"></i
+                      ></dui-button>
+                    </div>`
+                )
             ],
             [
               2,

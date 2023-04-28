@@ -1,7 +1,7 @@
 import AppRoot from './AppRoot'
 import useBridge, { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { html, keyed } from './TailwindElement'
-import { RouteConfig } from '@lit-labs/router'
+import type { RouteConfig } from '@lit-labs/router'
 
 useBridge()
 

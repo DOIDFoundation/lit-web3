@@ -1,17 +1,39 @@
 import emitter from '@lit-web3/core/src/emitter'
-import type { Router } from '@lit-labs/router'
+import { Router } from '@lit-web3/router/src/router'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
+export { Router }
 
 const bareOrigin = (url: string) => url.replace(location.origin, '')
 const match = (url: any) => bareOrigin(safeDecodeURIComponent(location.href)) === bareOrigin(url)
 
-export const scrollTop = (y = 0) => setTimeout(() => window.scrollTo(0, y))
+type Pathname = `/${string}` | string
+
+const isRelative = (s = '') => /^[^/]+:/.test(s)
+
+export const routerPathname = (path = location.href): Pathname => {
+  const inHashMode = routerGuard.hashMode
+  if (!isRelative(path)) path = `blob:${inHashMode ? '#' : ''}${path}`
+  const url = new URL(path)
+  if (inHashMode) return url.hash.replace(/^#\/?/, '/')
+  return url.pathname
+}
+export const routerPathroot = (pathname?: string): Pathname =>
+  (pathname ?? routerPathname()).replace(/^(\/\w+)\/?.*?$/, '$1')
+
+export const scrollTop = (y = 0) => setTimeout(() => globalThis.scrollTo(0, y))
+
+const toDest = (pathname?: string): string => {
+  pathname = routerPathname(pathname)
+  return routerGuard.hashMode ? `#${pathname}` : pathname
+}
 
 // Trick for @lit-labs/router
 export const routerGuard = {
   router: <Router | any>{},
+  hashMode: false,
   injected: false,
-  inject: () => {
+  inject: (hashMode = false) => {
+    routerGuard.hashMode = hashMode
     if (routerGuard.injected) return
     routerGuard.injected = true
     const { pushState, replaceState } = history
@@ -21,6 +43,7 @@ export const routerGuard = {
         scrollTop()
       })
     }
+    // Hijack
     history.pushState = function (state, key, url) {
       pushState.apply(history, [state, key, url])
       emitRouterChange(url)
@@ -29,14 +52,15 @@ export const routerGuard = {
       replaceState.apply(history, [state, key, url])
       emitRouterChange(url)
     }
-    window.addEventListener('popstate', () => emitRouterChange(location.href))
-    window.addEventListener('pushstate', () => emitRouterChange(location.href))
-    // Listener
-    emitter.on('router-goto', (e: Event) => {
-      setTimeout(() => routerGuard.goto((e as CustomEvent).detail))
+    // Proto Listener
+    globalThis.addEventListener('popstate', () => emitRouterChange(location.href))
+    globalThis.addEventListener('pushstate', () => emitRouterChange(location.href))
+    // Router Listener
+    emitter.on('router-goto', (e: CustomEvent) => {
+      setTimeout(() => routerGuard.goto(e.detail))
     })
-    emitter.on('router-replace', (e: Event) => {
-      setTimeout(() => routerGuard.replace((e as CustomEvent).detail))
+    emitter.on('router-replace', (e: CustomEvent) => {
+      setTimeout(() => routerGuard.replace(e.detail))
     })
   },
   goto: (url: string) => {
@@ -50,7 +74,7 @@ export const routerGuard = {
     routerGuard.router.goto(url)
   },
   init: (_router: Router) => {
-    routerGuard.router = _router
+    return (routerGuard.router = _router)
   }
 }
 

@@ -52,13 +52,15 @@ export class resetByPhrase extends TailwindElement(null) {
     this.err = ''
     try {
       let addrs = await getAddress(this.phrase)
-      await popupMessenger.send('internal_recovery', {
+      const params = {
         name: this.doid,
         json: { addrs },
         pwd: this.pwd,
         mnemonic: this.phrase,
         reply: this.notify
-      })
+      }
+      if (this.address) Object.assign(params, { address: this.address })
+      await popupMessenger.send('internal_recovery', params)
     } catch (e: any) {
       this.err = e
     } finally {

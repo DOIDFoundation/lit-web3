@@ -1,5 +1,3 @@
-import './process'
-import { Buffer } from 'buffer'
-globalThis.Buffer ?? (globalThis.Buffer = Buffer)
-if (!('Buffer' in process)) Object.defineProperty(process, 'Buffer', { value: globalThis.Buffer })
+import { Buffer as shimBuffer } from 'buffer'
+if (!('Buffer' in globalThis)) Object.defineProperty(globalThis, 'Buffer', { value: shimBuffer })
 export default globalThis.Buffer

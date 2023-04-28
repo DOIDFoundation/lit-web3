@@ -9,6 +9,7 @@ import { isUnlock, isInit, keyringState } from '~/lib.next/popup'
 popupMessenger.on('keyring_update', () => {})
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
 popupMessenger.on('popup_goto', ({ data: r }) => r && emitter.emit('router-goto', r))
+popupMessenger.on('popup_replace', ({ data: r }) => r && emitter.emit('router-replace', r))
 
 // const beforeEachRedirected = async (): Promise<boolean> => {
 //   const { isInitialized, isUnlocked } = await keyringState()
@@ -49,23 +50,10 @@ export const routes = [
   // Alias of home view
   { ...homeView, path: '/popup' },
   {
-    name: 'ipfs',
-    path: '/ipfs',
-    render: () => html`<view-ipfs></view-ipfs>`,
-    enter: async () => {
-      await import('~/views/ipfs')
-      return true
-    }
-  },
-  {
     name: 'unlock',
-    path: '/unlock',
-    render: () => html`<view-unlock></view-unlock>`,
+    path: '/unlock/:dest?',
+    render: ({ dest = '/main' }) => html`<view-unlock .dest=${safeDecodeURIComponent(dest)}></view-unlock>`,
     enter: async () => {
-      if (await isUnlock()) {
-        emitter.emit('router-goto', '/')
-        return false
-      }
       await import('~/views/unlock')
       return true
     }
@@ -194,13 +182,34 @@ export const routes = [
   },
   {
     name: 'connect',
-    path: '/connect',
-    render: () => {
-      return html`<view-connect></view-connect>`
+    path: '/connect/:origin?',
+    render: ({ origin = '' }) => {
+      return html`<view-connect .origin=${safeDecodeURIComponent(origin)}></view-connect>`
     },
     enter: async () => {
+      // if (await isConnected()) {
+      //   return false
+      // }
       await import('~/views/connect')
       return true
+    }
+  },
+  {
+    name: 'notification',
+    path: '/notification/:msg?/:origin?',
+    render: ({ msg = '', origin = '' }) => {
+      return html`<view-notification .ROUTE=${{ msg, origin }}></view-notification>`
+    },
+    enter: async () => {
+      await import('~/views/notification')
+      return true
+    }
+  },
+  {
+    name: 'idle',
+    path: '/idle',
+    render: () => {
+      return html``
     }
   }
 ]
