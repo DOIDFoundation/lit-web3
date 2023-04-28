@@ -3,22 +3,23 @@ import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
 import emitter from '@lit-web3/core/src/emitter'
+import { routerPathname } from '@lit-web3/dui/src/shared/router'
 import '~/views/home'
 // Components
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
-import { StateController, walletStore } from './store'
-import doid_icon from '@lit-web3/dui/src/i/doid.svg'
+// import { StateController, walletStore } from './store'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
+  // state = new StateController(this, walletStore)
   @state() showHeader = false
-  state = new StateController(this, walletStore)
   chkView = () => {
+    const pathname = routerPathname()
     this.showHeader =
-      !['/', '/popup.html', '/recover', '/restore', '/start', '/import2nd', '/import3rd'].includes(location.pathname) &&
-      !['/unlock', '/landing', '/create', '/generate-phrase'].some((substr) => location.pathname.startsWith(substr))
+      !['/', '/popup.html', '/recover', '/restore', '/start', '/import2nd', '/import3rd'].includes(pathname) &&
+      !['/unlock', '/landing', '/create', '/generate-phrase'].some((substr) => pathname.startsWith(substr))
     const { style } = document.documentElement
     this.showHeader ? style.removeProperty('--header-height') : style.setProperty('--header-height', `0px`)
   }
@@ -57,7 +58,7 @@ export class AppMain extends TailwindElement('') {
           html`<dui-header fixed logoHref="/">
             <div slot="left"><account-switch></account-switch></div>
             <div slot="right" class="block w-6 h-6 mx-auto">
-              <img class="w-full h-full object-contain select-none pointer-events-none" src="${doid_icon}" />
+              <doid-icon></doid-icon>
             </div>
             <div slot="logo"></div>
             <div slot="wallet"></div>

@@ -4,26 +4,28 @@ import '@webcomponents/webcomponentsjs/webcomponents-loader.js'
 import 'lit/polyfill-support.js'
 //
 import { TailwindElement, html, customElement } from './TailwindElement'
-import { Router, RouteConfig } from '@lit-labs/router'
+import type { RouteConfig } from '@lit-labs/router'
 import { fallbackRender, fallbackEnter } from './router/fallback'
-import { routerGuard } from './router'
+import { Router, routerGuard } from './router'
 import emitter from '@lit-web3/core/src/emitter'
 
 import '~/variables-override.css' // => /apps/*/src/variables-override.css
 import '../c/g.css'
 
-routerGuard.inject()
-
-export default function ({ routes = <RouteConfig[]>[] } = {}) {
+export default function ({ routes = <RouteConfig[]>[], hashMode = false } = {}) {
+  routerGuard.inject(hashMode)
   // App Root
   @customElement('app-root')
   class AppRoot extends TailwindElement('') {
-    _router: Router = new Router(this, routes, {
-      fallback: {
-        render: fallbackRender,
-        enter: async (params) => await fallbackEnter(this._router, params)
-      }
-    })
+    _router: Router = routerGuard.init(
+      new Router(this, routes, {
+        hashMode,
+        fallback: {
+          render: fallbackRender,
+          enter: async (params) => await fallbackEnter(this._router, params)
+        }
+      })
+    )
 
     constructor() {
       super()
@@ -33,7 +35,6 @@ export default function ({ routes = <RouteConfig[]>[] } = {}) {
 
     connectedCallback() {
       super.connectedCallback()
-      routerGuard.init(this._router)
     }
 
     render() {

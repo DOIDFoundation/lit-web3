@@ -9,9 +9,7 @@ import {
   ifDefined,
   when
 } from '../shared/TailwindElement'
-
-const getPathName = (path?: string) => new URL(path ?? location.href).pathname
-const getPath = (pathname?: string) => (pathname ?? getPathName()).replace(/^(\/\w+)\/?.*?$/, '$1')
+import { routerPathname, routerPathroot } from '../shared/router'
 
 import style from './link.css?inline'
 @customElement('dui-link')
@@ -29,13 +27,13 @@ export class DuiLink extends TailwindElement(style) {
   @property({ type: Boolean }) nav = false // as navigator
   @property({ type: Boolean }) text = false // as text with underline
 
-  @state() pathname = getPathName()
+  @state() pathname = routerPathname()
 
   get blocked() {
     return this.disabled
   }
   get path() {
-    return getPath(this.pathname)
+    return routerPathroot(this.pathname)
   }
   get noHref() {
     return typeof this.href === 'undefined'
@@ -45,11 +43,11 @@ export class DuiLink extends TailwindElement(style) {
   }
   get exacted() {
     if (this.outsite || this.noHref) return false
-    return this.pathname === getPathName(`${location.origin}${this.href}`) || this.pathname === this.alias
+    return this.pathname === routerPathname(`${location.origin}${this.href}`) || this.pathname === this.alias
   }
   get active() {
     if (this.outsite) return false
-    return getPath(this.href) === this.path || getPath(this.alias) === this.path
+    return routerPathroot(this.href) === this.path || routerPathroot(this.alias) === this.path
   }
   get rel() {
     return this.outsite ? 'noopener' : ''
@@ -66,7 +64,7 @@ export class DuiLink extends TailwindElement(style) {
   }
 
   updatePathName = () => {
-    this.pathname = getPathName()
+    this.pathname = routerPathname()
   }
 
   connectedCallback() {
