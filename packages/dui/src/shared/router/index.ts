@@ -1,3 +1,4 @@
+// Router Guard for @lit-labs/router
 import emitter from '@lit-web3/core/src/emitter'
 import { Router } from '@lit-web3/router/src/router'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
@@ -6,34 +7,16 @@ export { Router }
 const bareOrigin = (url: string) => url.replace(location.origin, '')
 const match = (url: any) => bareOrigin(safeDecodeURIComponent(location.href)) === bareOrigin(url)
 
-type Pathname = `/${string}` | string
-
-const isRelative = (s = '') => /^[^/]+:/.test(s)
-
-export const routerPathname = (path = location.href): Pathname => {
-  const inHashMode = routerGuard.hashMode
-  if (!isRelative(path)) path = `blob:${inHashMode ? '#' : ''}${path}`
-  const url = new URL(path)
-  if (inHashMode) return url.hash.replace(/^#\/?/, '/')
-  return url.pathname
-}
-export const routerPathroot = (pathname?: string): Pathname =>
-  (pathname ?? routerPathname()).replace(/^(\/\w+)\/?.*?$/, '$1')
+export const routerPathname = (path = location.href) => routerGuard.router.getPathname(path)
+export const routerPathroot = (path?: string) => routerGuard.router.getPathroot(path)
 
 export const scrollTop = (y = 0) => setTimeout(() => globalThis.scrollTo(0, y))
 
-const toDest = (pathname?: string): string => {
-  pathname = routerPathname(pathname)
-  return routerGuard.hashMode ? `#${pathname}` : pathname
-}
-
 // Trick for @lit-labs/router
 export const routerGuard = {
-  router: <Router | any>{},
-  hashMode: false,
+  router: <Router | any>undefined,
   injected: false,
-  inject: (hashMode = false) => {
-    routerGuard.hashMode = hashMode
+  inject: () => {
     if (routerGuard.injected) return
     routerGuard.injected = true
     const { pushState, replaceState } = history
@@ -63,15 +46,15 @@ export const routerGuard = {
       setTimeout(() => routerGuard.replace(e.detail))
     })
   },
-  goto: (url: string) => {
-    if (match(url)) return
-    history.pushState({}, '', url)
-    routerGuard.router.goto(url)
+  goto: (path: string) => {
+    if (match(path)) return
+    history.pushState({}, '', routerGuard.router.path2href(path))
+    routerGuard.router.goto(path)
   },
-  replace: (url: string) => {
-    if (match(url)) return
-    history.replaceState({}, '', url)
-    routerGuard.router.goto(url)
+  replace: (path: string) => {
+    if (match(path)) return
+    history.replaceState({}, '', routerGuard.router.path2href(path))
+    routerGuard.router.goto(path)
   },
   init: (_router: Router) => {
     return (routerGuard.router = _router)

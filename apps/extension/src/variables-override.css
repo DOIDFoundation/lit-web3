@@ -8,10 +8,10 @@ html {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.24) rgba(0, 0, 0, 0.01);
   overscroll-behavior: contain;
-  padding-right: 4px;
-  margin-right: -4px;
+  padding-right: 0;
+  margin-right: -0;
   &::-webkit-scrollbar {
-    width: 4px;
+    width: 0;
   }
   &::-webkit-scrollbar {
     transition: background-color 0.3s;

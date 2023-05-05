@@ -37,6 +37,10 @@ export class AccountMenu extends TailwindElement(css) {
     uiKeyring.sync()
     this.emit('switch')
   }
+  create = () => {
+    goto('/create')
+    this.emit('switch')
+  }
 
   connectedCallback() {
     super.connectedCallback()
@@ -67,7 +71,7 @@ export class AccountMenu extends TailwindElement(css) {
         </div>
 
         <div class="border-t py-1">
-          <div class="menu-list" @click=${() => goto('/create')}>
+          <div class="menu-list" @click=${() => this.create()}>
             <div class="menu-list-left"><i class="menu-list-icon mdi mdi-plus"></i> Import or Create DOID</div>
           </div>
         </div>

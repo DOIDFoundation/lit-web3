@@ -25,9 +25,24 @@ export class Router extends Routes {
     window.addEventListener('click', this._onClick)
     window.addEventListener('popstate', this._onPopState)
     // Kick off routed rendering by going to the current URL
-    const { pathname, search, hash } = location
-    this.goto(`${pathname}${search}${hash}`)
+    this.goto(this.getFullpath())
   }
+
+  // S hash mode only
+  path2URL = (path = location.href) => {
+    if (!/^[^/]+:/.test(path)) path = `blob:${this.hashMode ? '#' : ''}${path}`
+    return new URL(path)
+  }
+  path2href = (path: string, prefix = location.origin + location.pathname) => {
+    return `${prefix}${this.hashMode ? `#${encodeURI(path)}` : path}`
+  }
+  getFullpath = (path?: string) => {
+    const { pathname, search, hash } = this.path2URL(path)
+    return this.hashMode ? decodeURIComponent(hash.replace(/^#?\/?/, '/')) : `${pathname}${search}${hash}`
+  }
+  getPathname = (path?: string) => this.path2URL(this.getFullpath(path)).pathname
+  getPathroot = (path?: string) => this.getPathname(path).replace(/^(\/\w+)\/?.*?$/, '$1')
+  // E
 
   override hostDisconnected() {
     super.hostDisconnected()
@@ -51,7 +66,7 @@ export class Router extends Routes {
       return
     }
 
-    const href = anchor.href
+    const href = this.path2href(anchor.getAttribute('href') ?? '')
     if (href === '' || href.startsWith('mailto:')) {
       return
     }
@@ -64,12 +79,11 @@ export class Router extends Routes {
     if (href !== location.href) {
       window.history.pushState({}, '', href)
       const { pathname, search, hash } = anchor
-      this.goto(`${pathname}${search}${hash}`)
+      this.goto(this.getFullpath(`${pathname}${search}${hash}`))
     }
   }
 
   private _onPopState = (_e: PopStateEvent) => {
-    const { pathname, search, hash } = location
-    this.goto(`${pathname}${search}${hash}`)
+    this.goto(this.getFullpath())
   }
 }

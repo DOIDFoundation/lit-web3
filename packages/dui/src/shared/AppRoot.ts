@@ -9,15 +9,15 @@ import { fallbackRender, fallbackEnter } from './router/fallback'
 import { Router, routerGuard } from './router'
 import emitter from '@lit-web3/core/src/emitter'
 
-import '~/variables-override.css' // => /apps/*/src/variables-override.css
+import '~/variables-override.css' // -> /apps/*/src/variables-override.css
 import '../c/g.css'
 
 export default function ({ routes = <RouteConfig[]>[], hashMode = false } = {}) {
-  routerGuard.inject(hashMode)
+  routerGuard.inject()
   // App Root
   @customElement('app-root')
   class AppRoot extends TailwindElement('') {
-    _router: Router = routerGuard.init(
+    _router: any = routerGuard.init(
       new Router(this, routes, {
         hashMode,
         fallback: {

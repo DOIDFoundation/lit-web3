@@ -1,6 +1,7 @@
 // src: metamask-extension/app/scripts/platforms/extension.js
 import browser, { Tabs } from 'webextension-polyfill'
 import emitter from '@lit-web3/core/src/emitter'
+import { routerGuard } from '@lit-web3/dui/src/shared/router'
 
 // Simple assert
 export const envType = /^\/service-worker.*\.js$/.test(location.pathname)
@@ -36,7 +37,7 @@ export const closeCurrentWindow = async () => {
 
 export const openInFullscreen = (path = '', keepSelf = false) => {
   if (isFullscreen) return emitter.emit('router-goto', path)
-  openTab({ url: browser.runtime.getURL(path) })
+  openTab({ url: browser.runtime.getURL(`${routerGuard.router.path2href(path, '')}`) })
   if (!keepSelf) window.close()
 }
 

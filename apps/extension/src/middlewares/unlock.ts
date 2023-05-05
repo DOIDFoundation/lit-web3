@@ -54,7 +54,7 @@ export const unlock = (popupUrl?: string): BackgroundMiddlware => {
       if (isUnlocked) return _next()
       waitingForUnlock.push(_next)
       backgroundToPopup.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
-      await openPopup(isInitialized ? `index.html#/unlock/${encodeURIComponent(dest)}` : 'index.html#/import')
+      await openPopup(isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/import')
     })
   }
 }

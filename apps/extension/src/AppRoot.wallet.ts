@@ -19,7 +19,7 @@ useBridge({
 })
 
 export default function ({ routes = <RouteConfig[]>[] } = {}) {
-  class AppRootWallet extends AppRoot({ routes, hashMode: false }) {
+  class AppRootWallet extends AppRoot({ routes, hashMode: true }) {
     bindBridge: any = new StateController(this, walletStore)
     override render() {
       return html`${keyed(walletStore.key, html`<app-main>${this._router.outlet()}</app-main>`)}`

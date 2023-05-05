@@ -7,6 +7,7 @@ import { routerPathname } from '@lit-web3/dui/src/shared/router'
 import '~/views/home'
 // Components
 import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
 // import { StateController, walletStore } from './store'
@@ -58,7 +59,7 @@ export class AppMain extends TailwindElement('') {
           html`<dui-header fixed logoHref="/">
             <div slot="left"><account-switch></account-switch></div>
             <div slot="right" class="block w-6 h-6 mx-auto">
-              <doid-icon></doid-icon>
+              <dui-link href="/"><doid-icon></doid-icon></dui-link>
             </div>
             <div slot="logo"></div>
             <div slot="wallet"></div>
