@@ -1,4 +1,5 @@
 import { html } from 'lit'
+import { keyed } from 'lit/directives/keyed.js'
 
 // import emitter from '@lit-web3/core/src/emitter'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
@@ -198,7 +199,8 @@ export const routes = [
     name: 'notification',
     path: '/notification/:msg?/:origin?',
     render: ({ msg = '', origin = '' }) => {
-      return html`<view-notification .ROUTE=${{ msg, origin }}></view-notification>`
+      const key = [msg, origin].join('-')
+      return html`${keyed(key, html`<view-notification .ROUTE=${{ msg, origin }}></view-notification>`)}`
     },
     enter: async () => {
       await import('~/views/notification')
