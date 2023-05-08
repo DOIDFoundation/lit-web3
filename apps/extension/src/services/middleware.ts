@@ -17,8 +17,9 @@ export class MiddlerwareEngine {
     this.currentResolver = null
   }
   _settleAll = () => {
-    if (this.ctx.res.respond) this.currentResolver.resolve()
-    else this.currentResolver.reject()
+    const { res } = this.ctx
+    if (res.respond && !res.err) this.currentResolver.resolve()
+    else this.currentResolver.reject(res.err)
   }
   resolve = async () => {
     // On body written
@@ -75,7 +76,7 @@ const createRes = (): Res => {
     set err(_err: Error) {
       res.end(null, _err)
     },
-    end: async (data: any, err?: Error) => {
+    end: async (data?: any, err?: Error) => {
       if (res.respond) return console.warn('Res body has already been used.')
       res.respond = true
       if (err) _reject((_err = err))

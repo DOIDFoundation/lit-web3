@@ -30,7 +30,7 @@ export class Router extends Routes {
 
   // S hash mode only
   path2URL = (path = location.href) => {
-    if (!/^[^/]+:/.test(path)) path = `blob:${this.hashMode ? '#' : ''}${path}`
+    if (!/^[^/]+:/.test(path)) path = `blob:${path}`
     return new URL(path)
   }
   path2href = (path: string, prefix = location.origin + location.pathname) => {
@@ -38,7 +38,7 @@ export class Router extends Routes {
   }
   getFullpath = (path?: string) => {
     const { pathname, search, hash } = this.path2URL(path)
-    return this.hashMode ? decodeURIComponent(hash.replace(/^#?\/?/, '/')) : `${pathname}${search}${hash}`
+    return this.hashMode ? hash.replace(/^#?\/?/, '/') : `${pathname}${search}${hash}`
   }
   getPathname = (path?: string) => this.path2URL(this.getFullpath(path)).pathname
   getPathroot = (path?: string) => this.getPathname(path).replace(/^(\/\w+)\/?.*?$/, '$1')

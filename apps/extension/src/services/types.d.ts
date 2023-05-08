@@ -20,11 +20,12 @@ declare type Res = {
   respond: boolean
   err?: Error | unknown
 }
+declare type ReqState = JsonValue
 
 declare interface BackgroundMiddlwareCtx {
   req: Req
   res: Res
-  state: JsonValue
+  state: ReqState
   end: Function
 }
 declare type BackgroundMiddlware = (ctx: BackgroundMiddlwareCtx, next: Promise) => Promise<any>

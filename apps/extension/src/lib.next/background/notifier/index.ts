@@ -30,15 +30,19 @@ export const openPopup = async (path?: string): Promise<void> => {
 export const closePopup = async () => {
   if (popupStorage._popupId) browser.windows.remove(popupStorage._popupId as number)
 }
-
-const showPopup = async (currentPopupId?: number, path = '/'): Promise<any> => {
+export const updatePopup = async (path?: string, currentPopupId?: number) => {
   if (currentPopupId) popupStorage._popupId = currentPopupId
-  const url = `/popup.html#${path}`
   const popup = await getPopup()
   if (popup?.id) {
-    if (path) backgroundToPopup.send('popup_replace', url)
-    return await browser.windows.update(popup.id, { focused: true })
+    if (path) backgroundToPopup.send('popup_replace', path)
+    await browser.windows.update(popup.id, { focused: true })
+    return true
   }
+  return false
+}
+
+const showPopup = async (currentPopupId?: number, path = '/'): Promise<any> => {
+  if (await updatePopup(path, currentPopupId)) return
   //
   let left = 0
   let top = 0
@@ -52,7 +56,7 @@ const showPopup = async (currentPopupId?: number, path = '/'): Promise<any> => {
     left = Math.max(screenX + (outerWidth - POPUP_WIDTH), 0)
   }
   const popupWindow = await browser.windows.create({
-    url,
+    url: `/popup.html#${path}`,
     type: 'popup',
     width: POPUP_WIDTH,
     height: POPUP_HEIGHT,

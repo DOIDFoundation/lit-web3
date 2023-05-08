@@ -1,33 +1,22 @@
-import { openPopup, popupStorage } from '~/lib.next/background/notifier'
+import { openPopup, updatePopup, popupStorage } from '~/lib.next/background/notifier'
 import { BACKGROUND_EVENTS, ERR_USER_DENIED } from '~/lib.next/constants'
 import { backgroundToPopup } from '~/lib.next/messenger/background'
 import { getKeyring } from '~/lib.next/keyring'
+import emitter from '@lit-web3/core/src/emitter'
 
-const waitingForUnlock: Function[] = []
-const waitingForPopupGoto: BackgroundMiddlwareCtx[] = []
+const waitingQueue: Function[] = []
+const userDenied = new Error(ERR_USER_DENIED)
 
-const handleUnlock = async () => {
-  if (!waitingForUnlock.length) return
-  const err = (await getKeyring()).isUnlocked ? null : new Error(ERR_USER_DENIED)
-  while (waitingForUnlock.length) {
-    waitingForUnlock.shift()!(true, err)
+const handlePopup = (err?: Error) => {
+  if (!waitingQueue.length) return
+  while (waitingQueue.length) {
+    waitingQueue.shift()!(err)
   }
-  backgroundToPopup.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
+  emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
 }
-const onPopupGotoClosed = () => {
-  if (!waitingForPopupGoto.length) return
-  while (waitingForPopupGoto.length) {
-    let { res } = waitingForPopupGoto.shift()!
-    if (!res.respond) res.err = new Error(ERR_USER_DENIED)
-  }
-}
-
-backgroundToPopup.emitter.on('unlock', handleUnlock)
+emitter.on('unlock', () => handlePopup())
 // Mostly ignored
-backgroundToPopup.emitter.on('popup_closed', () => {
-  handleUnlock()
-  onPopupGotoClosed()
-})
+emitter.on('popup_closed', () => handlePopup(userDenied))
 
 // eg. /landing/:DOIDName + req.state.DOIDName >> /landing/vitalik
 export const state2url = (state: Record<string, any>, url = '') => {
@@ -41,37 +30,34 @@ export const state2url = (state: Record<string, any>, url = '') => {
 }
 
 // Authed requests
-export const unlock = (popupUrl?: string): BackgroundMiddlware => {
-  return async ({ state }, next) => {
+export const unlock = (url?: string): BackgroundMiddlware => popupGoto({ url, unlock: true })
+
+export const popupGoto = ({ url = '', unlock = false } = {}): BackgroundMiddlware => {
+  return async ({ req, res, state }, next) => {
     await new Promise(async (resolve, reject) => {
       const { isInitialized, isUnlocked } = await getKeyring()
-      const dest = popupUrl ? state2url(state, popupUrl) : '/idle'
-      const _next = async (_?: any, err?: any) => {
-        if (err) return reject(err)
-        backgroundToPopup.send('popup_goto', dest)
-        resolve(next())
+      const needUnlock = (state.needUnlock = unlock ? !isUnlocked : undefined)
+      const dest = url ? state2url(state, url) : needUnlock ? '/idle' : '/'
+      const redirectUrl = needUnlock ? (isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/import') : dest
+      // internal
+      if (req.headers.isInternal) return resolve(backgroundToPopup.send('popup_goto', dest))
+      if (!url && popupStorage.isOpen) state.passOpen = true
+      // Already unlocked
+      if (needUnlock === false) {
+        if (url) await updatePopup(url)
+        return resolve(true)
       }
-      if (isUnlocked) return _next()
-      waitingForUnlock.push(_next)
-      backgroundToPopup.emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
-      await openPopup(isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/import')
+      // Waiting for unlock
+      const _next = async (err?: Error) => {
+        if (err) return reject(userDenied)
+        const { isUnlocked: unlocked } = await getKeyring()
+        if (needUnlock !== undefined) return unlocked ? resolve(unlocked) : reject(userDenied)
+        resolve(await updatePopup(dest))
+      }
+      if (!popupStorage.isOpen) waitingQueue.push(_next)
+      emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
+      await openPopup(redirectUrl)
     })
-  }
-}
-
-// Non-Authed requests
-export const popupGoto = (popupUrl = '/'): BackgroundMiddlware => {
-  return async (ctx, next) => {
-    const dest = state2url(ctx.state, popupUrl)
-    // internal
-    if (ctx.req.headers.isInternal) {
-      backgroundToPopup.send('popup_goto', dest)
-      return next()
-    }
-    // inpage
-    if (popupStorage.isOpen) return next()
-    waitingForPopupGoto.push(ctx)
-    await openPopup(dest)
-    return next()
+    next()
   }
 }

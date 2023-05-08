@@ -103,10 +103,16 @@ export class ViewRestore extends TailwindElement('') {
         <p class="my-2">Res: ${this.res_DOID_name || ''}</p>
 
         <hr class="my-2" />
-        <dui-button class="outlined minor" @click=${this.req_DOID_setup} .pending=${this.pending}
+        <dui-button class="outlined minor" @click=${this.req_DOID_setup}
           >{ method: 'DOID_setup', params: ['${this.name}'] }</dui-button
         >
         <p class="my-2">Res: ${this.res_DOID_setup || ''}</p>
+
+        <hr class="my-2" />
+        <div class="h-6">
+          ${when(this.pending, () => html`<i class="mdi mdi-loading"></i>`)}
+          <p class="my-2 text-red-600">${this.err}</p>
+        </div>
 
         <hr class="my-2" />
         <div class="my-2">
@@ -124,9 +130,6 @@ export class ViewRestore extends TailwindElement('') {
               </div>`
           )}
         </div>
-
-        <hr class="my-2" />
-        <p class="my-2 text-red-600">${this.err}</p>
       </div>
     </div>`
   }

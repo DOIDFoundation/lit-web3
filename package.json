@@ -6,6 +6,7 @@
   "packageManager": "pnpm@8.2.0",
   "scripts": {},
   "dependencies": {
+    "@aptos-labs/wallet-adapter-core": "2.0.1",
     "@chainify/evm": "2.2.0",
     "@chainify/types": "2.2.0",
     "@ethersproject/address": "^5.7.0",
@@ -19,13 +20,12 @@
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "cross-env": "^7.0.3",
     "events": "^3.3.0",
-    "lit": "^2.7.3",
+    "lit": "^2.7.4",
     "lodash": "^4.17.21",
-    "urlpattern-polyfill": "^6.0.2",
-    "@aptos-labs/wallet-adapter-core": "2.0.1"
+    "urlpattern-polyfill": "^6.0.2"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.56",
+    "@iconify/json": "^2.2.62",
     "@rollup/plugin-inject": "^5.0.3",
     "@rollup/plugin-terser": "^0.4.1",
     "@types/lodash": "^4.14.194",
@@ -38,7 +38,7 @@
     "postcss-import": "^15.1.0",
     "postcss-nesting": "^11.2.2",
     "postcss-preset-env": "^8.3.2",
-    "rollup": "^3.21.0",
+    "rollup": "^3.21.5",
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "rollup-plugin-polyfill-node": "^0.12.0",
     "sass": "^1.62.1",
@@ -47,9 +47,9 @@
     "tsup": "^6.7.0",
     "typescript": "^4.9.5",
     "unplugin-auto-import": "^0.15.3",
-    "vite": "^4.3.3",
+    "vite": "^4.3.5",
     "vite-plugin-html": "^3.2.0",
-    "vite-plugin-mkcert": "^1.14.1",
+    "vite-plugin-mkcert": "^1.15.0",
     "vite-plugin-pwa": "^0.14.7",
     "vite-plugin-static-copy": "^0.13.1"
   },

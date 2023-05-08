@@ -19,8 +19,9 @@ export class AppMain extends TailwindElement('') {
   chkView = () => {
     const pathname = routerPathname()
     this.showHeader =
-      !['/', '/popup.html', '/recover', '/restore', '/start', '/import2nd', '/import3rd'].includes(pathname) &&
-      !['/unlock', '/landing', '/create', '/generate-phrase'].some((substr) => pathname.startsWith(substr))
+      !['/', '/popup.html', '/recover', '/restore', '/start', '/import', '/import2nd', '/import3rd'].includes(
+        pathname
+      ) && !['/unlock', '/landing', '/create', '/generate-phrase'].some((substr) => pathname.startsWith(substr))
     const { style } = document.documentElement
     this.showHeader ? style.removeProperty('--header-height') : style.setProperty('--header-height', `0px`)
   }

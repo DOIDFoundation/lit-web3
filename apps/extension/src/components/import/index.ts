@@ -96,7 +96,7 @@ export class resetByPhrase extends TailwindElement(null) {
         <div slot="msg"><slot name="msg"></slot></div>
       </doid-symbol>
       <!-- <p class="text-red-500">${this.step}---${this.tittlH}</p> -->
-      <div class="px-4">
+      <div class="dui-container">
         <slot name="subtitle"></slot>
         </span>
         ${when(

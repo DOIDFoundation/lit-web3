@@ -1,8 +1,8 @@
 import { closePopup } from '~/lib.next/background/notifier'
 
-export const autoClosePopup: BackgroundMiddlware = async (ctx, next) => {
+export const autoClosePopup: BackgroundMiddlware = async ({ res, state }, next) => {
   await next()
-  ctx.res.responder.finally(() => {
-    if (ctx.res.respond) closePopup()
+  res.responder.finally(() => {
+    if (!state.passOpen && res.respond) closePopup()
   })
 }
