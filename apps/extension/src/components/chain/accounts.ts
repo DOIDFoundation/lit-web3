@@ -15,8 +15,8 @@ interface UserDetail {
   addresses: UserAddresses
 }
 type UserAddresses = Record<string, string>[]
-const requestUserAddresses = async (): Promise<UserDetail> => {
-  const accounts = await popupMessenger.send('internal_getMultiChainAddress')
+const requestUserAddresses = async (name?: string): Promise<UserDetail> => {
+  const accounts = await popupMessenger.send('internal_getMultiChainAddress', { name })
   popupMessenger.log('accounts', accounts)
   return {
     addresses: [{ eth: accounts.eth }, { sol: accounts.solana }, { apt: accounts.aptos }, { bnb: accounts.eth }]
@@ -25,8 +25,9 @@ const requestUserAddresses = async (): Promise<UserDetail> => {
 
 @customElement('account-list')
 export class accountList extends TailwindElement(null) {
-  @property() class = ''
+  @property() name = ''
   @property() chain = null as any
+  @property() class = ''
   @state() addresses: UserAddresses = []
 
   get mainAddress() {
@@ -35,6 +36,7 @@ export class accountList extends TailwindElement(null) {
     return res ? res![this.chain?.coin] : ''
   }
   async connectedCallback() {
+    console.info('🐔', this.name)
     const { addresses } = await requestUserAddresses()
     this.addresses = addresses
     super.connectedCallback()

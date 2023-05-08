@@ -40,8 +40,12 @@ export const solana_request: BackgroundService = {
         if (!res.respond) res.err = new Error(ERR_NOT_IMPLEMENTED)
         break
       case 'signMessage': {
-        const { message } = req.body
-        await openPopup(`/notification/${message}`)
+        const {
+          body: { message },
+          headers: { origin }
+        } = req
+        const { hostname } = new URL(origin)
+        await openPopup(`/notification/${message}/${hostname}`)
         backgroundMessenger.on('reply_personal_sign', async ({ data }) => {
           if (!data) {
             res.err = new Error(ERR_USER_DENIED)

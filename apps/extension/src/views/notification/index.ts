@@ -1,10 +1,10 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-// import { goto } from '@lit-web3/dui/src/shared/router/index'
+import base58 from 'bs58'
+
 // Components
-// import '@lit-web3/dui/src/input/text'
 import '@lit-web3/dui/src/button'
 import popupMessenger from '~/lib.next/messenger/popup'
-// import '@lit-web3/dui/src/link'
+
 @customElement('view-notification')
 export class ViewStart extends TailwindElement(null) {
   @state() message = ''
@@ -15,10 +15,15 @@ export class ViewStart extends TailwindElement(null) {
   }
   async connectedCallback() {
     super.connectedCallback()
-    const { msg, origin } = await popupMessenger.send('get_personal_sign', '')
-    console.log(msg, 'msg')
+    // const { msg, origin } = await popupMessenger.send('get_personal_sign', '')
+    // console.log(msg, 'msg')
+    const { msg, origin } = this.ROUTE
     this.message = msg
     this.origin = origin
+  }
+
+  get messageTxt() {
+    return new TextDecoder().decode(base58.decode(this.ROUTE.msg))
   }
 
   onReject() {
@@ -40,7 +45,7 @@ export class ViewStart extends TailwindElement(null) {
       </div>
       <div class="mt-2 border-t pt-4 px-4 pb-12">
         <div class="font-bold">Message:</div>
-        <pre class="mt-2 whitespace-pre-line">${this.message}</pre>
+        <pre class="mt-2 whitespace-pre-line">${this.messageTxt}</pre>
       </div>
       <div class="grid grid-cols-2 gap-3 px-4 fixed bottom-0 w-full pb-4 pt-2 bg-white">
         <dui-button class="block w-full secondary outlined !rounded-full h-12" @click=${this.onReject} block
