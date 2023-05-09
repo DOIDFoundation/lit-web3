@@ -5,7 +5,7 @@ import { ERR_USER_DENIED } from '~/lib.next/constants'
 export const DOID_setup: BackgroundService = {
   method: 'DOID_setup',
   allowInpage: true,
-  middlewares: [DOIDBodyParser(), popupGoto({ url: `/landing/:name` }), autoClosePopup],
+  middlewares: [DOIDBodyParser(), popupGoto({ path: `/landing/:name` }), autoClosePopup],
   fn: async ({ res }) => {
     const unlisten = backgroundMessenger.on('reply_DOID_setup', ({ data }) => {
       const bytes = data?.bytes as Uint8Array

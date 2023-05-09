@@ -12,6 +12,7 @@ declare type Req = {
   body: JsonValue
   headers: Header
   raw: webextMessage
+  id: number
 }
 declare type Res = {
   body: JsonValue

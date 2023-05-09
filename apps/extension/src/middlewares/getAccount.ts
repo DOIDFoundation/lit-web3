@@ -31,7 +31,7 @@ export const connectAccount = (): BackgroundMiddlware => {
       unlisten()
     })
     await new Promise(async (_next) => {
-      await popupGoto({ url: `/connect/${encodeURIComponent(origin)}` })(ctx, _next)
+      await popupGoto({ path: `/connect/${encodeURIComponent(origin)}` })(ctx, _next)
     })
   }
 }

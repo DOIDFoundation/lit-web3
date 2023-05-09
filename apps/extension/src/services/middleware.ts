@@ -44,6 +44,7 @@ export class MiddlerwareEngine {
   }
 }
 
+let reqId = 0
 const createReq = (message: webextMessage): Req => {
   const { data: body, sender, id: method } = message
   const { context, tabId } = sender
@@ -51,6 +52,7 @@ const createReq = (message: webextMessage): Req => {
   return {
     raw: Object.freeze(message),
     method,
+    id: ++reqId,
     body,
     headers: { extOrigin: `${context}${tabId ? `@${tabId}` : ''}`, origin: '', tabId, isInternal }
   }

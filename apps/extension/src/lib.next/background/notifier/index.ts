@@ -7,14 +7,13 @@ import { backgroundToPopup } from '~/lib.next/messenger/background'
 export const POPUP_HEIGHT = 620
 export const POPUP_WIDTH = 360
 
-let uiIsTriggering = false
-
 export const getPopup = async (): Promise<any> => {
   const windows = await browser.windows.getAll()
   if (!windows?.length) return
   return windows.find((win) => win && win.type === 'popup' && win.id === popupStorage._popupId)
 }
 
+let uiIsTriggering = false
 export const openPopup = async (path?: string): Promise<void> => {
   // const tabs = await browser.tabs.query({ active: true })
   // const currentlyActived = tabs.some(({ id }) => id && popupStorage.openTabsIDs[id])
@@ -24,7 +23,6 @@ export const openPopup = async (path?: string): Promise<void> => {
     await showPopup(popupStorage.currentPopupId, path)
   } catch {}
   uiIsTriggering = false
-  // }
 }
 
 export const closePopup = async () => {

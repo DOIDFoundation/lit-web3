@@ -1,16 +1,26 @@
-import { openPopup, updatePopup, popupStorage } from '~/lib.next/background/notifier'
+import { openPopup, updatePopup } from '~/lib.next/background/notifier'
 import { BACKGROUND_EVENTS, ERR_USER_DENIED } from '~/lib.next/constants'
 import { backgroundToPopup } from '~/lib.next/messenger/background'
 import { getKeyring } from '~/lib.next/keyring'
 import emitter from '@lit-web3/core/src/emitter'
 
-const waitingQueue: Function[] = []
+export const waitingForPopup: { ctx: BackgroundMiddlwareCtx; next: Function }[] = []
 const userDenied = new Error(ERR_USER_DENIED)
 
-const handlePopup = (err?: Error) => {
-  if (!waitingQueue.length) return
-  while (waitingQueue.length) {
-    waitingQueue.shift()!(err)
+const handlePopup = async (err?: Error) => {
+  if (!waitingForPopup.length) return
+  if (err) {
+    while (waitingForPopup.length) await waitingForPopup.shift()!.next(err)
+  } else {
+    await Promise.all(
+      waitingForPopup.map(async ({ ctx, next }, i) => {
+        next()
+        try {
+          await ctx.res.responder
+        } catch {}
+        waitingForPopup.splice(i, 1)
+      })
+    )
   }
   emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
 }
@@ -19,44 +29,43 @@ emitter.on('unlock', () => handlePopup())
 emitter.on('popup_closed', () => handlePopup(userDenied))
 
 // eg. /landing/:DOIDName + req.state.DOIDName >> /landing/vitalik
-export const state2url = (state: Record<string, any>, url = '') => {
-  return url.replaceAll(/(\/:)(\w+)/g, (_, _slash, key) => {
+// TODO: [Watch this](https://github.com/WICG/urlpattern/issues/73)
+export const state2path = (state: Record<string, any>, path = '') => {
+  return path.replaceAll(/(\/:)(\w+)/g, (_, _slash, key) => {
     const val = state[key]
     if (val) {
-      if (typeof val !== 'string') throw new Error(`Invalid route path: ${url}`)
+      if (typeof val !== 'string') throw new Error(`Invalid route path: ${path}`)
     } else throw new Error(`req.state[${key}] not found`)
     return `/${val}`
   })
 }
 
 // Authed requests
-export const unlock = (url?: string): BackgroundMiddlware => popupGoto({ url, unlock: true })
+export const unlock = (path?: string): BackgroundMiddlware => popupGoto({ path, unlock: true })
 
-export const popupGoto = ({ url = '', unlock = false } = {}): BackgroundMiddlware => {
-  return async ({ req, res, state }, next) => {
+export const popupGoto = ({ path = '', unlock = false } = {}): BackgroundMiddlware => {
+  return async (ctx, next) => {
+    const { req, state } = ctx
     await new Promise(async (resolve, reject) => {
       const { isInitialized, isUnlocked } = await getKeyring()
       const needUnlock = (state.needUnlock = unlock ? !isUnlocked : undefined)
-      const dest = url ? state2url(state, url) : needUnlock ? '/idle' : '/'
-      const redirectUrl = needUnlock ? (isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/import') : dest
-      // internal
+      const dest = path ? state2path(state, path) : needUnlock ? '/idle' : '/'
+      const redirectDest = needUnlock ? (isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/import') : dest
+      // Pass internal
       if (req.headers.isInternal) return resolve(backgroundToPopup.send('popup_goto', dest))
-      if (!url && popupStorage.isOpen) state.passOpen = true
+      const goto = async () => resolve(path && (await updatePopup(dest)))
       // Already unlocked
-      if (needUnlock === false) {
-        if (url) await updatePopup(url)
-        return resolve(true)
-      }
-      // Waiting for unlock
+      if (needUnlock === false) return await goto()
+      // Waiting for popup open
       const _next = async (err?: Error) => {
         if (err) return reject(userDenied)
         const { isUnlocked: unlocked } = await getKeyring()
         if (needUnlock !== undefined) return unlocked ? resolve(unlocked) : reject(userDenied)
-        resolve(await updatePopup(dest))
+        await goto()
       }
-      if (!popupStorage.isOpen) waitingQueue.push(_next)
+      waitingForPopup.push({ ctx, next: _next })
       emitter.emit(BACKGROUND_EVENTS.UPDATE_BADGE)
-      await openPopup(redirectUrl)
+      await openPopup(redirectDest)
     })
     next()
   }
