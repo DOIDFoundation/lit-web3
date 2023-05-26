@@ -5,8 +5,9 @@ export const internal_connect: BackgroundService = {
   method: 'internal_connect',
   middlewares: [DOIDBodyParser()],
   fn: async ({ req, res }) => {
-    const { name, origin } = req.body
-    await ConnectsStorage.set(name, origin)
+    const { names, domain, chain } = req.body
+    const key = `${domain}-${chain}`
+    await ConnectsStorage.set(key, names.join(','))
     res.body = 'ok'
   }
 }

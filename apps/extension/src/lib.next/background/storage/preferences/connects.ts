@@ -3,39 +3,48 @@ import emitter from '@lit-web3/core/src/emitter'
 import { getPreferences } from './base'
 
 type Connection = {
-  [origin: string]: true
+  [key: string]: true
 }
 type Connects = {
   [name: string]: Connection
 }
 
+// key: domain-chain, value: names
+
 export const ConnectsStorage = {
   getConnects: async () => (await getPreferences()).state.connects ?? {},
-  update: async (connects: Connects, has: boolean, name: string, origin?: string) => {
+  update: async (connects: Connects, has: boolean, name: string, origin?: string, chain?: string) => {
     const { updateState } = await getPreferences()
     updateState({ connects })
-    emitter.emit('connect_change', { name, origin, has })
+    emitter.emit('connect_change', { name, origin, has, chain })
   },
-  get: async (name: string, origin?: string) => {
+  get: async (key: string) => {
     const connects = await ConnectsStorage.getConnects()
-    const connection = connects[name]
-    return origin && connection ? connection[origin] : connection
+    const connection = connects[key]
+    const cur = connection.names.length ? connection.names[0] : ''
+    return cur
   },
-  has: async (origin: string): Promise<boolean> => {
+  has: async (key: string, name?: string): Promise<boolean> => {
     const connects = await ConnectsStorage.getConnects()
-    return (Object.values(connects) as Connection[]).some((connection) => connection[origin])
+    const connect = connects[key]
+    return name ? connect?.names?.includes(name) : connect
   },
-  set: async (name: string, origin: string) => {
+  set: async (key: string, names: string) => {
     const connects = await ConnectsStorage.getConnects()
-    connects[name] ?? (connects[name] = {})
-    connects[name][origin] = true
-    ConnectsStorage.update(connects, true, name, origin)
+    const _names = names.split(',')
+    connects[key] ?? (connects[key] = {})
+    connects[key]['names'] = _names
+    const [domain, chain] = key.split('-')
+    ConnectsStorage.update(connects, true, names[0], domain, chain)
   },
-  remove: async (name: string, origin?: string) => {
+  remove: async (key: string, name: string) => {
     const connects = await ConnectsStorage.getConnects()
-    if (origin) delete connects[name]?.[origin]
-    else delete connects[name]
-    ConnectsStorage.update(connects, false, name, origin)
+    const names = connects[key]?.names
+    const idx = names?.indexOf(name)
+    if (idx < 0) return
+    names.splice(idx, 1)
+    const [domain, chain] = key.split('-')
+    ConnectsStorage.update(connects, false, name, domain, chain)
   },
   sync: async () => {}
 }

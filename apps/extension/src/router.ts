@@ -183,9 +183,9 @@ export const routes = [
   },
   {
     name: 'connect',
-    path: '/connect/:origin?',
-    render: ({ origin = '' }) => {
-      return html`<view-connect .origin=${safeDecodeURIComponent(origin)}></view-connect>`
+    path: '/connect/:origin?/:chain?',
+    render: ({ origin = '', chain = '' }) => {
+      return html`<view-connect .origin=${safeDecodeURIComponent(origin)} .chain=${chain}></view-connect>`
     },
     enter: async () => {
       // if (await isConnected()) {

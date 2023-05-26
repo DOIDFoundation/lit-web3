@@ -7,20 +7,22 @@ import { ERR_USER_DENIED } from '~/lib.next/constants'
 export const getAccount = (): BackgroundMiddlware => {
   return async (ctx, next) => {
     const { req, state } = ctx
+    const [chain] = req.body
     const { selectedDOID: DOID } = await getKeyring()
     const { name, address } = DOID
     Object.assign(state, { DOID, name, account: address })
     // internal
     if (req.headers.isInternal) return next()
     // inpage need to connect
-    await connectAccount()(ctx, next)
+    await connectAccount(chain, name)(ctx, next)
   }
 }
 
-export const connectAccount = (): BackgroundMiddlware => {
+export const connectAccount = (_chain?: string, name?: string): BackgroundMiddlware => {
   return async (ctx, next) => {
+    const chain = _chain ?? 'ethereum'
     const { origin } = ctx.req.headers
-    const connected = await ConnectsStorage.has(origin)
+    const connected = await ConnectsStorage.has(`${origin}-${chain}`, name)
     if (connected) return next()
     const unlisten = emitter.on('connect_change', async (e: CustomEvent) => {
       const { origin: _origin, has } = e.detail
@@ -31,7 +33,7 @@ export const connectAccount = (): BackgroundMiddlware => {
       unlisten()
     })
     await new Promise(async (_next) => {
-      await popupGoto({ path: `/connect/${encodeURIComponent(origin)}` })(ctx, _next)
+      await popupGoto({ path: `/connect/${encodeURIComponent(origin)}/${chain}` })(ctx, _next)
     })
   }
 }

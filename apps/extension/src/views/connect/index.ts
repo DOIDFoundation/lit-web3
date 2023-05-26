@@ -6,6 +6,8 @@ import { uiKeyring, StateController } from '~/store/keyringState'
 // import '@lit-web3/dui/src/menu'
 import '@lit-web3/dui/src/address/name'
 import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/src/menu/drop'
+import { chainsDefault } from '~/lib.next/chain'
 
 import style from './connect.css?inline'
 
@@ -13,6 +15,8 @@ import style from './connect.css?inline'
 export class ViewUnlock extends TailwindElement(style) {
   bindKeyring: any = new StateController(this, uiKeyring)
   @property() origin = ''
+  @property() chain = ''
+  @state() names: Record<string, boolean> = {}
 
   @state() headers: any
 
@@ -25,21 +29,37 @@ export class ViewUnlock extends TailwindElement(style) {
   get favicon() {
     return `${this.origin}/favicon.ico`
   }
+  get _chain() {
+    return chainsDefault.find((r: any) => r.name === this.chain)
+  }
+
+  get selectNames() {
+    const names = this.names
+    const res = Object.keys(names).filter((k) => names[k] === true)
+    return res
+  }
 
   get = async () => {
     this.headers = await popupMessenger.send('internal_headers')
   }
 
   connect = async () => {
+    if (!this.selectNames.length) return
+    const chain = this._chain?.name
     try {
-      const res = await popupMessenger.send('internal_connect', { ...this.selectedDOID, origin: this.origin })
+      const res = await popupMessenger.send('internal_connect', {
+        names: this.selectNames,
+        domain: decodeURIComponent(this.origin),
+        chain
+      })
       if (res === 'ok') this.close()
-    } catch (e) {}
+    } catch (e) {
+      console.error(e)
+    }
   }
 
-  select = (e: Event) => {
-    e.stopImmediatePropagation()
-    e.preventDefault()
+  select = (name: string) => {
+    this.names[name] = !this.names[name]
   }
 
   close = () => {
@@ -48,6 +68,7 @@ export class ViewUnlock extends TailwindElement(style) {
 
   connectedCallback() {
     super.connectedCallback()
+    this.names = Object.fromEntries(this.DOIDs.map((r) => [r.name, false]))
     this.get()
   }
 
@@ -73,24 +94,26 @@ export class ViewUnlock extends TailwindElement(style) {
           <!-- Accounts -->
           <p class="mt-4 flex justify-between">
             <span>Select:</span>
-            <dui-link href="/create">New Account</dui-link>
+            <dui-link href="#/create">New Account</dui-link>
           </p>
           <ul class="border rounded-md mt-2 mb-4">
             ${repeat(
               this.DOIDs,
               (DOID) =>
-                html`<li @click=${this.select} class="flex items-center p-4 gap-4 cursor-pointer">
-                  <input type="checkbox" class="cursor-pointer" checked readonly /><dui-name-address
-                    .DOID=${DOID}
-                    short
-                  ></dui-name-address>
+                html`<li @click=${() => this.select(DOID.name)} class="flex items-center p-4 gap-4 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    class="cursor-pointer"
+                    .checked=${(this.names[DOID.name] as boolean) || ''}
+                    readonly
+                  /><dui-name-address .DOID=${DOID} short></dui-name-address>
                 </li>`
             )}
           </ul>
           <!-- Chain -->
           <div>
             <strong class="my-4 font-semibold">Chain:</strong>
-            <span class="">Ethereum</span>
+            <span class="">${this._chain?.title}</span>
           </div>
         </div>
 

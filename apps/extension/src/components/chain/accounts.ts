@@ -36,7 +36,6 @@ export class accountList extends TailwindElement(null) {
     return res ? res![this.chain?.coin] : ''
   }
   async connectedCallback() {
-    console.info('🐔', this.name)
     const { addresses } = await requestUserAddresses()
     this.addresses = addresses
     super.connectedCallback()
