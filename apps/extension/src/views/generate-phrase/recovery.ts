@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -98,17 +98,22 @@ export class ViewAddress extends TailwindElement(style) {
       <div class="mt-2 ">
         <textarea class="border rounded-md w-full h-24 p-2" .value=${this.phraseString} readonly></textarea>
       </div>
-      <div class="mt-2 text-center flex flex-wrap">
-        ${this.randomPhrase.map(
-          (item) =>
-            html`<div
-              class="p-2 my-2 cursor-pointer mr-2 ${item.active ? 'bg-blue-600 text-white' : 'bg-gray-300'}"
-              @click=${() => this.onRecovery(item)}
-            >
-              ${item.name}
-            </div>`
-        )}
-      </div>
+      ${when(
+        this.phrase,
+        () => html`
+          <div class="mt-2 text-center flex flex-wrap">
+            ${this.randomPhrase.map(
+              (item) =>
+                html`<div
+                  class="p-2 my-2 cursor-pointer mr-2 ${item.active ? 'bg-blue-600 text-white' : 'bg-gray-300'}"
+                  @click=${() => this.onRecovery(item)}
+                >
+                  ${item.name}
+                </div>`
+            )}
+          </div>
+        `
+      )}
       <!-- <div>${this.phraseElements}----</div> -->
       <div class="mt-4 flex justify-between">
         <dui-button @click=${() => this.routeGoto('2')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "

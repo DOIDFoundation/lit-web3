@@ -51,7 +51,7 @@ export class ViewPwd extends TailwindElement(style) {
       <div class="mt-2 text-center">
         This password will unlock your DOID name(s) only on this device. DOID can not recover this password.
       </div>
-      <div class="mt-3">
+      <div class="mt-6">
         <dui-input-text
           autoforce
           type="password"

@@ -47,7 +47,7 @@ export class ViewPhrase extends TailwindElement(style) {
   @property() phrase = ''
 
   get curStep() {
-    return this.ROUTE?.step ?? 1
+    return this.ROUTE?.step || 1
   }
   get activeRoute() {
     return this.steps.find((item) => item.id == this.curStep)
@@ -121,11 +121,11 @@ export class ViewPhrase extends TailwindElement(style) {
             <span slot="h1" class="text-xl"></span>
             <p slot="msg"></p>
           </doid-symbol>
-          <div class="max-w-lg mx-auto border-gray-400 border-2 rounded-md mt-10 p-6">
+          <div class="max-w-lg mx-auto border-gray-400 border-2 rounded-md mt-10 py-6 p-4">
             ${when(
               this.ROUTE?.step !== 'unlock',
               () => html`
-                <ul class="step-line mt-4">
+                <ul class="step-line mt-4 -mx-4">
                   ${this.steps.map(
                     (item) =>
                       html`<li

@@ -25,6 +25,10 @@ export class ViewHome extends TailwindElement(style) {
     this.showRegister = false
     this.doid = e.detail
   }
+  register(e: CustomEvent) {
+    e.preventDefault()
+    goto(`/create/${this.doid}`)
+  }
 
   async submit() {
     if (!this.doid) return
@@ -70,7 +74,7 @@ export class ViewHome extends TailwindElement(style) {
               <span slot="label"><slot name="label">Import or Create your DOID</slot></span>
               <span slot="msg">
                 ${when(this.err, () => html`<span class="text-red-500">${this.err}</span>`)}
-                ${when(this.showRegister, () => html`<dui-link href="/create/${this.doid}">Register</dui-link>`)}</span
+                ${when(this.showRegister, () => html`<dui-link @click=${this.register}>Register</dui-link>`)}</span
               >
               <span slot="right">
                 ${when(
