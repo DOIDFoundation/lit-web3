@@ -32,9 +32,11 @@ export class ViewAddress extends TailwindElement(style) {
   get account() {
     return accountStore.account
   }
-
   get phraseArr() {
     return this.phrase.split(' ')
+  }
+  get phraseEnabled() {
+    return this.pwd && this.phrase
   }
   onInput = async (e: CustomEvent) => {
     const { val = '', error = '', msg = '' } = {}
@@ -46,6 +48,7 @@ export class ViewAddress extends TailwindElement(style) {
     this.emit('routeGoto', { step, pwd: this.pwd, phrase: this.phrase })
   }
   onTogglePhrase = () => {
+    if (!this.phraseEnabled) return
     this.showPhrase = !this.showPhrase
   }
   generatePhrase = async () => {
@@ -53,6 +56,7 @@ export class ViewAddress extends TailwindElement(style) {
     this.phrase = genMnemonic()
   }
   copyPhrase = async () => {
+    if (!this.phraseEnabled) return
     try {
       await clipboard.writeText(this.phrase)
     } catch {}
@@ -66,17 +70,17 @@ export class ViewAddress extends TailwindElement(style) {
   render() {
     return html` <div class="dui-container">
       <div class="text-lg font-bold mt-2 text-center">Create Addresses</div>
-      <div class="mt-2 text-center text-yellow-600">
+      <div class="mt-2 text-yellow-600">
         Warning: Don't send your recovery phrase to others, Anyone gets your recovery phrase, he can send your assets
         without notifying you.
       </div>
-      <div class="mt-2 text-center ">
+      <div class="mt-2">
         Your main addresses are generated with this 12-word Secret Recovery Phrase. Write down this 12-word Secret
         Recovery Phrase and save it in a place that you trust and only you can access.
       </div>
-      <div class="mt-2">
-        <div>Tips:</div>
-        <ul class="list-disc">
+      <div class="my-4">
+        <div class="mb-2">Tips:</div>
+        <ul class="list-disc text-sm space-2">
           <li>Save in a password manager</li>
           <li>Store in a safe deposit box</li>
           <li>Write down and store in multiple secret places</li>
@@ -111,17 +115,26 @@ export class ViewAddress extends TailwindElement(style) {
           `
         )}
       </div>
-      <div class="flex p-2 justify-between">
-        <dui-button text class="!text-blue-400 !text-sm" @click=${this.onTogglePhrase}
-          >${this.showPhrase ? 'Reveal seed phrase' : 'Hide seed phrase'}</dui-button
-        >
-        <dui-button @click=${this.copyPhrase} text class="!text-blue-400 !text-sm">Copy to clipboard</dui-button>
-      </div>
+      ${when(
+        this.phraseEnabled,
+        () => html`
+          <div class="flex p-2 justify-between">
+            <dui-button text class="!text-blue-400 !text-xs" @click=${this.onTogglePhrase}
+              >${this.showPhrase ? 'Hide seed phrase' : 'Reveal seed phrase'}</dui-button
+            >
+            <dui-button @click=${this.copyPhrase} text class="!text-blue-400 !text-xs">Copy to clipboard</dui-button>
+          </div>
+        `
+      )}
+      <!-- actions -->
       <div class="mt-4 flex justify-between">
         <dui-button @click=${() => this.routeGoto('1')} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
           ><i class="mdi mdi-arrow-left text-gray-500"></i
         ></dui-button>
-        <dui-button @click=${() => this.routeGoto('3')} class="secondary !rounded-full h-12 w-12"
+        <dui-button
+          .disabled=${!this.phraseEnabled}
+          @click=${() => this.routeGoto('3')}
+          class="secondary !rounded-full h-12 w-12"
           ><i class="mdi mdi-arrow-right"></i
         ></dui-button>
       </div>
