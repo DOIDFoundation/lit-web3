@@ -15,7 +15,7 @@ import { getPublicKey } from 'ethereum-cryptography/secp256k1'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 import { AptosAccount } from 'aptos'
 import { Keypair } from '@solana/web3.js'
-import * as bip39 from 'bip39'
+import * as bip39 from '@scure/bip39'
 
 import {
   bufferToHex,

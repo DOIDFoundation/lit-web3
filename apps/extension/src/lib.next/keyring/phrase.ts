@@ -1,6 +1,6 @@
 import { AptosAccount } from 'aptos'
 import { mnemonicToSeedSync, validateMnemonic, generateMnemonic } from 'ethereum-cryptography/bip39'
-import { wordlist } from 'ethereum-cryptography/bip39/wordlists/english'
+import { wordlist } from '@scure/bip39/wordlists/english'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
 import { Keypair } from '@solana/web3.js'
@@ -25,7 +25,7 @@ export const genMnemonic = () => {
 }
 export const validatePhrase = (phrase = '') => {
   const valid = validateMnemonic(phrase, wordlist)
-  const err = valid ? '' : 'Bad mnemonic'
+  const err = validateMnemonic(phrase, wordlist) ? '' : 'Bad mnemonic'
   return err
 }
 export const phraseMatch = (phrase = '', target = '') => {

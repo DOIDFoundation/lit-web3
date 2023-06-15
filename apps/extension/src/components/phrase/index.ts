@@ -27,14 +27,14 @@ export class PhraseToSecret extends TailwindElement(style) {
   get fullFilled() {
     return !this.phrases.some((r) => !r)
   }
-  get wordInalid() {
+  get wordInvalid() {
     return validatePhrase(this.phrase)
   }
   get err() {
     if (this.ts == 0) return ''
     let msg = ''
     if (!this.fullFilled) msg = `Secret Recovery Phrases contain ${this.length} words`
-    else if (this.wordInalid) msg = `Invalid Secret Recovery Phrase`
+    else if (this.wordInvalid) msg = `Invalid Secret Recovery Phrase`
     return msg
   }
 

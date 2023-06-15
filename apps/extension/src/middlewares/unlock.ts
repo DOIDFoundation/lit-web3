@@ -50,7 +50,7 @@ export const popupGoto = ({ path = '', unlock = false } = {}): BackgroundMiddlwa
       const { isInitialized, isUnlocked } = await getKeyring()
       const needUnlock = (state.needUnlock = unlock ? !isUnlocked : undefined)
       const dest = path ? state2path(state, path) : needUnlock ? '/idle' : '/'
-      const redirectDest = needUnlock ? (isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/import') : dest
+      const redirectDest = needUnlock ? (isInitialized ? `/unlock/${encodeURIComponent(dest)}` : '/') : dest
       // Pass internal
       if (req.headers.isInternal) return resolve(backgroundToPopup.send('popup_goto', dest))
       const goto = async () => resolve(path && (await updatePopup(dest)))
