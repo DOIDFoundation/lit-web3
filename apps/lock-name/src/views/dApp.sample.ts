@@ -40,10 +40,12 @@ export class ViewRestore extends TailwindElement('') {
     const mainAddr = address || (await mainAddressByName(name)).toLowerCase()
     try {
       logger('set main address and IPNS:>>', this.ipns)
-      this.tx = await setMainAddrAndIPNS(name, mainAddr, bytes)
-      const success = await this.tx.wait()
-      this.success = success
-      logger(this.success)
+      if (bytes.length) {
+        this.tx = await setMainAddrAndIPNS(name, mainAddr, bytes)
+        const success = await this.tx.wait()
+        this.success = success
+        logger(this.success)
+      }
 
       logger(`query ipns of ${name}:>>`)
       this.ipns = (await ipnsBytes(name)) as string

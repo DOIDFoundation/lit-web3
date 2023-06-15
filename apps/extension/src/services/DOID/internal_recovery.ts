@@ -22,9 +22,10 @@ export const internal_recovery: BackgroundService = {
       } else keyring.createNewVaultAndRestore(name, pwd, mnemonic)
 
       // TODO: move to keyring.setDOIDs
-      const { cid, bytes } = await ipfsHelper.updateJsonData(json, name, { memo: mnemonic })
       if (reply) {
-        backgroundMessenger.broadcast('reply_DOID_setup', { cid, bytes, address })
+        // const { cid, bytes } = await ipfsHelper.updateJsonData(json, name, { memo: mnemonic })
+        // backgroundMessenger.broadcast('reply_DOID_setup', { cid, bytes, address })
+        backgroundMessenger.broadcast('reply_DOID_setup', { cid: '', bytes: '', address })
       }
       res.body = 'ok'
     } catch (e) {

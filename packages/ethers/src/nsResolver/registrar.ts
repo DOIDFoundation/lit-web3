@@ -60,10 +60,10 @@ export const commit = async (name: string) => {
   return tx
 }
 
-export const register = async (name: string, secret = seed, data = []) => {
+export const register = async (name: string, account?: string, secret = seed, data = []) => {
   const contract = await getResolverContract()
   const [method, overrides] = ['register', {}]
-  const parameters = [bareTLD(name), await getAccount()]
+  const parameters = [bareTLD(name), account || (await getAccount())]
   await assignOverrides(overrides, contract, method, parameters)
   const call = contract[method](...parameters)
   const tx = new txReceipt(call, {
