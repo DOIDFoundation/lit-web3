@@ -12,7 +12,7 @@ export class SearchBar extends TailwindElement('') {
   @property({ type: Boolean }) sm = false
 
   onSearch = (e: CustomEvent) => {
-    const { token, uri, name } = e.detail
+    const { token = {}, uri, name } = e.detail
     if (token.name || token.slugName) goto(`/collection/${uri}`)
     else if (name) goto(`/artist/${uri}`)
   }

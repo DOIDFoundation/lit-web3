@@ -35,4 +35,4 @@ declare interface Token {
   address?: string
 }
 declare type Tokenish = Token | string | any
-declare type ChainConf = Record<string, Record<string, string>>
+declare type ChainConf = Record<string, Record<ChainId, string>>

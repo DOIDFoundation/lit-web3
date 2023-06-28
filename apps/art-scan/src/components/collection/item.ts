@@ -8,7 +8,7 @@ import '@lit-web3/dui/src/media-player'
 import '@lit-web3/dui/src/loading/icon'
 import '@lit-web3/dui/src/loading/skeleton'
 import { getNetworkSync } from '@lit-web3/ethers/src/useBridge'
-import { getOpenseaUri } from '@lit-web3/ethers/src/constants/opensea'
+import { getScanUrl } from '@lit-web3/ethers/src/constants/openScan'
 // Style
 import style from './item.css?inline'
 
@@ -48,7 +48,7 @@ export class DoidCollection extends TailwindElement(style) {
     return !this.pending && !!this.ts && !this.metaPending && (!this.item || !this.sameURI)
   }
   get opensea() {
-    const url = `${getOpenseaUri('url')}/${this.address}/${this.tokenID}`
+    const url = `${getScanUrl('opensea')}/${this.address}/${this.tokenID}`
     return { url, origin: new URL(url).origin }
   }
   get scan() {
