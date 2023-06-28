@@ -33,7 +33,7 @@ export class Router extends Routes {
     if (!/^[^/]+:/.test(path)) path = `blob:${path}`
     return new URL(path)
   }
-  path2href = (path: string, prefix = location.origin + location.pathname) => {
+  path2href = (path: string, prefix = location.origin + (this.hashMode ? location.pathname : '')) => {
     return `${prefix}${this.hashMode ? `#${encodeURI(path)}` : path}`
   }
   getFullpath = (path?: string) => {
@@ -76,6 +76,7 @@ export class Router extends Routes {
     }
 
     e.preventDefault()
+    console.log(href, location.href)
     if (href !== location.href) {
       window.history.pushState({}, '', href)
       const { pathname, search, hash } = anchor

@@ -48,6 +48,7 @@ export const routerGuard = {
   },
   goto: (path: string) => {
     if (match(path)) return
+    console.log(path, routerGuard.router.path2href(path))
     history.pushState({}, '', routerGuard.router.path2href(path))
     routerGuard.router.goto(path)
   },
