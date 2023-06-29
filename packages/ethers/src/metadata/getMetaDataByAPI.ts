@@ -27,9 +27,20 @@ export const fromAlchemy = async (
   try {
     const reqUrl = `${getScanApi('alchemy')}/getNFTMetadata?contractAddress=${address}&tokenId=${tokenID}`
     const res: any = await throttle('alchemy', reqUrl)
+    const {
+      name,
+      description,
+      raw,
+      contract: { openSeaMetadata = {} }
+    } = res
     meta = await normalize({
-      ...res?.metadata,
-      ...res?.media?.[0]
+      ...openSeaMetadata,
+      name,
+      description,
+      poster: res.image.thumbnailUrl,
+      raw: raw.metadata.image,
+      creator: raw.metadata.artist,
+      owner: '' // Not provided yet
     })
     if (!meta.image) {
       // Send a purge request

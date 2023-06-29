@@ -31,7 +31,7 @@ export const getMetaData = async (token: NFTToken | Coll): Promise<Meta> => {
   // 1. by cache
   if (!meta && tokenURI) meta = await (await useStorage(`meta.${tokenURI}`, storageOpt)).get()
   if (!meta) meta = await (await useStorage(`meta.${address}.${tokenID}`, storageOpt)).get()
-  // 2. by OpenSea
+  // 2. by openAPI
   if (!meta && address && tokenID) {
     meta = await getMetaDataByAPI(token)
   }

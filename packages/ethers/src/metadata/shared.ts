@@ -8,7 +8,6 @@ export const normalize = async (data: Record<string, any>): Promise<Meta> => {
   const name: string = data.name || collection.name
   const poster: string =
     data.poster ||
-    data.thumbnail ||
     data.image_preview_url ||
     data.image_thumbnail_url ||
     data.image_url ||
@@ -24,7 +23,7 @@ export const normalize = async (data: Record<string, any>): Promise<Meta> => {
     description: (data.description || collection.description) as string,
     image: normalizeUri(poster),
     raw,
-    creator: data.creator?.address,
+    creator: data.creator?.address || data.creator,
     owner,
     external_link: data.external_link || data.external_uri,
     background_color,

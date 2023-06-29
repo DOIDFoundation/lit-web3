@@ -6,8 +6,8 @@ const alchemyApiKey = 'bGarR-34AQNx20ZlWah4RPwq7MQ3_Okl'
 export const openScan: Record<string, ChainConf> = {
   alchemy: {
     api: {
-      '0x1': `https://eth-mainnet.g.alchemy.com/nft/v2/${alchemyApiKey}`,
-      '0x5': `https://eth-goerli.g.alchemy.com/nft/v2/${alchemyApiKey}`
+      '0x1': `https://eth-mainnet.g.alchemy.com/nft/v3/${alchemyApiKey}`,
+      '0x5': `https://eth-goerli.g.alchemy.com/nft/v3/${alchemyApiKey}`
     }
   },
   opensea: {

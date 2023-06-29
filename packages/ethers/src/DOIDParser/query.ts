@@ -15,11 +15,9 @@ export const reverseDOIDName = async (DOIDName = ''): Promise<Address> => {
   })
   ethAddr = await storage.get()
   if (ethAddr) return ethAddr
-  // 2. from wallet
-  if (!ethAddr) {
-    const account = await getAccount()
-    if (account) ethAddr = (await nameInfo(DOIDName)).owner ?? ''
-  }
+  // 2. from user's wallet for throttle
+  const getOwner = async () => (await nameInfo(DOIDName)).owner ?? ''
+  if (!ethAddr && (await getAccount())) await getOwner()
   // 3. from graph
   if (!ethAddr) {
     try {
@@ -32,6 +30,8 @@ export const reverseDOIDName = async (DOIDName = ''): Promise<Address> => {
       console.error(err.messages)
     }
   }
+  // 4. from chain by infura
+  if (!ethAddr) ethAddr = await getOwner()
   if (ethAddr) storage.set(ethAddr)
   return ethAddr ?? ZERO
 }
