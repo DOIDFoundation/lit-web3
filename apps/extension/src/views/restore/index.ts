@@ -57,7 +57,7 @@ export class ViewRestore extends TailwindElement(style) {
     return html`<div class="restore">
       <div class="dui-container">
         <div class="flex items-center">
-          <dui-link href="/unlock" class="link"><i class="mdi mdi-arrow-left"></i>Back</dui-link>
+          <dui-link href="/" class="link"><i class="mdi mdi-arrow-left"></i>Back</dui-link>
         </div>
         <h1 class="my-4 text-4xl">Restore wallet</h1>
 
