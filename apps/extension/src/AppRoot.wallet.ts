@@ -1,6 +1,6 @@
 import AppRoot from '@lit-web3/dui/src/shared/AppRoot'
 import useBridge from '@lit-web3/ethers/src/useBridge'
-import { JsonRpcProvider as provider } from '@ethersproject/providers'
+import { JsonRpcProvider as provider } from 'ethers'
 import { html, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
 import { StateController } from '@lit-app/state'
 import { walletStore } from '~/store'

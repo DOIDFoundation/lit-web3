@@ -1,4 +1,4 @@
-import { isAddress } from '@ethersproject/address'
+import { isAddress } from 'ethers'
 import getAddressEncoder from '../address-encoder'
 import uts from './uts'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'

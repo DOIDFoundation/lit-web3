@@ -1,10 +1,10 @@
-import { JsonRpcProvider, Web3Provider, WebSocketProvider } from '@ethersproject/providers'
+import { JsonRpcProvider, BrowserProvider, WebSocketProvider } from 'ethers'
 import Network from './networks'
 import emitter from '@lit-web3/core/src/emitter'
 import { getChainIdSync } from './detectEthereum'
 
 class Provider {
-  public provider: Web3Provider | JsonRpcProvider | WebSocketProvider | any
+  public provider: BrowserProvider | JsonRpcProvider | WebSocketProvider | any
   public network: any
   public storage: any
   constructor(options: useBridgeOptions = {}) {
@@ -35,7 +35,7 @@ class Provider {
     this.network.chainId = chainId
     if (!persistent) this.storage = sessionStorage.setItem('chainId', chainId)
     if (!persistent && window.ethereum) {
-      this.provider = new Web3Provider(window.ethereum)
+      this.provider = new BrowserProvider(window.ethereum)
     } else {
       const _provider = provider || (this.network.providerWs ? WebSocketProvider : JsonRpcProvider)
       const _rpc = rpc || (this.network.providerWs ? this.network.providerWs : this.network.provider)

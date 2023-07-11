@@ -2,7 +2,7 @@ import { getResolverContract } from './controller'
 import { bareTLD } from './checker'
 import { assignOverrides, getAccount } from '../useBridge'
 import { txReceipt } from '../txReceipt'
-import { formatBytes32String } from '@ethersproject/strings'
+import { encodeBytes32String } from 'ethers'
 import { useStorage } from '../useStorage'
 
 export const secretKey = async (name: string) => `.${name}`
@@ -29,7 +29,7 @@ export const makeCommitment = async (name: string, secret = seed, data = []): Pr
   if (saved) return saved
   const contract = await getResolverContract()
   const commitment = {
-    secret: await contract.makeCommitment(bareTLD(name), await getAccount(), formatBytes32String(secret), data),
+    secret: await contract.makeCommitment(bareTLD(name), await getAccount(), encodeBytes32String(secret), data),
     ts: now()
   }
   await storage.set(commitment, { merge: true })

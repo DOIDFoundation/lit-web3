@@ -1,8 +1,4 @@
-import { keccak256 } from '@ethersproject/keccak256'
-import { AbiCoder } from '@ethersproject/abi'
-import { BytesLike } from '@ethersproject/bytes'
-import { toUtf8Bytes } from '@ethersproject/strings'
-import { ParamType } from '@ethersproject/abi'
+import { keccak256, AbiCoder, BytesLike, toUtf8Bytes, ParamType } from 'ethers'
 
 export class Abi {
   public static encode(name: string, inputs: ParamType[], params: any[]) {
@@ -25,14 +21,14 @@ export class Abi {
 
 function getFunctionSignature(name: string, inputs: ParamType[]): string {
   const types = []
-  for (const input of inputs) {
+  for (const input of inputs!) {
     if (input.type === 'tuple') {
-      const tupleString = getFunctionSignature('', input.components)
+      const tupleString = getFunctionSignature('', <ParamType[]>input.components)
       types.push(tupleString)
       continue
     }
     if (input.type === 'tuple[]') {
-      const tupleString = getFunctionSignature('', input.components)
+      const tupleString = getFunctionSignature('', <ParamType[]>input.components)
       const arrayString = `${tupleString}[]`
       types.push(arrayString)
       continue

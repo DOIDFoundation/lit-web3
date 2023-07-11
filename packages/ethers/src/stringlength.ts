@@ -1,4 +1,4 @@
-import { toUtf8Bytes } from '@ethersproject/strings'
+import { toUtf8Bytes } from 'ethers'
 
 // stringlength(❤‍🔥a) => > 2
 export const stringlength = (str: string) => [...new Intl.Segmenter().segment(str)].length

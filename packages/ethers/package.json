@@ -14,11 +14,7 @@
     "@types/tr46": "^3.0.0"
   },
   "peerDependencies": {
-    "@ethersproject/address": "^5",
-    "@ethersproject/contracts": "^5",
-    "@ethersproject/providers": "^5",
-    "@ethersproject/units": "^5",
-    "@ethersproject/wallet": "^5",
+    "ethers": "^6",
     "tsup": "^6"
   },
   "license": "MIT"

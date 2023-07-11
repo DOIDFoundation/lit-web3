@@ -1,10 +1,9 @@
-import { mnemonicToSeed, validateMnemonic } from 'ethereum-cryptography/bip39'
-import { HDKey } from 'ethereum-cryptography/hdkey'
-// import Wallet from 'ethereumjs-wallet'
+// import { HDKey } from 'ethereum-cryptography/hdkey'
 import * as IPFS from 'ipfs-core'
 import * as w3name from 'w3name'
 import { Web3Storage } from 'web3.storage'
 import http from '@lit-web3/core/src/http'
+import { HDNodeWallet, toBeArray } from 'ethers'
 
 import { keys } from '@libp2p/crypto'
 
@@ -46,8 +45,8 @@ class IPFSHelper {
   }
 
   async _chkIPNSExist(name: Name) {
-    let exist = false,
-      revision: any
+    let exist = false
+    let revision: any
     try {
       revision = await w3name.resolve(name)
       exist = true
@@ -108,11 +107,12 @@ class IPFSHelper {
   }
 
   // get the publickey from a seedphase
+  async _getIPNSNameFromStorage(phrase: string): Promise<w3name.WritableName> {
+    const wallet = HDNodeWallet.fromPhrase(phrase)
 
-  async _getIPNSNameFromStorage(mnemonic: string): Promise<w3name.WritableName> {
-    let seed = await mnemonicToSeed(mnemonic)
-    let key = HDKey.fromMasterSeed(seed)
-    let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
+    // let key = HDKey.fromMasterSeed(seed)
+    // let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', key.deriveChild(0x444f4944).privateKey!)
+    let ipfsKey = await keys.generateKeyPairFromSeed('Ed25519', toBeArray(wallet.deriveChild(0x444f4944).privateKey))
     return await w3name.from(ipfsKey.bytes)
   }
 }

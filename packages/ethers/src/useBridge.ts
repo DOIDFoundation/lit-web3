@@ -5,9 +5,7 @@ import { Bridge } from './bridge'
 import emitter from '@lit-web3/core/src/emitter'
 import { gasLimit, nowTs } from './utils'
 import { normalizeTxErr } from './parseErr'
-import { Contract } from '@ethersproject/contracts'
-import { BigNumber } from '@ethersproject/bignumber'
-import { formatUnits } from '@ethersproject/units'
+import { Contract, formatUnits } from 'ethers'
 export { StateController } from '@lit-app/state'
 
 // Singleton Data
@@ -174,9 +172,9 @@ export const estimateGasLimit = async (
   parameters = <any>[],
   limitPercent?: number
 ) => {
-  let estimatedGas = BigNumber.from(1000000)
+  let estimatedGas = BigInt(1000000)
   try {
-    estimatedGas = BigNumber.from(await contract.estimateGas[method](...parameters))
+    estimatedGas = BigInt(await contract[method].estimateGas(...parameters))
   } catch (err) {
     await normalizeTxErr(err, [method, parameters])
     throw err
@@ -217,7 +215,7 @@ export const getContract = async (
   if (!address && !abi) throw new Error(`Contract ${address} not found`)
   if (!account) account = await getAccount()
   if (!account && requireAccount) account = await getAccount()
-  return new Contract(address, abi, await (account ? getSigner() : getBridgeProvider()))
+  return new Contract(address, abi, await (account ? getSigner(account) : getBridgeProvider()))
 }
 
 export const getTokenContract = async (token: Tokenish, options = <getContractOpts>{}) =>

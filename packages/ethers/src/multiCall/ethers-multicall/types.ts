@@ -1,4 +1,4 @@
-import { ParamType } from '@ethersproject/abi'
+import { ParamType } from 'ethers'
 
 export interface ContractCall {
   contract: {

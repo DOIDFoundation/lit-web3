@@ -9,7 +9,7 @@ import {
   until
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { Wallet } from '@ethersproject/wallet'
+import { Wallet, Contract } from 'ethers'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -29,7 +29,6 @@ import {
 } from '@lit-web3/ethers/src/useBridge'
 import { now } from '@lit-web3/ethers/src/nsResolver/registrar'
 import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
-import { Contract } from '@ethersproject/contracts'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { MultiChainAddresses } from '~/lib.next/keyring/phrase'
@@ -111,7 +110,7 @@ export class ViewHome extends TailwindElement(style) {
     this.next()
     try {
       let addresses = (await getAddress(this.mnemonic)) as MultiChainAddresses
-      let wallet = Wallet.fromMnemonic(this.mnemonic)
+      let wallet = Wallet.fromPhrase(this.mnemonic)
       let mainAddress = await wallet.getAddress()
       if (mainAddress.toLowerCase() != addresses[AddressType.eth].toLowerCase())
         throw new Error('Internal Error: Addresses generated differs')

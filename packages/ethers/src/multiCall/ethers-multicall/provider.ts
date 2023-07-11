@@ -1,11 +1,10 @@
-// import { Contract } from '@ethersproject/contracts'
-import { JsonRpcProvider, Web3Provider, WebSocketProvider } from '@ethersproject/providers'
+import { JsonRpcProvider, BrowserProvider, WebSocketProvider } from 'ethers'
 
 import { all } from './call'
 import { getEthBalance } from './calls'
 import { ContractCall } from './types'
 
-type ethersProvider = Web3Provider | JsonRpcProvider | WebSocketProvider | any
+type ethersProvider = BrowserProvider | JsonRpcProvider | WebSocketProvider | any
 
 export class Provider {
   private _provider: ethersProvider

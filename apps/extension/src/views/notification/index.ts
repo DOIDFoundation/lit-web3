@@ -1,5 +1,5 @@
 import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import base58 from 'bs58'
+import { decodeBase58, toBeArray } from 'ethers'
 
 // Components
 import '@lit-web3/dui/src/button'
@@ -23,7 +23,7 @@ export class ViewStart extends TailwindElement(null) {
   }
 
   get messageTxt() {
-    return new TextDecoder().decode(base58.decode(this.ROUTE.msg))
+    return new TextDecoder().decode(toBeArray(decodeBase58(this.ROUTE.msg)))
   }
 
   onReject() {

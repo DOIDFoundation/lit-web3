@@ -1,11 +1,8 @@
-import { keccak256 } from '@ethersproject/keccak256'
-import { toUtf8Bytes } from '@ethersproject/strings'
-import { arrayify, hexlify } from '@ethersproject/bytes'
+import { keccak256, toUtf8Bytes, getBytes, toBeHex, formatUnits } from 'ethers'
 import { getContract, assignOverrides, getChainId, getAccount } from '@lit-web3/ethers/src/useBridge'
 // import { normalizeTxErr } from '@lit-web3/ethers/src/parseErr'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import { PassCates, PassCate } from '@lit-web3/ethers/src/constants/passcate'
-import { formatUnits } from '@ethersproject/units'
 import { ZERO_HASH } from '@lit-web3/ethers/src/utils'
 
 export const LENs = [64, 130]
@@ -41,11 +38,11 @@ export const getInviteCode = async (account?: string) => {
   // const bridge = await getBridge()
   // const signer = bridge.provider.getSigner(account || bridge.account)
   // try {
-  //   code = await signer.signMessage(arrayify(CHash))
+  //   code = await signer.signMessage(getBytes(CHash))
   // } catch (err) {
   //   throw await normalizeTxErr(err)
   // }
-  code = hexlify(BigInt(account!) ^ BigInt(CHash))
+  code = toBeHex(BigInt(account!) ^ BigInt(CHash))
   return [code.replace('0x', ''), 'c', '0'].join('')
 }
 
@@ -72,7 +69,7 @@ export const getNameByHash = async (hash: string) => {
   if (!hash || hash === ZERO_HASH) return name
   const contract = await getLockerContract()
   try {
-    name = await contract.getNameByHash(arrayify(hash))
+    name = await contract.getNameByHash(getBytes(hash))
   } catch {}
   return name
 }

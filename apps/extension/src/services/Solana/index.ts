@@ -1,16 +1,14 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { Keypair } from '@solana/web3.js'
+import { Keypair as SolanaKeyPair } from '@solana/web3.js'
 import { getKeyring } from '~/lib.next/keyring'
 import { AddressType } from '~/lib.next/keyring/phrase'
 import { unlock, autoClosePopup } from '~/middlewares'
 import { ERR_NOT_IMPLEMENTED, ERR_USER_DENIED } from '~/lib.next/constants/errors'
-import base58 from 'bs58'
 import nacl from 'tweetnacl'
-import { mnemonicToSeed } from 'ethereum-cryptography/bip39'
 import { derivePath } from 'ed25519-hd-key'
 import { getSolanaProvider } from './daemon'
 import { openPopup } from '~/lib.next/background/notifier'
-import { bytesToHex } from 'ethereum-cryptography/utils'
+import { Mnemonic, decodeBase58, encodeBase58, toBeArray } from 'ethers'
 
 export const solana_request: BackgroundService = {
   method: 'solana_request',
@@ -52,11 +50,14 @@ export const solana_request: BackgroundService = {
             return
           }
           const keyring = await getKeyring()
-          let seed = await mnemonicToSeed(await keyring.getMnemonic())
-          const derivedSeed = derivePath(`m/44'/501'/0'/0'`, bytesToHex(seed)).key
-          const keypair = Keypair.fromSecretKey(nacl.sign.keyPair.fromSeed(derivedSeed).secretKey)
-          const decodedMsg = base58.decode(message)
-          res.body = base58.encode(nacl.sign.detached(decodedMsg, keypair.secretKey))
+          const phrase = await keyring.getMnemonic()
+          const mnemnoic = Mnemonic.fromPhrase(phrase)
+          const seed = mnemnoic.computeSeed()
+          const solanaKeypair = SolanaKeyPair.fromSeed(derivePath(`m/44'/501'/0'/0'`, seed.replace(/^0x/, '')).key)
+
+          const decodedMsg = decodeBase58(message)
+          // TODO: Can we use ethers instead of nacl?
+          res.body = encodeBase58(nacl.sign.detached(toBeArray(decodedMsg), solanaKeypair.secretKey))
         })
         break
       }

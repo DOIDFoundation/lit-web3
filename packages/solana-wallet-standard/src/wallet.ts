@@ -27,13 +27,13 @@ import {
     type StandardEventsNames,
     type StandardEventsOnMethod,
 } from '@wallet-standard/features';
-import bs58 from 'bs58';
 import { DOIDWalletAccount } from './account.js';
 import { icon } from './icon.js';
 import type { SolanaChain } from './solana.js';
 import { isSolanaChain, SOLANA_CHAINS } from './solana.js';
 import { bytesEqual } from './util.js';
 import type { DOIDSolana } from './window.js';
+import { decodeBase58, toBeArray } from 'ethers';
 
 export const DOIDNamespace = 'doid:';
 
@@ -204,7 +204,7 @@ export class DOIDWallet implements Wallet {
                 }
             );
 
-            outputs.push({ signature: bs58.decode(signature) });
+            outputs.push({ signature: toBeArray(decodeBase58(signature)) });
         } else if (inputs.length > 1) {
             for (const input of inputs) {
                 outputs.push(...(await this.#signAndSendTransaction(input)));

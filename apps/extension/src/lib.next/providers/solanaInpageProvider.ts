@@ -4,7 +4,7 @@ import { WalletEvent, DOIDSolana } from '@lit-web3/solana-wallet-standard/src/wi
 import { PublicKey, Transaction, VersionedTransaction, SendOptions } from '@solana/web3.js'
 import inpageMessenger from '~/lib.next/messenger/inpage'
 import { EventEmitter } from 'eventemitter3'
-import base58 from 'bs58'
+import { decodeBase58, encodeBase58, toBeArray } from 'ethers'
 
 class DOIDSolanaProvider implements DOIDSolana {
   emitter: EventEmitter
@@ -55,9 +55,9 @@ class DOIDSolanaProvider implements DOIDSolana {
     }
 
     return inpageMessenger
-      .send('solana_request', { method: 'signMessage', message: base58.encode(message) })
+      .send('solana_request', { method: 'signMessage', message: encodeBase58(message) })
       .then((signature) => {
-        return { signature: base58.decode(signature) }
+        return { signature: toBeArray(decodeBase58(signature)) }
       })
   }
   on<E extends keyof WalletEvent>(event: E, listener: WalletEvent[E], context?: any): void {

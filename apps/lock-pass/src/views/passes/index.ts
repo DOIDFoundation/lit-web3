@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { getPasses, getPassCates, getNameByHash, getLockerContract } from '~/lib/locker'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { formatUnits } from '@ethersproject/units'
+import { formatUnits } from 'ethers'
 // Components
 import '@lit-web3/dui/src/connect-wallet/btn'
 import '@lit-web3/dui/src/loading/icon'

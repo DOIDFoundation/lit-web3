@@ -1,4 +1,4 @@
-/// <reference types="@ethersproject/providers" />
+/// <reference types="ethers" />
 
 declare type Address = `0x${string}` | string
 declare type TokenID = string

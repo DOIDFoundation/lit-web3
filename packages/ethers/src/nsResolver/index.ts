@@ -2,10 +2,8 @@ import { bareTLD, wrapTLD } from './checker'
 
 import { getAccount, getBridgeProvider, assignOverrides, getSigner } from '../useBridge'
 import { getResolverAddress, getResolverContract } from './controller'
-import { formatUnits } from '@ethersproject/units'
-import { randomBytes } from '@ethersproject/random'
+import { formatUnits, randomBytes } from 'ethers'
 import { getRecords } from './checker'
-import { BigNumber } from '@ethersproject/bignumber'
 import { txReceipt } from '../txReceipt'
 
 // Queries
@@ -87,6 +85,11 @@ export const ownerRecords = async (name?: string) => {
   return Object.values(res)
 }
 
+const randomNonce = () =>
+  `0x${Array.from(randomBytes(32))
+    .map((i) => i.toString(16).padStart(2, '0'))
+    .join('')}`
+
 export const getSignerMessage = async (name: string, account: string, coinType: number | string) => {
   let contract = await getResolverContract()
   const provider = await getBridgeProvider()
@@ -95,10 +98,10 @@ export const getSignerMessage = async (name: string, account: string, coinType: 
   const _name = bareTLD(name)
   const blockNum = await provider.getBlockNumber()
   const timestamp = (await provider.getBlock(blockNum)).timestamp
-  const nonce = BigNumber.from(randomBytes(32))
+  const nonce = randomNonce()
   // const contract.makeMainAddrMessage(_name)
   const message = await contract.makeAddrMessage(_name, coinType, account, timestamp, nonce)
-  return { name, dest: account, timestamp, nonce: nonce._hex, message }
+  return { name, dest: account, timestamp, nonce, message }
 }
 
 export const signMessage = async (msg: string, address: string) => {
@@ -231,8 +234,8 @@ export const getSignerMessageByMainAddress = async (name: string, account: strin
   const _name = bareTLD(name)
   const blockNum = await provider.getBlockNumber()
   const timestamp = (await provider.getBlock(blockNum)).timestamp
-  const nonce = BigNumber.from(randomBytes(32))
+  const nonce = randomNonce()
   const message = await contract.makeMainAddrMessage(_name, account, timestamp, nonce)
   // const message = await contract.makeAddrMessage(_name, coinType, account, timestamp, nonce)
-  return { name, dest: account, timestamp, nonce: nonce._hex, message }
+  return { name, dest: account, timestamp, nonce, message }
 }

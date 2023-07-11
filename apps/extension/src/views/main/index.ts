@@ -34,9 +34,7 @@ export class ViewMain extends TailwindElement(style) {
         <network-list class="bg-gray-200 shrink" @switch=${this.onSwitch}></network-list>
         ${keyed(
           this.key,
-          html`<account-list class="grow py-2 px-4" .chain=${this.curChain} .name=${this.name}
-            >Addresses:</account-list
-          >`
+          html`<account-list class="grow p-2 pl-3" .chain=${this.curChain} .name=${this.name}>Addresses:</account-list>`
         )}
       </div>
     </div>`

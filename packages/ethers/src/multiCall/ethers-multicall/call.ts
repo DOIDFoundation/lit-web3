@@ -1,5 +1,4 @@
-import { Contract } from '@ethersproject/contracts'
-import { Provider } from '@ethersproject/providers'
+import { Contract, Provider } from 'ethers'
 import { Abi } from './abi'
 import { multicallAbi } from './abi/multicall'
 import { ContractCall } from './types'
@@ -17,7 +16,7 @@ export async function all<T extends any[] = any[]>(
       callData
     }
   })
-  const response = await multicall.callStatic.aggregate(callRequests)
+  const response = await multicall.aggregate.staticCall(callRequests)
   const callCount = calls.length
   const callResult = (<any>[]) as T
   for (let i = 0; i < callCount; i++) {

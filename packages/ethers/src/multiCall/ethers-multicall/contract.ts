@@ -1,4 +1,4 @@
-import { Fragment, FunctionFragment, JsonFragment } from '@ethersproject/abi'
+import { Fragment, FunctionFragment, JsonFragment } from 'ethers'
 
 export class Contract {
   private _address: string

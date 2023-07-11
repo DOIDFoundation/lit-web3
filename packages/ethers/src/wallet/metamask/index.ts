@@ -1,5 +1,5 @@
 import MetaMaskOnboarding from './metamask-onboarding'
-import { getAddress } from '@ethersproject/address'
+import { getAddress } from 'ethers'
 import { emitErr } from '@lit-web3/core/src/emitter'
 import { WalletState, forceRequestUpdate } from '../../wallet'
 import detectEthereum, { getChainId, getChainIdSync, getAccounts } from '../../detectEthereum'

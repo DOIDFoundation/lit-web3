@@ -1,11 +1,11 @@
-import { BigNumber } from '@ethersproject/bignumber'
-
 export const ZERO = '0x0000000000000000000000000000000000000000'
 export const ZERO_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 // gasLimit add 50%
-export const gasLimit = (gasEstimate: BigNumber, multiplyPercent = Number(import.meta.env.VITE_APP_GASLIMIT) || 50) =>
-  gasEstimate.mul(BigNumber.from(10000).add(BigNumber.from(multiplyPercent * 100))).div(BigNumber.from(10000))
+export const gasLimit = (
+  gasEstimate: number | string | bigint,
+  multiplyPercent = Number(import.meta.env.VITE_APP_GASLIMIT) || 50
+) => (BigInt(gasEstimate) * (10000n + BigInt(multiplyPercent) * 100n)) / 1000n
 
 export const shortAddress = (address: string, { leftLen = 6, rightLen = 4 } = {}) => {
   if (!address) return
