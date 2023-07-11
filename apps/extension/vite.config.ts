@@ -8,16 +8,6 @@ if (/reg/.test(depJsSrc)) {
   fs.writeFileSync(depPath, depJsSrc.replace(reg, `page?.scripts.push(...scripts)`))
 }
 // E
-// S touch public/inpage.js
-const inpagPath = resolve(__dirname, 'public/inpage.js')
-try {
-  const time = new Date()
-  fs.utimesSync(inpagPath, time, time)
-} catch (e) {
-  const fd = fs.openSync(inpagPath, 'w')
-  fs.closeSync(fd)
-}
-// E
 
 import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import manifest from './manifest.config'

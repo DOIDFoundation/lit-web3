@@ -30,6 +30,5 @@ export default async ({ mode = '' }) => {
     }
   }
   config.viteConfigOptions.html = false
-  if (isDev) config.build.watch = { usePolling: true }
   return viteConfig(config)({ mode })
 }
