@@ -1,7 +1,7 @@
 import { getKeyring } from '~/lib.next/keyring'
 import { ConnectsStorage } from '~/lib.next/background/storage/preferences'
-import { popupGoto } from '~/middlewares/unlock'
 import emitter from '@lit-web3/core/src/emitter'
+import { requestUnlock } from './unlock'
 import { ERR_USER_DENIED } from '~/lib.next/constants'
 
 export const getAccount = (): BackgroundMiddlware => {
@@ -32,8 +32,6 @@ export const connectAccount = (_chain?: string, name?: string): BackgroundMiddlw
       ctx.res.err = new Error(ERR_USER_DENIED)
       unlisten()
     })
-    await new Promise(async (_next) => {
-      await popupGoto({ path: `/connect/${encodeURIComponent(origin)}/${chain}` })(ctx, _next)
-    })
+    await requestUnlock(ctx, `/connect/${encodeURIComponent(origin)}/${chain}`)
   }
 }

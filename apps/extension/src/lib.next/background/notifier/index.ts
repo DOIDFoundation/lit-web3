@@ -13,16 +13,16 @@ export const getPopup = async (): Promise<any> => {
   return windows.find((win) => win && win.type === 'popup' && win.id === popupStorage._popupId)
 }
 
-let uiIsTriggering = false
 export const openPopup = async (path?: string): Promise<void> => {
   // const tabs = await browser.tabs.query({ active: true })
   // const currentlyActived = tabs.some(({ id }) => id && popupStorage.openTabsIDs[id])
-  // if (!uiIsTriggering && !popupStorage.isOpen && !currentlyActived) {
-  uiIsTriggering = true
+  // if (!popupStorage.uiIsTriggering && !popupStorage.isOpen && !currentlyActived) {
+  if (popupStorage.uiIsTriggering && !popupStorage.isOpen) return
+  popupStorage.uiIsTriggering = true
   try {
     await showPopup(popupStorage.currentPopupId, path)
   } catch {}
-  uiIsTriggering = false
+  popupStorage.uiIsTriggering = false
 }
 
 export const closePopup = async () => {

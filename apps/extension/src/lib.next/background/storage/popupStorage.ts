@@ -17,6 +17,7 @@ export const popupStorage = {
   previousTabId: 0,
   currentPopupId: undefined as PopupId,
   isOpen: false,
+  uiIsTriggering: false,
   openTabsIDs: {} as OpenTabsIDs,
   _popupId: undefined as PopupId,
   _popupAutomaticallyClosed: undefined

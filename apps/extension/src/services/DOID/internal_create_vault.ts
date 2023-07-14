@@ -1,6 +1,6 @@
 // import backgroundMessenger from '~/lib.next/messenger/background'
 import { getKeyring } from '~/lib.next/keyring'
-import { popupGoto } from '~/middlewares/unlock'
+import { requestUnlock } from '~/middlewares/unlock'
 
 export const internal_create_vault: BackgroundService = {
   method: 'internal_create_vault',
@@ -14,9 +14,7 @@ export const internal_create_vault: BackgroundService = {
       // if (doid) res = await keyringCtrl.bindName(doid)
       // await keyringCtrl.setCompletedOnboarding()
       ctx.res.body = res
-      await new Promise(async (_next) => {
-        await popupGoto({ path: `/main` })(ctx, _next)
-      })
+      await requestUnlock(ctx, `/main`)
     } catch (e) {
       throw e
     }
