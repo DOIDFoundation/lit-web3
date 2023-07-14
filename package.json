@@ -9,7 +9,7 @@
     "@aptos-labs/wallet-adapter-core": "2.0.1",
     "@chainify/evm": "2.2.0",
     "@chainify/types": "2.2.0",
-    "ethers": "^6",
+    "ethers": "^6.6.3",
     "@lit-app/state": "^0.8.4",
     "@lit-labs/motion": "^1.0.3",
     "@lit-labs/router": "^0.1.1",

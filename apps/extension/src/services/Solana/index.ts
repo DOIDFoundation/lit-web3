@@ -22,7 +22,7 @@ export const solana_request: BackgroundService = {
         const { options } = req.body
         const provider = await getSolanaProvider()
         const keyring = await getKeyring()
-        res.body = await keyring.getMultiChainAddress(AddressType.solana)
+        res.body = keyring.getMultiChainAddress(AddressType.solana)
         break
       }
       case 'disconnect':
@@ -50,8 +50,7 @@ export const solana_request: BackgroundService = {
             return
           }
           const keyring = await getKeyring()
-          const phrase = await keyring.getMnemonic()
-          const mnemnoic = Mnemonic.fromPhrase(phrase)
+          const mnemnoic = Mnemonic.fromPhrase(keyring.phrase)
           const seed = mnemnoic.computeSeed()
           const solanaKeypair = SolanaKeyPair.fromSeed(derivePath(`m/44'/501'/0'/0'`, seed.replace(/^0x/, '')).key)
 

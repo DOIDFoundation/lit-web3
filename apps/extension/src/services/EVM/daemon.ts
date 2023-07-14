@@ -1,33 +1,42 @@
-// TODO:
 import { getKeyring } from '~/lib.next/keyring'
-import { EvmChainProvider, EvmNetworks, EvmWalletProvider } from '@chainify/evm'
+import { Wallet, HDNodeWallet, JsonRpcProvider, Provider } from 'ethers'
+import { NetworkStorage } from '~/lib.next/background/storage/preferences'
+import emitter from '@lit-web3/core/src/emitter'
 
-let provider: any
+export const EVM = {
+  provider: <Provider | undefined>undefined,
+  wallet: <InstanceType<typeof HDNodeWallet> | undefined>undefined
+}
 let promise: any
-export const getEVMProvider = async () => {
-  if (provider) return provider
-  if (!promise)
-    promise = new Promise(async (resolve) => {
-      let mnemonic!: string
-      try {
-        const keyring = await getKeyring()
-        mnemonic = await keyring.getMnemonic()
-      } catch (err) {
-        promise = null
-        throw err
-      }
-      const network = EvmNetworks.ethereum_mainnet
 
-      network.rpcUrl = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
-      const chainProvider = new EvmChainProvider(network)
-      const walletOptions = {
-        mnemonic,
-        // 'diary wolf balcony magnet view mosquito settle gym slim target divert all',
-        derivationPath: `m/44'/${network.coinType}'/0'/0/0`,
-        network: network
-      }
-      provider = new EvmWalletProvider(walletOptions, chainProvider)
-      resolve(provider)
-    })
-  return await promise
+export const getEVMProvider = async () => {
+  if (EVM.provider) return EVM
+  return await (promise || (promise = new Promise(async (resolve) => resolve(await initEVMProvider()))))
+}
+
+let inited = false
+const initEVMProvider = async () => {
+  // Provider
+  const {
+    rpc: [selectedRpc],
+    id: selectedChainId
+  } = await NetworkStorage.get('ethereum')
+  EVM.provider = new JsonRpcProvider(selectedRpc, +selectedChainId)
+  // Wallet
+  await refreshWallet()
+  if (!inited) {
+    inited = true
+    emitter.on('keyring_update', refreshWallet)
+    emitter.on('unlock', refreshWallet)
+  }
+  return EVM
+}
+
+const refreshWallet = async () => {
+  try {
+    const keyring = await getKeyring()
+    EVM.wallet = Wallet.fromPhrase(keyring.phrase, EVM.provider)
+  } catch {
+    EVM.wallet = undefined
+  }
 }

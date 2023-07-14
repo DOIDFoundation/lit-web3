@@ -16,6 +16,7 @@ class Provider {
       if (window.ethereum?.chainId) chainId = getChainIdSync()
       else if (this.storage) chainId = this.storage
     }
+    if (chainId) chainId = `0x${(+chainId).toString(16)}`
     this.network = new Network(chainId)
     this.provider = this.update({ chainId })
   }

@@ -1,14 +1,13 @@
 // deps: preferences/base.ts
 import emitter from '@lit-web3/core/src/emitter'
-import { ChainName, chainNetworks } from '~/lib.next/chain'
-import type { Network, SelectedChain } from '~/lib.next/chain'
+import { ChainName, chainNetworks, getNetwork, SelectedChain } from '~/lib.next/chain'
 
 import { getPreferences } from './base'
 
 const getChain = (chainName: string) => chainNetworks[chainName as keyof typeof ChainName]
 
 export const NetworkStorage = {
-  get: async (chainName?: keyof typeof ChainName) => {
+  get: async (chainName: keyof typeof ChainName = ChainName.ethereum) => {
     const {
       state: { selectedChain = <SelectedChain>{} }
     } = await getPreferences()
@@ -16,7 +15,8 @@ export const NetworkStorage = {
     for (let _chainName in chainNetworks) {
       if (!selectedChain[_chainName]) selectedChain[_chainName] = { id: getChain(_chainName)[0].id }
     }
-    return chainName ? selectedChain[chainName] : selectedChain
+    let selected = selectedChain[chainName]
+    return getNetwork(chainName, selected.id)
   },
   setSelected: async (networkName: ChainName, network = chainNetworks[networkName]) => {
     const {

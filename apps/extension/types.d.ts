@@ -67,11 +67,6 @@ declare interface Window {
 declare module globalThis {
   var isFirstTimeProfileLoaded: boolean
 }
-declare module 'swappable-obj-proxy'
-declare module 'eth-json-rpc-filters'
-declare module 'eth-json-rpc-filters/subscriptionManager'
-declare module 'debounce-stream'
-declare module 'promise-to-callback'
 declare module '@metamask/eth-keyring-controller'
 
 declare type ChainNet = {

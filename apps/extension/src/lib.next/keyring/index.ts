@@ -5,7 +5,8 @@ import { HardwareKeyringTypes } from '~/constants/keyring'
 import browser from 'webextension-polyfill'
 import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
 import { getAddress as getMultiChainAddress, AddressType } from '~/lib.next/keyring/phrase'
-import ipfsHelper from '~/lib.next/ipfsHelper'
+// import ipfsHelper from '~/lib.next/ipfsHelper'
+import { toUtf8String } from 'ethers'
 
 class Keyring extends KeyringController {
   constructor(keyringOpts: Record<string, any>) {
@@ -37,8 +38,10 @@ class Keyring extends KeyringController {
     return this.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)[0]
   }
   get mnemonic() {
-    throw new Error('deprecated, should use getMnemonic')
-    return this.primaryKeyring?.mnemonic
+    return this.primaryKeyring?.opts.mnemonic
+  }
+  get phrase() {
+    return toUtf8String(new Uint8Array(this.mnemonic))
   }
   getAddresses = async () => await super.getAccounts()
 
@@ -50,8 +53,7 @@ class Keyring extends KeyringController {
     this.store.updateState({ DOIDs, selectedDOID })
     // write ipfs
     // TODO: do not use mnemonic as parameter
-    // const mnemonic = await this.getMnemonic()
-    // const cid = await ipfsHelper.updateJsonData({addresses}, name, { memo: mnemonic })
+    // const cid = await ipfsHelper.updateJsonData({addresses}, name, { memo: this.phrase })
   }
   selectDOID = async (DOIDish: VaultDOID | string | any) => {
     const { name = DOIDish } = DOIDish
@@ -66,12 +68,7 @@ class Keyring extends KeyringController {
   }
 
   // MultiChain
-  getMultiChainAddress = async (type?: AddressType) => await getMultiChainAddress(await this.getMnemonic(), type)
-  getMnemonic = async () => {
-    if (!this.primaryKeyring) throw new Error(`No keyring found`)
-    const keyring = await this.getKeyringForAccount(this.selectedAddress)
-    return new TextDecoder().decode(new Uint8Array((await keyring.serialize()).mnemonic))
-  }
+  getMultiChainAddress = (type?: AddressType) => getMultiChainAddress(this.phrase, type)
 
   // Overrides
   addNewAccount = async (name: string) => {
@@ -95,11 +92,11 @@ class Keyring extends KeyringController {
     return DOID
   }
 
-  addDOID = async (name: string, mnemnoic: Uint8Array | string | number[]) => {
-    if (!name || !mnemnoic) return
-    if (typeof mnemnoic !== 'string') mnemnoic = new TextDecoder().decode(new Uint8Array(mnemnoic))
+  addDOID = async (name: string, mnemonic: Uint8Array | string | number[]) => {
+    if (!name || !mnemonic) return
+    if (typeof mnemonic !== 'string') mnemonic = new TextDecoder().decode(new Uint8Array(mnemonic))
     const keyring = await super.addNewKeyring('HD Key Tree', {
-      mnemonic: mnemnoic,
+      mnemonic: mnemonic,
       numberOfAccounts: 1
     })
 
@@ -112,10 +109,10 @@ class Keyring extends KeyringController {
     this.setDOIDs(name, firstAccount)
   }
 
-  async createNewVaultAndRestore(name: string, password: string, mnemnoic: Uint8Array | string | number[]) {
-    if (!name || !password || !mnemnoic) return
-    if (typeof mnemnoic !== 'string') mnemnoic = new TextDecoder().decode(new Uint8Array(mnemnoic))
-    const vault = await super.createNewVaultAndRestore(password, mnemnoic)
+  async createNewVaultAndRestore(name: string, password: string, mnemonic: Uint8Array | string | number[]) {
+    if (!name || !password || !mnemonic) return
+    if (typeof mnemonic !== 'string') mnemonic = new TextDecoder().decode(new Uint8Array(mnemonic))
+    const vault = await super.createNewVaultAndRestore(password, mnemonic)
     if (!this.primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
     let addresses = await this.getAddresses()
     await this.setDOIDs(name, addresses[0])

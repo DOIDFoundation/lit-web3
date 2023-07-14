@@ -18,7 +18,7 @@ export const getMultiChainAddress = (type = undefined): BackgroundMiddlware => {
     if (doidAddressCache.hasOwnProperty(_name)) {
       addresses = doidAddressCache[_name]
     } else {
-      addresses = await keyring.getMultiChainAddress(type)
+      addresses = keyring.getMultiChainAddress(type)
       doidAddressCache[_name] = Object.assign({}, addresses)
     }
 

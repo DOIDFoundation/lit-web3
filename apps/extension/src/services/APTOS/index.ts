@@ -28,16 +28,16 @@ export const APTOS_request: BackgroundService = {
   middlewares: [],
 
   fn: async (ctx) => {
-    let mnemonic!: string
+    let phrase = ''
     try {
       const keyring = await getKeyring()
-      mnemonic = await keyring.getMnemonic()
+      phrase = keyring.phrase
     } catch (err) {
       throw err
     }
 
     const walletOptions = {
-      mnemonic,
+      mnemonic: phrase,
       derivationPath: `m/44'/637'/0'/0'/0'`
     }
     const provider = getAptosProvider()
