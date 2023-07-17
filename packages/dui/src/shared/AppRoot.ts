@@ -8,6 +8,7 @@ import type { RouteConfig } from '@lit-labs/router'
 import { fallbackRender, fallbackEnter } from './router/fallback'
 import { Router, routerGuard } from './router'
 import emitter from '@lit-web3/core/src/emitter'
+import { debounce } from '@lit-web3/ethers/src/utils'
 
 import '~/variables-override.css' // -> /apps/*/src/variables-override.css
 import '../c/g.css'
@@ -27,10 +28,11 @@ export default function ({ routes = <RouteConfig[]>[], hashMode = false } = {}) 
       })
     )
 
+    // Trick for @lit-app/state
+    forceUpdate = debounce(() => this.requestUpdate(), 100)
     constructor() {
       super()
-      // Trick for @lit-app/state
-      emitter.on('force-request-update', () => setTimeout(() => this.requestUpdate()))
+      emitter.on('force-request-update', () => this.forceUpdate())
     }
 
     connectedCallback() {

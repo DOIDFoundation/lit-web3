@@ -1,4 +1,5 @@
 import emitter from '@lit-web3/core/src/emitter'
+import { sleep } from './utils'
 
 export enum WalletState {
   DISCONNECTED = 'Disconnected',
@@ -10,8 +11,8 @@ export enum WalletState {
   WAITING = 'Waiting...'
 }
 
-// Trick for @lit-app/state
-export const forceRequestUpdate = async () => {
-  await 0
+export const emitWalletChange = async () => {
+  emitter.emit('wallet-changed')
+  await sleep(0)
   emitter.emit('force-request-update')
 }

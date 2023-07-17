@@ -17,7 +17,7 @@ export class ConnectWalletBtn extends TailwindElement(style) {
   @state() menu = false
 
   get account() {
-    return bridgeStore.bridge?.account
+    return bridgeStore.account
   }
   get addr() {
     return bridgeStore.bridge?.shortAccount

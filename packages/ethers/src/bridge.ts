@@ -4,7 +4,7 @@ import { shortAddress } from './utils'
 import Provider from './provider'
 import { getNetwork } from './networks'
 import detectEthereum, { getAccounts } from './detectEthereum'
-import { WalletState, forceRequestUpdate } from './wallet'
+import { WalletState, emitWalletChange } from './wallet'
 import { EtherNetworks } from './constants/networks'
 import MetaMask from './wallet/metamask'
 
@@ -42,7 +42,6 @@ export const walletStore = new WalletStore()
 
 export class Bridge {
   public selected: WalletApp | undefined
-  public wallet: any
   public wallets: WalletList
   public promise: any
   public Provider: any
@@ -50,12 +49,14 @@ export class Bridge {
   constructor(options?: useBridgeOptions) {
     this.wallets = Wallets
     this.Provider = Provider(options)
-    this.wallet = walletStore.wallet
     this.selected = undefined
     this.promise = undefined
     this.store = walletStore
   }
   alreadyTried = false
+  get wallet() {
+    return walletStore.wallet
+  }
   async switchNetwork(chainId: ChainId) {
     const { chainId: currentChainId } = this.network
     if (currentChainId === chainId) return
@@ -167,8 +168,8 @@ export class Bridge {
           this.promise = undefined
         }
         // if (wallet.state === WalletState.CONNECTED) this.wallet = walletStore.wallet = wallet
-        this.wallet = walletStore.wallet = wallet
-        forceRequestUpdate()
+        walletStore.wallet = wallet
+        emitWalletChange()
         return this.wallet
       })()
     return this.promise

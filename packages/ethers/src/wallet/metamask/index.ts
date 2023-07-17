@@ -1,7 +1,7 @@
 import MetaMaskOnboarding from './metamask-onboarding'
 import { getAddress } from 'ethers'
 import { emitErr } from '@lit-web3/core/src/emitter'
-import { WalletState, forceRequestUpdate } from '../../wallet'
+import { WalletState, emitWalletChange } from '../../wallet'
 import detectEthereum, { getChainId, getChainIdSync, getAccounts } from '../../detectEthereum'
 import screen from '@lit-web3/core/src/screen'
 
@@ -29,16 +29,15 @@ class MetaMask implements Wallet {
     return (this.state = WalletState[state])
   }
   get account() {
-    const [account = ''] = this.accounts
-    return account
+    return this.accounts[0] ?? ''
   }
   updateAccounts(accounts = []) {
     this.accounts = accounts.map((r) => getAddress(r))
-    forceRequestUpdate()
+    emitWalletChange()
   }
   updateProvider(chainId?: string) {
     this.provider.update({ chainId })
-    forceRequestUpdate()
+    emitWalletChange()
   }
   unlisten() {
     const { ethereum } = window

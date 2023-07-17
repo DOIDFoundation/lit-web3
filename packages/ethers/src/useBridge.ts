@@ -1,13 +1,12 @@
 import { State, property } from '@lit-app/state'
 import Network, { Networks } from './networks'
 import Contracts from './constants/contracts'
-import { Bridge } from './bridge'
+import { Bridge, walletStore } from './bridge'
 import emitter from '@lit-web3/core/src/emitter'
 import { gasLimit, nowTs } from './utils'
 import { normalizeTxErr } from './parseErr'
 import { Contract, formatUnits } from 'ethers'
 export { StateController } from '@lit-app/state'
-
 // Singleton Data
 let bridgeInstance: any
 let blockNumber = 0
@@ -17,14 +16,21 @@ let blockNumber = 0
 class BridgeStore extends State {
   @property({ value: 0 }) blockNumber!: number
   @property({ value: bridgeInstance, type: Object }) bridge!: Bridge
+  @property({ value: 0 }) _account: string = ''
+  constructor() {
+    super()
+    emitter.on('wallet-changed', () => {
+      this._account = walletStore.account
+    })
+  }
   get stateTitle(): string {
     return this.bridge.state || ''
   }
   get wallet(): any {
-    return this.bridge.wallet
+    return walletStore.wallet
   }
   get account(): any {
-    return this.bridge.store.wallet?.account || this.wallet?.account || ''
+    return walletStore.account || this._account || ''
   }
   get envKey(): string {
     return `${this.bridge.network.chainId}.${this.bridge.account}`
