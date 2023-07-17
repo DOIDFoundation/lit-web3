@@ -50,12 +50,12 @@ export class ConnectWalletDialog extends TailwindElement(style) {
     this.step = 2
     try {
       await this.bridge.select(i)
-    } catch (err) {
+    } catch {
       // back()
     }
     if (bridgeStore.bridge.isConnected) {
+      this.close() // Auto close
       emitter.emit('wallet-connected')
-      setTimeout(() => this.close(), 2000) // Auto close
     }
   }
   back() {

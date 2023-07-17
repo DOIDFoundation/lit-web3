@@ -18,14 +18,15 @@ class MetaMask implements Wallet {
     this.provider = provider
     this.accounts = []
     this.inited = false
-    this.state = this.updateState()
+    this.state = this.resetState()
     this.listeners = new Map()
   }
-  updateState(): WalletState {
-    return (this.state =
-      WalletState[
-        MetaMaskOnboarding.isMetaMaskInstalled() ? 'INSTALLED' : this.inited ? 'NOT_INSTALLED' : 'CONNECTING'
-      ])
+  resetState(): WalletState {
+    const installed = MetaMaskOnboarding.isMetaMaskInstalled()
+    let state: keyof typeof WalletState = 'CONNECTING'
+    if (installed) state = this.inited ? 'WAITING' : 'INSTALLED'
+    else state = this.inited ? 'NOT_INSTALLED' : 'CONNECTING'
+    return (this.state = WalletState[state])
   }
   get account() {
     const [account = ''] = this.accounts
@@ -66,7 +67,7 @@ class MetaMask implements Wallet {
   disconnect() {
     this.unlisten()
     this.onboarding.stopOnboarding()
-    if ([WalletState.CONNECTING, WalletState.INSTALLING].includes(this.state)) this.updateState()
+    if ([WalletState.CONNECTING, WalletState.INSTALLING].includes(this.state)) this.resetState()
     localStorage.removeItem('metamask.injected')
     this.updateAccounts([])
     this.updateProvider()
@@ -84,8 +85,9 @@ class MetaMask implements Wallet {
   }
   async connect() {
     this.inited = true
+    this.resetState()
     const ethereum = await detectEthereum()
-    if (!ethereum) this.updateState()
+    if (!ethereum) this.resetState()
     switch (this.state) {
       case WalletState.CONNECTING:
       case WalletState.INSTALLING:

@@ -6,7 +6,7 @@
   }
 }
 i.i.wallet-logo {
-  @apply inline-flex mt-8 w-16 h-16 items-center justify-center text-xl bg-no-repeat;
+  @apply inline-flex mt-8 w-16 h-16 items-center justify-center text-xl bg-no-repeat bg-center;
 }
 
 .connect-wallet-list {

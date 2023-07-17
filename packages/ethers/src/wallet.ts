@@ -6,7 +6,8 @@ export enum WalletState {
   CONNECTING = 'Connecting...',
   NOT_INSTALLED = 'Not Installed',
   INSTALLED = 'Installed',
-  INSTALLING = 'Installing'
+  INSTALLING = 'Installing...',
+  WAITING = 'Waiting...'
 }
 
 // Trick for @lit-app/state
