@@ -129,7 +129,7 @@ export class Bridge {
       this.connecting = (async () => {
         if (this.wallet?.inited) return
         let { ethereum } = window
-        if (autoConnect || ethereum) ethereum = await detectEthereum()
+        if (autoConnect || !ethereum) ethereum = await detectEthereum()
         if (ethereum?.isMetaMask && localStorage.getItem('metamask.injected')) {
           this.connectedAccounts = (await getAccounts(ethereum)) || []
           if (this.connectedAccounts[0]) await this.select(0)

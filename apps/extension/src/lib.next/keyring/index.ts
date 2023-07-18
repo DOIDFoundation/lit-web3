@@ -25,6 +25,9 @@ class Keyring extends KeyringController {
   get isUnlocked() {
     return this.memState.isUnlocked
   }
+  get primaryKeyring() {
+    return this.keyrings[0]
+  }
   get DOIDs() {
     return this.isUnlocked ? this.state.DOIDs : {}
   }
@@ -34,11 +37,11 @@ class Keyring extends KeyringController {
   get selectedAddress() {
     return this.selectedDOID?.address
   }
-  get primaryKeyring() {
-    return this.getKeyringsByType(HardwareKeyringTypes.hdKeyTree)[0]
+  get selectedKeyring() {
+    return this.keyrings.find((keyring: Keyring) => keyring.getAccounts().includes(this.selectedAddress))
   }
   get mnemonic() {
-    return this.primaryKeyring?.opts.mnemonic
+    return this.selectedKeyring?.opts.mnemonic
   }
   get phrase() {
     return toUtf8String(new Uint8Array(this.mnemonic))
@@ -153,16 +156,23 @@ getKeyring().then(() => {
     keyring.on(evt, () => emitter.emit(evt))
   })
   // keyring does not persist state to storage @10.x
-  keyring.store.subscribe(saveStateToStorage(storageKey.keyring))
+  keyring.store.subscribe((state: any) => {
+    saveStateToStorage(storageKey.keyring)(state)
+    keyring.memStore.updateState(state)
+  })
   // keyring memStore is not persistent
   keyring.memStore.subscribe(async (state: any) => {
+    let addresses = []
     if (!state) return console.warn('[To be confirmed] keyring state is undefined', state)
     const { keyrings, encryptionKey: loginToken, encryptionSalt: loginSalt } = state
     if (!keyrings) return console.warn('[To be confirmed] keyring state.keyrings is undefined', state)
     // @ts-expect-error
-    await browser.storage.session.set({ loginToken, loginSalt })
+    if (loginToken && loginSalt) await browser.storage.session.set({ loginToken, loginSalt })
+
     // TODO: Is this necessary for now?
-    const addresses = keyrings.reduce((acc: any, { accounts: _addresses } = <any>{}) => acc.concat(_addresses), [])
+    if (keyrings)
+      addresses = keyrings.reduce((acc: any, { accounts: _addresses } = <any>{}) => acc.concat(_addresses), [])
+
     emitter.emit('keyring_update', addresses)
   })
 })

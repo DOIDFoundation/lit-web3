@@ -4,6 +4,7 @@
 /* Background Methods */
 // background <-> inpage
 export const publicMethods = Object.freeze([
+  // DOID
   'DOID_setup',
   'DOID_name',
   'DOID_account',
@@ -11,8 +12,10 @@ export const publicMethods = Object.freeze([
   'DOID_account_change',
   'DOID_account_recover',
   'DOID_chain_address',
+  'reply_DOID_setup',
+  // EVM
   'evm_request',
-  'reply_DOID_setup'
+  'evm_response'
 ])
 // background <-> popup (Always pass private methods, so far)
 // export const privateMethods = Object.freeze(['state_keyring', 'state_lock', 'internal_isunlock', 'state_account'])

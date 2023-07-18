@@ -51,7 +51,7 @@ export const ConnectsStorage = {
 
 // Sync
 getPreferences().then(() => {
-  // emitter.on(`keyring_update`, (e: CustomEvent) => {
-  //   ConnectsStorage.sync(e.detail.DOIDs)
-  // })
+  emitter.on('keyring_update', (e: CustomEvent) => {
+    ConnectsStorage.sync()
+  })
 })
