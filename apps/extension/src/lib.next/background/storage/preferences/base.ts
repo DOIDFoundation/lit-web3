@@ -1,6 +1,6 @@
 // User's Preferences storage (deps: KeyringController)
 // src: metamask-extension/app/scripts/controllers/preferences.js
-import { getKeyring } from '~/lib.next/keyring'
+// import { getKeyring } from '~/lib.next/keyring'
 // import { normalize as normalizeAddress } from '@metamask/eth-sig-util'
 import emitter from '@lit-web3/core/src/emitter'
 import { saveStateToStorage, storageKey, loadStateFromStorage } from '~/lib.next/background/storage/extStorage'

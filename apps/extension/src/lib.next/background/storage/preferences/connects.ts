@@ -1,52 +1,53 @@
 // deps: preferences/base.ts
 import emitter from '@lit-web3/core/src/emitter'
 import { getPreferences } from './base'
+import { isEqual } from 'lodash'
 
-type Connection = {
-  [key: string]: true
-}
+type Names = string[]
+type Connected = { names: Names }
 type Connects = {
-  [name: string]: Connection
+  [host: string]: Connected
 }
 
-// key: domain-chain, value: names
+// key: host, value: names
 
 export const ConnectsStorage = {
-  getConnects: async () => (await getPreferences()).state.connects ?? {},
-  update: async (connects: Connects, has: boolean, name: string, origin?: string, chain?: string) => {
-    const { updateState } = await getPreferences()
-    updateState({ connects })
-    emitter.emit('connect_change', { name, origin, has, chain })
+  // Reads
+  getAll: async (): Promise<Connects> => (await getPreferences()).state.connects ?? {},
+  get: async (host: string): Promise<Names> => (await ConnectsStorage.getAll())[host]?.names ?? [],
+  has: async (host: string, name = '') => (await ConnectsStorage.get(host)).includes(name),
+
+  // Writes
+  update: async (connects?: Connects) => {
+    if (connects) {
+      const { state, updateState } = await getPreferences()
+      if (isEqual(state.connects, connects)) return
+      updateState({ connects })
+    }
+    emitAccountsChange()
   },
-  get: async (key: string) => {
-    const connects = await ConnectsStorage.getConnects()
-    const connection = connects[key]
-    const cur = connection.names.length ? connection.names[0] : ''
-    return cur
+  set: async (host: string, names = []) => {
+    if (!host) return
+    const connects = await ConnectsStorage.getAll()
+    connects[host] ??= { names: [] }
+    connects[host].names = names
+    ConnectsStorage.update(connects)
+    emitter.emit('connect_change', connects)
   },
-  has: async (key: string, name?: string): Promise<boolean> => {
-    const connects = await ConnectsStorage.getConnects()
-    const connect = connects[key]
-    return name ? connect?.names?.includes(name) : connect
-  },
-  set: async (key: string, names: string) => {
-    const connects = await ConnectsStorage.getConnects()
-    const _names = names.split(',')
-    connects[key] ?? (connects[key] = {})
-    connects[key]['names'] = _names
-    const [domain, chain] = key.split('-')
-    ConnectsStorage.update(connects, true, names[0], domain, chain)
-  },
-  remove: async (key: string, name: string) => {
-    const connects = await ConnectsStorage.getConnects()
-    const names = connects[key]?.names
-    const idx = names?.indexOf(name)
-    if (idx < 0) return
+  remove: async (host: string, name: string) => {
+    if (!ConnectsStorage.has(host, name)) return
+    const connects = await ConnectsStorage.getAll()
+    const { names } = connects[host]
+    const idx = names.findIndex((r) => r === name)
     names.splice(idx, 1)
-    const [domain, chain] = key.split('-')
-    ConnectsStorage.update(connects, false, name, domain, chain)
+    ConnectsStorage.update(connects)
+    emitter.emit('connect_change', connects)
   },
-  sync: async () => {}
+  // Sync with keyring
+  sync: async () => {
+    // TODO
+    ConnectsStorage.update()
+  }
 }
 
 // Sync
@@ -55,3 +56,7 @@ getPreferences().then(() => {
     ConnectsStorage.sync()
   })
 })
+
+const emitAccountsChange = async () => {
+  emitter.emit('connect_change', await ConnectsStorage.getAll())
+}

@@ -43,11 +43,10 @@ export const state2path = (state: Record<string, any>, path = '') => {
 // Auth requests (in middleware chain, eg: `middlewares: [unlock()]`)
 export const unlock = (path?: string): BackgroundMiddlware => popupGoto({ path, unlock: true })
 // Auth requests (manual await, eg: `await requestUnlock(ctx)`)
-export const requestUnlock = async (ctx: BackgroundMiddlwareCtx, path?: string) => {
-  await new Promise<void>(async (_next) => {
-    await popupGoto({ path, unlock: true })(ctx, _next)
+export const requestUnlock = async (ctx: BackgroundMiddlwareCtx, path?: string) =>
+  await new Promise<void>(async (_next, reject) => {
+    await popupGoto({ path, unlock: true })(ctx, (res: any, err: Error) => (err ? reject(err) : _next(res)))
   })
-}
 
 export const popupGoto = ({ path = '', unlock = false } = {}): BackgroundMiddlware => {
   return async (ctx, next) => {

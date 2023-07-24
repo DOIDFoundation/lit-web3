@@ -28,10 +28,10 @@ class Keyring extends KeyringController {
   get primaryKeyring() {
     return this.keyrings[0]
   }
-  get DOIDs() {
+  get DOIDs(): KeyringDOIDs {
     return this.isUnlocked ? this.state.DOIDs : {}
   }
-  get selectedDOID() {
+  get selectedDOID(): KeyringDOID {
     return this.isUnlocked ? this.state.selectedDOID : {}
   }
   get selectedAddress() {
@@ -49,9 +49,9 @@ class Keyring extends KeyringController {
   getAddresses = async () => await super.getAccounts()
 
   // DOID methods
-  setDOIDs = async (name: string, address: string) => {
-    const DOID = { name, address }
-    const { DOIDs = {}, selectedDOID = DOID } = this.state
+  setDOIDs = async (name: string, address: Address) => {
+    const DOID: KeyringDOID = { name, address }
+    const { DOIDs = <KeyringDOIDs>{}, selectedDOID = DOID } = this.state
     DOIDs[name] = DOID
     this.store.updateState({ DOIDs, selectedDOID })
     // write ipfs

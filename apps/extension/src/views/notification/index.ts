@@ -8,18 +8,18 @@ import popupMessenger from '~/lib.next/messenger/popup'
 @customElement('view-notification')
 export class ViewStart extends TailwindElement(null) {
   @state() message = ''
-  @state() origin = ''
+  @state() host = ''
   @property() ROUTE?: any
   constructor() {
     super()
   }
   async connectedCallback() {
     super.connectedCallback()
-    // const { msg, origin } = await popupMessenger.send('get_personal_sign', '')
+    // const { msg, host } = await popupMessenger.send('get_personal_sign', '')
     // console.log(msg, 'msg')
-    const { msg, origin } = this.ROUTE
+    const { msg, host } = this.ROUTE
     this.message = msg
-    this.origin = origin
+    this.host = host
   }
 
   get messageTxt() {
@@ -36,7 +36,7 @@ export class ViewStart extends TailwindElement(null) {
   render() {
     return html`<div class="view-notification">
       <div class="text-center px-8">
-        <div class="border rounded-full p-2 px-4 inline-block text-blue-600">${this.origin}</div>
+        <div class="border rounded-full p-2 px-4 inline-block text-blue-600">${this.host}</div>
         <div class="text-xl font-bold mt-2">Signature request</div>
         <div class="mt-2">
           Only sign this message if you fully understand the content and trust the requesting site.

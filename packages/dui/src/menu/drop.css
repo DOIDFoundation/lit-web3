@@ -1,4 +1,4 @@
-.doid-drop {
+.dui-drop {
   @apply z-20 absolute top-full w-72 bg-white drop-shadow-lg rounded-lg;
   min-height: 9rem;
   border: 1px solid #ccc;

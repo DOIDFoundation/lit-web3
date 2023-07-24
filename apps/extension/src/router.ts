@@ -183,9 +183,9 @@ export const routes = [
   },
   {
     name: 'connect',
-    path: '/connect/:origin?/:chain?',
-    render: ({ origin = '', chain = '' }) => {
-      return html`<view-connect .origin=${safeDecodeURIComponent(origin)} .chain=${chain}></view-connect>`
+    path: '/connect/:host?/:chain?',
+    render: ({ host = '', chain = '' }) => {
+      return html`<view-connect .host=${safeDecodeURIComponent(host)} .chain=${chain}></view-connect>`
     },
     enter: async () => {
       // if (await isConnected()) {
@@ -197,10 +197,10 @@ export const routes = [
   },
   {
     name: 'notification',
-    path: '/notification/:msg?/:origin?',
-    render: ({ msg = '', origin = '' }) => {
-      const key = [msg, origin].join('-')
-      return html`${keyed(key, html`<view-notification .ROUTE=${{ msg, origin }}></view-notification>`)}`
+    path: '/notification/:msg?/:host?',
+    render: ({ msg = '', host = '' }) => {
+      const key = [msg, host].join('-')
+      return html`${keyed(key, html`<view-notification .ROUTE=${{ msg, host }}></view-notification>`)}`
     },
     enter: async () => {
       await import('~/views/notification')

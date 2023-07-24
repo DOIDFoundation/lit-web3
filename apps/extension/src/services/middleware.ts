@@ -54,7 +54,7 @@ const createReq = (message: webextMessage): Req => {
     method,
     id: ++reqId,
     body,
-    headers: { extOrigin: `${context}${tabId ? `@${tabId}` : ''}`, origin: '', tabId, isInternal }
+    headers: { extOrigin: `${context}${tabId ? `@${tabId}` : ''}`, host: '', tabId, isInternal }
   }
 }
 

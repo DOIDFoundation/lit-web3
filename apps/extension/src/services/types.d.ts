@@ -4,7 +4,7 @@ declare type webextMessage = BridgeMessage<JsonValue>
 declare type Header = {
   isInternal: boolean // If request origin is content/background/popup
   extOrigin: string
-  origin: string
+  host: string
   tabId?: number
 }
 declare type Req = {

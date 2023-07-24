@@ -17,6 +17,9 @@
     @apply text-xs;
   }
 }
+.dui-header.fixed {
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+}
 
 .nav-menu-btn-1,
 .nav-menu-btn::before,

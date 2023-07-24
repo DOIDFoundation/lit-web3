@@ -29,6 +29,7 @@ class BackgroundMessenger extends Messenger implements MESSENGER {
     } catch {}
     return await promise
   }
+  getAllTabs = getAllTabs
   // TODO: This's not safe currently (ref: https://github.com/zikaari/webext-bridge/issues/37)
   broadcast: MessengerSend = async (method, params = {}) => {
     if (publicMethods.includes(method)) {

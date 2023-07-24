@@ -39,8 +39,8 @@ const getHeaders: BackgroundMiddlware = async ({ req: { headers } }, next) => {
   const { isInternal, tabId } = headers
   if (!isInternal) {
     const { url } = await browser.tabs.get(tabId!)
-    const { origin } = new URL(url!)
-    Object.assign(headers, { origin })
+    const { host } = new URL(url!)
+    Object.assign(headers, { host })
     Object.freeze(headers)
   }
   next()

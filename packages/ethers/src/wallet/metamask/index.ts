@@ -43,7 +43,7 @@ class MetaMask implements Wallet {
     const { ethereum } = window
     if (!ethereum) return
     // ethereum.removeAllListeners()
-    this.listeners.forEach((fn: Function, evt: string) => ethereum.removeAllListeners(evt, fn))
+    this.listeners.forEach((fn: Function, evt: string) => ethereum?.removeAllListeners(evt, fn))
   }
   onMessage(msg: any) {
     console.info(msg, 'MetaMask onMessage')

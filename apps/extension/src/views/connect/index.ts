@@ -14,7 +14,7 @@ import style from './connect.css?inline'
 @customElement('view-connect')
 export class ViewUnlock extends TailwindElement(style) {
   bindKeyring: any = new StateController(this, uiKeyring)
-  @property() origin = ''
+  @property() host = ''
   @property() chain = ''
   @state() names: Record<string, boolean> = {}
 
@@ -27,9 +27,9 @@ export class ViewUnlock extends TailwindElement(style) {
     return uiKeyring.selectedDOID
   }
   get favicon() {
-    return `${this.origin}/favicon.ico`
+    return `https://${this.host}/favicon.ico`
   }
-  get _chain() {
+  get Chain() {
     return chainsDefault.find((r: any) => r.name === this.chain)
   }
 
@@ -45,12 +45,11 @@ export class ViewUnlock extends TailwindElement(style) {
 
   connect = async () => {
     if (!this.selectNames.length) return
-    const chain = this._chain?.name
     try {
       const res = await popupMessenger.send('internal_connect', {
         names: this.selectNames,
-        domain: decodeURIComponent(this.origin),
-        chain
+        host: this.host,
+        chain: this.chain
       })
       if (res === 'ok') this.close()
     } catch (e) {
@@ -76,13 +75,13 @@ export class ViewUnlock extends TailwindElement(style) {
     return html`
       <div class="connect">
         <div class="dui-container sparse">
-          <!-- Origin -->
+          <!-- Host -->
           <div class="text-center">
             <div
               class="border border-gray-300 rounded-full bg-white p-3 px-4 gap-2 inline-flex justify-center items-center"
             >
               <img class="w-5 h-5" src=${this.favicon} />
-              <span>${this.origin}</span>
+              <span>${this.host}</span>
             </div>
             <!-- <dui-button class="inline-flex items-center">ethers</dui-button> -->
           </div>
@@ -113,7 +112,7 @@ export class ViewUnlock extends TailwindElement(style) {
           <!-- Chain -->
           <div>
             <strong class="my-4 font-semibold">Chain:</strong>
-            <span class="">${this._chain?.title}</span>
+            <span class="">${this.Chain?.title}</span>
           </div>
         </div>
 

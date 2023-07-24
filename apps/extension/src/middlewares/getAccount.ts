@@ -2,36 +2,74 @@ import { getKeyring } from '~/lib.next/keyring'
 import { ConnectsStorage } from '~/lib.next/background/storage/preferences'
 import emitter from '@lit-web3/core/src/emitter'
 import { requestUnlock } from './unlock'
-import { ERR_USER_DENIED } from '~/lib.next/constants'
+import { names2DOIDs } from '~/services/shared'
 
-export const getAccount = (): BackgroundMiddlware => {
+// >> res.body includes {DOID, name, account}
+export const getSelectedAccount = (): BackgroundMiddlware => {
   return async (ctx, next) => {
     const { req, state } = ctx
-    const [chain] = req.body
-    const { selectedDOID: DOID } = await getKeyring()
-    const { name, address } = DOID
-    Object.assign(state, { DOID, name, account: address })
+    const keyring = await getKeyring()
     // internal
-    if (req.headers.isInternal) return next()
-    // inpage need to connect
-    await connectAccount(chain, name)(ctx, next)
+    if (req.headers.isInternal) {
+      const { selectedDOID: DOID } = keyring
+      const { name, address } = DOID
+      Object.assign(state, { DOID, name, account: address })
+      return next()
+    }
+    // inpage needs connected account
+    await asssignConnectedDOIDs()(ctx, next)
   }
 }
 
-export const connectAccount = (_chain?: string, name?: string): BackgroundMiddlware => {
+const fetchConnectedDOIDs = async (host: string) => await names2DOIDs(await ConnectsStorage.get(host))
+
+// For inpage only
+// >> res.body includes {DOIDs}
+export const asssignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): BackgroundMiddlware => {
   return async (ctx, next) => {
-    const chain = _chain ?? 'ethereum'
-    const { origin } = ctx.req.headers
-    const connected = await ConnectsStorage.has(`${origin}-${chain}`, name)
-    if (connected) return next()
-    const unlisten = emitter.on('connect_change', async (e: CustomEvent) => {
-      const { origin: _origin, has } = e.detail
-      if (has && _origin === origin) return next()
-    })
-    emitter.on('popup_closed', () => {
-      ctx.res.err = new Error(ERR_USER_DENIED)
+    const { req, state } = ctx
+    state.DOIDs = []
+    const { host } = req.headers
+    const { isUnlocked } = await getKeyring()
+
+    const getConnects = async () => await ConnectsStorage.get(host)
+    let connects = await getConnects()
+    const isConnected = () => connects.length
+    const assignDOIDs = async () => (state.DOIDs = (await fetchConnectedDOIDs(host)).slice(0, 1))
+
+    // No need to unlock
+    if (!needUnlock) {
+      if (isConnected()) await assignDOIDs()
+      return next()
+    }
+
+    // Already unlocked and connected
+    if (isUnlocked && isConnected()) {
+      await assignDOIDs()
+      return next()
+    }
+
+    // Need unlock and not connected yet
+    const unlisten = emitter.on('connect_change', async () => {
+      await assignDOIDs()
+      if (!state.DOIDs.length) return
       unlisten()
+      next()
     })
-    await requestUnlock(ctx, `/connect/${encodeURIComponent(origin)}/${chain}`)
+    emitter.once('popup_closed', () => {
+      unlisten()
+      next()
+    })
+    await requestUnlock(ctx, isConnected() ? undefined : `/connect/${encodeURIComponent(host)}/${state.chain}`)
   }
+}
+
+export const requestConnecteDOIDs = (opts?: any) => async (ctx: BackgroundMiddlwareCtx) =>
+  await new Promise<void>(
+    async (_next, reject) =>
+      await asssignConnectedDOIDs(opts)(ctx, (res: any, err: Error) => (err ? reject(err) : _next()))
+  )
+
+export const isConnected = (name: string): BackgroundMiddlware => {
+  return async (ctx, next) => {}
 }
