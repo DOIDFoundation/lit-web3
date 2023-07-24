@@ -137,9 +137,10 @@ const viteConfig = (options = {}) => {
         ...(viteConfigOptions.legacy === false
           ? []
           : [
-              legacy({
-                polyfills: ['web.url', 'es.object.from-entries']
-              })
+              //TODO: Disabled for `BigInt` error (@vitejs/plugin-legacy@4.1.1)
+              // legacy({
+              //   polyfills: ['web.url', 'es.object.from-entries']
+              // })
             ])
       ]
     }

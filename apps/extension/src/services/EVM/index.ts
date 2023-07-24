@@ -2,7 +2,6 @@ import backgroundMessenger from '~/lib.next/messenger/background'
 import { requestConnecteDOIDs, popupGoto, autoClosePopup } from '~/middlewares'
 import { getEVMProvider } from './daemon'
 import { toUtf8String } from 'ethers'
-import { getKeyring } from '~/lib.next/keyring'
 import { EVMBodyParser } from './bodyParser'
 
 export const EVM_request: BackgroundService = {
@@ -12,14 +11,13 @@ export const EVM_request: BackgroundService = {
   fn: async (ctx) => {
     const { req, res, state } = ctx
     const { method, params } = req.body
-    const keyring = await getKeyring()
     const { provider } = await getEVMProvider()
 
     // Unauthed req
     if (method === 'eth_chainId') return (res.body = (await provider.getNetwork()).chainId.toString())
     if (method === 'eth_blockNumber') return (res.body = await provider.getBlockNumber())
 
-    const needUnlock = !keyring.isUnlocked && !['eth_accounts'].includes(method)
+    const needUnlock = !['eth_accounts'].includes(method)
 
     await requestConnecteDOIDs({ needUnlock })(ctx)
     const accounts = state.DOIDs.map((DOID: KeyringDOID) => DOID.address)

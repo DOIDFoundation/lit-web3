@@ -8,6 +8,7 @@ import { txReceipt } from '../txReceipt'
 
 // Queries
 export const cookNameInfo = (src: Record<string, any>, opts = {}): NameInfo => {
+  if ('toObject' in src) src = src.toObject()
   const data: Record<string, any> = { ...src, ...opts }
   const { owner, status, account } = data
   const itsme = !!account && owner.toLowerCase() === account.toLowerCase()

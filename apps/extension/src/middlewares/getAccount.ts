@@ -17,7 +17,7 @@ export const getSelectedAccount = (): BackgroundMiddlware => {
       return next()
     }
     // inpage needs connected account
-    await asssignConnectedDOIDs()(ctx, next)
+    await assignConnectedDOIDs()(ctx, next)
   }
 }
 
@@ -25,7 +25,7 @@ const fetchConnectedDOIDs = async (host: string) => await names2DOIDs(await Conn
 
 // For inpage only
 // >> res.body includes {DOIDs}
-export const asssignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): BackgroundMiddlware => {
+export const assignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): BackgroundMiddlware => {
   return async (ctx, next) => {
     const { req, state } = ctx
     state.DOIDs = []
@@ -35,7 +35,7 @@ export const asssignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): Back
     const getConnects = async () => await ConnectsStorage.get(host)
     let connects = await getConnects()
     const isConnected = () => connects.length
-    const assignDOIDs = async () => (state.DOIDs = (await fetchConnectedDOIDs(host)).slice(0, 1))
+    const assignDOIDs = async () => (state.DOIDs = (await fetchConnectedDOIDs(host)).slice(0, len))
 
     // No need to unlock
     if (!needUnlock) {
@@ -67,7 +67,7 @@ export const asssignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): Back
 export const requestConnecteDOIDs = (opts?: any) => async (ctx: BackgroundMiddlwareCtx) =>
   await new Promise<void>(
     async (_next, reject) =>
-      await asssignConnectedDOIDs(opts)(ctx, (res: any, err: Error) => (err ? reject(err) : _next()))
+      await assignConnectedDOIDs(opts)(ctx, (res: any, err: Error) => (err ? reject(err) : _next()))
   )
 
 export const isConnected = (name: string): BackgroundMiddlware => {
