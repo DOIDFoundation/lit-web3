@@ -1,0 +1,9 @@
+.sample-methods {
+  @apply p-2;
+  & li {
+    @apply py-2 gap-4;
+    &:not(:first-child) {
+      @apply border-t-2 border-dashed;
+    }
+  }
+}

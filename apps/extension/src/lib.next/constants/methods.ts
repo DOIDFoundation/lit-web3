@@ -7,6 +7,7 @@ export const publicMethods = Object.freeze([
   // DOID
   'DOID_setup',
   'DOID_name',
+  'DOID_requestName',
   'DOID_account',
   'DOID_account_update',
   'DOID_account_change',

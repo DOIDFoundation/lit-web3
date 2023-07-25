@@ -14,7 +14,7 @@ export const internal_create_vault: BackgroundService = {
       // if (doid) res = await keyringCtrl.bindName(doid)
       // await keyringCtrl.setCompletedOnboarding()
       ctx.res.body = res
-      await requestUnlock(ctx, `/main`)
+      await requestUnlock(`/main`)(ctx)
     } catch (e) {
       throw e
     }

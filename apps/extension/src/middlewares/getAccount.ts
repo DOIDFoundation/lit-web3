@@ -60,15 +60,17 @@ export const assignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): Backg
       unlisten()
       next()
     })
-    await requestUnlock(ctx, isConnected() ? undefined : `/connect/${encodeURIComponent(host)}/${state.chain}`)
+    await requestUnlock(isConnected() ? undefined : `/connect/${encodeURIComponent(host)}/${state.chain}`)(ctx)
   }
 }
 
-export const requestConnecteDOIDs = (opts?: any) => async (ctx: BackgroundMiddlwareCtx) =>
-  await new Promise<void>(
-    async (_next, reject) =>
-      await assignConnectedDOIDs(opts)(ctx, (res: any, err: Error) => (err ? reject(err) : _next()))
-  )
+export const requestConnectedDOIDs =
+  (opts?: any): BackgroundMiddlware =>
+  async (ctx, next?) =>
+    await assignConnectedDOIDs(opts)(ctx, (res: any, err: Error) => {
+      if (err) throw err
+      if (next) next()
+    })
 
 export const isConnected = (name: string): BackgroundMiddlware => {
   return async (ctx, next) => {}

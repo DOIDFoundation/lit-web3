@@ -1,5 +1,5 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { requestConnecteDOIDs, popupGoto, autoClosePopup } from '~/middlewares'
+import { requestConnectedDOIDs, popupGoto, autoClosePopup } from '~/middlewares'
 import { getEVMProvider } from './daemon'
 import { toUtf8String } from 'ethers'
 import { EVMBodyParser } from './bodyParser'
@@ -19,7 +19,7 @@ export const EVM_request: BackgroundService = {
 
     const needUnlock = !['eth_accounts'].includes(method)
 
-    await requestConnecteDOIDs({ needUnlock })(ctx)
+    await requestConnectedDOIDs({ needUnlock })(ctx)
     const accounts = state.DOIDs.map((DOID: KeyringDOID) => DOID.address)
 
     // Both supported

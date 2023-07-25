@@ -29,7 +29,7 @@ declare interface BackgroundMiddlwareCtx {
   state: ReqState
   end: Function
 }
-declare type BackgroundMiddlware = (ctx: BackgroundMiddlwareCtx, next: Promise) => Promise<any>
+declare type BackgroundMiddlware = (ctx: BackgroundMiddlwareCtx, next?: Promise) => Promise<any>
 
 declare interface BackgroundService {
   method: string

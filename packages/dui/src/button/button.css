@@ -28,6 +28,9 @@
   &.pending {
     @apply !cursor-not-allowed !pointer-events-none;
     background: #aaa !important;
+    &.outlined {
+      opacity: 0.75;
+    }
   }
   &.outlined {
     background-color: transparent !important;

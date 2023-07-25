@@ -1,7 +1,7 @@
 // Only allowed in background environment
 import { KeyringController, KeyringControllerError } from '@metamask/eth-keyring-controller'
 import emitter from '@lit-web3/core/src/emitter'
-import { HardwareKeyringTypes } from '~/constants/keyring'
+import { HardwareKeyringTypes } from './constants'
 import browser from 'webextension-polyfill'
 import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
 import { getAddress as getMultiChainAddress, AddressType } from '~/lib.next/keyring/phrase'
