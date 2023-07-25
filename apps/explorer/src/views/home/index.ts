@@ -10,13 +10,18 @@ import style from './home.css?inline'
 export class ViewHome extends TailwindElement(style) {
   @state() blockData: any = []
   @state() pending = false
+  @state() isConnect = false
+
+  // socket:any = null;
   goto = (e: CustomEvent) => {
     // goto(`/search/${e.detail}`)
   }
 
   runWs() {
-    const socket = new WebSocket('ws://54.91.9.8:8557');
     const that = this;
+    this.isConnect = false;
+    this.blockData = [];
+    const socket = new WebSocket('ws://54.91.9.8:8557');
     socket.addEventListener('open', function (event) {
       socket.send('{"jsonrpc":"2.0","id":1,"method":"doid_currentBlock","params":[]}')
       socket.send('{"jsonrpc": "2.0", "method": "doid_subscribe", "params": ["newHeads"], "id": 1}')
@@ -26,18 +31,23 @@ export class ViewHome extends TailwindElement(style) {
     socket.addEventListener('message', function (event) {
       const result = JSON.parse(event.data)
       that.getData(result)
-
+      that.isConnect = true;
       // console.log(that.blockData, that.pending);
-
     });
 
     socket.addEventListener('close', function (event) {
+      that.runWs()
+      that.isConnect = false;
     });
 
     socket.addEventListener('error', function (event) {
+      that.runWs()
+      that.isConnect = false;
     });
   }
-
+  reloadSocket() {
+    location.reload()
+  }
   getData(params: any) {
     if (params.result && params.result.header) {
       this.blockData.unshift(params.result.header)
@@ -52,10 +62,8 @@ export class ViewHome extends TailwindElement(style) {
 
   }
   connectedCallback(): void {
-    this.runWs();
     super.connectedCallback()
-    console.log(111);
-
+    this.runWs();
   }
   render() {
     return html`<div class="home">
@@ -70,12 +78,24 @@ export class ViewHome extends TailwindElement(style) {
           <p slot="msg" class="my-2">Safer, faster and easier entrance to chains, contacts and dApps</p>
         </doid-symbol> -->
         <div class="mx-auto">
-          <dui-ns-search @search=${this.goto} placeholder="Search Explorer"></dui-ns-search>
+          <!-- <dui-ns-search @search=${this.goto} placeholder="Search Explorer"></dui-ns-search> -->
         </div>
-        <div class="text-3xl mt-2">Latest Blocks</div>
+        <div class="mt-2 flex justify-between items-center">
+          <div class="text-3xl">Latest Blocks</div>
+          <div>
+            ${when(this.isConnect,
+      () => html`<div class="text-green-600">
+                    <i class="mdi mdi-lan-connect mx-1"></i>Connected</div>`,
+      () => html`
+             <div class="text-red-600 inline-block"><i class="mdi mdi-lan-disconnect mx-1"></i>Disconnected</div>
+             <i class="mdi mdi-reload mx-1 text-green-600 cursor-pointer" @click="${this.reloadSocket}"></i>
+          `)}
+
+          </div>
+        </div>
         <div class="mt-2 blocks-table">
           <div class="flex block-header uppercase">
-            <div class="flex-1 p-2">BLOCK</div>
+            <div class="flex-none w-20 p-2">BLOCK</div>
             <div class="flex-1 p-2 ">timestamp</div>
             <div class="flex-1 p-2">HASH</div>
             <div class="flex-1 p-2 text-right">miner</div>
@@ -83,27 +103,19 @@ export class ViewHome extends TailwindElement(style) {
           </div>
           ${when(!this.pending, () => html`
             ${this.blockData.map((item: any, idx: any) =>
-      html`<div class="flex bg-gray-200 rounded-lg ${when(idx > 0, () => `mt-2`)} cursor-pointer">
-              <div class="flex-1 p-2 text-blue-500">${item.height}</div>
-              <div class="flex-1 p-2 truncate">${item.timestamp}</div>
+        html`<div class="flex bg-gray-200 rounded-lg ${when(idx > 0, () => `mt-2`)} cursor-pointer">
+              <div class="flex-none w-20 p-2 text-blue-500">${item.height}</div>
+              <div class="flex-1 p-2 truncate">${new Date(item.timestamp * 1000).toUTCString()}</div>
               <div class="flex-1 p-2 truncate">${item.parentHash}</div>
               <div class="flex-1 p-2 text-right truncate">${item.miner}</div>
               <div class="flex-1 p-2 text-right truncate">${item.transactionsRoot}</div>
             </div>`
-    )}
+      )}
           `, () => html`
           <div class="text-center p-3 border-t-2">
           <loading-icon type="inline-block"></loading-icon>
           </div>
           `)}
-
-          <!-- <div class="flex bg-gray-200 rounded-lg mt-1  cursor-pointer">
-            <div class="flex-1 p-2">BLOCK</div>
-            <div class="flex-1 p-2">AGE</div>
-            <div class="flex-1 p-2">HASH</div>
-            <div class="flex-1 p-2 text-right">FIRST VERSION</div>
-            <div class="flex-1 p-2 text-right">LAST VERSION</div>
-          </div> -->
         </div>
       </div>
     </div>`

@@ -25,7 +25,7 @@ export class AppMain extends TailwindElement('') {
           ${when(this.account, () => html`<dui-link href=${`/address/${this.account}`} nav exact>My DOID</dui-link>`)}
           <dui-link href="https://lockpass.doid.tech/passes" nav>My Lock Pass</dui-link>
         </dui-nav> -->
-        <connect-wallet-btn slot="wallet" dropable></connect-wallet-btn>
+        <div slot="wallet" dropable></div>
       </dui-header>
       <main class="dui-app-main">
         <slot></slot>
