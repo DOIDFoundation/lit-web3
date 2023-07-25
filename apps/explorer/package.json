@@ -1,0 +1,18 @@
+{
+  "name": "@lit-web3/lock-explorer",
+  "version": "0.0.1",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host --mode development",
+    "build": "vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest"
+  },
+  "license": "MIT"
+}

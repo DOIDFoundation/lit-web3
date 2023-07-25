@@ -1,0 +1,26 @@
+ol {
+  @apply grid md_grid-cols-3 gap-4 my-4 mt-8;
+  & li {
+    @apply relative inline-flex flex-col border bg-gray-100 p-4 pt-5 pl-16 gap-2 rounded-md;
+    min-height: 6.25rem;
+    & dui-progress-ring {
+      @apply left-4 top-4 absolute inline-block w-10 h-10 font-bold text-gray-500;
+    }
+    &.active,
+    &.done {
+      @apply bg-slate-200 border-dashed border-gray-400;
+    }
+    &.done {
+      @apply border-transparent bg-slate-100;
+    }
+    & > b {
+      @apply flex items-center gap-1;
+      & .mdi {
+        @apply text-base;
+      }
+    }
+    & .desc {
+      @apply leading-snug;
+    }
+  }
+}

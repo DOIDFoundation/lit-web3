@@ -1,0 +1,6 @@
+.edit {
+  @apply my-0;
+  & .addr_edit {
+    @apply w-56 lg_w-96;
+  }
+}
