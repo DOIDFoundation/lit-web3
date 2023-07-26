@@ -53,7 +53,7 @@ export class ViewAddress extends TailwindElement(style) {
   }
   generatePhrase = async () => {
     if (!this.pwd) return
-    this.phrase = genMnemonic()
+    this.phrase = genMnemonic()?.phrase
   }
   copyPhrase = async () => {
     if (!this.phraseEnabled) return

@@ -5,11 +5,11 @@ import {
   property,
   state,
   choose,
-  when,
-  until
+  when
+  // until
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
-import { Wallet, Contract } from 'ethers'
+import { Wallet } from 'ethers'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -20,19 +20,20 @@ import '~/components/pwd-equal'
 import style from './create.css?inline'
 import { AddressType, phraseToAddress } from '~/lib.next/keyring/phrase'
 import {
-  assignOverrides,
-  getABI,
-  getBridgeProvider,
-  getContracts,
+  // assignOverrides,
+  // getABI,
+  // getBridgeProvider,
+  // getContracts,
   getNativeBalance,
   getNetwork
 } from '@lit-web3/ethers/src/useBridge'
-import { now } from '@lit-web3/ethers/src/nsResolver/registrar'
+// import { now } from '@lit-web3/ethers/src/nsResolver/registrar'
 import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
-import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
+// import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { MultiChainAddresses } from '~/lib.next/keyring/phrase'
-import ipfsHelper from '~/lib.next/ipfsHelper'
+// import ipfsHelper from '~/lib.next/ipfsHelper'
+import { rpcRegistName } from '~/lib.next/register'
 
 enum Steps {
   EnterPhrase,
@@ -115,9 +116,9 @@ export class ViewHome extends TailwindElement(style) {
       if (mainAddress.toLowerCase() != addresses[AddressType.eth].toLowerCase())
         throw new Error('Internal Error: Addresses generated differs')
 
-      const name = await ipfsHelper._getIPNSNameFromStorage(this.phrase)
+      // const name = await ipfsHelper._getIPNSNameFromStorage(this.phrase)
       // register doid
-      let contract = new Contract(
+      /* let contract = new Contract(
         await getContracts('Resolver'),
         await getABI('Resolver'),
         wallet.connect(await getBridgeProvider())
@@ -135,7 +136,9 @@ export class ViewHome extends TailwindElement(style) {
           overrides
         }
       })
-      await this.transaction.wait()
+      await this.transaction.wait() */
+
+      await rpcRegistName(bareTLD(this.doid), this.address, this.mnemonic)
 
       // add to extension
       await popupMessenger.send('internal_recovery', {

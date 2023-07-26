@@ -21,6 +21,8 @@
   "keywords": [],
   "dependencies": {
     "@aptos-labs/wallet-adapter-core": "2.0.1",
+    "@erebos/keccak256": "^0.13.1",
+    "@erebos/secp256k1": "^0.10.0",
     "@libp2p/crypto": "^1.0.7",
     "@lit-web3/core": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",

@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 settings:
   autoInstallPeers: true
@@ -156,6 +160,12 @@ importers:
       '@aptos-labs/wallet-adapter-core':
         specifier: 2.0.1
         version: 2.0.1
+      '@erebos/keccak256':
+        specifier: ^0.13.1
+        version: 0.13.1
+      '@erebos/secp256k1':
+        specifier: ^0.10.0
+        version: 0.10.0
       '@libp2p/crypto':
         specifier: ^1.0.7
         version: 1.0.7(uint8arraylist@2.4.3)
@@ -1773,19 +1783,11 @@ packages:
       regenerator-runtime: 0.13.11
     dev: false
 
-  /@babel/runtime@7.21.5:
-    resolution: {integrity: sha512-8jI69toZqqcsnqGGqwGS4Qb1VwLOEp4hz+CXPywcvjs60u3B4Pom/U/7rm4W8tMOYEB+E9wgD0mW1l3r8qlI9Q==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      regenerator-runtime: 0.13.11
-    dev: false
-
   /@babel/runtime@7.22.5:
     resolution: {integrity: sha512-ecjvYlnAaZ/KVneE/OdKYBYfgXV3Ptu6zQWmgEF7vwKhQnvVS6bjMD2XYgj+SNvQ1GfK/pjgokfPkC/2CO8CuA==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.11
-    dev: true
 
   /@babel/template@7.22.5:
     resolution: {integrity: sha512-X7yV7eiwAxdj9k94NEylvbVHLiVG1nvzCV2EAowhxLTwODV1jl9UzZ48leOC0sH7OnuHrIkllaBgneUykIcZaw==}
@@ -2315,6 +2317,27 @@ packages:
       nano-base32: 1.0.1
       ripemd160: 2.0.2
       sha3: 2.1.4
+    dev: false
+
+  /@erebos/hex@0.13.0:
+    resolution: {integrity: sha512-aKHoLiWX+LeejzHrkM8I52G1EbZGqA/JgmqscrVDJAabjvXgDyaa7fES9218th0D9c115C4pv5mxxNKCoaADpA==}
+    dependencies:
+      '@babel/runtime': 7.22.5
+    dev: false
+
+  /@erebos/keccak256@0.13.1:
+    resolution: {integrity: sha512-zeNl0p201iv39U9aBnqqV9I4SWvRjAZ8OiN78cemEBBouNvBFisrhurHE8/cOcuwAFQf+6Vfo07tnspQJcsTPQ==}
+    dependencies:
+      '@babel/runtime': 7.22.5
+      '@erebos/hex': 0.13.0
+      js-sha3: 0.8.0
+    dev: false
+
+  /@erebos/secp256k1@0.10.0:
+    resolution: {integrity: sha512-0mGDq937uQiEE4tyEseEiW8b7ymX/m/ARrXSIyrsYPBJA89A2uj1hLbMQF8fwCBYSD7XA464g1JYQC2r//ZgHQ==}
+    dependencies:
+      '@babel/runtime': 7.22.5
+      elliptic: 6.5.4
     dev: false
 
   /@esbuild/android-arm64@0.17.19:
@@ -11426,7 +11449,7 @@ packages:
   /rpc-websockets@7.5.1:
     resolution: {integrity: sha512-kGFkeTsmd37pHPMaHIgN1LVKXMi0JD782v4Ds9ZKtLlwdTKjn+CxM9A9/gLT2LaOuEcEFGL98h1QWQtlOIdW0w==}
     dependencies:
-      '@babel/runtime': 7.21.5
+      '@babel/runtime': 7.22.5
       eventemitter3: 4.0.7
       uuid: 8.3.2
       ws: 8.13.0(bufferutil@4.0.7)(utf-8-validate@5.0.10)
