@@ -16,6 +16,19 @@ export const getEVMProvider = async () => {
   return await (promise || (promise = new Promise(async (resolve) => resolve(await initEVMProvider()))))
 }
 
+// TODO: only send to subscribers
+const emitAccountsChanged = async () => {
+  const connects: Connects = await ConnectsStorage.getAll()
+  const { isUnlocked } = await getKeyring()
+  await Promise.all(
+    Object.entries(connects).map(async ([host, { names = [] }]) => {
+      if (!isUnlocked) names = []
+      const addresses = await names2Addresses(names)
+      backgroundToInpage.send('evm_response', { method: 'accountsChanged', params: addresses }, { host })
+    })
+  )
+}
+
 let inited = false
 const initEVMProvider = async () => {
   // Provider
@@ -26,23 +39,12 @@ const initEVMProvider = async () => {
   EVM.provider = new JsonRpcProvider(selectedRpc, +selectedChainId)
   // Wallet
   await refreshWallet()
-  if (!inited) {
-    inited = true
-    emitter.on('connect_change', async (e: CustomEvent) => {
-      refreshWallet()
-      const connects = e.detail ?? (await ConnectsStorage.getAll())
-      const tabs = await backgroundToInpage.getAllTabs()
-      tabs.forEach(async ({ url, id }) => {
-        if (!url) return
-        const { host } = new URL(url)
-        const { names = [] } = connects[host] ?? {}
-        if (!names.length) return
-        const accounts = await names2Addresses(names)
-        backgroundToInpage.send('evm_response', { method: 'accountsChanged', params: accounts }, `window@${id}`)
-      })
-    })
-    emitter.on('unlock', refreshWallet)
-  }
+  if (inited) return EVM
+  inited = true
+  emitter.on('connect_change', emitAccountsChanged)
+  emitter.on('lock', emitAccountsChanged)
+  emitter.on('unlock', emitAccountsChanged)
+  emitter.on('keyring_update', refreshWallet)
   return EVM
 }
 

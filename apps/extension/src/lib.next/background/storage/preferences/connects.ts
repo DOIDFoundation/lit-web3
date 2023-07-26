@@ -3,18 +3,12 @@ import emitter from '@lit-web3/core/src/emitter'
 import { getPreferences } from './base'
 import { isEqual } from 'lodash'
 
-type Names = string[]
-type Connected = { names: Names }
-type Connects = {
-  [host: string]: Connected
-}
-
 // key: host, value: names
 
 export const ConnectsStorage = {
   // Reads
   getAll: async (): Promise<Connects> => (await getPreferences()).state.connects ?? {},
-  get: async (host: string): Promise<Names> => (await ConnectsStorage.getAll())[host]?.names ?? [],
+  get: async (host: string): Promise<ConnectedNames> => (await ConnectsStorage.getAll())[host]?.names ?? [],
   has: async (host: string, name = '') => (await ConnectsStorage.get(host)).includes(name),
 
   // Writes

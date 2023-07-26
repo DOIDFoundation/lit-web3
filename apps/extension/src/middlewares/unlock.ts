@@ -50,10 +50,14 @@ export const unlock = (path?: string): BackgroundMiddlware => {
 export const requestUnlock =
   (path?: string): BackgroundMiddlware =>
   async (ctx, next?) =>
-    await popupGoto({ path, unlock: true })(ctx, (res: any, err: Error) => {
-      if (err) throw err
-      if (next) next()
-    })
+    await new Promise<void>(
+      async (_next) =>
+        await popupGoto({ path, unlock: true })(ctx, (res: any, err: Error) => {
+          if (err) throw err
+          _next()
+          if (next) next()
+        })
+    )
 
 export const popupGoto = ({ path = '', unlock = false } = {}): BackgroundMiddlware => {
   return async (ctx, next) => {

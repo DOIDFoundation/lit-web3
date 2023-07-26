@@ -5,12 +5,13 @@
 // 3. `contentscript.ts` will executed in an "isolated world" environment
 // 4. `inpage.js` will be injected to "main world" aka real browser environment
 
-import { injectDOIDInpageProvider } from '~/lib.next/providers/inpageProvider'
+import { injectDOIDInpageProvider } from '~/lib.next/providers/DOIDInpageProvider'
 import { injectEVMInpageProvider } from '~/lib.next/providers/evmInpageProvider'
 import { injectSolanaInpageProvider } from '~/lib.next/providers/solanaInpageProvider'
 import { injectAptosInpageProvider } from '~/lib.next/providers/aptosInpageProvider'
 
-injectDOIDInpageProvider()
-injectEVMInpageProvider()
-injectSolanaInpageProvider()
-injectAptosInpageProvider()
+Promise.all(
+  [injectDOIDInpageProvider, injectEVMInpageProvider, injectSolanaInpageProvider, injectAptosInpageProvider].map((r) =>
+    r()
+  )
+)
