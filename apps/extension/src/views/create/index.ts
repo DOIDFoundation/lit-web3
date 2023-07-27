@@ -138,7 +138,7 @@ export class ViewHome extends TailwindElement(style) {
       })
       await this.transaction.wait() */
 
-      await rpcRegistName(bareTLD(this.doid), this.address, this.mnemonic)
+      await rpcRegistName(bareTLD(this.doid), this.address, this.phrase)
 
       // add to extension
       await popupMessenger.send('internal_recovery', {
