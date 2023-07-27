@@ -1,6 +1,6 @@
 import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
-import { phraseMatch, getAddress } from '~/lib.next/keyring/phrase'
+import { phraseMatch, phraseToAddress } from '~/lib.next/keyring/phrase'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 // Components
@@ -51,12 +51,12 @@ export class resetByPhrase extends TailwindElement(null) {
     this.pending = true
     this.err = ''
     try {
-      let addrs = await getAddress(this.phrase)
+      let addrs = await phraseToAddress(this.phrase)
       const params = {
         name: this.doid,
         json: { addrs },
         pwd: this.pwd,
-        mnemonic: this.phrase,
+        phrase: this.phrase,
         reply: this.notify
       }
       if (this.address) Object.assign(params, { address: this.address })

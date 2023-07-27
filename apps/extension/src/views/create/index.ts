@@ -18,7 +18,7 @@ import '~/components/phrase'
 import '~/components/pwd-equal'
 
 import style from './create.css?inline'
-import { AddressType, getAddress } from '~/lib.next/keyring/phrase'
+import { AddressType, phraseToAddress } from '~/lib.next/keyring/phrase'
 import {
   assignOverrides,
   getABI,
@@ -49,7 +49,7 @@ export class ViewHome extends TailwindElement(style) {
   @state() pending = false
   @state() btnNextDisabled = true
   @state() err = ''
-  @state() mnemonic = ''
+  @state() phrase = ''
   @state() pwd = ''
   @state() address = ''
   @state() balance = ''
@@ -71,7 +71,7 @@ export class ViewHome extends TailwindElement(style) {
     const { phrase, error } = e.detail as any
     if (error) return
 
-    this.mnemonic = phrase
+    this.phrase = phrase
     this.btnNextDisabled = false
   }
 
@@ -82,7 +82,7 @@ export class ViewHome extends TailwindElement(style) {
   }
 
   onConfirmPhrase = async () => {
-    let address = await getAddress(this.mnemonic, AddressType.eth)
+    let address = await phraseToAddress(this.phrase, AddressType.eth)
     if (!address || typeof address != 'string' || !this.doid) return
     this.address = address
     this.balance = ''
@@ -109,13 +109,13 @@ export class ViewHome extends TailwindElement(style) {
   onCreate = async () => {
     this.next()
     try {
-      let addresses = (await getAddress(this.mnemonic)) as MultiChainAddresses
-      let wallet = Wallet.fromPhrase(this.mnemonic)
+      let addresses = (await phraseToAddress(this.phrase)) as MultiChainAddresses
+      let wallet = Wallet.fromPhrase(this.phrase)
       let mainAddress = await wallet.getAddress()
       if (mainAddress.toLowerCase() != addresses[AddressType.eth].toLowerCase())
         throw new Error('Internal Error: Addresses generated differs')
 
-      const name = await ipfsHelper._getIPNSNameFromStorage(this.mnemonic)
+      const name = await ipfsHelper._getIPNSNameFromStorage(this.phrase)
       // register doid
       let contract = new Contract(
         await getContracts('Resolver'),
@@ -142,7 +142,7 @@ export class ViewHome extends TailwindElement(style) {
         doid: this.wrapName,
         json: { addresses },
         pwd: this.pwd,
-        mnemonic: this.mnemonic
+        phrase: this.phrase
       })
       this.stepTo(Steps.Success)
     } catch (error: any) {

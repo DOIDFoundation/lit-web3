@@ -22,7 +22,7 @@ export const solana_request: BackgroundService = {
         const { options } = req.body
         const provider = await getSolanaProvider()
         const keyring = await getKeyring()
-        res.body = keyring.getMultiChainAddress(AddressType.solana)
+        res.body = await keyring.getMultiChainAddress(AddressType.solana)
         break
       }
       case 'disconnect':

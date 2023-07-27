@@ -8,21 +8,20 @@ export const getDOIDs: BackgroundMiddlware = async ({ req, state }, next) => {
   next()
 }
 
-const doidAddressCache: Record<string, any> = {}
+const DOIDAddressCache: Record<string, string> = {}
 export const getMultiChainAddress = (type = undefined): BackgroundMiddlware => {
   return async ({ req, state }, next) => {
     if (!req.headers.isInternal) throw new Error(ERR_METHOD_NOT_ALLOWED)
-    let addresses: any
+    state.addresses ??= {}
     const keyring = await getKeyring()
+    if (!keyring.isUnlocked) return next()
     let _name: string = req.body?.name ?? (await keyring.selectedDOID).name
-    if (doidAddressCache.hasOwnProperty(_name)) {
-      addresses = doidAddressCache[_name]
+    if (DOIDAddressCache.hasOwnProperty(_name)) {
+      state.addresses = DOIDAddressCache[_name]
     } else {
-      addresses = keyring.getMultiChainAddress(type)
-      doidAddressCache[_name] = Object.assign({}, addresses)
+      state.addresses = await keyring.getMultiChainAddress(type)
+      DOIDAddressCache[_name] = Object.assign({}, state.addresses)
     }
-
-    Object.assign(state, { addresses })
     next()
   }
 }

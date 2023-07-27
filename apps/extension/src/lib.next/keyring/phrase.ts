@@ -22,16 +22,17 @@ export const validatePhrase = (phrase = '') => {
   const err = Mnemonic.isValidMnemonic(phrase) ? '' : 'Bad mnemonic'
   return err
 }
-export const phraseMatch = (phrase = '', target = '') => {
+export const phraseMatch = async (phrase = '', target = '') => {
   if (!phrase) return false
   if (target) {
-    let ethAddr = getAddress(phrase, AddressType.eth)
+    let ethAddr = await phraseToAddress(phrase, AddressType.eth)
     return target ? target === String(ethAddr).toLowerCase() : true
   }
   return true
 }
 
-export const getAddress = (phrase: string, type?: AddressType) => {
+export const phraseToAddress = async (phrase: string, type?: keyof typeof AddressType) => {
+  if (!phrase) throw new Error('No phrase')
   const addrs = Object.fromEntries(Object.keys(AddressType).map((key) => [key, ''])) as MultiChainAddresses
 
   // Wallet

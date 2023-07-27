@@ -11,10 +11,10 @@ export const DOIDBodyParser = (): BackgroundMiddlware => {
       reqName = body.DOIDName ?? body.DOID ?? body.doid ?? body.doidName ?? body.name ?? ''
     }
     const [name, DOIDName] = [bareTLD(reqName), wrapTLD(reqName)]
-    // pwd/mnemonic/host
-    const { pwd, mnemonic, host } = body
+    // pwd/phrase/host
+    const { pwd, phrase, host } = body
     //
-    Object.assign(state, { name, DOIDName, host, pwd, mnemonic })
+    Object.assign(state, { name, DOIDName, host, pwd, phrase })
     return next()
   }
 }

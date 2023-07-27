@@ -4,7 +4,7 @@ import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from './constants'
 import browser from 'webextension-polyfill'
 import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
-import { getAddress as getMultiChainAddress, AddressType } from '~/lib.next/keyring/phrase'
+import { phraseToAddress, AddressType } from '~/lib.next/keyring/phrase'
 // import ipfsHelper from '~/lib.next/ipfsHelper'
 import { toUtf8String } from 'ethers'
 
@@ -44,16 +44,16 @@ class Keyring extends KeyringController {
     return this.selectedKeyring?.opts.mnemonic
   }
   get phrase() {
-    return toUtf8String(new Uint8Array(this.mnemonic))
+    return typeof this.mnemonic === 'string' ? this.mnemonic : toUtf8String(new Uint8Array(this.mnemonic))
   }
   getAddresses = async () => await super.getAccounts()
 
   // DOID methods
   setDOIDs = async (name: string, address: Address) => {
     const DOID: KeyringDOID = { name, address }
-    const { DOIDs = <KeyringDOIDs>{}, selectedDOID = DOID } = this.state
+    const { DOIDs = <KeyringDOIDs>{} } = this.state
     DOIDs[name] = DOID
-    this.store.updateState({ DOIDs, selectedDOID })
+    this.store.updateState({ DOIDs, selectedDOID: DOID })
     // write ipfs
     // TODO: do not use mnemonic as parameter
     // const cid = await ipfsHelper.updateJsonData({addresses}, name, { memo: this.phrase })
@@ -65,22 +65,29 @@ class Keyring extends KeyringController {
     this.store.updateState({ selectedDOID })
   }
   lock = async () => await this.setLocked()
-  unlock = async (pwd: string) => {
-    await this.submitPassword(pwd)
+  unlock = async (pwd: string) => await this.submitPassword(pwd)
+  #setUnlock = () => {
+    this.memStore.updateState({ isUnlocked: true })
+    this.emit('unlock')
     return this.fullUpdate()
   }
 
   // MultiChain
-  getMultiChainAddress = (type?: AddressType) => getMultiChainAddress(this.phrase, type)
+  getMultiChainAddress = async (type?: AddressType) => {
+    return await phraseToAddress(this.phrase, type)
+  }
 
   // Overrides
+  // Add new DOID on the selected keyring
   addNewAccount = async (name: string) => {
     if (!this.primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
     const oldAddrs = await this.getAddresses()
     await super.addNewAccount(this.primaryKeyring)
     const newAddr = (await this.getAddresses()).find((addr: string) => !oldAddrs.has(addr))
     await this.setDOIDs(name, newAddr)
+    this.#setUnlock()
   }
+  // Remove a DOID from a keyring
   removeAccount = async (DOID: VaultDOID) => {
     let { DOIDs, selectedDOID } = this.state
     const { name, address } = DOID
@@ -92,45 +99,31 @@ class Keyring extends KeyringController {
     const keyring = await this.getKeyringForAccount(address)
     const updatedKeyringAccounts = keyring ? await keyring.getAccounts() : {}
     if (updatedKeyringAccounts?.length === 0) keyring.destroy?.()
-    return DOID
+    return this.state
   }
-
-  addDOID = async (name: string, mnemonic: Uint8Array | string | number[]) => {
+  // Add new DOID and new Keyring with mnemonic
+  addDOID = async (name: string, mnemonic: Uint8Array | string | number[], { type = 'HD Key Tree' } = {}) => {
     if (!name || !mnemonic) return
     if (typeof mnemonic !== 'string') mnemonic = new TextDecoder().decode(new Uint8Array(mnemonic))
-    const keyring = await super.addNewKeyring('HD Key Tree', {
-      mnemonic: mnemonic,
-      numberOfAccounts: 1
-    })
-
+    const keyring = await super.addNewKeyring(type, { mnemonic, numberOfAccounts: 1 })
     const [firstAccount] = await keyring.getAccounts()
-
-    if (!firstAccount) {
-      throw new Error(KeyringControllerError.NoFirstAccount)
-    }
-    this.fullUpdate()
+    if (!firstAccount) throw new Error(KeyringControllerError.NoFirstAccount)
     this.setDOIDs(name, firstAccount)
+    this.#setUnlock()
   }
-
+  // Create & Destroys any old encrypted storage
   async createNewVaultAndRestore(name: string, password: string, mnemonic: Uint8Array | string | number[]) {
     if (!name || !password || !mnemonic) return
     if (typeof mnemonic !== 'string') mnemonic = new TextDecoder().decode(new Uint8Array(mnemonic))
-    const vault = await super.createNewVaultAndRestore(password, mnemonic)
+    await super.createNewVaultAndRestore(password, mnemonic)
     if (!this.primaryKeyring) throw new Error(`No ${HardwareKeyringTypes.hdKeyTree} found`)
     let addresses = await this.getAddresses()
     await this.setDOIDs(name, addresses[0])
-    return vault
   }
+  // Create & Destroys any old encrypted storage
   async createNewVaultAndKeychain(password: string) {
-    let vault
-    const addresses = await this.getAddresses()
-    if (addresses.length) {
-      vault = await this.fullUpdate()
-    } else {
-      vault = await super.createNewVaultAndKeychain(password)
-      this.fullUpdate()
-    }
-    return vault
+    if ((await this.getAddresses()).length) return this.fullUpdate()
+    return await super.createNewVaultAndKeychain(password)
   }
 }
 

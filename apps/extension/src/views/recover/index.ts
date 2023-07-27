@@ -4,7 +4,7 @@ import '@lit-web3/dui/src/button'
 import '~/components/phrase'
 import '~/components/pwd-equal'
 
-import { AddressType, getAddress } from '~/lib.next/keyring/phrase'
+import { AddressType, phraseToAddress } from '~/lib.next/keyring/phrase'
 import ipfsHelper from '~/lib.next/ipfsHelper'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { StateController, walletStore } from '~/store'
@@ -33,7 +33,7 @@ export class ViewImport extends TailwindElement(null) {
   @state() err = ''
   @state() btnNextDisabled = true
   @state() pending = false
-  @state() mnemonic = ''
+  @state() phrase = ''
   @state() pwd = ''
 
   @state() step = 1
@@ -67,7 +67,7 @@ export class ViewImport extends TailwindElement(null) {
   }
 
   onCreateMainAddress = async () => {
-    let addresses = await getAddress(this.mnemonic)
+    let addresses = await phraseToAddress(this.phrase)
     if (!addresses || !this.account.name) return
     try {
       this.pending = true
@@ -75,7 +75,7 @@ export class ViewImport extends TailwindElement(null) {
         doid: this.account.name,
         json: { addresses },
         pwd: this.pwd,
-        mnemonic: this.mnemonic
+        phrase: this.phrase
       })
       this.next()
     } catch (e: any) {
@@ -88,8 +88,8 @@ export class ViewImport extends TailwindElement(null) {
     //
     // try {
     //   await initialize()
-    //   console.log(this.mnemonic, this.pwd, '----------')
-    //   const encodedSeedPhrase = Array.from(Buffer.from(this.mnemonic, 'utf8').values())
+    //   console.log(this.phrase, this.pwd, '----------')
+    //   const encodedSeedPhrase = Array.from(Buffer.from(this.phrase, 'utf8').values())
     //   // TODO: open
     //   // await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)
     //   await this.syncAddresses()
@@ -102,10 +102,10 @@ export class ViewImport extends TailwindElement(null) {
   }
 
   syncAddresses = async () => {
-    let addresses = await getAddress(this.mnemonic)
+    let addresses = await phraseToAddress(this.phrase)
     if (!addresses || !this.account.name) return
     try {
-      await ipfsHelper.updateJsonData({ addresses }, this.account.name, { memo: this.mnemonic })
+      await ipfsHelper.updateJsonData({ addresses }, this.account.name, { memo: this.phrase })
     } catch (e) {
       console.error(e)
     }
@@ -117,9 +117,9 @@ export class ViewImport extends TailwindElement(null) {
     const { phrase, error } = e.detail as any
     if (error) return
 
-    this.mnemonic = phrase
+    this.phrase = phrase
 
-    let ethAddress = await getAddress(this.mnemonic, AddressType.eth)
+    let ethAddress = await phraseToAddress(this.phrase, AddressType.eth)
 
     if (this.account.mainAddress.toLowerCase() != String(ethAddress).toLowerCase()) {
       this.err = `The Secret Recovery Phrase entered does not match ${this.account.mainAddress}`
