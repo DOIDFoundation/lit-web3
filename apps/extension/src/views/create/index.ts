@@ -33,7 +33,7 @@ import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { MultiChainAddresses } from '~/lib.next/keyring/phrase'
 // import ipfsHelper from '~/lib.next/ipfsHelper'
-import { rpcRegistName } from '~/lib.next/register'
+import { rpcRegistName } from '~/lib.next/peer_rpc'
 
 enum Steps {
   EnterPhrase,

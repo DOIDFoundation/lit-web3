@@ -1,6 +1,7 @@
 import { State, property } from '@lit-app/state'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 export { StateController } from '@lit-app/state'
+import { rpcSearch } from '~/lib.next/peer_rpc'
 
 class AccountStore extends State {
   @property({ value: false }) pending!: boolean
@@ -23,10 +24,11 @@ class AccountStore extends State {
     let res: NameInfo = { name: '', registered: false, available: false }
     this.pending = true
     if (keyword) {
-      const { name, owner, mainAddress, registered, available } = (await nameInfo(keyword)) as NameInfo
+      // const { name, owner, mainAddress, registered, available } = (await nameInfo(keyword)) as NameInfo
+      const { name, owner, mainAddress, registered, available } = (await rpcSearch(keyword)) as NameInfo
       if (mark) {
         this.name = name
-        this.mainAddress = mainAddress || ''
+        this.mainAddress = `0x${mainAddress}` || ''
         this.owner = owner ?? ''
         this.registered = registered ?? false
         this.available = available ?? false

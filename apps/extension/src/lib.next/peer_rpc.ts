@@ -4,6 +4,7 @@ import jsonRpcRequest from '@lit-web3/core/src/http/jsonRpcRequest'
 import { getEVMProvider } from '~/services/EVM/daemon'
 
 import type { HDNodeWallet } from 'ethers'
+import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
 const rpcApi = import.meta.env.VITE_RPC_API
 const hexWithout0x = (hex: string) => {
@@ -33,6 +34,17 @@ export const rpcRegistName = async (doid: string, account: string, phrase: strin
     }
   ]
   return await jsonRpcRequest(`${rpcApi}`, 'doid_sendTransaction', params)
+}
+
+export const rpcSearch = async (keyword: string): Promise<NameInfo> => {
+  let _name = bareTLD(keyword)
+  let res: NameInfo = { name: '', registered: false, available: false }
+
+  if (keyword) {
+    const owner = (await jsonRpcRequest(`${rpcApi}`, 'doid_getOwner', [{ DOID: _name }])) as string
+    res = { name: _name, owner, mainAddress: owner, registered: !!owner, available: !owner }
+  }
+  return res
 }
 
 const getWalletByPhrase = async (phrase: string) => {
