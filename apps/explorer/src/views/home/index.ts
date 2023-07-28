@@ -1,7 +1,7 @@
 import { TailwindElement, html, customElement, state, when, property } from '@lit-web3/dui/src/shared/TailwindElement'
 // import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
-import '../../components/search/index'
+// import '../../components/search/index'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/loading/icon'
 
