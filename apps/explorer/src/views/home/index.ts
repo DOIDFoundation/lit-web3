@@ -19,18 +19,29 @@ export class ViewHome extends TailwindElement(style) {
 
   runWs() {
     const that = this;
+    that.pending = true
     this.isConnect = false;
     this.blockData = [];
     const socket = new WebSocket('ws://54.91.9.8:8557');
     socket.addEventListener('open', function (event) {
       socket.send('{"jsonrpc":"2.0","id":1,"method":"doid_currentBlock","params":[]}')
-      socket.send('{"jsonrpc": "2.0", "method": "doid_subscribe", "params": ["newHeads"], "id": 1}')
-      that.pending = true
+      socket.send('{"jsonrpc": "2.0", "method": "doid_subscribe", "params": ["newHeads"], "id": 2}')
+      // socket.send('{"jsonrpc":"2.0","id":3,"method":"doid_getBlockByHeight","params":[2589]}')
+
     });
 
     socket.addEventListener('message', function (event) {
       const result = JSON.parse(event.data)
       that.getData(result)
+      // console.log(result.result)
+
+      if (result.id === 1) {
+        const block = result.result.header.height
+        for (let index = block - 1; index > block - 30; index--) {
+          socket.send(`{"jsonrpc":"2.0","id":3,"method":"doid_getBlockByHeight","params":[${index}]}`)
+        }
+      }
+      that.pending = false
       that.isConnect = true;
       // console.log(that.blockData, that.pending);
     });
@@ -51,13 +62,13 @@ export class ViewHome extends TailwindElement(style) {
   getData(params: any) {
     if (params.result && params.result.header) {
       this.blockData.unshift(params.result.header)
-      this.pending = false
+      // this.pending = false
     }
     if (params.method === 'doid_subscription') {
       this.blockData.unshift(params.params.result.header)
-      this.pending = false
+
     }
-    this.blockData = this.blockData.slice(0, 30)
+    this.blockData = this.blockData.slice(0, 30).sort((a: any, b: any) => b.height - a.height)
     // console.log('paraams', this.blockData, this.pending);
 
   }
@@ -94,7 +105,7 @@ export class ViewHome extends TailwindElement(style) {
           </div>
         </div>
         <div class="mt-2 blocks-table">
-          <div class="flex block-header uppercase">
+          <div class="flex block-header uppercase py-2 border-y">
             <div class="flex-none w-20 p-2">BLOCK</div>
             <div class="flex-1 p-2 ">timestamp</div>
             <div class="flex-1 p-2">HASH</div>
@@ -103,8 +114,8 @@ export class ViewHome extends TailwindElement(style) {
           </div>
           ${when(!this.pending, () => html`
             ${this.blockData.map((item: any, idx: any) =>
-        html`<div class="flex bg-gray-200 rounded-lg ${when(idx > 0, () => `mt-2`)} cursor-pointer">
-              <div class="flex-none w-20 p-2 text-blue-500">${item.height}</div>
+        html`<div class="flex bg-gray-100 rounded-lg mt-2 cursor-pointer  py-2 hover_bg-gray-300">
+              <div class="flex-none w-20 p-2 text-blue-500 underline">${item.height}</div>
               <div class="flex-1 p-2 truncate">${new Date(item.timestamp * 1000).toUTCString()}</div>
               <div class="flex-1 p-2 truncate">${item.parentHash}</div>
               <div class="flex-1 p-2 text-right truncate">${item.miner}</div>
