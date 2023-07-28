@@ -65,7 +65,7 @@ export class ViewUnlock extends TailwindElement(style) {
           </doid-symbol>
           <div class="max-w-xs mx-auto">
             <dui-input-pwd
-              autoforce
+              autofocus
               type="password"
               @input=${this.onInput}
               @submit=${this.unlock}

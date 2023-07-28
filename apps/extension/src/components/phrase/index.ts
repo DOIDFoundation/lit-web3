@@ -82,7 +82,7 @@ export class PhraseToSecret extends TailwindElement(style) {
             <dui-input-pwd
               .idx=${idx}
               dense
-              ?autoforce=${idx === 0}
+              ?autofocus=${idx === 0}
               type="password"
               @input=${(e: CustomEvent) => this.onInput(e, idx)}
               @paste=${this.onPaste}

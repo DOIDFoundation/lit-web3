@@ -33,8 +33,6 @@ export class ViewKeyring extends TailwindElement(style) {
     this.pwd = val
   }
 
-
-
   submit() {}
   render() {
     return html`<div class="keyring">
@@ -51,7 +49,7 @@ export class ViewKeyring extends TailwindElement(style) {
               <b class="block w-4">${i + 1}.</b>
               <dui-input-text
                 dense
-                ?autoforce=${i === 0}
+                ?autofocus=${i === 0}
                 type="password"
                 @input=${this.onInput}
                 @submit=${this.submit}

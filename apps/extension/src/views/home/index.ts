@@ -64,7 +64,7 @@ export class ViewHome extends TailwindElement(style) {
           </doid-symbol>
           <div class="max-w-xs mx-auto">
             <dui-input-text
-              autoforce
+              autofocus
               @input=${this.onInput}
               @submit=${this.submit}
               value=${this.doid}

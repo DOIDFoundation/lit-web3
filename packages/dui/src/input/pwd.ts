@@ -8,7 +8,6 @@ import style from './text.css?inline'
 @customElement('dui-input-pwd')
 export class DuiInputPwd extends EditableElement(TailwindElement(style)) {
   @property({ type: Boolean }) toggle = true
-
   @state() type = 'password'
 
   get hide() {

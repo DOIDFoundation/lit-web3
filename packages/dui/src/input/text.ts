@@ -18,7 +18,7 @@ export class DuiInputText extends TailwindElement(style) {
   @property({ type: Boolean }) sm = false
   @property({ type: Boolean }) dense = false
   @property({ type: Boolean }) disabled = false
-  @property({ type: Boolean }) autoforce = false
+  @property({ type: Boolean }) autofocus = false
   @property({ type: Boolean }) required = false
   @property({ type: Boolean }) lower = false
   @property({ type: Boolean }) upper = false
@@ -50,10 +50,9 @@ export class DuiInputText extends TailwindElement(style) {
   }
 
   firstUpdated() {
-    if (this.autoforce) {
+    if (this.autofocus) {
       const $input = this.$('input')
       $input!.focus()
-      $input!.select()
     }
   }
 

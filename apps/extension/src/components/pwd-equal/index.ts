@@ -74,7 +74,7 @@ export class PwdEqual extends TailwindElement(style) {
         .toggle=${this.toggle.pwd}
         required
         @input=${this.onInput}
-        autoforce
+        autofocus
         @submit=${this.onConfirm}
       >
         <span slot="label">New password</span>

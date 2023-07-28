@@ -25,7 +25,7 @@ export const EditableElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
     @property({ type: Boolean }) sm = false
     @property({ type: Boolean }) dense = false
     @property({ type: Boolean }) disabled = false
-    @property({ type: Boolean }) autoforce = false
+    @property({ type: Boolean }) autofocus = false
     @property({ type: Boolean }) required = false
     @property({ type: Boolean }) lower = false
     @property({ type: Boolean }) upper = false
@@ -57,12 +57,11 @@ export const EditableElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
       this.leftSlotted = !!e.target
     }
 
-    firstUpdated() {
-      if (this.autoforce) {
-        const $input = this.$('input')
-        $input!.focus()
-        $input!.select()
-      }
+    #autofocused = false
+    #autofocus() {
+      if (!this.autofocus || this.#autofocused) return
+      this.#autofocused = true
+      setTimeout(() => this.$('input').focus(), 50)
     }
 
     onFocus(e: any) {
@@ -104,6 +103,7 @@ export const EditableElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
         placeholder="${this.placeholder}"
         value="${this.value}"
         title="${this.title}"
+        ?autofocus=${this.autofocus}
         @focus="${this.onFocus}"
         @input="${this.onInput}"
         @keyup="${this.onKeyup}"
@@ -117,6 +117,7 @@ export const EditableElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
 
     connectedCallback() {
       super.connectedCallback()
+      this.#autofocus()
     }
 
     render() {

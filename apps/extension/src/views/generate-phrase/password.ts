@@ -53,7 +53,7 @@ export class ViewPwd extends TailwindElement(style) {
       </div>
       <div class="mt-6">
         <dui-input-text
-          autoforce
+          autofocus
           type="password"
           @input=${this.onInput}
           @submit=${this.submit}
@@ -73,7 +73,7 @@ export class ViewPwd extends TailwindElement(style) {
       </div>
       <div class="">
         <dui-input-text
-          autoforce
+          autofocus
           type="password"
           @input=${this.onConfirmInput}
           @submit=${this.submit}
