@@ -1,7 +1,7 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-// import * as keyringCtrl from '~/lib.next/keyring'
 import { getKeyring } from '~/lib.next/keyring'
-import { DOIDBodyParser, getDOIDs, getMultiChainAddress } from '~/middlewares'
+import { ConnectsStorage } from '~/lib.next/background/storage/preferences'
+import { DOIDBodyParser, getDOIDs, assignConnects, getMultiChainAddress } from '~/middlewares'
 
 // Re-emit keyring events (emitted from ~/lib.next/keyring)
 const evtMap: Record<string, string> = {
@@ -62,6 +62,34 @@ export const internal_getDOIDs: BackgroundService = {
   fn: async ({ res, state }) => {
     const { DOIDs, selectedDOID } = state
     res.body = { DOIDs, selectedDOID }
+  }
+}
+
+export const internal_getConnects: BackgroundService = {
+  method: 'internal_getConnects',
+  middlewares: [assignConnects],
+  fn: async ({ res, state }) => {
+    const { connects } = state
+    res.body = { connects }
+  }
+}
+
+export const internal_connects_remove: BackgroundService = {
+  method: 'internal_connects_remove',
+  middlewares: [],
+  fn: async ({ req, res, state }) => {
+    const { host, name } = req.body
+    await ConnectsStorage.remove(host, name)
+    res.body = 'ok'
+  }
+}
+export const internal_connects_set: BackgroundService = {
+  method: 'internal_connects_set',
+  middlewares: [],
+  fn: async ({ req, res, state }) => {
+    const { host, name } = req.body
+    await ConnectsStorage.set(host, name)
+    res.body = 'ok'
   }
 }
 

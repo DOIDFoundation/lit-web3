@@ -15,7 +15,6 @@ export const ConnectsStorage = {
   update: async (connects?: Connects) => {
     if (connects) {
       const { state, updateState } = await getPreferences()
-      if (isEqual(state.connects, connects)) return
       updateState({ connects })
     }
     emitAccountsChange()

@@ -10,6 +10,8 @@ import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
+import '~/components/account/connection'
+import '~/components/connect/guard'
 // import { StateController, walletStore } from './store'
 
 @customElement('app-main')
@@ -30,35 +32,16 @@ export class AppMain extends TailwindElement('') {
     super.connectedCallback()
     this.chkView()
     emitter.on('router-change', this.chkView)
-    // const connectionStream = await getConnectStream()
-    // connectToAccountManager(connectionStream, async (err: any, backgroundConnection: any) => {
-    //   // console.log(backgroundConnection, 'backgroundConnection')
-    //   await backgroundConnection.getState(async (err: any, state: any) => {
-    //     if (err) return
-    //     console.log(state, 'state----')
-    //     walletStore.setState(state)
-    //     await walletStore.setBackgroundConnection(backgroundConnection)
-    //     // if (!walletStore.doidState.seedPhraseBackedUp && !walletStore.doidState.isInitialized) {
-    //     //   goto('/generate-phrase')
-    //     //   return
-    //     // }
-    //     // if (walletStore.doidState.isInitialized && !walletStore.doidState.seedPhraseBackedUp) {
-    //     //   goto('/generate-phrase/unlock')
-    //     //   return
-    //     // }
-    //     // if (!walletStore.doidState.isUnlocked) {
-    //     //   goto('/unlock')
-    //     //   return
-    //     // }
-    //   })
-    // })
   }
   render() {
     return html`${when(
         this.showHeader,
         () =>
           html`<dui-header fixed logoHref="/">
-            <div slot="left"><account-switch></account-switch></div>
+            <div slot="left" class="flex items-center">
+              <account-switch></account-switch>
+              <account-connection></account-connection>
+            </div>
             <div slot="right" class="block w-6 h-6 mx-auto">
               <dui-link href="/"><doid-icon></doid-icon></dui-link>
             </div>
@@ -68,7 +51,9 @@ export class AppMain extends TailwindElement('') {
       )}
       <main class="dui-app-main pt-4 pb-8">
         <slot></slot>
-      </main>`
+      </main>
+      <!-- Global cmps -->
+      <connects-guard></connects-guard>`
   }
 }
 

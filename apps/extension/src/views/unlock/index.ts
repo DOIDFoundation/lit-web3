@@ -19,6 +19,7 @@ export class ViewUnlock extends TailwindElement(style) {
   @state() pwd = ''
   @state() err = ''
   @state() pending = true
+  @state() pendingBtn = false
   @state() disabled = true
 
   onInput = async (e: CustomEvent) => {
