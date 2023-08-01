@@ -96,7 +96,12 @@ export class ViewHome extends TailwindElement(style) {
           <div>
             ${when(this.isConnect,
       () => html`<div class="text-green-600">
-                    <i class="mdi mdi-lan-connect mx-1"></i>Connected</div>`,
+                    <span class="relative inline-flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-green-700"></span>
+                    </span>
+                    <!-- <i class="mdi mdi-lan-connect mx-1"></i> -->
+                    Connected</div>`,
       () => html`
              <div class="text-red-600 inline-block"><i class="mdi mdi-lan-disconnect mx-1"></i>Disconnected</div>
              <i class="mdi mdi-reload mx-1 text-green-600 cursor-pointer" @click="${this.reloadSocket}"></i>
