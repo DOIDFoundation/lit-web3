@@ -1,9 +1,7 @@
 import { TailwindElement, html, customElement, state, when, property } from '@lit-web3/dui/src/shared/TailwindElement'
-// import { goto } from '@lit-web3/dui/src/shared/router'
-// Components
-// import '../../components/search/index'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/loading/icon'
+import { goto } from '@lit-web3/dui/src/shared/router'
 
 import style from './home.css?inline'
 @customElement('view-home')
@@ -13,8 +11,9 @@ export class ViewHome extends TailwindElement(style) {
   @state() isConnect = false
 
   // socket:any = null;
-  goto = (e: CustomEvent) => {
-    // goto(`/search/${e.detail}`)
+  goto = (block: any) => {
+    const _block = JSON.stringify(block);
+    goto(`/block/${_block}`)
   }
 
   runWs() {
@@ -119,7 +118,9 @@ export class ViewHome extends TailwindElement(style) {
           </div>
           ${when(!this.pending, () => html`
             ${this.blockData.map((item: any, idx: any) =>
-        html`<div class="flex bg-gray-100 rounded-lg mt-2 cursor-pointer  py-2 hover_bg-gray-300">
+        html`<div
+          class="flex bg-gray-100 rounded-lg mt-2 cursor-pointer  py-2 hover_bg-gray-300"
+          @click="${() => { this.goto(item) }}">
               <div class="flex-none w-20 p-2 text-blue-500 underline">${item.height}</div>
               <div class="flex-1 p-2 truncate">${new Date(item.timestamp * 1000).toUTCString()}</div>
               <div class="flex-1 p-2 truncate">${item.parentHash}</div>
