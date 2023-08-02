@@ -18,19 +18,21 @@ export const rpcRegistName = async (doid: string, account: string, phrase: strin
   const hash = hexWithout0x(keccak256(`${txt}`))
   const wallet = (await getWalletByPhrase(phrase)) as HDNodeWallet
   const msg = customizedSign(hash, wallet?.privateKey) as string
-  console.log({ msg })
 
-  // S
+  /* // S
   const resSignedMsg = wallet.signingKey.sign(`0x${hash}`).serialized
-  console.log({ msgE: resSignedMsg })
-  // E
+  // console.log({ msgE: resSignedMsg })
+  // E */
 
   const params = [
     {
-      DOID: doid,
-      Owner: owner, // to
-      Signature: hexWithout0x(msg),
-      From: owner //sign
+      type: 'register',
+      data: {
+        DOID: doid,
+        Owner: owner,
+        Signature: hexWithout0x(msg),
+        From: owner
+      }
     }
   ]
   return await jsonRpcRequest(`${rpcApi}`, 'doid_sendTransaction', params)
