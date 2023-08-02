@@ -32,7 +32,7 @@ class UIConnects extends State {
     this.pending = true
     try {
       const { connects } = await popupMessenger.send('internal_getConnects')
-      Object.assign(this, { connects })
+      this.connects = connects
     } catch {}
     this.ts++
     this.pending = false

@@ -1,7 +1,6 @@
 // deps: preferences/base.ts
 import emitter from '@lit-web3/core/src/emitter'
 import { getPreferences } from './base'
-import { isEqual } from 'lodash'
 
 // key: host, value: names
 
@@ -19,20 +18,22 @@ export const ConnectsStorage = {
     }
     emitAccountsChange()
   },
-  set: async (host: string, names = []) => {
-    if (!host) return
+  // Overwrite([]) or Add(non-existing string) or Remove(existing string)
+  set: async (host: string, data: string | string[]) => {
+    if (!host || !data) return
     const connects = await ConnectsStorage.getAll()
     connects[host] ??= { names: [] }
-    connects[host].names = names
-    ConnectsStorage.update(connects)
-    emitter.emit('connect_change', connects)
-  },
-  remove: async (host: string, name: string) => {
-    if (!ConnectsStorage.has(host, name)) return
-    const connects = await ConnectsStorage.getAll()
-    const { names } = connects[host]
-    const idx = names.findIndex((r) => r === name)
-    names.splice(idx, 1)
+    // Overwrite existing
+    if (Array.isArray(data)) {
+      connects[host].names = data
+    } else if (typeof data === 'string') {
+      const { names } = connects[host]
+      const idx = names.findIndex((r) => r === data)
+      // Add
+      if (idx < 0) names.push(data)
+      // Remove
+      else names.splice(idx, 1)
+    }
     ConnectsStorage.update(connects)
     emitter.emit('connect_change', connects)
   },

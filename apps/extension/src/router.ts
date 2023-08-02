@@ -8,6 +8,7 @@ import popupMessenger from '~/lib.next/messenger/popup'
 import { isUnlock, isInit, keyringState } from '~/lib.next/popup'
 
 popupMessenger.on('keyring_update', () => {})
+popupMessenger.on('connect_change', () => {})
 popupMessenger.on('state_lock', () => emitter.emit('router-goto', '/unlock'))
 popupMessenger.on('popup_goto', ({ data: r }) => r && emitter.emit('router-goto', r))
 popupMessenger.on('popup_replace', ({ data: r }) => r && emitter.emit('router-replace', r))

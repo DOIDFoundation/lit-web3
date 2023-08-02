@@ -7,7 +7,7 @@ import { DOIDBodyParser, getDOIDs, assignConnects, getMultiChainAddress } from '
 const evtMap: Record<string, string> = {
   lock: 'state_lock'
 }
-;['lock', 'keyring_update'].forEach((evt) => {
+;['lock', 'keyring_update', 'connect_change'].forEach((evt) => {
   const mappedEvt = evtMap[evt] ?? evt
   backgroundMessenger.emitter.on(evt, () => {
     backgroundMessenger.send(mappedEvt)
@@ -74,21 +74,12 @@ export const internal_getConnects: BackgroundService = {
   }
 }
 
-export const internal_connects_remove: BackgroundService = {
-  method: 'internal_connects_remove',
-  middlewares: [],
-  fn: async ({ req, res, state }) => {
-    const { host, name } = req.body
-    await ConnectsStorage.remove(host, name)
-    res.body = 'ok'
-  }
-}
 export const internal_connects_set: BackgroundService = {
   method: 'internal_connects_set',
   middlewares: [],
-  fn: async ({ req, res, state }) => {
-    const { host, name } = req.body
-    await ConnectsStorage.set(host, name)
+  fn: async ({ req, res }) => {
+    const { host, name, names } = req.body
+    await ConnectsStorage.set(host, name ?? names)
     res.body = 'ok'
   }
 }
