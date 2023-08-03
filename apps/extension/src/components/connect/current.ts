@@ -93,7 +93,7 @@ export class ViewUnlock extends TailwindElement(style) {
           <!-- Accounts -->
           <p class="mt-4 flex justify-between">
             <span>Select:</span>
-            <dui-link href="#/create">New Account</dui-link>
+            <dui-link href="/create">New Account</dui-link>
           </p>
           <ul class="border rounded-md mt-2 mb-4">
             ${repeat(

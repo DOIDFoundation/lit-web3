@@ -3,6 +3,7 @@ import { requestConnectedDOIDs, popupGoto, autoClosePopup } from '~/middlewares'
 import { getEVMProvider } from './daemon'
 import { toUtf8String } from 'ethers'
 import { EVMBodyParser } from './bodyParser'
+import { noAuthMethods } from './constants'
 
 export const EVM_request: BackgroundService = {
   method: 'evm_request',
@@ -13,19 +14,20 @@ export const EVM_request: BackgroundService = {
     const { method, params } = req.body
     const { provider } = await getEVMProvider()
 
-    // Unauthed req
+    // Pass autoClosePopup
+    if (noAuthMethods.includes(method)) state.passUnlock = true
+    // NoAuth methods
     if (method === 'eth_chainId') return (res.body = (await provider.getNetwork()).chainId.toString())
     if (method === 'eth_blockNumber') return (res.body = await provider.getBlockNumber())
 
-    const needUnlock = !['eth_accounts'].includes(method)
-
-    await requestConnectedDOIDs({ needUnlock })(ctx)
+    // Assign DOIDs
+    await requestConnectedDOIDs()(ctx)
     const accounts = state.DOIDs.map((DOID: KeyringDOID) => DOID.address)
 
-    // Both supported
+    // Both Auth/noAuth methods
     if (method === 'eth_accounts') return (res.body = accounts)
 
-    // Authed req
+    // Auth methods
     const { wallet } = await getEVMProvider()
 
     switch (method) {

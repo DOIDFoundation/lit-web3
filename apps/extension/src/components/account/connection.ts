@@ -35,7 +35,6 @@ export class AccountSwitch extends TailwindElement(null) {
 
   connectedCallback() {
     super.connectedCallback()
-    uiConnects.getTab()
   }
 
   render() {

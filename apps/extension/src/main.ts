@@ -23,7 +23,8 @@ export class AppMain extends TailwindElement('') {
     this.showHeader =
       !['/', '/popup.html', '/recover', '/restore', '/start', '/import', '/import2nd', '/import3rd'].includes(
         pathname
-      ) && !['/unlock', '/landing', '/create', '/generate-phrase'].some((substr) => pathname.startsWith(substr))
+      ) &&
+      !['/unlock', '/landing', '/create', '/generate-phrase', '/connect'].some((substr) => pathname.startsWith(substr))
     const { style } = document.documentElement
     this.showHeader ? style.removeProperty('--header-height') : style.setProperty('--header-height', `0px`)
   }

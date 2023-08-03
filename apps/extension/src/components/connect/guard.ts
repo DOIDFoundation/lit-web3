@@ -16,6 +16,7 @@ import { goto } from '@lit-web3/dui/src/shared/router'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/dialog'
+import './hostInfo'
 
 @customElement('connects-guard')
 export class AccountSwitch extends TailwindElement(null) {
@@ -27,9 +28,6 @@ export class AccountSwitch extends TailwindElement(null) {
   get name() {
     return uiKeyring.selectedDOID?.name
   }
-  get connectUri() {
-    return `/connect/${encodeURIComponent(uiConnects.host)}`
-  }
 
   edit = () => {
     this.dialog = true
@@ -38,8 +36,8 @@ export class AccountSwitch extends TailwindElement(null) {
   close() {
     this.dialog = false
   }
-  goto(uri: string) {
-    goto(uri)
+  go2connect() {
+    goto(`/connect/${encodeURIComponent(uiConnects.host)}`)
     this.close()
   }
 
@@ -60,8 +58,8 @@ export class AccountSwitch extends TailwindElement(null) {
     if (!this.dialog) return ''
     return html`<dui-dialog @close=${this.close}>
       <div slot="header">
-        <strong>${uiConnects.host}</strong>
-        <p class="text-xs mt-1">
+        <connect-host-info></connect-host-info>
+        <p class="text-xs mt-2">
           ${uiConnects.isConnected ? `You have ${uiConnects.isConnected} accounts connected to this site.` : ``}
         </p>
       </div>
@@ -94,7 +92,7 @@ export class AccountSwitch extends TailwindElement(null) {
                 </li>`
             )}
           </ul>
-          <div class="mt-2">
+          <div class="mt-4">
             <b class="block my-1">Permissions</b>
             <p class="text-xs">You have authorized the following permissions:</p>
             <p class="text-xs">See address, account balance, activity and suggest transactions to approve</p>
@@ -102,7 +100,7 @@ export class AccountSwitch extends TailwindElement(null) {
         () =>
           html`DOID is not connected to this site. To connect to a web3 site, please find and click the connect button.
             <div class="border-t-2 pt-2 mt-2">
-              <dui-link @click=${() => this.goto(this.connectUri)}>Manually connect to this site</dui-link>
+              <dui-link @click=${() => this.go2connect()}>Manually connect to this site</dui-link>
             </div>`
       )}
     </dui-dialog>`

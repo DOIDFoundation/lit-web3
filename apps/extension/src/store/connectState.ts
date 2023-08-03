@@ -30,6 +30,7 @@ class UIConnects extends State {
   }
   sync = async () => {
     this.pending = true
+    await this.getTab()
     try {
       const { connects } = await popupMessenger.send('internal_getConnects')
       this.connects = connects

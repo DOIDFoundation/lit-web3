@@ -1,13 +1,14 @@
 import { TailwindElement, html, customElement, property, state, repeat } from '@lit-web3/dui/src/shared/TailwindElement'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { uiKeyring, StateController } from '~/store/keyringState'
+import { chainsDefault } from '~/lib.next/chain'
 
 // Components
 // import '@lit-web3/dui/src/menu'
 import '@lit-web3/dui/src/address/name'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/menu/drop'
-import { chainsDefault } from '~/lib.next/chain'
+import '~/components/connect/hostInfo'
 
 import style from './connect.css?inline'
 
@@ -80,8 +81,7 @@ export class ViewUnlock extends TailwindElement(style) {
             <div
               class="border border-gray-300 rounded-full bg-white p-3 px-4 gap-2 inline-flex justify-center items-center"
             >
-              <img class="w-5 h-5" src=${this.favicon} />
-              <span>${this.host}</span>
+              <connect-host-info></connect-host-info>
             </div>
             <!-- <dui-button class="inline-flex items-center">ethers</dui-button> -->
           </div>
@@ -93,7 +93,7 @@ export class ViewUnlock extends TailwindElement(style) {
           <!-- Accounts -->
           <p class="mt-4 flex justify-between">
             <span>Select:</span>
-            <dui-link href="#/create">New Account</dui-link>
+            <dui-link href="/create">New Account</dui-link>
           </p>
           <ul class="border rounded-md mt-2 mb-4">
             ${repeat(
