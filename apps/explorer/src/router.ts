@@ -9,7 +9,7 @@ export const routes = [
   {
     name: 'home',
     path: '/',
-    render: () => html`<view-home></view-home>`,
+    render: ({ m = '' }) => html`<view-home .miner=${m}></view-home>`,
     enter: async () => {
       await import('~/views/home')
       return true
@@ -21,6 +21,15 @@ export const routes = [
     render: ({ blockObj = '' }) => html`<view-block .blockObj=${blockObj}></view-block>`,
     enter: async () => {
       await import('~/views/block')
+      return true
+    }
+  },
+  {
+    name: 'home',
+    path: '/blocks/:m?',
+    render: ({ m = '' }) => html`<view-home .miner=${m}></view-home>`,
+    enter: async () => {
+      await import('~/views/home')
       return true
     }
   }
