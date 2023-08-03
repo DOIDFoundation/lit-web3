@@ -25,9 +25,10 @@ const fetchConnectedDOIDs = async (host: string) => await names2DOIDs(await Conn
 
 // For inpage only
 // >> res.body includes {DOIDs}
-export const assignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): BackgroundMiddlware => {
+export const assignConnectedDOIDs = ({ passUnlock = false, len = 1 } = {}): BackgroundMiddlware => {
   return async (ctx, next) => {
     const { req, state } = ctx
+    if (passUnlock || state.passUnlock) state.passUnlock = passUnlock = true
     state.DOIDs = []
     const { host } = req.headers
     const { isUnlocked } = await getKeyring()
@@ -38,11 +39,10 @@ export const assignConnectedDOIDs = ({ needUnlock = true, len = 1 } = {}): Backg
     const assignDOIDs = async () => (state.DOIDs = (await fetchConnectedDOIDs(host)).slice(0, len))
 
     // No need to unlock
-    if (!needUnlock) {
+    if (passUnlock) {
       if (isConnected()) await assignDOIDs()
       return next()
     }
-
     // Already unlocked and connected
     if (isUnlocked && isConnected()) {
       await assignDOIDs()
@@ -75,7 +75,3 @@ export const requestConnectedDOIDs =
           if (next) next()
         })
     )
-
-export const isConnected = (name: string): BackgroundMiddlware => {
-  return async (ctx, next) => {}
-}

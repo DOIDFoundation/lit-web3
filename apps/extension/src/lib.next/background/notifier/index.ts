@@ -7,11 +7,8 @@ import { backgroundToPopup } from '~/lib.next/messenger/background'
 export const POPUP_HEIGHT = 620
 export const POPUP_WIDTH = 360
 
-export const getPopup = async (): Promise<any> => {
-  const windows = await browser.windows.getAll()
-  if (!windows?.length) return
-  return windows.find((win) => win && win.type === 'popup' && win.id === popupStorage._popupId)
-}
+export const getPopup = async () =>
+  (await browser.windows.getAll()).find((win) => win && win.type === 'popup' && win.id === popupStorage._popupId)
 
 export const openPopup = async (path?: string): Promise<void> => {
   // const tabs = await browser.tabs.query({ active: true })
@@ -28,19 +25,21 @@ export const openPopup = async (path?: string): Promise<void> => {
 export const closePopup = async () => {
   if (popupStorage._popupId) browser.windows.remove(popupStorage._popupId as number)
 }
-export const updatePopup = async (path?: string, currentPopupId?: number) => {
+export const replacePopup = async (path?: string, currentPopupId?: number): Promise<number | undefined> => {
   if (currentPopupId) popupStorage._popupId = currentPopupId
-  const popup = await getPopup()
-  if (popup?.id) {
+  const id = (await getPopup())?.id
+  if (id) {
     if (path) backgroundToPopup.send('popup_replace', path)
-    await browser.windows.update(popup.id, { focused: true })
-    return true
+    await browser.windows.update(id, { focused: true })
   }
-  return false
+  return id
+}
+export const updatePopup = async (path?: string) => {
+  if (!(await replacePopup(path))) await showPopup(undefined, path)
 }
 
 const showPopup = async (currentPopupId?: number, path = '/'): Promise<any> => {
-  if (await updatePopup(path, currentPopupId)) return
+  if (await replacePopup(path, currentPopupId)) return
   //
   let left = 0
   let top = 0

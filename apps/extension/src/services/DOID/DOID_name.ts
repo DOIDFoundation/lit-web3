@@ -5,7 +5,7 @@ const DOIDs2Names = (DOIDs = <KeyringDOID[]>[]) => DOIDs.map((r) => r.name)
 export const DOID_name: BackgroundService = {
   method: 'DOID_name',
   allowInpage: true,
-  middlewares: [requestConnectedDOIDs({ needUnlock: false }), autoClosePopup],
+  middlewares: [requestConnectedDOIDs({ passUnlock: true })],
   fn: async ({ state, res }) => {
     res.body = DOIDs2Names(state.DOIDs)
   }
