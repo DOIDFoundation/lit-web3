@@ -16,7 +16,7 @@ export class ViewHome extends TailwindElement(style) {
   @state() pending = false
   @state() isConnect = false
 
-  socket = new WebSocket('ws://54.91.9.8:8557');
+  socket = new WebSocket('ws://54.221.168.235:8557');
   // socket:any = null;
   goto = (block: any) => {
     const _block = JSON.stringify(block);
@@ -136,6 +136,8 @@ export class ViewHome extends TailwindElement(style) {
         </div>
         <div class="mt-2 flex justify-between items-center">
           <div class="text-3xl">${when(!this.miner, () => 'Latest Blocks', () => html`
+          <div class="text-blue-700 font-bold cursor-pointer uppercase text-sm" @click="${() => { history.back() }}"><i class="mdi mdi-arrow-left mx-1"></i>
+              Back</div>
             <div>Blocks</div>
 
           `)}</div>

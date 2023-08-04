@@ -9,7 +9,7 @@ export class ViewHome extends TailwindElement(style) {
 
   goMinerBlock(key: any) {
     if (key == 'miner') {
-      goto('/blocks/' + this.blocks[key])
+      // goto('/blocks/' + this.blocks[key])
     }
   }
   connectedCallback(): void {
