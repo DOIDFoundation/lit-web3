@@ -16,14 +16,16 @@ export class AccountSwitch extends TailwindElement(null) {
 
   @state() menu = false
 
-  get selected() {
-    return uiKeyring.selectedDOID
+  get walletSelectedName() {
+    return uiKeyring.selectedDOID?.name
   }
-  get name() {
-    return this.selected?.name
+  get isConnected() {
+    return uiConnects.name === this.walletSelectedName
   }
-  get address() {
-    return this.selected?.address
+  get title() {
+    if (this.isConnected) return `${uiConnects.name} connected`
+    if (this.walletSelectedName) return `${this.walletSelectedName} not connected`
+    return 'No accounts connected'
   }
 
   showConnects = () => {
@@ -39,13 +41,16 @@ export class AccountSwitch extends TailwindElement(null) {
 
   render() {
     return html`<div>
-      <button
-        @click=${() => this.showConnects()}
-        title=${uiConnects.isConnected ? `${uiConnects.name} connected` : 'No accounts connected'}
-      >
+      <button @click=${() => this.showConnects()} title=${this.title}>
         <i
           class="text-base mdi ${classMap(
-            this.$c([uiConnects.isConnected ? 'mdi-web-check text-teal-600' : 'mdi-web-cancel text-neutral-400'])
+            this.$c([
+              this.isConnected
+                ? 'mdi-web-check text-teal-600'
+                : uiConnects.isConnected
+                ? 'mdi-web-plus'
+                : 'mdi-web-cancel text-neutral-400'
+            ])
           )}"
         ></i>
       </button>

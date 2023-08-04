@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, property, when } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, property, when, classMap } from '../shared/TailwindElement'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 
@@ -13,6 +13,7 @@ export class DuiNameAddress extends TailwindElement(null) {
   @property({ type: Boolean }) avatar = false
   @property({ type: Boolean }) wrap = false
   @property({ type: Boolean }) short = false
+  @property({ type: Boolean }) col = false
 
   get #address() {
     return this.DOID?.address ?? this.address
@@ -35,13 +36,22 @@ export class DuiNameAddress extends TailwindElement(null) {
   }
 
   override render() {
-    return html`${when(
-      !this.empty,
-      () => html`<div class="flex justify-center items-center whitespace-nowrap text-ellipsis">
-        ${when(this.avatar, () => html`<dui-address-avatar class="mr-1.5" .address=${this.addr}></dui-address-avatar>`)}
-        ${this.showName}
-        ${when(this.showAddress, () => html`<span class="text-xs ml-2 opacity-60">${this.showAddress}</span>`)}
-      </div>`
-    )}`
+    if (this.empty) return ''
+    return html`<span
+      class="flex justify-center items-center whitespace-nowrap text-ellipsis ${classMap(
+        this.$c([this.col ? 'gap-2' : 'gap-1.5'])
+      )}"
+    >
+      ${when(
+        this.avatar,
+        () => html`<dui-address-avatar size=${this.col ? 21 : 16} .address=${this.addr}></dui-address-avatar>`
+      )}
+      <span class="flex ${classMap(this.$c([this.col ? 'flex-col gap-1' : 'gap-2']))}"
+        ><span>${this.showName}</span>${when(
+          this.showAddress,
+          () => html`<span class="text-xs opacity-60 ${classMap({ block: this.col })}">${this.showAddress}</span>`
+        )}</span
+      >
+    </span>`
   }
 }

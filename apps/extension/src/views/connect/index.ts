@@ -1,6 +1,16 @@
-import { TailwindElement, html, customElement, property, state, repeat } from '@lit-web3/dui/src/shared/TailwindElement'
+import {
+  TailwindElement,
+  html,
+  customElement,
+  property,
+  state,
+  repeat,
+  when,
+  classMap
+} from '@lit-web3/dui/src/shared/TailwindElement'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { uiKeyring, StateController } from '~/store/keyringState'
+import { uiConnects } from '~/store/connectState'
 import { chainsDefault } from '~/lib.next/chain'
 
 // Components
@@ -15,9 +25,10 @@ import style from './connect.css?inline'
 @customElement('view-connect')
 export class ViewUnlock extends TailwindElement(style) {
   bindKeyring: any = new StateController(this, uiKeyring)
+  bindConnects: any = new StateController(this, uiConnects)
   @property() host = ''
   @property() chain = ''
-  @state() names: Record<string, boolean> = {}
+  @state() names: Record<string, boolean> = {} // user selected names
 
   @state() headers: any
 
@@ -33,22 +44,14 @@ export class ViewUnlock extends TailwindElement(style) {
   get Chain() {
     return chainsDefault.find((r: any) => r.name === this.chain)
   }
-
-  get selectNames() {
-    const names = this.names
-    const res = Object.keys(names).filter((k) => names[k] === true)
-    return res
-  }
-
-  get = async () => {
-    this.headers = await popupMessenger.send('internal_headers')
+  get selectedNames() {
+    return Object.keys(this.names).filter((k) => this.names[k] === true)
   }
 
   connect = async () => {
-    if (!this.selectNames.length) return
     try {
       const res = await popupMessenger.send('internal_connect', {
-        names: this.selectNames,
+        names: this.selectedNames,
         host: this.host,
         chain: this.chain
       })
@@ -59,17 +62,28 @@ export class ViewUnlock extends TailwindElement(style) {
   }
 
   select = (name: string) => {
-    this.names[name] = !this.names[name]
+    this.names = { ...this.names, [name]: !this.names[name] }
+  }
+
+  selectAll = () => {
+    const alreadySelectedAll = this.selectedNames.length === this.DOIDs.length
+    for (let name in this.names) this.names[name] = !alreadySelectedAll
+    this.names = { ...this.names }
+  }
+
+  sync = async () => {
+    this.names = Object.fromEntries(this.DOIDs.map((r) => [r.name, uiConnects.names.includes(r.name)]))
+    this.headers = await popupMessenger.send('internal_headers')
   }
 
   close = () => {
+    if (history.length > 1) return history.back()
     window.close()
   }
 
   connectedCallback() {
     super.connectedCallback()
-    this.names = Object.fromEntries(this.DOIDs.map((r) => [r.name, false]))
-    this.get()
+    this.sync()
   }
 
   render() {
@@ -91,29 +105,37 @@ export class ViewUnlock extends TailwindElement(style) {
             <div class="mt-1 text-xs">Select DOID to use on this site</div>
           </div>
           <!-- Accounts -->
-          <p class="mt-4 flex justify-between">
-            <span>Select:</span>
-            <dui-link href="/create">New Account</dui-link>
+          <p class="mt-4 px-2 flex justify-between">
+            <span @click=${this.selectAll} class="inline-flex items-center ml-2.5 gap-2 cursor-pointer"
+              ><input type="checkbox" class="pointer-events-none" .checked=${false} readonly /><span class="text-xs"
+                >Select all</span
+              ></span
+            >
+            <dui-link href="/create">New DOID</dui-link>
           </p>
-          <ul class="border rounded-md mt-2 mb-4">
-            ${repeat(
-              this.DOIDs,
-              (DOID) =>
-                html`<li @click=${() => this.select(DOID.name)} class="flex items-center p-4 gap-4 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    class="cursor-pointer"
-                    .checked=${(this.names[DOID.name] as boolean) || ''}
-                    readonly
-                  /><dui-name-address .DOID=${DOID} short></dui-name-address>
-                </li>`
-            )}
-          </ul>
-          <!-- Chain -->
-          <div>
-            <strong class="my-4 font-semibold">Chain:</strong>
-            <span class="">${this.Chain?.title}</span>
+          <div class="border rounded-md my-2 max-h-64 overflow-x-hidden overflow-y-auto">
+            <ul class="">
+              ${repeat(
+                this.DOIDs,
+                (DOID) =>
+                  html`<li
+                    @click=${() => this.select(DOID.name)}
+                    class="flex items-center p-3 px-4 gap-3 border-t cursor-pointer first_border-t-0 border-gray-200 border-dashed hover_bg-slate-100"
+                  >
+                    <input type="checkbox" class="pointer-events-none" .checked=${this.names[DOID.name]} readonly />
+                    <dui-name-address .DOID=${DOID} short avatar col></dui-name-address>
+                  </li>`
+              )}
+            </ul>
           </div>
+          <!-- Chain -->
+          ${when(
+            this.chain,
+            () => html`<p class="my-4">
+              <strong>Request Chain:</strong>
+              <span class="">${this.Chain?.title}</span>
+            </p>`
+          )}
         </div>
 
         <!-- Actions -->
@@ -121,7 +143,7 @@ export class ViewUnlock extends TailwindElement(style) {
           <p class="text-xs">Only connect with sites you trust</p>
           <div class="mt-2 border-t p-4 flex justify-center gap-8">
             <dui-button @click=${this.close} class="outlined minor">Cancel</dui-button>
-            <dui-button class="secondary" @click=${this.connect}>Connect</dui-button>
+            <dui-button class="secondary" @click=${this.connect}>Confirm</dui-button>
           </div>
         </div>
       </div>

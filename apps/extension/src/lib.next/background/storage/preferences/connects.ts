@@ -10,13 +10,13 @@ export const ConnectsStorage = {
   get: async (host: string): Promise<ConnectedNames> => (await ConnectsStorage.getAll())[host]?.names ?? [],
   has: async (host: string, name = '') => (await ConnectsStorage.get(host)).includes(name),
 
-  // Writes
+  // Write to state
   update: async (connects?: Connects) => {
     if (connects) {
-      const { state, updateState } = await getPreferences()
+      const { updateState } = await getPreferences()
       updateState({ connects })
     }
-    emitAccountsChange()
+    emitAccountsChange(connects)
   },
   // Overwrite([]) or Add(non-existing string) or Remove(existing string)
   set: async (host: string, data: string | string[]) => {
@@ -35,7 +35,15 @@ export const ConnectsStorage = {
       else names.splice(idx, 1)
     }
     ConnectsStorage.update(connects)
-    emitter.emit('connect_change', connects)
+  },
+  // Switch to selected name and force connect
+  select: async (host: string, name: string) => {
+    const connects = await ConnectsStorage.getAll()
+    connects[host] ??= { names: [] }
+    const { names } = connects[host]
+    if (names.includes(name)) names.sort((r) => (r === name ? -1 : 1))
+    else names.unshift(name)
+    ConnectsStorage.update(connects)
   },
   // Sync with keyring
   sync: async () => {
@@ -51,6 +59,6 @@ getPreferences().then(() => {
   })
 })
 
-const emitAccountsChange = async () => {
-  emitter.emit('connect_change', await ConnectsStorage.getAll())
+const emitAccountsChange = async (connects?: Connects) => {
+  emitter.emit('connect_change', connects ?? (await ConnectsStorage.getAll()))
 }

@@ -1,9 +1,9 @@
 import { getKeyring } from '~/lib.next/keyring'
 
 export const names2DOIDs = async (names: string[]): Promise<KeyringDOID[]> => {
-  const { DOIDs, selectedDOID, isUnlocked } = await getKeyring()
+  const { DOIDs, isUnlocked } = await getKeyring()
   if (!isUnlocked) return []
-  return names.map((r) => DOIDs[r]).sort((r) => (r.name === selectedDOID.name ? -1 : 1))
+  return names.map((r) => DOIDs[r])
 }
 
 export const names2Addresses = async (names: string[], chain = 'eth') => {

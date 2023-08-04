@@ -84,6 +84,16 @@ export const internal_connects_set: BackgroundService = {
   }
 }
 
+export const internal_connects_select: BackgroundService = {
+  method: 'internal_connects_select',
+  middlewares: [],
+  fn: async ({ req, res }) => {
+    const { host, name } = req.body
+    await ConnectsStorage.select(host, name)
+    res.body = 'ok'
+  }
+}
+
 export const internal_getSelected: BackgroundService = {
   method: 'internal_getSelected',
   middlewares: [getDOIDs],
