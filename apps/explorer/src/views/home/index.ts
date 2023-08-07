@@ -22,8 +22,18 @@ export class ViewHome extends TailwindElement(style) {
     const _block = JSON.stringify(block);
     goto(`/block/${_block}`)
   }
+
+  onPage(page: number) {
+    // this.pending = true
+    if (page < 1) page = 1
+    if (this.minerData.totalPage != 0 && page >= this.minerData.totalPage) page = this.minerData.totalPage
+    this.minerData.page = page
+    this.minerData.blockData = []
+    this.socket.send(`{"jsonrpc":"2.0","id":5,"method":"doid_getBlockByMiner","params":[{"miner":"${this.miner.toLowerCase()}","limit":10,"page":${this.minerData.page}}]}`)
+  }
+
   async getMinterData(page: number) {
-    console.log(page, 'page');
+    // console.log(page, 'page');
     if (page < 1) page = 1
     if (this.minerData.totalPage != 0 && page >= this.minerData.totalPage) page = this.minerData.totalPage
     this.minerData.blockData = []
@@ -57,6 +67,9 @@ export class ViewHome extends TailwindElement(style) {
     socket.addEventListener('open', function (event) {
       socket.send('{"jsonrpc":"2.0","id":1,"method":"doid_currentBlock","params":[]}')
       socket.send('{"jsonrpc": "2.0", "method": "doid_subscribe", "params": ["newHeads"], "id": 2}')
+      if (that.miner) {
+        socket.send(`{"jsonrpc":"2.0","id":5,"method":"doid_getBlockByMiner","params":[{"miner":"${that.miner.toLowerCase()}","limit":10,"page":${that.minerData.page}}]}`)
+      }
       // console.log(socket, 'socket', WebSocket.OPEN);
     });
 
@@ -71,7 +84,13 @@ export class ViewHome extends TailwindElement(style) {
       const result = JSON.parse(event.data)
       that.getData(result)
       // console.log(result.result)
-
+      if (result.id == 5) {
+        that.minerData.data = result.result.data
+        that.minerData.totalPage = result.result.totalPage
+        for (let index in that.minerData.data) {
+          socket.send(`{"jsonrpc":"2.0","id":4,"method":"doid_getBlockByHeight","params":[${that.minerData.data[index]}]}`)
+        }
+      }
 
       that.pending = false
       that.isConnect = true;
@@ -96,7 +115,7 @@ export class ViewHome extends TailwindElement(style) {
       this.blockData.unshift(params.result.header)
       // this.pending = false
     }
-    if (params.method === 'doid_subscription' && params.id == 2) {
+    if (params.method === 'doid_subscription') {
       this.blockData.unshift(params.params.result.header)
     }
     if (params.id === 1) {
@@ -109,7 +128,7 @@ export class ViewHome extends TailwindElement(style) {
       this.minerData.blockData.unshift(params.result.header)
     }
     this.blockData = this.blockData.slice(0, 30).sort((a: any, b: any) => b.height - a.height)
-    this.minerData.blockData = this.minerData.blockData.slice(0, 30).sort((a: any, b: any) => b.height - a.height)
+    this.minerData.blockData = this.minerData.blockData.slice(0, 10).sort((a: any, b: any) => a.height - b.height)
     // console.log('paraams', this.blockData, this.pending);
     // console.log(this.minerData.blockData);
 
@@ -117,9 +136,9 @@ export class ViewHome extends TailwindElement(style) {
   connectedCallback(): void {
     super.connectedCallback()
     this.runWs();
-    if (this.miner) {
-      this.getMinterData(1)
-    }
+    // if (this.miner) {
+    //   this.getMinterData(1)
+    // }
   }
   render() {
     return html`<div class="home">
@@ -195,23 +214,23 @@ export class ViewHome extends TailwindElement(style) {
 
           ${when(!this.pending && !!this.miner, () => html`
             <div class="flex justify-center items-center">
-              <dui-button icon sm class="text-blue-500" @click=${() => this.getMinterData(1)}>
+              <dui-button icon sm class="text-blue-500" @click=${() => this.onPage(1)}>
                 First
               </dui-button>
               <dui-button icon sm class="text-blue-500" @click=${() => {
           const page = this.minerData.page - 1
-          this.getMinterData(page)
+          this.onPage(page)
         }}>
                 <i class="mdi mdi-menu-left text-lg"></i>
               </dui-button>
               <div class="text-gray-300 text-sm inline-block">Page ${this.minerData.page} of ${this.minerData.totalPage}</div>
               <dui-button icon sm class="text-blue-500" @click=${() => {
           const page = this.minerData.page + 1
-          this.getMinterData(page)
+          this.onPage(page)
         }}>
                 <i class="mdi mdi-menu-right text-lg"></i>
               </dui-button>
-              <dui-button icon sm class="text-blue-500" @click=${() => this.getMinterData(this.minerData.totalPage)}>
+              <dui-button icon sm class="text-blue-500" @click=${() => this.onPage(this.minerData.totalPage)}>
                 Last
               </dui-button>
             </div>
