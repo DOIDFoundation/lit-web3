@@ -5,7 +5,7 @@ export default ({ mode = '' }) => {
     server: {
       https: false, port: 4811, proxy: {
         '/jsonrpc': {
-          target: 'http://192.168.0.119:8556',
+          target: 'http://54.221.168.235:8556',
           changeOrigin: true,
           cookieDomainRewrite: 'localhost'
         }

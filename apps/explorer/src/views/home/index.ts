@@ -25,14 +25,16 @@ export class ViewHome extends TailwindElement(style) {
   async getMinterData(page: number) {
     console.log(page, 'page');
     if (page < 1) page = 1
-    if (page >= this.minerData.totalPage) page = this.minerData.totalPage
+    if (this.minerData.totalPage != 0 && page >= this.minerData.totalPage) page = this.minerData.totalPage
     this.minerData.blockData = []
-    // const isProd = import.meta.env.MODE === 'production'
-    // const rpcUrl = isProd ? 'http://192.168.0.119:8556' : `${location.origin}/jsonrpc/`
-    // const result = await jsonRpcRequest(rpcUrl, "doid_getBlockByMiner", [{ "miner": "a7497216abf4ca75652ad33e6200328f4c41bb3f", "limit": 10, "page": 1025 }])
-    // console.log(result, 'result');
-    this.minerData.data = [31389, 31389, 31437, 31437, 31550, 31695, 31803, 31809, 31839]
-    this.minerData.totalPage = 1025
+    const isProd = import.meta.env.MODE === 'production'
+    const rpcUrl = isProd ? 'http://54.221.168.235:8556' : `${location.origin}/jsonrpc/`
+    const result: any = await jsonRpcRequest(rpcUrl, "doid_getBlockByMiner", [{ "miner": `${this.miner.toLowerCase()}`, "limit": 10, "page": page }])
+    console.log(result, 'result');
+    // this.minerData.data = [31389, 31389, 31437, 31437, 31550, 31695, 31803, 31809, 31839]a7497216abf4ca75652ad33e6200328f4c41bb3f
+    if (result == null) return
+    this.minerData.data = result.data
+    this.minerData.totalPage = result.totalPage
     this.minerData.page = page
     const onSendData = () => {
       for (let index in this.minerData.data) {
@@ -109,7 +111,7 @@ export class ViewHome extends TailwindElement(style) {
     this.blockData = this.blockData.slice(0, 30).sort((a: any, b: any) => b.height - a.height)
     this.minerData.blockData = this.minerData.blockData.slice(0, 30).sort((a: any, b: any) => b.height - a.height)
     // console.log('paraams', this.blockData, this.pending);
-    console.log(this.minerData.blockData);
+    // console.log(this.minerData.blockData);
 
   }
   connectedCallback(): void {
