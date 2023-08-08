@@ -46,7 +46,7 @@ export class ConnectWalletBtn extends TailwindElement(style) {
     emitter.off('connect-wallet', this.show)
   }
 
-  override render() {
+  render() {
     return html`<div class="connect-wallet-btn relative">
       <dui-button sm @click=${this.show} class="inline-flex items-center">
         ${when(
@@ -66,27 +66,24 @@ export class ConnectWalletBtn extends TailwindElement(style) {
         )}
       </dui-button>
       <!-- Menu -->
-      ${when(
-        this.menu,
-        () => html`<dui-drop show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
-          <div class="flex w-full justify-between items-center py-3 pl-4 pr-2">
-            <div class="flex items-center space-x-2">
-              <dui-address-avatar></dui-address-avatar>
-              <span>${this.addr}</span>
-              <span>
-                <dui-copy-icon .value=${this.account}></dui-copy-icon>
-                <dui-button sm icon href=${this.scan}><i class="mdi mdi-open-in-new"></i></dui-button
-              ></span>
-            </div>
-            <div>
-              <dui-button sm icon @click=${() => bridgeStore.bridge.disconnect()}
-                ><i class="mdi mdi-link-variant-off"></i
-              ></dui-button>
-            </div>
+      <dui-drop .show=${this.menu} @close=${() => (this.menu = false)}>
+        <div class="flex w-full justify-between items-center py-3 pl-4 pr-2">
+          <div class="flex items-center space-x-2">
+            <dui-address-avatar></dui-address-avatar>
+            <span>${this.addr}</span>
+            <span>
+              <dui-copy-icon .value=${this.account}></dui-copy-icon>
+              <dui-button sm icon href=${this.scan}><i class="mdi mdi-open-in-new"></i></dui-button
+            ></span>
           </div>
-          <slot name="submenu"></slot>
-        </dui-drop>`
-      )}
+          <div>
+            <dui-button sm icon @click=${() => bridgeStore.bridge.disconnect()}
+              ><i class="mdi mdi-link-variant-off"></i
+            ></dui-button>
+          </div>
+        </div>
+        <slot name="submenu"></slot>
+      </dui-drop>
       <!-- Dialog -->
       ${when(this.dialog, () => html`<connect-wallet-dialog @close=${this.close}></connect-wallet-dialog>`)}
     </div>`

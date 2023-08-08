@@ -21,11 +21,7 @@ export class AccountSwitch extends TailwindElement(null) {
     return this.selected?.address
   }
 
-  show = (e: CustomEvent) => {
-    e.stopPropagation()
-    this.menu = !this.menu
-  }
-  onSwitch = () => {
+  close = () => {
     this.menu = false
   }
 
@@ -36,16 +32,13 @@ export class AccountSwitch extends TailwindElement(null) {
   render() {
     if (!this.name) return ''
     return html`<div class="relative">
-      <dui-button md @click=${this.show} text class="inline-flex items-center">
+      <dui-button @click=${() => (this.menu = !this.menu)} text class="inline-flex items-center !px-0">
         <dui-name-address avatar .name=${this.name} .address=${this.address} class="tex" wrap></dui-name-address>
         <i class="text-xl mdi  ${classMap({ 'mdi-chevron-down': !this.menu, 'mdi-chevron-up': this.menu })}"></i>
       </dui-button>
-      ${when(
-        this.menu,
-        () => html`<dui-drop alignLeft show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
-          <account-menu @switch=${this.onSwitch}></account-menu>
-        </dui-drop>`
-      )}
+      <dui-drop .show=${this.menu} @close=${this.close} alignLeft>
+        <account-menu @switch=${this.close}></account-menu>
+      </dui-drop>
     </div>`
   }
 }

@@ -77,7 +77,7 @@ export class ViewUnlock extends TailwindElement(style) {
   }
 
   close = () => {
-    if (history.length > 1) return history.back()
+    if (history.length > 2) return history.back()
     window.close()
   }
 
@@ -120,7 +120,9 @@ export class ViewUnlock extends TailwindElement(style) {
                 (DOID) =>
                   html`<li
                     @click=${() => this.select(DOID.name)}
-                    class="flex items-center p-3 px-4 gap-3 border-t cursor-pointer first_border-t-0 border-gray-200 border-dashed hover_bg-slate-100"
+                    class="flex items-center p-3 px-4 gap-3 border-t cursor-pointer first_border-t-0 border-gray-200 border-dashed hover_bg-slate-100 ${classMap(
+                      { 'font-bold bg-slate-50': this.selectedDOID?.name === DOID.name }
+                    )}"
                   >
                     <input type="checkbox" class="pointer-events-none" .checked=${this.names[DOID.name]} readonly />
                     <dui-name-address .DOID=${DOID} short avatar col></dui-name-address>

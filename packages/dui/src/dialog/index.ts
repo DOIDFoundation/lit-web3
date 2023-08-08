@@ -1,5 +1,5 @@
 // Todo: ShadowRoot should be created as childNodes of document.body
-import { customElement, TailwindElement, html, state, property } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, state, property, classMap } from '../shared/TailwindElement'
 import type { TAILWINDELEMENT } from '../shared/TailwindElement'
 import { sleep } from '@lit-web3/ethers/src/utils'
 import { animate } from '@lit-labs/motion'
@@ -13,19 +13,23 @@ export class DuiDialog extends TailwindElement(style) implements TAILWINDELEMENT
 
   close = async () => {
     this.model = false
-    await sleep(200)
-    this.remove()
+    this.unlisten()
+    await sleep(200) // Anamition timeout
     this.emit('close')
+    this.remove()
   }
 
-  onEsc = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') setTimeout(() => this.close())
+  #onEsc = (e: KeyboardEvent) => {
+    if (e.key !== 'Escape') return
+    e.preventDefault()
+    this.close()
   }
   listen() {
-    window.addEventListener('keydown', this.onEsc)
+    this.unlisten()
+    window.addEventListener('keydown', this.#onEsc)
   }
   unlisten() {
-    window.removeEventListener('keydown', this.onEsc)
+    window.removeEventListener('keydown', this.#onEsc)
   }
 
   connectedCallback() {
@@ -44,9 +48,9 @@ export class DuiDialog extends TailwindElement(style) implements TAILWINDELEMENT
     return html`
       <div
         part="dialog-container"
-        class="relative !origin-center z-10 bg-white rounded-xl drop-shadow-lg ${this.model
-          ? '-mt-8 opacity-100 visible'
-          : '-mt-80 opacity-0 invisible'}"
+        class="relative !origin-center z-10 bg-white rounded-xl drop-shadow-lg ${classMap(
+          this.$c([this.model ? '-mt-8 opacity-100 visible' : '-mt-80 opacity-0 invisible'])
+        )}"
         ${animate({
           guard: () => this.model,
           properties: ['opacity', 'visibility', 'margin', 'transform'],
@@ -71,7 +75,9 @@ export class DuiDialog extends TailwindElement(style) implements TAILWINDELEMENT
           <div part="dialog-footer" class="w-full p-4 rounded-b-xl"><slot name="footer"></slot></div>
         </slot>
       </div>
+      <!-- Overlay -->
       <div
+        @click="${() => !this.persistent && this.close()}"
         part="dialog-overlay"
         class="z-0 absolute left-0 top-0 w-full h-full visible bg-black bg-opacity-75 ${this.model
           ? 'opacity-75'
