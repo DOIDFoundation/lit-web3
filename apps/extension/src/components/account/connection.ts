@@ -48,7 +48,7 @@ export class AccountSwitch extends TailwindElement(null) {
               this.isConnected
                 ? 'mdi-web-check text-teal-600'
                 : uiConnects.isConnected
-                ? 'mdi-web-plus'
+                ? 'mdi-web-cancel'
                 : 'mdi-web-cancel text-neutral-400'
             ])
           )}"

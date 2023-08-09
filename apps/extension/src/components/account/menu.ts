@@ -50,7 +50,7 @@ export class AccountMenu extends TailwindElement(css) {
     return html`
       <div>
         <div class="flex justify-between items-center py-3 px-4 border-b">
-          <span>My accounts</span>
+          <span>My DOID accounts</span>
           <dui-button sm class="outlined" @click=${this.lock}>Lock</dui-button>
         </div>
 

@@ -12,6 +12,7 @@ import '@lit-web3/dui/src/nav/header'
 import '~/components/account/switch'
 import '~/components/account/connection'
 import '~/components/connect/guard'
+import '~/components/settings/btn'
 // import { StateController, walletStore } from './store'
 
 @customElement('app-main')
@@ -39,12 +40,12 @@ export class AppMain extends TailwindElement('') {
         this.showHeader,
         () =>
           html`<dui-header fixed logoHref="/">
-            <div slot="left" class="flex items-center">
+            <div slot="left" class="flex items-center gap-4">
               <account-switch></account-switch>
               <account-connection></account-connection>
             </div>
-            <div slot="right" class="block w-6 h-6 mx-auto">
-              <dui-link href="/"><doid-icon></doid-icon></dui-link>
+            <div slot="right" class="flex items-center gap-4">
+              <settings-btn></settings-btn>
             </div>
             <div slot="logo"></div>
             <div slot="wallet"></div>

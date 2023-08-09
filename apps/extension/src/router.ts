@@ -209,6 +209,17 @@ export const routes = [
     }
   },
   {
+    name: 'settings',
+    path: '/settings',
+    render: () => {
+      return html`<view-settings></view-settings>`
+    },
+    enter: async () => {
+      await import('~/views/settings')
+      return true
+    }
+  },
+  {
     name: 'idle',
     path: '/idle',
     render: () => {

@@ -46,7 +46,7 @@ export class DuiNameAddress extends TailwindElement(null) {
         this.avatar,
         () => html`<dui-address-avatar size=${this.col ? 21 : 16} .address=${this.addr}></dui-address-avatar>`
       )}
-      <span class="flex ${classMap(this.$c([this.col ? 'flex-col gap-1' : 'gap-2']))}"
+      <span class="flex ${classMap(this.$c([this.col ? 'flex-col gap-1' : 'gap-2 items-center']))}"
         ><span>${this.showName}</span>${when(
           this.showAddress,
           () => html`<span class="text-xs opacity-60 ${classMap({ block: this.col })}">${this.showAddress}</span>`

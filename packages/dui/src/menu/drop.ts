@@ -8,6 +8,7 @@ import style from './drop.css?inline'
 export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
   @property({ type: Boolean, reflect: true }) show = false
   @property({ type: Boolean }) alignLeft = false
+  @property({ type: Boolean }) md = false
 
   @state() model = false
 
@@ -64,7 +65,8 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
       class="dui-drop ${classMap(
         this.$c([
           { 'right-0': !this.alignLeft },
-          this.model ? 'mt-auto opacity-100 visible' : '-mt-2 opacity-0 invisible'
+          this.model ? 'mt-auto opacity-100 visible' : '-mt-2 opacity-0 invisible',
+          this.md ? '!w-44' : ''
         ])
       )}"
       ${animate({
