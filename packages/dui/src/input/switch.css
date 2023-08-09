@@ -1,0 +1,31 @@
+.dui-input-switch {
+  @apply relative inline-flex w-8 h-4 rounded-full box-content bg-gray-400 transition-all select-none cursor-pointer;
+  border: 1px solid transparent;
+  &::before {
+    @apply w-4 h-4 block absolute left-0 rounded-full bg-white transition-all;
+    content: '';
+  }
+  &.checked {
+    @apply bg-blue-600;
+    &::before {
+      @apply left-4;
+    }
+  }
+  &[disabled] {
+    @apply cursor-default bg-gray-200;
+    &.checked {
+      @apply !bg-blue-300;
+    }
+  }
+  &.sm {
+    @apply w-6 h-3;
+    &::before {
+      @apply w-3 h-3;
+    }
+    &.checked {
+      &::before {
+        @apply left-3;
+      }
+    }
+  }
+}
