@@ -11,6 +11,7 @@
   "keywords": [],
   "dependencies": {
     "@lit-web3/core": "workspace:latest",
+    "@lit-web3/doids": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest"
   },

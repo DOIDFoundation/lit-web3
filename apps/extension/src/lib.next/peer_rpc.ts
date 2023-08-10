@@ -2,11 +2,12 @@ import { Wallet, keccak256, hexlify, toUtf8Bytes } from 'ethers'
 import { createKeyPair, sign } from '@erebos/secp256k1'
 import jsonRpcRequest from '@lit-web3/core/src/http/jsonRpcRequest'
 import { getEVMProvider } from '~/services/EVM/daemon'
+import { defaultNetwork } from '@lit-web3/doids/src/networks'
 
 import type { HDNodeWallet } from 'ethers'
 import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
-const rpcApi = import.meta.env.VITE_RPC_API
+const rpcApi = defaultNetwork.provider
 const hexWithout0x = (hex: string) => {
   return hex.replace(/0x/g, '')
 }

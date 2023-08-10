@@ -57,6 +57,7 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
 
   disconnectedCallback() {
     super.disconnectedCallback()
+    this.model = this.show
     this.unlisten()
   }
 

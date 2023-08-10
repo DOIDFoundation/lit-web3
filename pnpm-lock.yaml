@@ -147,6 +147,9 @@ importers:
       '@lit-web3/core':
         specifier: workspace:latest
         version: link:../../packages/core
+      '@lit-web3/doids':
+        specifier: workspace:latest
+        version: link:../../packages/doids
       '@lit-web3/dui':
         specifier: workspace:latest
         version: link:../../packages/dui
@@ -171,6 +174,9 @@ importers:
       '@lit-web3/core':
         specifier: workspace:latest
         version: link:../../packages/core
+      '@lit-web3/doids':
+        specifier: workspace:latest
+        version: link:../../packages/doids
       '@lit-web3/dui':
         specifier: workspace:latest
         version: link:../../packages/dui
@@ -254,18 +260,6 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0
 
-  apps/lock-explorer:
-    dependencies:
-      '@lit-web3/core':
-        specifier: workspace:latest
-        version: link:../../packages/core
-      '@lit-web3/dui':
-        specifier: workspace:latest
-        version: link:../../packages/dui
-      '@lit-web3/ethers':
-        specifier: workspace:latest
-        version: link:../../packages/ethers
-
   apps/lock-name:
     dependencies:
       '@lit-web3/core':
@@ -317,6 +311,15 @@ importers:
       '@types/readable-stream':
         specifier: ^2.3.15
         version: 2.3.15
+
+  packages/doids:
+    dependencies:
+      '@lit-web3/core':
+        specifier: workspace:latest
+        version: link:../core
+      tsup:
+        specifier: ^6
+        version: 6.7.0(postcss@8.4.24)(typescript@5.1.6)
 
   packages/dui:
     dependencies:
@@ -11444,21 +11447,12 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /rollup@3.25.2:
-    resolution: {integrity: sha512-VLnkxZMDr3jpxgtmS8pQZ0UvhslmF4ADq/9w4erkctbgjCqLW9oa89fJuXEs4ZmgyoF7Dm8rMDKSS5b5u2hHUg==}
-    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: false
-
   /rollup@3.26.3:
     resolution: {integrity: sha512-7Tin0C8l86TkpcMtXvQu6saWH93nhG3dGQ1/+l5V2TDMceTxO7kDiK6GzbfLWNNxqJXm591PcEZUozZm51ogwQ==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /rpc-websockets@7.5.1:
     resolution: {integrity: sha512-kGFkeTsmd37pHPMaHIgN1LVKXMi0JD782v4Ds9ZKtLlwdTKjn+CxM9A9/gLT2LaOuEcEFGL98h1QWQtlOIdW0w==}
@@ -12290,7 +12284,7 @@ packages:
       postcss: 8.4.24
       postcss-load-config: 3.1.4(postcss@8.4.24)
       resolve-from: 5.0.0
-      rollup: 3.25.2
+      rollup: 3.26.3
       source-map: 0.8.0-beta.0
       sucrase: 3.32.0
       tree-kill: 1.2.2
@@ -12327,7 +12321,7 @@ packages:
       postcss: 8.4.24
       postcss-load-config: 3.1.4(postcss@8.4.24)
       resolve-from: 5.0.0
-      rollup: 3.25.2
+      rollup: 3.26.3
       source-map: 0.8.0-beta.0
       sucrase: 3.32.0
       tree-kill: 1.2.2

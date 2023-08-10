@@ -25,6 +25,7 @@
     "@erebos/secp256k1": "^0.10.0",
     "@libp2p/crypto": "^1.0.7",
     "@lit-web3/core": "workspace:latest",
+    "@lit-web3/doids": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
     "@lit-web3/solana-wallet-standard": "workspace:latest",

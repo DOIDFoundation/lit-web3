@@ -6,8 +6,8 @@ import style from './switch.css?inline'
 @customElement('dui-input-switch')
 export class DuiInputSwitch extends TailwindElement(style) {
   @property({ type: Boolean }) checked = false
-  @property({ type: Boolean }) readonly = false
-  @property({ type: Boolean }) disabled = false
+  @property({ type: Boolean, reflect: true }) readonly = false
+  @property({ type: Boolean, reflect: true }) disabled = false
   @property({ type: Boolean }) sm = false
 
   switch = () => {

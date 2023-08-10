@@ -32,7 +32,7 @@
     "skipLibCheck": true,
     "jsx": "preserve"
   },
-  "include": ["**/*.ts", "**/*.d.ts"],
+  "include": ["**/*.ts", "**/*.d.ts", "packages/doids/src/constants/networks.cjs"],
   "exclude": ["public", "dist", "vendor", "node_modules", ".vscode", ".git"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

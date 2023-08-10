@@ -3,6 +3,7 @@ import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/loading/icon'
 import '../../components/search/index'
 import { goto } from '@lit-web3/dui/src/shared/router'
+import { defaultNetwork } from '@lit-web3/doids/src/networks'
 // import http from '@lit-web3/core/src/http'
 import jsonRpcRequest from '@lit-web3/core/src/http/jsonRpcRequest'
 import '@lit-web3/dui/src/button'
@@ -16,10 +17,10 @@ export class ViewHome extends TailwindElement(style) {
   @state() pending = false
   @state() isConnect = false
 
-  socket = new WebSocket('ws://54.221.168.235:8557');
+  socket = new WebSocket(defaultNetwork.providerWs)
   // socket:any = null;
   goto = (block: any) => {
-    const _block = JSON.stringify(block);
+    const _block = JSON.stringify(block)
     goto(`/block/${_block}`)
   }
 
@@ -29,7 +30,11 @@ export class ViewHome extends TailwindElement(style) {
     if (this.minerData.totalPage != 0 && page >= this.minerData.totalPage) page = this.minerData.totalPage
     this.minerData.page = page
     this.minerData.blockData = []
-    this.socket.send(`{"jsonrpc":"2.0","id":5,"method":"doid_getBlockByMiner","params":[{"miner":"${this.miner.toLowerCase()}","limit":10,"page":${this.minerData.page}}]}`)
+    this.socket.send(
+      `{"jsonrpc":"2.0","id":5,"method":"doid_getBlockByMiner","params":[{"miner":"${this.miner.toLowerCase()}","limit":10,"page":${
+        this.minerData.page
+      }}]}`
+    )
   }
 
   async getMinterData(page: number) {
@@ -38,9 +43,11 @@ export class ViewHome extends TailwindElement(style) {
     if (this.minerData.totalPage != 0 && page >= this.minerData.totalPage) page = this.minerData.totalPage
     this.minerData.blockData = []
     const isProd = import.meta.env.MODE === 'production'
-    const rpcUrl = isProd ? 'http://54.221.168.235:8556' : `${location.origin}/jsonrpc/`
-    const result: any = await jsonRpcRequest(rpcUrl, "doid_getBlockByMiner", [{ "miner": `${this.miner.toLowerCase()}`, "limit": 10, "page": page }])
-    console.log(result, 'result');
+    const rpcUrl = isProd ? defaultNetwork.provider : defaultNetwork.provider
+    const result: any = await jsonRpcRequest(rpcUrl, 'doid_getBlockByMiner', [
+      { miner: `${this.miner.toLowerCase()}`, limit: 10, page: page }
+    ])
+    console.log(result, 'result')
     // this.minerData.data = [31389, 31389, 31437, 31437, 31550, 31695, 31803, 31809, 31839]a7497216abf4ca75652ad33e6200328f4c41bb3f
     if (result == null) return
     this.minerData.data = result.data
@@ -48,7 +55,9 @@ export class ViewHome extends TailwindElement(style) {
     this.minerData.page = page
     const onSendData = () => {
       for (let index in this.minerData.data) {
-        this.socket.send(`{"jsonrpc":"2.0","id":4,"method":"doid_getBlockByHeight","params":[${this.minerData.data[index]}]}`)
+        this.socket.send(
+          `{"jsonrpc":"2.0","id":4,"method":"doid_getBlockByHeight","params":[${this.minerData.data[index]}]}`
+        )
       }
     }
     if (this.socket.readyState === WebSocket.OPEN) {
@@ -59,19 +68,23 @@ export class ViewHome extends TailwindElement(style) {
     })
   }
   runWs() {
-    const that = this;
+    const that = this
     that.pending = true
-    this.isConnect = false;
-    this.blockData = [];
-    const socket = this.socket;
+    this.isConnect = false
+    this.blockData = []
+    const socket = this.socket
     socket.addEventListener('open', function (event) {
       socket.send('{"jsonrpc":"2.0","id":1,"method":"doid_currentBlock","params":[]}')
       socket.send('{"jsonrpc": "2.0", "method": "doid_subscribe", "params": ["newHeads"], "id": 2}')
       if (that.miner) {
-        socket.send(`{"jsonrpc":"2.0","id":5,"method":"doid_getBlockByMiner","params":[{"miner":"${that.miner.toLowerCase()}","limit":10,"page":${that.minerData.page}}]}`)
+        socket.send(
+          `{"jsonrpc":"2.0","id":5,"method":"doid_getBlockByMiner","params":[{"miner":"${that.miner.toLowerCase()}","limit":10,"page":${
+            that.minerData.page
+          }}]}`
+        )
       }
       // console.log(socket, 'socket', WebSocket.OPEN);
-    });
+    })
 
     // {data
     // :
@@ -88,24 +101,26 @@ export class ViewHome extends TailwindElement(style) {
         that.minerData.data = result.result.data
         that.minerData.totalPage = result.result.totalPage
         for (let index in that.minerData.data) {
-          socket.send(`{"jsonrpc":"2.0","id":4,"method":"doid_getBlockByHeight","params":[${that.minerData.data[index]}]}`)
+          socket.send(
+            `{"jsonrpc":"2.0","id":4,"method":"doid_getBlockByHeight","params":[${that.minerData.data[index]}]}`
+          )
         }
       }
 
       that.pending = false
-      that.isConnect = true;
+      that.isConnect = true
       // console.log(that.blockData, that.pending);
-    });
+    })
 
     socket.addEventListener('close', function (event) {
       that.runWs()
-      that.isConnect = false;
-    });
+      that.isConnect = false
+    })
 
     socket.addEventListener('error', function (event) {
       that.runWs()
-      that.isConnect = false;
-    });
+      that.isConnect = false
+    })
   }
   reloadSocket() {
     location.reload()
@@ -131,11 +146,10 @@ export class ViewHome extends TailwindElement(style) {
     this.minerData.blockData = this.minerData.blockData.slice(0, 10).sort((a: any, b: any) => a.height - b.height)
     // console.log('paraams', this.blockData, this.pending);
     // console.log(this.minerData.blockData);
-
   }
   connectedCallback(): void {
     super.connectedCallback()
-    this.runWs();
+    this.runWs()
     // if (this.miner) {
     //   this.getMinterData(1)
     // }
@@ -156,34 +170,50 @@ export class ViewHome extends TailwindElement(style) {
           <!-- <dui-ns-search @search="" placeholder="Search Explorer"></dui-ns-search> -->
         </div>
         <div class="mt-2 flex justify-between items-center">
-          <div class="text-3xl">${when(!this.miner, () => 'Latest Blocks', () => html`
-          <div class="text-blue-700 font-bold cursor-pointer uppercase text-sm" @click="${() => { history.back() }}"><i class="mdi mdi-arrow-left mx-1"></i>
-              Back</div>
-            <div>Blocks</div>
-
-          `)}</div>
+          <div class="text-3xl">
+            ${when(
+              !this.miner,
+              () => 'Latest Blocks',
+              () => html`
+                <div
+                  class="text-blue-700 font-bold cursor-pointer uppercase text-sm"
+                  @click="${() => {
+                    history.back()
+                  }}"
+                >
+                  <i class="mdi mdi-arrow-left mx-1"></i> Back
+                </div>
+                <div>Blocks</div>
+              `
+            )}
+          </div>
 
           <div>
-          ${when(!this.miner, () => html`
-          ${when(this.isConnect,
-      () => html`<div class="text-green-600">
-                          <span class="relative inline-flex h-3 w-3">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-700"></span>
-                          </span>
-                          <!-- <i class="mdi mdi-lan-connect mx-1"></i> -->
-                          Connected</div>`,
-      () => html`
-                  <div class="text-red-600 inline-block"><i class="mdi mdi-lan-disconnect mx-1"></i>Disconnected</div>
-                  <i class="mdi mdi-reload mx-1 text-green-600 cursor-pointer" @click="${this.reloadSocket}"></i>
-                `)}
-
-          `, () => html`
-
-          <div class="text-sm mt-1 text-gray-400">By: <i class="mdi mdi-laptop mx-1"></i>${this.miner}</div>
-          `)}
-
-
+            ${when(
+              !this.miner,
+              () => html`
+                ${when(
+                  this.isConnect,
+                  () => html`<div class="text-green-600">
+                    <span class="relative inline-flex h-3 w-3">
+                      <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75"
+                      ></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-green-700"></span>
+                    </span>
+                    <!-- <i class="mdi mdi-lan-connect mx-1"></i> -->
+                    Connected
+                  </div>`,
+                  () => html`
+                    <div class="text-red-600 inline-block"><i class="mdi mdi-lan-disconnect mx-1"></i>Disconnected</div>
+                    <i class="mdi mdi-reload mx-1 text-green-600 cursor-pointer" @click="${this.reloadSocket}"></i>
+                  `
+                )}
+              `,
+              () => html`
+                <div class="text-sm mt-1 text-gray-400">By: <i class="mdi mdi-laptop mx-1"></i>${this.miner}</div>
+              `
+            )}
           </div>
         </div>
         <div class="mt-2 blocks-table">
@@ -194,48 +224,67 @@ export class ViewHome extends TailwindElement(style) {
             <div class="flex-1 p-2 text-right">miner</div>
             <div class="flex-1 p-2 text-right">transactionsRoot</div>
           </div>
-          ${when(!this.pending, () => html`
-            ${(!!this.miner ? this.minerData.blockData : this.blockData).map((item: any, idx: any) =>
-        html`<div
-          class="flex bg-gray-100 rounded-lg mt-2 cursor-pointer  py-2 hover_bg-gray-300"
-          @click="${() => { this.goto(item) }}">
-              <div class="flex-none w-20 p-2 text-blue-500 underline">${item.height}</div>
-              <div class="flex-1 p-2 truncate">${new Date(item.timestamp * 1000).toUTCString()}</div>
-              <div class="flex-1 p-2 truncate">${item.parentHash}</div>
-              <div class="flex-1 p-2 text-right truncate">${item.miner}</div>
-              <div class="flex-1 p-2 text-right truncate">${item.transactionsRoot}</div>
-            </div>`
-      )}
-          `, () => html`
-          <div class="text-center p-3 border-t-2">
-          <loading-icon type="inline-block"></loading-icon>
-          </div>
-          `)}
-
-          ${when(!this.pending && !!this.miner, () => html`
-            <div class="flex justify-center items-center">
-              <dui-button icon sm class="text-blue-500" @click=${() => this.onPage(1)}>
-                First
-              </dui-button>
-              <dui-button icon sm class="text-blue-500" @click=${() => {
-          const page = this.minerData.page - 1
-          this.onPage(page)
-        }}>
-                <i class="mdi mdi-menu-left text-lg"></i>
-              </dui-button>
-              <div class="text-gray-300 text-sm inline-block">Page ${this.minerData.page} of ${this.minerData.totalPage}</div>
-              <dui-button icon sm class="text-blue-500" @click=${() => {
-          const page = this.minerData.page + 1
-          this.onPage(page)
-        }}>
-                <i class="mdi mdi-menu-right text-lg"></i>
-              </dui-button>
-              <dui-button icon sm class="text-blue-500" @click=${() => this.onPage(this.minerData.totalPage)}>
-                Last
-              </dui-button>
-            </div>
-          `)}
-
+          ${when(
+            !this.pending,
+            () => html`
+              ${(!!this.miner ? this.minerData.blockData : this.blockData).map(
+                (item: any, idx: any) =>
+                  html`<div
+                    class="flex bg-gray-100 rounded-lg mt-2 cursor-pointer  py-2 hover_bg-gray-300"
+                    @click="${() => {
+                      this.goto(item)
+                    }}"
+                  >
+                    <div class="flex-none w-20 p-2 text-blue-500 underline">${item.height}</div>
+                    <div class="flex-1 p-2 truncate">${new Date(item.timestamp * 1000).toUTCString()}</div>
+                    <div class="flex-1 p-2 truncate">${item.parentHash}</div>
+                    <div class="flex-1 p-2 text-right truncate">${item.miner}</div>
+                    <div class="flex-1 p-2 text-right truncate">${item.transactionsRoot}</div>
+                  </div>`
+              )}
+            `,
+            () => html`
+              <div class="text-center p-3 border-t-2">
+                <loading-icon type="inline-block"></loading-icon>
+              </div>
+            `
+          )}
+          ${when(
+            !this.pending && !!this.miner,
+            () => html`
+              <div class="flex justify-center items-center">
+                <dui-button icon sm class="text-blue-500" @click=${() => this.onPage(1)}> First </dui-button>
+                <dui-button
+                  icon
+                  sm
+                  class="text-blue-500"
+                  @click=${() => {
+                    const page = this.minerData.page - 1
+                    this.onPage(page)
+                  }}
+                >
+                  <i class="mdi mdi-menu-left text-lg"></i>
+                </dui-button>
+                <div class="text-gray-300 text-sm inline-block">
+                  Page ${this.minerData.page} of ${this.minerData.totalPage}
+                </div>
+                <dui-button
+                  icon
+                  sm
+                  class="text-blue-500"
+                  @click=${() => {
+                    const page = this.minerData.page + 1
+                    this.onPage(page)
+                  }}
+                >
+                  <i class="mdi mdi-menu-right text-lg"></i>
+                </dui-button>
+                <dui-button icon sm class="text-blue-500" @click=${() => this.onPage(this.minerData.totalPage)}>
+                  Last
+                </dui-button>
+              </div>
+            `
+          )}
         </div>
       </div>
     </div>`
