@@ -19,7 +19,7 @@ class UIBlocks extends State {
   @property({ value: DOIDProviderWs }) ws!: any
   @property({ value: false }) pending!: boolean
   @property({ value: 0 }) ts!: number
-  @property({ value: 30 }) limit!: number
+  @property({ value: 20 }) limit!: number
   @property({ value: cachedBlocks }) blocks!: Block[]
 
   delay = 3000
