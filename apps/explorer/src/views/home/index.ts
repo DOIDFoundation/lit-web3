@@ -6,7 +6,8 @@ import {
   when,
   property,
   repeat,
-  classMap
+  classMap,
+  keyed
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/loading/icon'
@@ -131,9 +132,9 @@ export class ViewHome extends TailwindElement(style) {
           ${when(
             !this.loading,
             () => html`
-              ${repeat(
-                this.miner ? this.minerBlocks : uiBlocks.blocks,
-                (block) =>
+              ${repeat(this.miner ? this.minerBlocks : uiBlocks.blocks, (block) =>
+                keyed(
+                  block.height,
                   html`<div
                     class="flex overflow-hidden bg-gray-100 rounded-lg mt-2 cursor-pointer h-14 items-center py-2 hover_bg-gray-300 ${classMap(
                       { incoming: !!block.incoming }
@@ -146,6 +147,7 @@ export class ViewHome extends TailwindElement(style) {
                     <div class="flex-1 p-2 text-right truncate">${block.miner}</div>
                     <div class="flex-1 p-2 text-right truncate">${block.transactionsRoot}</div>
                   </div>`
+                )
               )}
             `,
             () => html`
