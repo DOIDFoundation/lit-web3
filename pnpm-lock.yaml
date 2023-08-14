@@ -156,6 +156,9 @@ importers:
       '@lit-web3/ethers':
         specifier: workspace:latest
         version: link:../../packages/ethers
+      ws-sequence:
+        specifier: ^1.10.2
+        version: 1.10.2
 
   apps/extension:
     dependencies:
@@ -11236,6 +11239,10 @@ packages:
       resolve: 1.22.2
     dev: true
 
+  /reconnecting-websocket@4.2.0:
+    resolution: {integrity: sha512-HMD8A0sv40xhkHf/T4qxktyOvHx7K3d2A9i1QG2wRIYdMecxQJMhTIBH4aQ8KfQLfQW4UOqNSfxTgv0C+MbPIA==}
+    dev: false
+
   /redent@3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
@@ -13276,6 +13283,12 @@ packages:
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+
+  /ws-sequence@1.10.2:
+    resolution: {integrity: sha512-vjTxtBz3EF6SM1DYdMc5eeV4CPu9u5dpOGz3izmT3YhjwWS4UWYYjf/wq1qbbVvU3czLLp/ENX0xugfu5jZzGg==}
+    dependencies:
+      reconnecting-websocket: 4.2.0
+    dev: false
 
   /ws@7.5.9:
     resolution: {integrity: sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==}

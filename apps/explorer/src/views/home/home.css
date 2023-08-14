@@ -1,0 +1,11 @@
+.incoming {
+  @apply origin-top;
+  animation: incoming 0.4s ease-out;
+}
+@keyframes incoming {
+  0% {
+    @apply h-0 translate-y-0 py-0 my-0;
+  }
+  to {
+  }
+}

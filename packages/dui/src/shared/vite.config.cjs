@@ -102,11 +102,11 @@ const viteConfig = (options = {}) => {
                 minify: true
               })
             ]),
-        ...(isDev || !viteConfigOptions.copies?.length
-          ? []
+        ...(isDev || viteConfigOptions.copies
+          ? viteConfigOptions.copies ?? []
           : [
               viteStaticCopy({
-                targets: viteConfigOptions.copies ?? [
+                targets: [
                   // Github Pages
                   {
                     src: 'dist/index.html',

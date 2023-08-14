@@ -128,13 +128,13 @@ export class ViewHome extends TailwindElement(style) {
       const txHash = (await rpcRegistName(bareTLD(this.doid), this.address, this.phrase)) as string
 
       this.txPending = true
-      this.txUrl = `${defaultNetwork.scan}/block/${txHash}`
+      this.txUrl = `${defaultNetwork.scan}/tx/${txHash}`
 
       await new Promise<void>(async (resolve) => {
         const check = async () => {
           let flag = false
           const res = (await checkTx(txHash)) as any
-          if (addressEquals(res?.data?.owner, this.address)) flag = true
+          if (addressEquals(res?.data?.owner ?? '', this.address)) flag = true
           if (this.txCount > 18 || flag) {
             return resolve()
           }
