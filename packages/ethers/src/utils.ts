@@ -33,3 +33,9 @@ export const throttle = (fn: Function, delay = 100, limit = 300, immediate = fal
   }
 }
 export const debounce = (fn: Function, delay = 300) => throttle(fn, delay, 0)
+
+export const addressEquals = (source: string, dest: string) => {
+  if (!source.startsWith('0x')) source = `0x${source}`
+  if (!dest.startsWith('0x')) dest = `0x${dest}`
+  return source.toLowerCase() == dest.toLowerCase()
+}

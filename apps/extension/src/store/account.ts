@@ -1,5 +1,5 @@
 import { State, property } from '@lit-app/state'
-import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
+// import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 export { StateController } from '@lit-app/state'
 import { rpcSearch } from '~/lib.next/peer_rpc'
 

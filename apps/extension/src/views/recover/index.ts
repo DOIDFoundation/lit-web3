@@ -5,7 +5,7 @@ import '~/components/phrase'
 import '~/components/pwd-equal'
 
 import { AddressType, phraseToAddress } from '~/lib.next/keyring/phrase'
-import ipfsHelper from '~/lib.next/ipfsHelper'
+// import ipfsHelper from '~/lib.next/ipfsHelper'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { StateController, walletStore } from '~/store'
 import { accountStore } from '~/store/account'
@@ -101,15 +101,15 @@ export class ViewImport extends TailwindElement(null) {
     // }
   }
 
-  syncAddresses = async () => {
-    let addresses = await phraseToAddress(this.phrase)
-    if (!addresses || !this.account.name) return
-    try {
-      await ipfsHelper.updateJsonData({ addresses }, this.account.name, { memo: this.phrase })
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  // syncAddresses = async () => {
+  //   let addresses = await phraseToAddress(this.phrase)
+  //   if (!addresses || !this.account.name) return
+  //   try {
+  //     await ipfsHelper.updateJsonData({ addresses }, this.account.name, { memo: this.phrase })
+  //   } catch (e) {
+  //     console.error(e)
+  //   }
+  // }
 
   onPhraseChange = async (e: CustomEvent) => {
     e.stopPropagation()
