@@ -125,7 +125,7 @@ export class ViewHome extends TailwindElement(style) {
         }
       })
       await this.transaction.wait() */
-      const txHash = (await rpcRegistName(wrapTLD(this.doid), this.address, this.phrase)) as string
+      const txHash = (await rpcRegistName(bareTLD(this.doid), this.address, this.phrase)) as string
 
       this.txPending = true
       this.txUrl = `${defaultNetwork.scan}/tx/${txHash}`
