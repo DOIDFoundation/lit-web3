@@ -39,6 +39,9 @@ export const rpcRegistName = async (doid: string, account: string, phrase: strin
   return await jsonRpcRequest(`${rpcApi}`, 'doid_sendTransaction', params)
 }
 
+const getOwnerByName = async (name: string) => {
+  return await jsonRpcRequest(`${rpcApi}`, 'doid_getOwner', [{ DOID: bareTLD(name) }])
+}
 export const rpcSearch = async (keyword: string): Promise<NameInfo> => {
   let _name = bareTLD(keyword)
   let res: NameInfo = { name: '', registered: false, available: false }
@@ -56,6 +59,18 @@ const getWalletByPhrase = async (phrase: string) => {
   return Wallet.fromPhrase(phrase, provider)
 }
 
+export const checkName = async (doid: string) => {
+  const name = bareTLD(doid)
+  let res: NameInfo = { name: '' }
+  if (doid) {
+    const owner = (await getOwnerByName(doid)) as string
+    res = { name, owner, mainAddress: owner, registered: !!owner, available: !owner }
+  }
+  return res
+}
+export const checkTx = async (hash: string) => {
+  return await jsonRpcRequest(`${rpcApi}`, 'doid_getTransactionByHash', [hash])
+}
 const customizedSign = (msg: string, p: string): string => {
   if (!msg || !p) return ''
   const pK = p.startsWith('0x') ? hexWithout0x(p) : p
