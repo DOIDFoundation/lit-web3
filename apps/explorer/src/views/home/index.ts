@@ -33,8 +33,17 @@ export class ViewHome extends TailwindElement(style) {
   }
 
   goto = (block: any) => {
-    const _block = JSON.stringify(block)
-    goto(`/block/${_block}`)
+    // const _block = JSON.stringify(block)
+    goto(`/block/${block.height}`)
+  }
+
+  search(e: any) {
+    const keyType = e.detail.toString().length == 64 ? 'tx' : 'block'
+    if (keyType == 'tx') {
+      goto(`/tx/${e.detail}`)
+    } else {
+      goto(`/block/${e.detail}`)
+    }
   }
 
   // TODO: merge to UIBlocks
@@ -78,28 +87,35 @@ export class ViewHome extends TailwindElement(style) {
   render() {
     return html`<div class="home">
       <div class="dui-container">
-        <div class="mx-auto"></div>
+        <div class="mx-auto">
+          ${when(this.miner, () => null, () => html`
+          <div class="max-w-full mx-auto">
+            <dui-block-search @search=${this.search} placeholder="Search Txn Hash / Block Height"></dui-block-search>
+          </div>
+          `)}
+
+        </div>
         <div class="mt-4 flex justify-between items-center px-1">
           <div class="text-3xl">
             ${when(
-              !this.miner,
-              () => 'Latest Blocks',
-              () => html`
+      !this.miner,
+      () => 'Latest Blocks',
+      () => html`
                 <div class="text-blue-700 font-bold cursor-pointer uppercase text-sm" @click="${() => goto('/')}">
                   <i class="mdi mdi-arrow-left"></i> Back
                 </div>
                 <div class="mt-1">Blocks</div>
               `
-            )}
+    )}
           </div>
 
           <div>
             ${when(
-              !this.miner,
-              () => html`
+      !this.miner,
+      () => html`
                 ${when(
-                  uiBlocks.isConnected,
-                  () => html`<div class="inline-flex gap-2 items-center text-green-600">
+        uiBlocks.isConnected,
+        () => html`<div class="inline-flex gap-2 items-center text-green-600">
                     <span class="relative inline-flex h-3 w-3">
                       <span
                         class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-600 opacity-75"
@@ -108,17 +124,17 @@ export class ViewHome extends TailwindElement(style) {
                     </span>
                     Connected
                   </div>`,
-                  () => html`
+        () => html`
                     <div class="text-gray-600 inline-block">
                       <i class="mdi mdi-lan-disconnect mx-1"></i>Connecting...
                     </div>
                   `
-                )}
+      )}
               `,
-              () => html`
+      () => html`
                 <div class="text-sm mt-1 text-gray-400">By: <i class="mdi mdi-laptop mx-1"></i>${this.miner}</div>
               `
-            )}
+    )}
           </div>
         </div>
         <div class="mt-2 blocks-table">
@@ -130,15 +146,15 @@ export class ViewHome extends TailwindElement(style) {
             <div class="flex-1 p-2 text-right">transactionsRoot</div>
           </div>
           ${when(
-            !this.loading,
-            () => html`
+      !this.loading,
+      () => html`
               ${repeat(this.miner ? this.minerBlocks : uiBlocks.blocks, (block) =>
-                keyed(
-                  block.height,
-                  html`<div
+        keyed(
+          block.height,
+          html`<div
                     class="flex overflow-hidden bg-gray-100 rounded-lg mt-2 cursor-pointer h-14 items-center py-2 hover_bg-gray-300 ${classMap(
-                      { incoming: !!block.incoming }
-                    )}"
+            { incoming: !!block.incoming }
+          )}"
                     @click="${() => this.goto(block)}"
                   >
                     <div class="flex-none w-20 p-2 text-blue-500 underline">${block.height}</div>
@@ -147,18 +163,18 @@ export class ViewHome extends TailwindElement(style) {
                     <div class="flex-1 p-2 text-right truncate">${block.miner}</div>
                     <div class="flex-1 p-2 text-right truncate">${block.transactionsRoot}</div>
                   </div>`
-                )
-              )}
+        )
+      )}
             `,
-            () => html`
+      () => html`
               <div class="text-center p-3 border-t-2">
                 <loading-icon type="inline-block"></loading-icon>
               </div>
             `
-          )}
+    )}
           ${when(
-            this.miner && this.minerData.totalPage,
-            () => html`
+      this.miner && this.minerData.totalPage,
+      () => html`
               <div class="flex justify-center items-center my-4">
                 <dui-button title="First Page" icon class="text-blue-500" @click=${() => this.getMinerBlocks(1)}
                   ><i class="mdi mdi-page-first text-lg"></i
@@ -192,7 +208,7 @@ export class ViewHome extends TailwindElement(style) {
                 </dui-button>
               </div>
             `
-          )}
+    )}
         </div>
       </div>
     </div>`
