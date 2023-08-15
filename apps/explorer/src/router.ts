@@ -17,22 +17,31 @@ export const routes = [
   },
   {
     name: 'block',
-    path: '/block/:blockObj?',
-    render: ({ blockObj = '' }) => html`<view-block .blockObj=${blockObj}></view-block>`,
+    path: '/block/:height?',
+    render: ({ height = '' }) => html`<view-block .height=${height}></view-block>`,
     enter: async () => {
       await import('~/views/block')
       return true
     }
   },
   {
-    name: 'home',
+    name: 'blocks',
     path: '/blocks/:m?',
     render: ({ m = '' }) => html`<view-home .miner=${m}></view-home>`,
     enter: async () => {
       await import('~/views/home')
       return true
     }
-  }
+  },
+  {
+    name: 'txhash',
+    path: '/tx/:height?',
+    render: ({ height = '' }) => html`<view-block .height=${height}></view-block>`,
+    enter: async () => {
+      await import('~/views/block')
+      return true
+    }
+  },
 ]
 
 export default routes
