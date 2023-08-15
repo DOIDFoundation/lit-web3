@@ -125,7 +125,7 @@ export class ViewHome extends TailwindElement(style) {
         }
       })
       await this.transaction.wait() */
-      const txHash = (await rpcRegistName(bareTLD(this.doid), this.address, this.phrase)) as string
+      const txHash = (await rpcRegistName(wrapTLD(this.doid), this.address, this.phrase)) as string
 
       this.txPending = true
       this.txUrl = `${defaultNetwork.scan}/tx/${txHash}`
@@ -244,15 +244,17 @@ export class ViewHome extends TailwindElement(style) {
             ],
             [
               Steps.CreateConfirm,
-              () => html`<doid-symbol class="block mt-12"> </doid-symbol>
+              () => html`
+                <doid-symbol class="block mt-12"></doid-symbol>
                 <div class="my-4 text-sm">
                   You are trying to create
                   <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
+                  <div class="my-4">With account: ${this.address}</div>
                 </div>
-                <div class="my-4 text-sm">With account ${this.address}</div>
-                <dui-button sm class="my-2" @click=${this.onCreate}>Create</dui-button>
-                </div>
-                <div class="my-2 text-center">or</div>
+                <p class="text-center">
+                <dui-button class="my-2" @click=${this.onCreate}>Create</dui-button></p>
+              </div>
+              <div class="my-2 text-center">or</div>
                 <dui-button text class="w-full my-2" @click=${() => this.stepTo(Steps.EnterPhrase)}
                   >Use other Secret Recovery Phrase</dui-button
                 >`
@@ -271,8 +273,8 @@ export class ViewHome extends TailwindElement(style) {
                   () => html`<i class="mdi mdi-loading"></i>
                     <div class="my-4 text-sm">Waiting for transaction confirmation...</div>
                     <div class="my-4 text-sm">
-                      View transaction:<dui-link class="link ml-1 underline" .href=${this.txUrl}
-                        >${this.txHash || 'here'} <i class="mdi mdi-open-in-new"></i
+                      <dui-link class="link ml-1 underline" .href=${this.txUrl}
+                        >View transaction <i class="mdi mdi-open-in-new"></i
                       ></dui-link>
                     </div>`
                 )}`
@@ -289,8 +291,8 @@ export class ViewHome extends TailwindElement(style) {
                 ${when(
                   this.transaction?.hash,
                   () => html`<div class="my-4 text-sm">
-                    View transaction:<dui-link class="link ml-1 underline" .href=${this.txUrl}
-                      >${this.txHash || 'here'} <i class="mdi mdi-open-in-new"></i
+                    <dui-link class="link ml-1 underline" .href=${this.txUrl}
+                      >View transaction <i class="mdi mdi-open-in-new"></i
                     ></dui-link>
                   </div>`
                 )}

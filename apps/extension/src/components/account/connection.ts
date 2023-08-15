@@ -5,7 +5,6 @@ import emitter from '@lit-web3/core/src/emitter'
 // Components
 import '@lit-web3/dui/src/address/avatar'
 import '@lit-web3/dui/src/address/name'
-import '@lit-web3/dui/src/menu/drop'
 import '@lit-web3/dui/src/button'
 import './menu'
 

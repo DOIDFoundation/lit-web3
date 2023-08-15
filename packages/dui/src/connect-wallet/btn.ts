@@ -46,27 +46,18 @@ export class ConnectWalletBtn extends TailwindElement(style) {
     emitter.off('connect-wallet', this.show)
   }
 
-  override render() {
-    return html`<div class="connect-wallet-btn relative">
-      <dui-button sm @click=${this.show} class="inline-flex items-center">
-        ${when(
-          this.account,
-          () =>
-            html`<dui-address avatar short></dui-address>${when(
-                this.dropable,
-                () =>
-                  html`<i
-                    class="mdi mdi-chevron-down ml-1 ${classMap({
-                      'mdi-chevron-down': !this.menu,
-                      'mdi-chevron-up': this.menu
-                    })}"
-                  ></i>`
-              )}`,
-          () => html`Connect Wallet`
-        )}
-      </dui-button>
-      <!-- Menu -->
-      <dui-drop .show=${this.menu} @close=${() => (this.menu = false)}>
+  render() {
+    // Dropdown Button
+    if (this.account)
+      return html`<dui-drop
+        .show=${this.menu}
+        @change=${(e: CustomEvent) => (this.menu = e.detail)}
+        ?icon=${this.dropable}
+        btnSm
+        btnTheme="dark"
+      >
+        <dui-address slot="button" avatar short></dui-address>
+        <!-- Content -->
         <div class="flex w-full justify-between items-center py-3 pl-4 pr-2">
           <div class="flex items-center space-x-2">
             <dui-address-avatar></dui-address-avatar>
@@ -83,9 +74,13 @@ export class ConnectWalletBtn extends TailwindElement(style) {
           </div>
         </div>
         <slot name="submenu"></slot>
-      </dui-drop>
-      <!-- Dialog -->
-      ${when(this.dialog, () => html`<connect-wallet-dialog @close=${this.close}></connect-wallet-dialog>`)}
-    </div>`
+      </dui-drop>`
+    // Dialog Button
+    else
+      return html`
+        <dui-button sm @click=${() => (this.dialog = true)} theme="dark">Connect Wallet</dui-button>
+        <!-- Dialog -->
+        ${when(this.dialog, () => html`<connect-wallet-dialog @close=${this.close}></connect-wallet-dialog>`)}
+      `
   }
 }
