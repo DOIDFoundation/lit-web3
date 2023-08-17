@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - '@lit-web3/extension@*'
-    branches:
-      - 'main'
 
 jobs:
   build:
