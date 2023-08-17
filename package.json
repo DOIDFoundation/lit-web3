@@ -4,7 +4,16 @@
   "version": "0.9.2",
   "private": true,
   "packageManager": "pnpm@8.2.0",
-  "scripts": {},
+  "scripts": {
+    "extension": "pnpm --filter @lit-web3/extension"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DOIDFoundation/lit-web3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DOIDFoundation/lit-web3/issues"
+  },
   "dependencies": {
     "@aptos-labs/wallet-adapter-core": "2.5.1",
     "ethers": "^6.6.5",
