@@ -9,7 +9,6 @@ import style from './drop.css?inline'
 @customElement('dui-drop')
 export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
   @property({ type: Boolean, reflect: true }) show = false
-  @property({ type: Boolean }) md = false
   @property({ type: Boolean }) lg = false
   @property({ type: Boolean }) icon = false
   // Button props
@@ -19,6 +18,7 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
   @property({ type: Boolean }) btnIcon = false
   @property({ type: Boolean }) btnDense = false
   @property({ type: String }) btnTheme?: string
+  @property({ type: String }) btnClass = ''
 
   @state() model = false
   @state() align = { left: false, top: false }
@@ -84,10 +84,8 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
   }
 
   override render() {
-    return html`<div
-        class="dui-drop-toggle relative z-10 inline-flex items-center"
-        @click=${() => (this.show = !this.show)}
-      >
+    return html`<div class="inline-block whitespace-nowrap ${classMap(this.$c([this.show ? 'relative z-10' : '']))}">
+      <div class="dui-drop-toggle inline-flex items-center" @click=${() => (this.show = !this.show)}>
         <slot name="toggle">
           <dui-button
             ?sm=${this.btnSm}
@@ -95,18 +93,19 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
             ?dense=${this.btnDense}
             ?text=${this.btnText}
             theme="${this.btnTheme}"
-            class="inline-flex items-center space-x-0.5"
+            class="inline-flex items-center space-x-0.5 ${this.btnClass}"
             ><slot name="button"></slot> ${when(
               this.icon,
-              () => html`<slot name="icon"
-                ><i
-                  class="text-lg -mr-0.5 leading-none mdi mdi-chevron-down ${classMap({
-                    'mdi-chevron-down': !this.show,
-                    'mdi-chevron-up': this.show,
-                    'text-xl': this.lg
-                  })}"
-                ></i
-              ></slot>`
+              () =>
+                html`<slot name="icon"
+                  ><i
+                    class="text-lg -mr-0.5 leading-none mdi mdi-chevron-down ${classMap({
+                      'mdi-chevron-down': !this.show,
+                      'mdi-chevron-up': this.show,
+                      'text-xl': this.lg
+                    })}"
+                  ></i
+                ></slot>`
             )}</dui-button
           >
         </slot>
@@ -117,8 +116,7 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
           this.$c([
             this.align.left ? 'left-0' : 'right-0',
             this.align.top ? 'bottom-full' : 'top-full',
-            this.model ? 'mt-auto opacity-100 visible' : '-mt-4 opacity-0 invisible',
-            this.md ? '!w-44' : ''
+            this.model ? 'mt-auto opacity-100 visible' : '-mt-4 opacity-0 invisible'
           ])
         )}"
         ${animate({
@@ -128,6 +126,7 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
         })}
       >
         ${when(this.model, () => html`<slot></slot>`)}
-      </div>`
+      </div>
+    </div>`
   }
 }

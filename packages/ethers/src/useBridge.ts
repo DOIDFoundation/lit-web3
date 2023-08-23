@@ -20,6 +20,7 @@ class BridgeStore extends State {
   constructor() {
     super()
     emitter.on('wallet-changed', () => {
+      this.reset() //  Trick for bridge.network cantnot update immediately probs
       this._account = walletStore.account
     })
   }

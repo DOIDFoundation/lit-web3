@@ -3,6 +3,7 @@
   &::part(dialog-container) {
     width: 400px;
     @apply w-full lg_w-96;
+    max-width: var(--appMaxW);
     min-height: 300px;
   }
   &::part(dialog-close) {

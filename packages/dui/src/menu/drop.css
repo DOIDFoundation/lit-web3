@@ -1,8 +1,8 @@
 :host {
-  @apply relative inline-block;
 }
 .dui-drop {
-  @apply absolute w-72 bg-white drop-shadow-lg rounded-lg;
+  @apply absolute bg-white drop-shadow-lg rounded-lg max-w-xs;
+  min-width: 11rem;
   min-height: 9rem;
   border: 1px solid #ccc;
 }

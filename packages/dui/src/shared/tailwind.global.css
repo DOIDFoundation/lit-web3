@@ -14,6 +14,18 @@
       @apply px-4;
     }
   }
+  .dui-select {
+    @apply whitespace-nowrap;
+    & > li {
+      @apply flex items-center gap-2 py-2 px-4 hover_bg-gray-50 cursor-pointer;
+      &.active {
+        @apply bg-gray-100;
+      }
+      & > .mdi:first-child {
+        @apply text-gray-600;
+      }
+    }
+  }
   .doid-logo {
     @apply inline-block;
     width: var(--doidLogoW);
