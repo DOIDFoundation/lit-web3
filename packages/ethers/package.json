@@ -6,9 +6,9 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@ensdomains/address-encoder": "^0.2.20",
+    "@ensdomains/address-encoder": "^0.2.21",
     "@lit-web3/core": "workspace:latest",
-    "tr46": "^4.1.0"
+    "tr46": "^4.1.1"
   },
   "devDependencies": {
     "@types/tr46": "^3.0.0"
