@@ -7,10 +7,11 @@ type EVMMsg = { method: string; params: [] }
 const EVMListeners = new Map<string, Set<Function>>()
 
 export const initEVMInpageProvider = async () => {
-  const chainId = await inpageMessenger.send('evm_request', { method: 'eth_chainId', params: [] })
+  let _chainId = await inpageMessenger.send('evm_request', { method: 'eth_chainId', params: [] })
   // Global listener
   inpageMessenger.on('evm_response', ({ data }) => {
     const { method, params } = data as EVMMsg
+    if (method === 'chainChanged') _chainId = params
     if (EVMListeners.has(method)) EVMListeners.get(method)!.forEach((fn) => fn(params))
   })
 
@@ -21,16 +22,18 @@ export const initEVMInpageProvider = async () => {
 
   return {
     request: async ({ method, params } = <EVMMsg>{}) => {
-      inpageLogger(`[${method}] req:`, params)
+      // inpageLogger(`[${method}] req:`, params)
       const res = await inpageMessenger.send('evm_request', { method, params })
-      inpageLogger(`[${method}] res:`, res)
+      // inpageLogger(`[${method}] res:`, res)
       return res
     },
     addListener: subscribe,
     on: subscribe,
     removeListener: (reqMethod: string, fn: Function) => EVMListeners.get(reqMethod)?.delete(fn),
     removeAllListeners: (reqMethod: string) => EVMListeners.delete(reqMethod),
-    chainId,
+    get chainId() {
+      return _chainId
+    },
     isMetaMask: true
   }
 }

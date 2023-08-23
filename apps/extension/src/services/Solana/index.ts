@@ -1,7 +1,6 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { Keypair as SolanaKeyPair } from '@solana/web3.js'
 import { getKeyring } from '~/lib.next/keyring'
-import { AddressType } from '~/lib.next/keyring/phrase'
 import { unlock, autoClosePopup } from '~/middlewares'
 import { ERR_NOT_IMPLEMENTED, ERR_USER_DENIED } from '~/lib.next/constants/errors'
 import nacl from 'tweetnacl'
@@ -22,7 +21,7 @@ export const solana_request: BackgroundService = {
         const { options } = req.body
         const provider = await getSolanaProvider()
         const keyring = await getKeyring()
-        res.body = await keyring.getMultiChainAddress(AddressType.solana)
+        res.body = await keyring.getMultiChainAddress('solana')
         break
       }
       case 'disconnect':

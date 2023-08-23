@@ -1,7 +1,7 @@
 // import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
 // import { goto } from '@lit-web3/dui/src/shared/router'
 // import { keyringStore } from '~/store/keyringState'
-// import { getAddress, AddressType } from '~/lib.next/keyring/phrase'
+// import { getAddress } from '~/lib.next/keyring/phrase'
 // import { StateController, walletStore } from '~/store'
 // import { accountStore } from '~/store/account'
 
@@ -38,7 +38,7 @@
 //   onCreateMainAddress = async () => {
 //     try {
 //       console.log(this.account.name, keyringStore.mnemonic, this.pwd, '----------')
-//       let ethAddress = await getAddress(keyringStore.mnemonic, AddressType.eth)
+//       let ethAddress = await getAddress(keyringStore.mnemonic, 'ethereum')
 //       console.log('mainAddress:', ethAddress, '------------')
 //       const encodedSeedPhrase = Array.from(Buffer.from(keyringStore.mnemonic, 'utf8').values())
 //       await walletStore.createNewVaultAndRestore(this.account.name, this.pwd, encodedSeedPhrase)

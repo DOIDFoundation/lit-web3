@@ -6,43 +6,34 @@ import {
   state,
   classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
-
+import { uiNetworks, StateController } from '~/store/networkState'
+import { uiKeyring } from '~/store/keyringState'
 // Components
 import '@lit-web3/dui/src/address'
-import popupMessenger from '~/lib.next/messenger/popup'
-
-interface UserDetail {
-  addresses: UserAddresses
-}
-type UserAddresses = Record<string, string>[]
-const requestUserAddresses = async (name?: string): Promise<UserDetail> => {
-  const accounts = await popupMessenger.send('internal_getMultiChainAddress', { name })
-  return {
-    addresses: [{ eth: accounts.eth }, { sol: accounts.solana }, { apt: accounts.aptos }, { bnb: accounts.eth }]
-  }
-}
+import './switch'
 
 @customElement('account-list')
 export class accountList extends TailwindElement(null) {
-  @property() name = ''
-  @property() chain = null as any
+  bindKeyring = new StateController(this, uiKeyring)
+  bindNetworks = new StateController(this, uiNetworks)
+
+  @property() chain!: ChainNetwork
   @property() class = ''
-  @state() addresses: UserAddresses = []
 
   get mainAddress() {
-    if (!this.chain?.coin) return ''
-    const res = this.addresses.find((r) => Object.keys(r).indexOf(this.chain?.coin) > -1)
-    return res ? res![this.chain?.coin] : ''
+    return uiKeyring.addresses[this.chain.name]
   }
   async connectedCallback() {
-    const { addresses } = await requestUserAddresses()
-    this.addresses = addresses
     super.connectedCallback()
   }
 
   render() {
+    if (!this.chain) return ''
     return html`<div class="flex flex-col justify-start items-start ${classMap(this.$c([this.class]))}">
-      <strong class="mb-4">${this.chain?.title || this.chain?.name}</strong>
+      <div class="mb-4 w-full flex justify-between items-center">
+        <strong>${this.chain.title}</strong>
+        <chain-switch .chain=${this.chain}></chain-switch>
+      </div>
       <p class="text-xs text-gray-500 mb-1">Main address:</p>
       <dui-address .address=${this.mainAddress} copy></dui-address>
       <!-- <p class="text-xs text-gray-500 mt-4 mb-1">Other addresses:</p> -->

@@ -6,14 +6,13 @@ import '@lit-web3/dui/src/input/text'
 // Style
 import style from './sample.css?inline'
 
-@customElement('dapp-method-doid-subcribe')
-export class dappMethodDoidSubcribe extends TailwindElement(style) {
-  @property() name = 'zzzxxx.doid'
+@customElement('dapp-method-evm-subcribe')
+export class dappMethodEVMSubcribe extends TailwindElement(style) {
+  @property() name = ''
+  @property() chainId = ''
   @state() err: any = null
   @state() msgs: any[] = []
   @state() pending = false
-  @state() res_DOID_setup = null
-  @state() res_DOID_chain_addrs: Record<string, string> = {}
   @state() tx: any = null
   @state() success = false
   @state() ipns = ''
@@ -22,16 +21,16 @@ export class dappMethodDoidSubcribe extends TailwindElement(style) {
     super.connectedCallback()
     // TODO: Add onboarding service
     await sleep(500)
-    ;['DOID_account_change', 'DOID_account_update', 'reply_DOID_setup'].forEach((_evt) => {
-      window.DOID?.on(_evt, ({ id, data } = <any>{}) => {
-        this.msgs = this.msgs.concat([{ id, data }])
+    ;['accountsChanged', 'chainChanged'].forEach((_evt) => {
+      window.ethereum?.on(_evt, (data: any) => {
+        this.msgs = [data].concat(this.msgs)
       })
     })
   }
   render() {
     return html`<div class="my-2">
-      <p class="my-2">{ method: 'DOID_subscribe' } received messages:</p>
-      <textarea class="w-96 h-32 border">${html`${this.msgs.map((msg) => JSON.stringify(msg))}`}</textarea>
+      <p class="my-2">EVM received messages:</p>
+      <textarea class="w-96 h-32 border">${html`${this.msgs.map((msg) => JSON.stringify(msg) + '\n')}`}</textarea>
     </div>`
   }
 }

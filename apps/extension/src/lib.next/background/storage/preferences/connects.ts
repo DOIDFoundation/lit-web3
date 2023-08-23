@@ -16,7 +16,7 @@ export const ConnectsStorage = {
       const { updateState } = await getPreferences()
       updateState({ connects })
     }
-    emitAccountsChange(connects)
+    emit(connects)
   },
   // Overwrite([]) or Add(non-existing string) or Remove(existing string)
   set: async (host: string, data: string | string[]) => {
@@ -54,11 +54,12 @@ export const ConnectsStorage = {
 
 // Sync
 getPreferences().then(() => {
-  emitter.on('keyring_update', (e: CustomEvent) => {
-    ConnectsStorage.sync()
+  emitter.on('keyring_update', () => {
+    // It's unnecessary to re-emit `connect_change`, so far
+    // ConnectsStorage.sync()
   })
 })
 
-const emitAccountsChange = async (connects?: Connects) => {
+const emit = async (connects?: Connects) => {
   emitter.emit('connect_change', connects ?? (await ConnectsStorage.getAll()))
 }

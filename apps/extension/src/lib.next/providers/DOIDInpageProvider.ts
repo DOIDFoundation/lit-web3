@@ -1,13 +1,13 @@
 // Inpage Provider
-import { inpageLogger } from '~/lib.next/logger'
+// import { inpageLogger } from '~/lib.next/logger'
 import inpageMessenger from '~/lib.next/messenger/inpage'
 
 export const DOIDInpageProvider = () => {
   return {
     request: async ({ method, params } = <Record<string, any>>{}) => {
-      inpageLogger('requested', method, params)
+      // inpageLogger('requested', method, params)
       const res = await inpageMessenger.send(method, params)
-      inpageLogger('response', res)
+      // inpageLogger('response', res)
       return res
     },
     on: inpageMessenger.on,

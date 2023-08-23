@@ -9,6 +9,7 @@ import '@lit-web3/dui/src/link'
 import './DOID_requestName'
 import './DOID_setup'
 import './DOID_subscribe'
+import './EVM_subscribe'
 // Style
 import style from './sample.css?inline'
 
@@ -22,6 +23,7 @@ export class ViewRestore extends TailwindElement(style) {
           <li><dapp-method-doid-requestname></dapp-method-doid-requestname></li>
           <li><dapp-method-doid-setup></dapp-method-doid-setup></li>
           <li><dapp-method-doid-subcribe></dapp-method-doid-subcribe></li>
+          <li><dapp-method-evm-subcribe></dapp-method-evm-subcribe></li>
         </ul>
       </div>
     </div>`

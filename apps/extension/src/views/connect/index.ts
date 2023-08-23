@@ -11,10 +11,8 @@ import {
 import popupMessenger from '~/lib.next/messenger/popup'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
-import { chainsDefault } from '~/lib.next/chain'
-
+import { multiChains } from '@lit-web3/chain/src'
 // Components
-// import '@lit-web3/dui/src/menu'
 import '@lit-web3/dui/src/address/name'
 import '@lit-web3/dui/src/link'
 import '@lit-web3/dui/src/menu/drop'
@@ -27,9 +25,9 @@ export class ViewUnlock extends TailwindElement(style) {
   bindKeyring: any = new StateController(this, uiKeyring)
   bindConnects: any = new StateController(this, uiConnects)
   @property() host = ''
-  @property() chain = ''
-  @state() names: Record<string, boolean> = {} // user selected names
+  @property() chainName = ''
 
+  @state() names: Record<string, boolean> = {} // user selected names
   @state() headers: any
 
   get DOIDs() {
@@ -38,11 +36,8 @@ export class ViewUnlock extends TailwindElement(style) {
   get selectedDOID() {
     return uiKeyring.selectedDOID
   }
-  get favicon() {
-    return `https://${this.host}/favicon.ico`
-  }
-  get Chain() {
-    return chainsDefault.find((r: any) => r.name === this.chain)
+  get blockChain() {
+    return multiChains.find((r: any) => r.name === this.chainName)
   }
   get selectedNames() {
     return Object.keys(this.names).filter((k) => this.names[k] === true)
@@ -56,9 +51,8 @@ export class ViewUnlock extends TailwindElement(style) {
       const res = await popupMessenger.send('internal_connect', {
         names: this.selectedNames,
         host: this.host,
-        chain: this.chain
+        chain: this.chainName
       })
-      console.log(res, '??')
       if (res === 'ok') this.close()
     } catch (e) {
       console.error(e)
@@ -101,7 +95,6 @@ export class ViewUnlock extends TailwindElement(style) {
             >
               <connect-host-info></connect-host-info>
             </div>
-            <!-- <dui-button class="inline-flex items-center">ethers</dui-button> -->
           </div>
           <!-- Title -->
           <div class="mt-4 mb-8 text-center">
@@ -135,13 +128,14 @@ export class ViewUnlock extends TailwindElement(style) {
               )}
             </ul>
           </div>
-          <!-- Chain -->
+          <!-- Request Chain -->
           ${when(
-            this.chain,
-            () => html`<p class="my-4">
-              <strong>Request Chain:</strong>
-              <span class="">${this.Chain?.title}</span>
-            </p>`
+            this.chainName,
+            () =>
+              html`<p class="my-4">
+                <strong>Request Chain:</strong>
+                <span class="">${this.blockChain?.title}</span>
+              </p>`
           )}
         </div>
 

@@ -17,7 +17,7 @@ export const EVM_request: BackgroundService = {
     // Pass autoClosePopup
     if (noAuthMethods.includes(method)) state.passUnlock = true
     // NoAuth methods
-    if (method === 'eth_chainId') return (res.body = (await provider.getNetwork()).chainId.toString())
+    if (method === 'eth_chainId') return (res.body = `0x${(await provider.getNetwork()).chainId.toString(16)}`)
     if (method === 'eth_blockNumber') return (res.body = await provider.getBlockNumber())
 
     // Assign DOIDs

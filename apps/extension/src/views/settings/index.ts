@@ -1,17 +1,6 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  repeat,
-  when,
-  classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
-import popupMessenger from '~/lib.next/messenger/popup'
+import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
-import { chainsDefault } from '~/lib.next/chain'
 import { goto } from '@lit-web3/dui/src/shared/router'
 
 // Components

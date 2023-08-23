@@ -8,13 +8,11 @@ import type { RouteConfig } from '@lit-labs/router'
 
 const isProd = import.meta.env.MODE === 'production'
 useBridge({
-  chainId: isProd ? '0x1' : import.meta.env.VITE_APP_TESTNET_S ? '0xaa36a7' : '0x5',
+  chainId: isProd ? '0x1' : '0x5',
   provider,
   persistent: true,
   rpc: isProd
     ? 'https://mainnet.infura.io/v3/50e9845f779f4770a64fa6f47e238d10'
-    : import.meta.env.VITE_APP_TESTNET_S
-    ? 'https://sepolia.infura.io/v3/50e9845f779f4770a64fa6f47e238d10'
     : 'https://goerli.infura.io/v3/50e9845f779f4770a64fa6f47e238d10'
 })
 

@@ -184,9 +184,9 @@ export const routes = [
   },
   {
     name: 'connect',
-    path: '/connect/:host?/:chain?',
-    render: ({ host = '', chain = '' }) => {
-      return html`<view-connect .host=${safeDecodeURIComponent(host)} .chain=${chain}></view-connect>`
+    path: '/connect/:host?/:chainName?',
+    render: ({ host = '', chainName = '' }) => {
+      return html`<view-connect .host=${safeDecodeURIComponent(host)} .chainName=${chainName}></view-connect>`
     },
     enter: async () => {
       // if (await isConnected()) {

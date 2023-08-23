@@ -4,14 +4,10 @@ import { Keypair as SolanaKeyPair } from '@solana/web3.js'
 import { derivePath } from 'ed25519-hd-key'
 
 export const PHRASE_LEN_MAP = [12, 15, 18, 21, 24]
+export const supportedChain: ChainName[] = ['ethereum', 'aptos', 'solana']
 
-export enum AddressType {
-  eth = 'eth',
-  aptos = 'aptos',
-  solana = 'solana'
-}
 export type MultiChainAddresses = {
-  [key in AddressType]: string
+  [chainName in ChainName]: string
 }
 
 export const genMnemonic = () => {
@@ -25,15 +21,15 @@ export const validatePhrase = (phrase = '') => {
 export const phraseMatch = async (phrase = '', target = '') => {
   if (!phrase) return false
   if (target) {
-    let ethAddr = await phraseToAddress(phrase, AddressType.eth)
+    let ethAddr = await phraseToAddress(phrase, 'ethereum')
     return target ? target === String(ethAddr).toLowerCase() : true
   }
   return true
 }
 
-export const phraseToAddress = async (phrase: string, type?: keyof typeof AddressType) => {
+export const phraseToAddress = async (phrase: string, chainName?: ChainName) => {
   if (!phrase) throw new Error('No phrase')
-  const addrs = Object.fromEntries(Object.keys(AddressType).map((key) => [key, ''])) as MultiChainAddresses
+  const addrs = Object.fromEntries(supportedChain.map((key) => [key, ''])) as MultiChainAddresses
 
   // Wallet
   const mnemnoic = Mnemonic.fromPhrase(phrase)
@@ -41,21 +37,21 @@ export const phraseToAddress = async (phrase: string, type?: keyof typeof Addres
   const wallet = HDNodeWallet.fromMnemonic(mnemnoic)
 
   // ETH
-  if (type == AddressType.eth || !type) {
-    addrs[AddressType.eth] = wallet.address
+  if (chainName === 'ethereum' || !chainName) {
+    addrs['ethereum'] = wallet.address
   }
 
   // Aptos
-  if (type == AddressType.aptos || !type) {
+  if (chainName === 'aptos' || !chainName) {
     const aptos = AptosAccount.fromDerivePath(`m/44'/637'/0'/0'/0'`, phrase)
-    addrs[AddressType.aptos] = aptos.address().hex()
+    addrs['aptos'] = aptos.address().hex()
   }
 
   // Solana
-  if (type == AddressType.solana || !type) {
+  if (chainName === 'solana' || !chainName) {
     const solanaKeypair = SolanaKeyPair.fromSeed(derivePath(`m/44'/501'/0'/0'`, seed.replace(/^0x/, '')).key)
-    addrs[AddressType.solana] = solanaKeypair.publicKey.toBase58()
+    addrs['solana'] = solanaKeypair.publicKey.toBase58()
   }
 
-  return type ? addrs[type] : addrs
+  return chainName ? addrs[chainName] : addrs
 }
