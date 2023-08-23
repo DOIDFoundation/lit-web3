@@ -1,1 +1,13 @@
 * text=auto eol=lf
+dist export-ignore
+apps/lock-* export-ignore
+apps/art-scan export-ignore
+apps/explorer export-ignore
+
+.editorconfig export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.github export-ignore
+
+CHANGELOG.md
+pnpm-lock.yaml
