@@ -1,10 +1,13 @@
 export { StateController } from '@lit-app/state'
 import { State, property } from '@lit-app/state'
 // @ts-expect-error
-import WS from 'ws-sequence'
+import WS from 'ws-sequence/src'
 import { defaultNetwork } from '@lit-web3/doids/src/networks'
 
-export const DOIDProviderWs = new WS({ uri: defaultNetwork.providerWs })
+export const DOIDProviderWs = new WS({
+  uri: defaultNetwork.providerWs,
+  ping: '{"jsonrpc":"2.0","method":"node_status"}'
+})
 
 export const wsSend = async (params: Record<string, unknown>, cb?: Function) =>
   DOIDProviderWs.send({ jsonrpc: '2.0', ...params }, cb)
