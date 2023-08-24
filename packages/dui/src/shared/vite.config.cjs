@@ -16,7 +16,7 @@ config()
 
 const { env } = process
 const appTitle = env.VITE_APP_TITLE || env.VITE_APP_NAME || env.npm_package_name
-const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.1.96/css/materialdesignicons.min.css"/>`
+const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css"/>`
 
 const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
@@ -25,6 +25,7 @@ const define = {
 }
 
 const viteConfig = (options = {}) => {
+  const shimNode = (s) => resolve(__dirname, '../../../core/src/shims/node', s)
   const { server: { https = true } = {}, viteConfigOptions = {} } = options
   return ({ mode = '' }) => {
     const isDev = mode === 'development'
@@ -44,7 +45,11 @@ const viteConfig = (options = {}) => {
         alias: {
           '~': resolve(process.cwd(), './src'),
           // bugfix: crypto-addr-codec@0.1.7
-          'crypto-addr-codec': 'crypto-addr-codec/dist/index.js'
+          'crypto-addr-codec': 'crypto-addr-codec/dist/index.js',
+          // Node Shims
+          stream: shimNode('stream.ts'),
+          util: shimNode('util.js')
+          // assert: shimNode('assert.js')
         }
       },
       build: {
@@ -142,7 +147,10 @@ const viteConfig = (options = {}) => {
               //   polyfills: ['web.url', 'es.object.from-entries']
               // })
             ])
-      ]
+      ],
+      optimizeDeps: {
+        include: ['readable-stream']
+      }
     }
     // options (shallow merge)
     const merge = (src, dest) => {

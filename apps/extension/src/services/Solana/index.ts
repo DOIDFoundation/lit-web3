@@ -1,5 +1,5 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { Keypair as SolanaKeyPair } from '@solana/web3.js'
+import { Keypair as SolanaKeyPair } from '~/services/Solana/solana-web3'
 import { getKeyring } from '~/lib.next/keyring'
 import { unlock, autoClosePopup } from '~/middlewares'
 import { ERR_NOT_IMPLEMENTED, ERR_USER_DENIED } from '~/lib.next/constants/errors'

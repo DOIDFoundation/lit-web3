@@ -8,25 +8,26 @@ if (/reg/.test(depJsSrc)) {
   fs.writeFileSync(depPath, depJsSrc.replace(reg, `page?.scripts.push(...scripts)`))
 }
 // E
+// S Touch git-ignored `public/inpage.js`
+const inpagPath = resolve(__dirname, 'public/inpage.js')
+try {
+  const time = new Date()
+  fs.utimesSync(inpagPath, time, time)
+} catch (e) {
+  const fd = fs.openSync(inpagPath, 'w')
+  fs.closeSync(fd)
+}
+// E
 
 import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.cjs'
 import manifest from './manifest.config'
 import { dirname, relative, resolve } from 'node:path'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 import AutoImport from 'unplugin-auto-import/vite'
 
 type viteConfig = Record<string, any>
 export const sharedConfig = async (mode?: string): Promise<viteConfig> => {
-  // const shimNode = (s: string) => resolve(__dirname, '../../packages/core/src/shims/node', s)
   return {
-    resolve: {
-      alias: {
-        // stream: shimNode('stream.ts')
-        // util: shimNode('util.js'),
-        // assert: shimNode('assert.js')
-      }
-    },
     plugins: [
       // rewrite assets to use relative path
       {
@@ -55,7 +56,6 @@ export const sharedExtConfig = async (mode?: string): Promise<viteConfig> => {
   const [isDev] = [mode === 'development']
   config.plugins.push(
     ...[
-      nodePolyfills(),
       AutoImport({
         imports: [{ 'webextension-polyfill': [['*', 'browser']] }],
         dts: resolve(__dirname, 'src/auto-imports.d.ts')

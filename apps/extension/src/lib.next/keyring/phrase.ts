@@ -1,6 +1,6 @@
 import { AptosAccount } from 'aptos'
 import { Mnemonic, HDNodeWallet, randomBytes } from 'ethers'
-import { Keypair as SolanaKeyPair } from '@solana/web3.js'
+import { Keypair as SolanaKeyPair } from '~/services/Solana/solana-web3'
 import { derivePath } from 'ed25519-hd-key'
 
 export const PHRASE_LEN_MAP = [12, 15, 18, 21, 24]

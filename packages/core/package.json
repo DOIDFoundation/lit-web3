@@ -6,7 +6,6 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "buffer": "^6.0.3",
     "localforage": "^1.10.0",
     "readable-stream": "^4.4.2",
     "safe-decode-uri-component": "latest",
