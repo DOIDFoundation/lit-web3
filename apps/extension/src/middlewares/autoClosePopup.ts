@@ -6,7 +6,7 @@ export const autoClosePopup: BackgroundMiddlware = async ({ res, state }, next) 
   res.responder.finally(() => {
     if (waitingForPopup.length) return
     // TODO: not confirmed yet
-    // if (!state.passUnlock && res.respond) closePopup()
-    if (res.respond) closePopup()
+    if (!state.passUnlock && res.respond) closePopup()
+    // if (res.respond) closePopup()
   })
 }
