@@ -7,15 +7,11 @@ import { gasLimit, nowTs } from './utils'
 import { normalizeTxErr } from './parseErr'
 import { Contract, formatUnits } from 'ethers'
 export { StateController } from '@lit-app/state'
-// Singleton Data
-let bridgeInstance: any
-let blockNumber = 0
 
-// Proxify
-// declare some state
+// Singleton Data
 class BridgeStore extends State {
   @property({ value: 0 }) blockNumber!: number
-  @property({ value: bridgeInstance, type: Object }) bridge!: Bridge
+  @property({ value: undefined, type: Object }) bridge!: Bridge
   @property({ value: 0 }) _account: string = ''
   constructor() {
     super()
@@ -60,6 +56,7 @@ class BlockPolling {
     this.interval = 15 * 1000
     this.blockTs = 0
     this.blockDebounce = { timer: null, interval: 50 }
+    this.getBlockNumber()
     // Events
     emitter.on('tx-success', () => this.broadcast())
     emitter.on('network-change', () => {
@@ -71,11 +68,13 @@ class BlockPolling {
     this.polling()
   }
   get block() {
-    return blockNumber
+    return bridgeStore.blockNumber
   }
   set block(v: number) {
-    blockNumber = v
     bridgeStore.blockNumber = v
+  }
+  getBlockNumber = async () => {
+    this.block = await bridgeStore.bridge.provider.getBlockNumber()
   }
   polling() {
     clearTimeout(this.timer)
@@ -93,7 +92,7 @@ class BlockPolling {
     Object.assign(this.blockDebounce, { timer: null, interval: 50 })
   }
   async listenProvider() {
-    bridgeInstance.provider.on('block', this.onBlock.bind(this))
+    bridgeStore.bridge.provider.on('block', this.onBlock.bind(this))
   }
   onBlock(block: number) {
     if (block <= this.block) return
@@ -104,15 +103,15 @@ class BlockPolling {
     this.block = block
   }
   broadcast(block = this.block) {
-    // if (!block) block = (await bridgeInstance.provider.getBlockNumber()) || this.block
+    // if (!block) block = (await bridgeStore.bridge.provider.getBlockNumber()) || this.block
     emitter.emit('block-polling', block + '')
     this.polling()
   }
 }
 
 const initBridge = (options?: useBridgeOptions) => {
-  if (!bridgeInstance) {
-    bridgeStore.bridge = bridgeInstance = new Bridge(options)
+  if (!bridgeStore.bridge) {
+    bridgeStore.bridge = new Bridge(options)
     new BlockPolling()
   }
   return bridgeStore.bridge
@@ -124,8 +123,7 @@ const wrapBridge = () => {
     blockNumber: bridgeStore.blockNumber,
     stateTitle: bridgeStore.stateTitle,
     envKey: bridgeStore.envKey,
-    bridge: bridgeStore.bridge,
-    bridgeInstance
+    bridge: bridgeStore.bridge
   }
 }
 
@@ -158,7 +156,7 @@ export const getBlockNumber = async () => {
 }
 export const getNonce = async (address?: string) => {
   if (!address) address = await getAccount()
-  return await bridgeInstance.provider.getTransactionCount(address)
+  return await bridgeStore.bridge.provider.getTransactionCount(address)
 }
 export const getGraph = async (path = '') => ((await getNetwork()).graph ?? '') + path
 
@@ -166,7 +164,7 @@ export const getGraph = async (path = '') => ((await getNetwork()).graph ?? '') 
 // blockNumber, default: current block
 export const getBlockTimestamp = async ({ offset = 0, blockNumber = 0 } = {}) => {
   if (!blockNumber) blockNumber = await getBlockNumber()
-  const { timestamp } = await bridgeInstance.provider.getBlock(blockNumber - offset / 3)
+  const { timestamp } = await bridgeStore.bridge.provider.getBlock(blockNumber - offset / 3)
   return timestamp
 }
 
@@ -192,7 +190,7 @@ export const estimateGasLimit = async (
 
 export const assignOverrides = async (overrides: any, ...args: any[]) => {
   let [contract, method, parameters, { gasLimitPer, nonce } = <any>{}] = args
-  if (nonce || bridgeInstance.provider.nonce) overrides.nonce = nonce || bridgeInstance.provider.nonce
+  if (nonce || bridgeStore.bridge.provider.nonce) overrides.nonce = nonce || bridgeStore.bridge.provider.nonce
   let gasLimit
   try {
     if (gasLimitPer) {
