@@ -54,6 +54,7 @@ export class ConnectWalletBtn extends TailwindElement(style) {
         @change=${(e: CustomEvent) => (this.menu = e.detail)}
         ?icon=${this.dropable}
         btnSm
+        dropClass="w-72"
         btnTheme="dark"
       >
         <dui-address slot="button" avatar short></dui-address>

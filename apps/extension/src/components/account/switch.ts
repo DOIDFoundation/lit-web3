@@ -20,12 +20,17 @@ export class AccountSwitch extends TailwindElement(null) {
   render() {
     if (!this.selected) return ''
     return html`
-      <dui-drop .show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)} btnText btnDense icon>
+      <dui-drop
+        .show=${this.menu}
+        @change=${(e: CustomEvent) => (this.menu = e.detail)}
+        btnText
+        btnDense
+        icon
+        dropClass="w-72"
+      >
         <dui-name-address slot="button" avatar .DOID=${this.selected} wrap></dui-name-address>
         <!-- Content -->
-        <div class="w-72">
-          <account-menu @switch=${this.close}></account-menu>
-        </div>
+        <account-menu @switch=${this.close}></account-menu>
       </dui-drop>
     `
   }

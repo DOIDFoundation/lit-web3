@@ -6,11 +6,16 @@ import { animate } from '@lit-labs/motion'
 import '../button'
 
 import style from './drop.css?inline'
+import { sleep } from '@lit-web3/ethers/src/utils'
+
+const duration = 133
+
 @customElement('dui-drop')
 export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
   @property({ type: Boolean, reflect: true }) show = false
   @property({ type: Boolean }) lg = false
   @property({ type: Boolean }) icon = false
+  @property({ type: String }) dropClass = ''
   // Button props
   // TODO: Is there any way to inherit all?
   @property({ type: Boolean, attribute: true }) btnSm = false
@@ -22,6 +27,7 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
 
   @state() model = false
   @state() align = { left: false, top: false }
+  @state() delayedModel = false
 
   calcPos = () => {
     const pos = this.getBoundingClientRect() ?? {}
@@ -38,14 +44,18 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
     this.model = false
     this.emit('close')
     this.emit('change', this.model)
+    await sleep(duration)
+    this.delayedModel = false
   }
   open = async () => {
+    this.delayedModel = true
     this.calcPos()
     this.model = true
     setTimeout(() => this.listen())
     this.emit('open')
     this.emit('change', this.model)
   }
+  toggle = () => (this.model ? this.close() : this.open())
 
   #clickOutside = (e: Event) => {
     if (!e.composedPath?.().includes(this.$('.dui-drop'))) this.close()
@@ -84,8 +94,12 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
   }
 
   override render() {
-    return html`<div class="inline-block whitespace-nowrap ${classMap(this.$c([this.show ? 'relative z-10' : '']))}">
-      <div class="dui-drop-toggle inline-flex items-center" @click=${() => (this.show = !this.show)}>
+    // Here has a problem with shadow DOM's relatvie zIndex, maybe its a bug...
+    return html`<div class="inline-block whitespace-nowrap ${classMap({ relative: this.delayedModel })}">
+      <div
+        class="dui-drop-toggle z-20 inline-flex items-center ${classMap({ relative: this.delayedModel })}"
+        @click=${this.toggle}
+      >
         <slot name="toggle">
           <dui-button
             ?sm=${this.btnSm}
@@ -100,8 +114,8 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
                 html`<slot name="icon"
                   ><i
                     class="text-lg -mr-0.5 leading-none mdi mdi-chevron-down ${classMap({
-                      'mdi-chevron-down': !this.show,
-                      'mdi-chevron-up': this.show,
+                      'mdi-chevron-down': !this.model,
+                      'mdi-chevron-up': this.model,
                       'text-xl': this.lg
                     })}"
                   ></i
@@ -112,17 +126,18 @@ export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
       </div>
       <div
         part="dui-drop"
-        class="dui-drop ${classMap(
+        class="dui-drop z-10 ${classMap(
           this.$c([
             this.align.left ? 'left-0' : 'right-0',
             this.align.top ? 'bottom-full' : 'top-full',
-            this.model ? 'mt-auto opacity-100 visible' : '-mt-4 opacity-0 invisible'
+            this.model ? 'mt-auto opacity-100 visible' : '-mt-4 opacity-0 invisible',
+            this.dropClass
           ])
         )}"
         ${animate({
           guard: () => this.model,
-          properties: ['opacity', 'visibility', 'margin', 'transform'],
-          keyframeOptions: { duration: 133 }
+          properties: ['opacity', 'visibility', 'margin'],
+          keyframeOptions: { duration }
         })}
       >
         ${when(this.model, () => html`<slot></slot>`)}

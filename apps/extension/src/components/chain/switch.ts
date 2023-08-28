@@ -37,12 +37,12 @@ export class ChainSwitch extends TailwindElement(style) {
       btnSm
       btnDense
       icon
+      dropClass="w-56"
       btnClass="!text-inherit !text-xs"
     >
       <span title=${uiNetworks.currentNetwork?.title} class="inline-flex items-center gap-1" slot="button"
         ><chain-symbol .chain=${uiNetworks.currentNetwork}></chain-symbol>${uiNetworks.currentNetwork?.abbr}</span
       >
-
       <!-- Content -->
       <ul class="dui-select">
         ${repeat(
