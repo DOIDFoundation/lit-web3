@@ -4,15 +4,15 @@ declare type ChainId = string
 
 declare interface BlockChain {
   readonly name: ChainName
-  readonly title: string
-  readonly symbol: string
+  readonly title?: string
+  readonly symbol?: string
 }
 declare type BlockChains = BlockChain[]
 
 declare interface ChainNetwork extends BlockChain {
   readonly id: ChainId
   readonly abbr?: string
-  readonly rpc: string
+  readonly rpc?: string
   readonly rpcWs?: string
   readonly scan?: string
   readonly icon?: string

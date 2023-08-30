@@ -209,6 +209,18 @@ export const routes = [
     }
   },
   {
+    name: 'switchNetwork',
+    path: '/switchNetwork/:name/:id',
+    render: ({ name = '', id = '' }) => {
+      const key = [name, id].join('-')
+      return html`${keyed(key, html`<view-switch-network .chainNetwork=${{ name, id }}></view-switch-network>`)}`
+    },
+    enter: async () => {
+      await import('~/views/switchNetwork')
+      return true
+    }
+  },
+  {
     name: 'settings',
     path: '/settings',
     render: () => {

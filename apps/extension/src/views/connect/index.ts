@@ -56,7 +56,6 @@ export class ViewUnlock extends TailwindElement(style) {
       if (res === 'ok') this.close()
     } catch (e) {
       console.error(e)
-      debugger
     }
   }
 

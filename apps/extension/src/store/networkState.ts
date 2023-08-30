@@ -46,7 +46,7 @@ class UINetworks extends State {
 
   selectChain = (chain: ChainNetwork) => {
     this.currentChainName = chain.name
-    this.currentChainSymbol = chain.symbol
+    this.currentChainSymbol = chain.symbol!
   }
 
   switchNetwork = async (chainName: ChainName, id: ChainId) => {
@@ -57,7 +57,8 @@ class UINetworks extends State {
     Object.assign(this, { DOIDs: undefined, selectedDOID: {} })
   }
 
-  get = (chainName = this.currentChainName): ChainNetwork => {
+  get = (chainName = this.currentChainName): ChainNetwork | undefined => {
+    if (!this.preferNetworks) return
     const networks = this.enabledMultiChain[chainName]
     const { id: savedChainId } = this.preferNetworks[chainName]
     return networks.find((network) => savedChainId === network.id)!

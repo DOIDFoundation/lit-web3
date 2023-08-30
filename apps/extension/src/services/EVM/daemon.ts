@@ -29,15 +29,11 @@ const emitAccountsChanged = async () => {
     })
   )
 }
+// TODO: Only send to evm subscribers
 const emitChainChanged = async () => {
   refreshWallet()
   const { id } = await networkStorage.get('ethereum')
-  const connects: Connects = await ConnectsStorage.getAll()
-  await Promise.all(
-    Object.entries(connects).map(async ([host]) => {
-      backgroundToInpage.send('evm_response', { method: 'chainChanged', params: id }, { host })
-    })
-  )
+  backgroundToInpage.broadcast('evm_response', { method: 'chainChanged', params: id })
 }
 
 let inited = false

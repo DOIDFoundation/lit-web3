@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, state, property, styleMap } from '../shared/TailwindElement'
+import { TailwindElement, html, customElement, state, property, styleMap, when } from '../shared/TailwindElement'
 import { getSymbol } from '@lit-web3/chain/src/symbol'
 
 import style from './symbol.css?inline'
@@ -6,6 +6,7 @@ import style from './symbol.css?inline'
 export class ChainSymbol extends TailwindElement(style) {
   @property() chain?: ChainNetwork
   @property() symbol = ''
+  @property({ type: Boolean }) text = false
 
   @state() _symbol = ''
 
@@ -24,7 +25,13 @@ export class ChainSymbol extends TailwindElement(style) {
 
   render() {
     if (!this.chain) return ''
-    if (this.isTestnet) return html`<i class="chain-symbol testnet" icon=${this.icon}></i>`
-    return html`<i class="chain-symbol" style=${styleMap({ backgroundImage: `url(${this.icon})` })}></i>`
+    return html`<!-- Icon -->
+      ${when(
+        this.isTestnet,
+        () => html`<i class="chain-symbol testnet" icon=${this.icon}></i>`,
+        () => html`<i class="chain-symbol" style=${styleMap({ backgroundImage: `url(${this.icon})` })}></i>`
+      )}
+      <!-- Title -->
+      ${when(this.text, () => html`${this.chain?.title}`)}`
   }
 }

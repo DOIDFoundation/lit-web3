@@ -1,9 +1,9 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
-import { requestConnectedDOIDs, popupGoto, autoClosePopup } from '~/middlewares'
+import { requestConnectedDOIDs, requestUnlock, popupGoto, autoClosePopup } from '~/middlewares'
 import { getEVMProvider } from './daemon'
 import { toUtf8String } from 'ethers'
 import { EVMBodyParser } from './bodyParser'
-import { noAuthMethods } from './constants'
+import { noAuthMethods, noConnectMethods, USER_DENIED } from './constants'
 
 export const EVM_request: BackgroundService = {
   method: 'evm_request',
@@ -20,7 +20,20 @@ export const EVM_request: BackgroundService = {
     if (method === 'eth_chainId') return (res.body = `0x${(await provider.getNetwork()).chainId.toString(16)}`)
     if (method === 'eth_blockNumber') return (res.body = await provider.getBlockNumber())
 
-    // Assign DOIDs
+    // Require unlock, no need to connect
+    if (noConnectMethods.includes(method)) {
+      switch (method) {
+        case 'wallet_switchEthereumChain':
+        case 'wallet_addEthereumChain':
+          await requestUnlock(`/switchNetwork/${state.chain}/${params[0].chainId}`)(ctx)
+          backgroundMessenger.on('reply_switch_network', async ({ data }) => {
+            return data === 'ok' ? (res.body = data) : (res.err = USER_DENIED)
+          })
+          return
+      }
+    }
+
+    // Require connect
     await requestConnectedDOIDs()(ctx)
     const accounts = state.DOIDs.map((DOID: KeyringDOID) => DOID.address)
 
