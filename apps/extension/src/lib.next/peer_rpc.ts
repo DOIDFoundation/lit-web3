@@ -1,11 +1,12 @@
 import { Wallet, keccak256, hexlify, toUtf8Bytes } from 'ethers'
 import { createKeyPair, sign } from '@erebos/secp256k1'
 import jsonRpcRequest from '@lit-web3/core/src/http/jsonRpcRequest'
-import { getEVMProvider } from '~/services/EVM/daemon'
 import { defaultNetwork } from '@lit-web3/doids/src/networks'
+import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
+import { getEVMProvider } from '~/services/EVM/daemon'
+import { networkStorage } from './background/storage/preferences'
 
 import type { HDNodeWallet } from 'ethers'
-import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
 const rpcApi = defaultNetwork.provider
 const hexWithout0x = (hex: string) => {
@@ -13,18 +14,16 @@ const hexWithout0x = (hex: string) => {
 }
 
 export const rpcRegistName = async (doid: string, account: string, phrase: string) => {
+  const preferNet = await networkStorage.get('doid')
   if (!doid || !account || !phrase) return
-  const owner = hexWithout0x(account)
-  const txt = hexlify(toUtf8Bytes(doid)) + `${owner}`.toLowerCase()
+  const chainId= preferNet.id.padStart(+preferNet.id,'0')
+  const owner = hexWithout0x(account).toLowerCase()
+  const nameHex = hexWithout0x(hexlify(toUtf8Bytes(doid)))
+
+  const txt = `0x${chainId}${nameHex}${owner}`
   const hash = hexWithout0x(keccak256(`${txt}`))
   const wallet = (await getWalletByPhrase(phrase)) as HDNodeWallet
   const msg = customizedSign(hash, wallet?.privateKey) as string
-
-  /* // S
-  const resSignedMsg = wallet.signingKey.sign(`0x${hash}`).serialized
-  // console.log({ msgE: resSignedMsg })
-  // E */
-
   const params = [
     {
       type: 'register',
