@@ -1,0 +1,23 @@
+{
+  "name": "@doidfoundation/connect",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "main": "index.js",
+  "module": "index.js",
+  "type": "module",
+  "dependencies": {
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest",
+    "@lit-web3/router": "workspace:latest",
+    "@metamask/jazzicon": "^2"
+  },
+  "peerDependencies": {
+    "@lit-labs/router": "^0.1",
+    "tsup": "^6"
+  },
+  "license": "MIT"
+}

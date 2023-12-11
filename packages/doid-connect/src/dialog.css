@@ -1,0 +1,25 @@
+.separator {
+  @apply flex uppercase text-xs font-medium w-full mb-6;
+  &::before,
+  &::after {
+    @apply h-2;
+    flex: 1 0 auto;
+    content: '';
+    border-bottom: 1px solid #d4d4d8;
+  }
+  span {
+    flex: 0.2 0 auto;
+  }
+}
+
+.button-container {
+  @apply flex justify-center space-x-2;
+  .text {
+    @apply hidden;
+  }
+
+  .button,
+  dui-button {
+    @apply w-10 h-10 border-2 rounded-full bg-transparent pt-0.5;
+  }
+}

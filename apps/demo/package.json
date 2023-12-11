@@ -1,0 +1,17 @@
+{
+  "name": "@lit-web3/demo",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host --mode development",
+    "build": "vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/core": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest",
+    "@doidfoundation/connect": "workspace:latest"
+  },
+  "license": "MIT"
+}
