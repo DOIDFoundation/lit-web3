@@ -1,6 +1,7 @@
 import { customElement, TailwindElement, html, state, when, property } from '@lit-web3/dui/src/shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import emitter from '@lit-web3/core/src/emitter'
+import './dialog'
 
 @customElement('connect-doid')
 export class ConnectDOID extends TailwindElement('') {
