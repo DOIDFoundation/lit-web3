@@ -23,10 +23,9 @@ export class SettingsBtn extends TailwindElement(style) {
 
   render() {
     return html`<div class="relative">
-      <dui-button icon @click=${() => (this.menu = !this.menu)} class="${classMap({ active: this.menu })}">
-        <i class="text-xl mdi mdi-dots-vertical"></i>
-      </dui-button>
-      <dui-drop md .show=${this.menu} @close=${() => (this.menu = false)}>
+      <dui-drop md btnIcon .show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
+        <i slot="button" class="text-xl mdi mdi-dots-vertical"></i>
+        <!-- Content -->
         <ul>
           <li @click=${() => this.go2('https://doid.tech')}><i class="mdi mdi-information"></i>About</li>
           <li @click=${() => this.go2('https://discord.gg/N9emnzwAzm')}>

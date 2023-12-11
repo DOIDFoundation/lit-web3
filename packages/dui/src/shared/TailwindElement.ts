@@ -44,7 +44,7 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
     }
     // Element Events
     emit<T>(type: string, detail: T, options = []) {
-      this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, ...options }))
+      this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
     }
     on(type: string, listener: EventListener, options?: any) {
       this.addEventListener(type, listener, options)

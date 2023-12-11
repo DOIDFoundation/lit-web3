@@ -162,12 +162,18 @@ importers:
       '@lit-web3/core':
         specifier: workspace:latest
         version: link:../../packages/core
+      '@lit-web3/doids':
+        specifier: workspace:latest
+        version: link:../../packages/doids
       '@lit-web3/dui':
         specifier: workspace:latest
         version: link:../../packages/dui
       '@lit-web3/ethers':
         specifier: workspace:latest
         version: link:../../packages/ethers
+      ws-sequence:
+        specifier: ^1.10.2
+        version: 1.10.2
 
   apps/extension:
     dependencies:
@@ -186,6 +192,9 @@ importers:
       '@lit-web3/core':
         specifier: workspace:latest
         version: link:../../packages/core
+      '@lit-web3/doids':
+        specifier: workspace:latest
+        version: link:../../packages/doids
       '@lit-web3/dui':
         specifier: workspace:latest
         version: link:../../packages/dui
@@ -246,7 +255,7 @@ importers:
         version: 3.4.0
       '@types/chrome':
         specifier: latest
-        version: 0.0.241
+        version: 0.0.235
       '@types/webextension-polyfill':
         specifier: ^0.10.0
         version: 0.10.0
@@ -268,18 +277,6 @@ importers:
       webextension-polyfill:
         specifier: ^0.10.0
         version: 0.10.0
-
-  apps/lock-explorer:
-    dependencies:
-      '@lit-web3/core':
-        specifier: workspace:latest
-        version: link:../../packages/core
-      '@lit-web3/dui':
-        specifier: workspace:latest
-        version: link:../../packages/dui
-      '@lit-web3/ethers':
-        specifier: workspace:latest
-        version: link:../../packages/ethers
 
   apps/lock-name:
     dependencies:
@@ -353,6 +350,15 @@ importers:
       '@metamask/jazzicon':
         specifier: ^2
         version: 2.0.0
+      tsup:
+        specifier: ^6
+        version: 6.7.0(postcss@8.4.24)(typescript@5.1.6)
+
+  packages/doids:
+    dependencies:
+      '@lit-web3/core':
+        specifier: workspace:latest
+        version: link:../core
       tsup:
         specifier: ^6
         version: 6.7.0(postcss@8.4.24)(typescript@5.1.6)
@@ -4538,8 +4544,8 @@ packages:
     resolution: {integrity: sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==}
     dev: true
 
-  /@types/chrome@0.0.241:
-    resolution: {integrity: sha512-3WxC2D8zhyDnCU1GxyznoyUulLH6ReLWUWQm5LSM7S1rvV9w+k8TUNbWrFavk6zz2E1ws05lNawnSa7rK5kY8Q==}
+  /@types/chrome@0.0.235:
+    resolution: {integrity: sha512-SPj9A4E35SBJICjnL04KZEA/eVr8Km7gbnEfAxzaU2fHpLSnN64OPnfOR3EpDJXXpSORKTn3OUDwugw+rYBBXA==}
     dependencies:
       '@types/filesystem': 0.0.32
       '@types/har-format': 1.2.11
@@ -11272,6 +11278,10 @@ packages:
       resolve: 1.22.2
     dev: true
 
+  /reconnecting-websocket@4.2.0:
+    resolution: {integrity: sha512-HMD8A0sv40xhkHf/T4qxktyOvHx7K3d2A9i1QG2wRIYdMecxQJMhTIBH4aQ8KfQLfQW4UOqNSfxTgv0C+MbPIA==}
+    dev: false
+
   /redent@3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
@@ -11483,21 +11493,12 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /rollup@3.25.2:
-    resolution: {integrity: sha512-VLnkxZMDr3jpxgtmS8pQZ0UvhslmF4ADq/9w4erkctbgjCqLW9oa89fJuXEs4ZmgyoF7Dm8rMDKSS5b5u2hHUg==}
-    engines: {node: '>=14.18.0', npm: '>=8.0.0'}
-    hasBin: true
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: false
-
   /rollup@3.26.3:
     resolution: {integrity: sha512-7Tin0C8l86TkpcMtXvQu6saWH93nhG3dGQ1/+l5V2TDMceTxO7kDiK6GzbfLWNNxqJXm591PcEZUozZm51ogwQ==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /rpc-websockets@7.5.1:
     resolution: {integrity: sha512-kGFkeTsmd37pHPMaHIgN1LVKXMi0JD782v4Ds9ZKtLlwdTKjn+CxM9A9/gLT2LaOuEcEFGL98h1QWQtlOIdW0w==}
@@ -12329,7 +12330,7 @@ packages:
       postcss: 8.4.24
       postcss-load-config: 3.1.4(postcss@8.4.24)
       resolve-from: 5.0.0
-      rollup: 3.25.2
+      rollup: 3.26.3
       source-map: 0.8.0-beta.0
       sucrase: 3.32.0
       tree-kill: 1.2.2
@@ -12366,7 +12367,7 @@ packages:
       postcss: 8.4.24
       postcss-load-config: 3.1.4(postcss@8.4.24)
       resolve-from: 5.0.0
-      rollup: 3.25.2
+      rollup: 3.26.3
       source-map: 0.8.0-beta.0
       sucrase: 3.32.0
       tree-kill: 1.2.2
@@ -13321,6 +13322,12 @@ packages:
 
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
+
+  /ws-sequence@1.10.2:
+    resolution: {integrity: sha512-vjTxtBz3EF6SM1DYdMc5eeV4CPu9u5dpOGz3izmT3YhjwWS4UWYYjf/wq1qbbVvU3czLLp/ENX0xugfu5jZzGg==}
+    dependencies:
+      reconnecting-websocket: 4.2.0
+    dev: false
 
   /ws@7.5.9:
     resolution: {integrity: sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==}

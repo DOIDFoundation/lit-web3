@@ -1,0 +1,16 @@
+{
+  "name": "@lit-web3/doids",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@lit-web3/core": "workspace:latest"
+  },
+  "devDependencies": {},
+  "peerDependencies": {
+    "tsup": "^6"
+  },
+  "license": "MIT"
+}

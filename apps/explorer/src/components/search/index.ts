@@ -11,8 +11,8 @@ import '@lit-web3/dui/src/button'
 
 // Style
 import style from './index.css?inline'
-@customElement('dui-ns-search')
-export class duiNsSearch extends TailwindElement(style) {
+@customElement('dui-block-search')
+export class duiBlockSearch extends TailwindElement(style) {
   // bindStore: any = new StateController(this, searchStore)
   // bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = 'Search names or addresses'

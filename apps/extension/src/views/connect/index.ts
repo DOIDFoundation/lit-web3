@@ -47,6 +47,9 @@ export class ViewUnlock extends TailwindElement(style) {
   get selectedNames() {
     return Object.keys(this.names).filter((k) => this.names[k] === true)
   }
+  get isAllSelected() {
+    return this.selectedNames.length === this.DOIDs.length
+  }
 
   connect = async () => {
     try {
@@ -55,9 +58,11 @@ export class ViewUnlock extends TailwindElement(style) {
         host: this.host,
         chain: this.chain
       })
+      console.log(res, '??')
       if (res === 'ok') this.close()
     } catch (e) {
       console.error(e)
+      debugger
     }
   }
 
@@ -66,8 +71,7 @@ export class ViewUnlock extends TailwindElement(style) {
   }
 
   selectAll = () => {
-    const alreadySelectedAll = this.selectedNames.length === this.DOIDs.length
-    for (let name in this.names) this.names[name] = !alreadySelectedAll
+    for (let name in this.names) this.names[name] = !this.isAllSelected
     this.names = { ...this.names }
   }
 
@@ -106,8 +110,9 @@ export class ViewUnlock extends TailwindElement(style) {
           </div>
           <!-- Accounts -->
           <p class="mt-4 px-2 flex justify-between">
-            <span @click=${this.selectAll} class="inline-flex items-center ml-2.5 gap-2 cursor-pointer"
-              ><input type="checkbox" class="pointer-events-none" .checked=${false} readonly /><span class="text-xs"
+            <span @click=${this.selectAll} class="inline-flex items-center ml-2.5 gap-2 cursor-pointer select-none"
+              ><input type="checkbox" class="pointer-events-none" .checked=${this.isAllSelected} readonly /><span
+                class="text-xs"
                 >Select all</span
               ></span
             >

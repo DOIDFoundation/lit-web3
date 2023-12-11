@@ -1,6 +1,2 @@
 :host {
 }
-
-.connect-wallet-btn > ::part(dui-button) {
-  background: var(--colorDark) !important;
-}

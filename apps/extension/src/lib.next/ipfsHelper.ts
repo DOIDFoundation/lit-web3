@@ -32,7 +32,7 @@ class IPFSHelper {
   }
 
   // Update ipfs data and update relative ipns
-  async updateJsonData(json: Object, doidName: string, { memo = '' }: any = {}): Promise<Record<string, any>> {
+  /*   async updateJsonData(json: Object, doidName: string, { memo = '' }: any = {}): Promise<Record<string, any>> {
     // get private by doidName from storage
     const _memo = memo || this._getMnemonicByDoidName(doidName)
     // write json to ipfs
@@ -43,7 +43,7 @@ class IPFSHelper {
     const bytes = (await this._getIPNSNameFromStorage(memo)).bytes
     return { cid, bytes }
   }
-
+ */
   async _chkIPNSExist(name: Name) {
     let exist = false
     let revision: any

@@ -74,7 +74,7 @@ export const EditableElement = <T extends PublicConstructor<TAILWINDELEMENT>>(
 
     onInput(e: Event) {
       e.stopImmediatePropagation()
-      let val = (e.target as HTMLInputElement).value
+      let val = (e.target as HTMLInputElement).value.trim()
       this.value = converter(val, null, { lower: this.lower, upper: this.upper }) || ''
       this.updateVal()
       this.emit('input', val)

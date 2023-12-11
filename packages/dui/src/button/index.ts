@@ -16,6 +16,8 @@ export class DuiButton extends TailwindElement(style) {
   @property({ type: Boolean }) icon = false
   @property({ type: Boolean }) text = false
   @property({ type: Boolean }) sm = false
+  @property({ type: Boolean }) dense = false
+  @property({ type: String, reflect: true }) theme?: string
 
   constructor() {
     super()
@@ -54,10 +56,12 @@ export class DuiButton extends TailwindElement(style) {
           rel="${ifDefined(this.rel)}"
           class="dui-button ${this.class}"
           ?icon=${this.icon}
+          ?dense=${this.dense}
           ?disabled=${this.blocked}
           ?pending=${this.pending}
           ?text=${this.text}
           ?sm=${this.sm}
+          theme=${this.theme}
         >
           <slot></slot>
         </a>`,
@@ -66,10 +70,12 @@ export class DuiButton extends TailwindElement(style) {
           type="button"
           class="dui-button ${this.class}"
           ?icon=${this.icon}
+          ?dense=${this.dense}
           ?disabled=${this.blocked}
           ?pending=${this.pending}
           ?text=${this.text}
           ?sm=${this.sm}
+          theme=${this.theme}
         >
           <slot></slot>
         </button>`

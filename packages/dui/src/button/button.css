@@ -8,9 +8,11 @@
 }
 
 .dui-button {
-  @apply gap-1 text-white px-3 leading-tight text-sm sm_text-base rounded-md;
+  @apply gap-1 text-white py-2 leading-tight text-sm sm_text-base rounded-md;
   background: var(--btnBg);
-  padding: 0.5rem 0.875rem;
+  &:not([dense]) {
+    @apply px-3.5;
+  }
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   &:not([disabled]) {
     &:hover {
@@ -120,10 +122,15 @@
     }
   }
   &[sm] {
-    @apply text-sm;
-    padding: 0.35rem 0.625rem;
+    @apply text-sm py-1.5;
+    &:not([dense]) {
+      @apply px-2.5;
+    }
     &[icon] {
       @apply w-8 h-8;
     }
+  }
+  &[theme='dark'] {
+    background: var(--colorDark) !important;
   }
 }

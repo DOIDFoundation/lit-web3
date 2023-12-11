@@ -10,6 +10,8 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { Wallet } from 'ethers'
+import { defaultNetwork } from '@lit-web3/doids/src/networks'
+import { sleep, addressEquals } from '@lit-web3/ethers/src/utils'
 
 // Components
 import '@lit-web3/dui/src/input/text'
@@ -19,26 +21,25 @@ import '~/components/pwd-equal'
 
 import style from './create.css?inline'
 import { AddressType, phraseToAddress } from '~/lib.next/keyring/phrase'
-import {
-  // assignOverrides,
-  // getABI,
-  // getBridgeProvider,
-  // getContracts,
-  getNativeBalance,
-  getNetwork
-} from '@lit-web3/ethers/src/useBridge'
+import // assignOverrides,
+// getABI,
+// getBridgeProvider,
+// getContracts,
+// getNativeBalance,
+// getNetwork
+'@lit-web3/ethers/src/useBridge'
 // import { now } from '@lit-web3/ethers/src/nsResolver/registrar'
 import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { MultiChainAddresses } from '~/lib.next/keyring/phrase'
 // import ipfsHelper from '~/lib.next/ipfsHelper'
-import { rpcRegistName } from '~/lib.next/peer_rpc'
+import { rpcRegistName, checkTx } from '~/lib.next/peer_rpc'
 
 enum Steps {
   EnterPhrase,
   EnterPassword,
-  CheckBalance,
+  CreateConfirm,
   WaitTX,
   Error,
   Success
@@ -53,17 +54,16 @@ export class ViewHome extends TailwindElement(style) {
   @state() phrase = ''
   @state() pwd = ''
   @state() address = ''
-  @state() balance = ''
   @state() transaction: any = null
+  @state() txPending: boolean = false
+  @state() txHash: string = ''
+  @state() txUrl: string = ''
+  @state() txCount = 1
   @state() step: Steps = Steps.EnterPhrase
   @state() timer: NodeJS.Timeout | null = null
 
   get wrapName() {
     return wrapTLD(this.doid)
-  }
-
-  get insufficientBalance() {
-    return this.balance == '' || parseFloat(this.balance) == 0
   }
 
   onPhraseChange = async (e: CustomEvent) => {
@@ -86,25 +86,13 @@ export class ViewHome extends TailwindElement(style) {
     let address = await phraseToAddress(this.phrase, AddressType.eth)
     if (!address || typeof address != 'string' || !this.doid) return
     this.address = address
-    this.balance = ''
     if (await popupMessenger.send('internal_isinitialized')) {
-      this.stepTo(Steps.CheckBalance)
-      this.checkBalance()
+      this.stepTo(Steps.CreateConfirm)
     } else this.next()
   }
 
   onConfirmCreation = async () => {
-    this.balance = ''
     this.next()
-    this.checkBalance()
-  }
-
-  checkBalance = async () => {
-    if (this.timer) clearTimeout(this.timer)
-    getNativeBalance(this.address).then((balance) => {
-      this.balance = balance
-      this.timer = setTimeout(this.checkBalance, 3000)
-    })
   }
 
   onCreate = async () => {
@@ -137,9 +125,27 @@ export class ViewHome extends TailwindElement(style) {
         }
       })
       await this.transaction.wait() */
+      const txHash = (await rpcRegistName(bareTLD(this.doid), this.address, this.phrase)) as string
 
-      await rpcRegistName(bareTLD(this.doid), this.address, this.phrase)
+      this.txPending = true
+      this.txUrl = `${defaultNetwork.scan}/tx/${txHash}`
 
+      await new Promise<void>(async (resolve) => {
+        const check = async () => {
+          let flag = false
+          const res = (await checkTx(txHash)) as any
+          if (addressEquals(res?.data?.owner ?? '', this.address)) flag = true
+          if (this.txCount > 18 || flag) {
+            return resolve()
+          }
+          this.txCount++
+          await sleep(10 * 1000)
+          await check()
+        }
+        await check()
+      })
+
+      this.txReset()
       // add to extension
       await popupMessenger.send('internal_recovery', {
         doid: this.wrapName,
@@ -152,7 +158,15 @@ export class ViewHome extends TailwindElement(style) {
       console.error(error)
       this.err = error
       this.stepTo(Steps.Error)
+    } finally {
+      this.txUrl = ''
+      this.txPending = false
     }
+  }
+  txReset = () => {
+    this.txHash = ''
+    this.txUrl = ''
+    this.txPending = false
   }
 
   next() {
@@ -229,39 +243,18 @@ export class ViewHome extends TailwindElement(style) {
                 </div> `
             ],
             [
-              Steps.CheckBalance,
-              () => html`<doid-symbol class="block mt-12"> </doid-symbol>
+              Steps.CreateConfirm,
+              () => html`
+                <doid-symbol class="block mt-12"></doid-symbol>
                 <div class="my-4 text-sm">
                   You are trying to create
                   <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
+                  <div class="my-4">With account: ${this.address}</div>
                 </div>
-                <div class="my-4 text-sm">
-                  With ETH account
-                  ${this.address}(${when(
-                    this.balance,
-                    () => html`${this.balance} ETH`,
-                    () => html`<i class="mdi mdi-loading"></i>`
-                  )})
-                </div>
-                <dui-button sm ?disabled=${this.insufficientBalance} class="my-2" @click=${this.onCreate}
-                  >${choose(
-                    this.balance,
-                    [
-                      ['', () => html`Checking balance <i class="mdi mdi-loading"></i>`],
-                      ['0.0', () => html`Insufficient balance`]
-                    ],
-                    () => html`Create`
-                  )}</dui-button
-                >
-                <div class="my-4 text-xs">
-                  ${when(
-                    this.insufficientBalance,
-                    () => html`A small amount of ETH is needed to pay gas. You can transfer some ETH to this account
-                    above and start creation.`,
-                    () => html`A small amount of ETH will be used to pay gas.`
-                  )}
-                </div>
-                <div class="my-2 text-center">or</div>
+                <p class="text-center">
+                <dui-button class="my-2" @click=${this.onCreate}>Create</dui-button></p>
+              </div>
+              <div class="my-2 text-center">or</div>
                 <dui-button text class="w-full my-2" @click=${() => this.stepTo(Steps.EnterPhrase)}
                   >Use other Secret Recovery Phrase</dui-button
                 >`
@@ -273,16 +266,15 @@ export class ViewHome extends TailwindElement(style) {
                   You are creating
                   <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
                 </div>
-                <div class="my-4 text-sm">With ETH account ${this.address}(${this.balance} ETH)</div>
-                <i class="mdi mdi-loading"></i>
+                <div class="my-4 text-sm">With account ${this.address}</div>
+
                 ${when(
-                  this.transaction?.hash,
-                  () => html`<div class="my-4 text-sm">Waiting for transaction confirmation...</div>
+                  this.txPending,
+                  () => html`<i class="mdi mdi-loading"></i>
+                    <div class="my-4 text-sm">Waiting for transaction confirmation...</div>
                     <div class="my-4 text-sm">
-                      View transaction:<dui-link
-                        class="link ml-1 underline"
-                        href="${async () => (await getNetwork()).scan}/tx/${this.transaction?.hash}"
-                        >${this.transaction?.hash} <i class="mdi mdi-open-in-new"></i
+                      <dui-link class="link ml-1 underline" .href=${this.txUrl}
+                        >View transaction <i class="mdi mdi-open-in-new"></i
                       ></dui-link>
                     </div>`
                 )}`
@@ -294,21 +286,19 @@ export class ViewHome extends TailwindElement(style) {
                   Failed to create
                   <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
                 </div>
-                <div class="my-4 text-sm">With ETH account ${this.address}(${this.balance} ETH)</div>
+                <div class="my-4 text-sm">With ETH account ${this.address}(ETH)</div>
                 <div class="my-4 text-sm"><span class="text-red-500">${this.err}</span></div>
                 ${when(
                   this.transaction?.hash,
                   () => html`<div class="my-4 text-sm">
-                    View transaction:<dui-link
-                      class="link ml-1 underline"
-                      href="${async () => (await getNetwork()).scan}/tx/${this.transaction?.hash}"
-                      >${this.transaction?.hash} <i class="mdi mdi-open-in-new"></i
+                    <dui-link class="link ml-1 underline" .href=${this.txUrl}
+                      >View transaction <i class="mdi mdi-open-in-new"></i
                     ></dui-link>
                   </div>`
                 )}
                 <div class="mt-4 flex justify-between">
                   <dui-button
-                    @click=${() => this.stepTo(Steps.CheckBalance)}
+                    @click=${() => this.stepTo(Steps.CreateConfirm)}
                     class="!rounded-full h-12 outlined w-12 !border-gray-500 "
                     ><i class="mdi mdi-arrow-left text-gray-500"></i
                   ></dui-button>

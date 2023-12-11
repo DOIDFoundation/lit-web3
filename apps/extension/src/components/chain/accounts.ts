@@ -44,8 +44,8 @@ export class accountList extends TailwindElement(null) {
     return html`<div class="flex flex-col justify-start items-start ${classMap(this.$c([this.class]))}">
       <strong class="mb-4">${this.chain?.title || this.chain?.name}</strong>
       <p class="text-xs text-gray-500 mb-1">Main address:</p>
-      <dui-address .address=${this.mainAddress} copy class="gap-2"></dui-address>
-      <p class="text-xs text-gray-500 mt-4 mb-1">Other address:</p>
+      <dui-address .address=${this.mainAddress} copy></dui-address>
+      <!-- <p class="text-xs text-gray-500 mt-4 mb-1">Other addresses:</p> -->
     </div>`
   }
 }

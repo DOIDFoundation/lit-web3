@@ -22,7 +22,7 @@ export class AppMain extends TailwindElement('') {
   chkView = () => {
     const pathname = routerPathname()
     this.showHeader =
-      !['/', '/popup.html', '/recover', '/restore', '/start', '/import', '/import2nd', '/import3rd'].includes(
+      !['/', '/popup.html', '/recover', '/restore', '/start', '/import', '/import2nd', '/import3rd', '/idle'].includes(
         pathname
       ) &&
       !['/unlock', '/landing', '/create', '/generate-phrase', '/connect'].some((substr) => pathname.startsWith(substr))
