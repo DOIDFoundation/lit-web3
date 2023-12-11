@@ -12,11 +12,13 @@
     "@lit-web3/core": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
-    "@lit-web3/router": "workspace:latest",
-    "@metamask/jazzicon": "^2"
+    "@web3auth/base": "^7.2.0",
+    "@web3auth/ethereum-provider": "^7.2.0",
+    "@web3auth/metamask-adapter": "^7.2.0",
+    "@web3auth/no-modal": "^7.2.0",
+    "@web3auth/openlogin-adapter": "^7.2.0"
   },
   "peerDependencies": {
-    "@lit-labs/router": "^0.1",
     "tsup": "^6"
   },
   "license": "MIT"

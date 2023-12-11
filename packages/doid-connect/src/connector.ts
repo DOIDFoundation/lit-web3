@@ -7,6 +7,8 @@ import './dialog'
 export class ConnectDOID extends TailwindElement('') {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: String }) appName = ''
+  @property({ type: String }) chainId = '0x1'
+  @property({ type: String }) rpcTarget: string | undefined
   @state() dialog = false
 
   open = () => {
@@ -28,7 +30,16 @@ export class ConnectDOID extends TailwindElement('') {
   override render() {
     return html`<div class="connect-wallet-btn relative">
       <!-- Dialog -->
-      ${when(this.dialog, () => html`<connect-doid-dialog ?appName=${this.appName} @close=${this.close} />`)}
+      ${when(
+        this.dialog,
+        () =>
+          html`<connect-doid-dialog
+            appName="${this.appName}"
+            chainId="${this.chainId}"
+            rpcTarget="${this.rpcTarget}"
+            @close=${this.close}
+          />`
+      )}
     </div>`
   }
 }
