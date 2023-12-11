@@ -6,12 +6,12 @@ import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/input/text'
 import icon from '@lit-web3/ethers/src/wallet/metamask/icon.svg'
+import DOID from '@lit-web3/ethers/src/wallet/doid'
 import style from './dialog.css?inline'
 import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { CHAIN_NAMESPACES, OPENLOGIN_NETWORK, WALLET_ADAPTERS } from '@web3auth/base'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
-import { MetamaskAdapter } from '@web3auth/metamask-adapter'
 
 @customElement('connect-doid-dialog')
 export class ConnectDOIDDialog extends TailwindElement(style) {
@@ -105,6 +105,15 @@ export class ConnectDOIDDialog extends TailwindElement(style) {
       loginProvider: provider
     })
     console.log(web3authProvider)
+    bridgeStore.bridge.wallets.push({
+      name: 'doid',
+      title: 'DOID',
+      icon,
+      app: undefined,
+      import: async () => {
+        return new DOID()
+      }
+    })
     console.log(await bridgeStore.bridge.select(1))
   }
 

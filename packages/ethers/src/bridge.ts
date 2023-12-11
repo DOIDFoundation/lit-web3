@@ -7,7 +7,6 @@ import detectEthereum, { getAccounts } from './detectEthereum'
 import { WalletState, emitWalletChange } from './wallet'
 import { EtherNetworks } from './constants/networks'
 import MetaMask from './wallet/metamask'
-import DOID from './wallet/doid'
 
 type WalletApp = {
   name: string
@@ -29,15 +28,6 @@ export const Wallets: WalletList = [
     import: async () => {
       // const MetaMask = (await import(`./wallet/metamask`)).default
       return new MetaMask(Provider())
-    }
-  },
-  {
-    name: 'doid',
-    title: 'DOID',
-    icon,
-    app: undefined,
-    import: async () => {
-      return new DOID()
     }
   }
 ]

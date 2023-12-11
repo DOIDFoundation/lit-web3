@@ -382,9 +382,6 @@ importers:
       '@web3auth/ethereum-provider':
         specifier: ^7.2.0
         version: 7.2.0(@babel/runtime@7.23.5)
-      '@web3auth/metamask-adapter':
-        specifier: ^7.2.0
-        version: 7.2.0(@babel/runtime@7.23.5)
       '@web3auth/no-modal':
         specifier: ^7.2.0
         version: 7.2.0(@babel/runtime@7.23.5)
@@ -3870,11 +3867,6 @@ packages:
     engines: {node: '>=14.0.0'}
     dev: false
 
-  /@metamask/detect-provider@2.0.0:
-    resolution: {integrity: sha512-sFpN+TX13E9fdBDh9lvQeZdJn4qYoRb/6QF2oZZK/Pn559IhCFacPMU1rMuqyXoFQF3JSJfii2l98B87QDPeCQ==}
-    engines: {node: '>=14.0.0'}
-    dev: false
-
   /@metamask/eth-hd-keyring@6.0.0:
     resolution: {integrity: sha512-dEj/I6Ag9FyCmjPcRXeXCkRXkVJE/uElhDVRcLBU6mT/GsXKgzVWXC/k0dhE8rEDrQbidhl+8wEElSJ2LI1InA==}
     engines: {node: '>= 14.0.0'}
@@ -5530,21 +5522,6 @@ packages:
     resolution: {integrity: sha512-K1undnK70vLLauqdE8bq/l98isTF2FDhcP0UPpXVSjkSWe3xhAn5eRXk5jfA1E5ycNm84Ws/rQFUD7ue11nciw==}
     dev: false
 
-  /@web3auth/base-evm-adapter@7.2.0(@babel/runtime@7.23.5):
-    resolution: {integrity: sha512-WK6jhw7qObUWLh16/UTrT/5zzUqHTHrPzgdl/ZNvUk2lGqDSpdoEpjOwkmKuRxYDlTUXgqEKySr5pArJMrqCFA==}
-    engines: {node: '>=18.x', npm: '>=9.x'}
-    peerDependencies:
-      '@babel/runtime': ^7.x
-    dependencies:
-      '@babel/runtime': 7.23.5
-      '@web3auth/base': 7.2.0(@babel/runtime@7.23.5)
-    transitivePeerDependencies:
-      - '@sentry/types'
-      - bufferutil
-      - supports-color
-      - utf-8-validate
-    dev: false
-
   /@web3auth/base-plugin@7.2.0(@babel/runtime@7.23.5):
     resolution: {integrity: sha512-N8cSr5dJ6C+6XuWRhBgYNbNuZMf5+/oVOKK8EzYIkqkRiaV1vhdOncZvpb/vDb/zZx2UkPmJvHMcAZ5FL6C3/w==}
     engines: {node: '>=18.x', npm: '>=9.x'}
@@ -5638,23 +5615,6 @@ packages:
       - buffer
       - bufferutil
       - c-kzg
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@web3auth/metamask-adapter@7.2.0(@babel/runtime@7.23.5):
-    resolution: {integrity: sha512-gZ1LmPT2+175DFA/Ja90nbSUhMU6El6+y3lJ77DqqEity42bvZ9hjRL1SOAZknh5VESascRl67L6oWbgdDm/7w==}
-    engines: {node: '>=18.x', npm: '>=9.x'}
-    peerDependencies:
-      '@babel/runtime': ^7.x
-    dependencies:
-      '@babel/runtime': 7.23.5
-      '@metamask/detect-provider': 2.0.0
-      '@web3auth/base': 7.2.0(@babel/runtime@7.23.5)
-      '@web3auth/base-evm-adapter': 7.2.0(@babel/runtime@7.23.5)
-    transitivePeerDependencies:
-      - '@sentry/types'
-      - bufferutil
       - supports-color
       - utf-8-validate
     dev: false
