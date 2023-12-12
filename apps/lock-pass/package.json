@@ -1,6 +1,7 @@
 {
   "name": "@lit-web3/lock-pass",
   "version": "1.0.2",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "vite --host --mode development",

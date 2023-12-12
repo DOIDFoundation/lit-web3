@@ -20,7 +20,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "isolatedModules": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -32,7 +32,7 @@
     "skipLibCheck": true,
     "jsx": "preserve"
   },
-  "include": ["**/*.ts", "**/*.d.ts", "packages/doids/src/constants/networks.cjs"],
+  "include": ["**/*.ts", "**/*.d.ts", "packages/ui/src/shared/vite.config.js"],
   "exclude": ["public", "dist", "vendor", "node_modules", ".vscode", ".git"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

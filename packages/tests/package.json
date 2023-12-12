@@ -1,5 +1,6 @@
 {
   "name": "@lit-web3/tests",
+  "type": "module",
   "private": true,
   "scripts": {
     "coverage": "vitest run --coverage",
@@ -18,7 +19,7 @@
     "@vitest/ui": "^0.28.5",
     "cross-fetch": "^3.1.8",
     "jsdom": "^21.1.2",
-    "msw": "^1.2.5",
+    "msw": "^2.0.11",
     "vitest": "^0.28.5"
   },
   "stackblitz": {

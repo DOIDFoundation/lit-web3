@@ -1,6 +1,7 @@
 {
   "name": "@lit-web3/art-scan",
   "version": "0.7.1",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "vite --host --mode development",

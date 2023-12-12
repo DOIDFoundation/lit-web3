@@ -11,11 +11,11 @@
     "tr46": "^4.1.1"
   },
   "devDependencies": {
-    "@types/tr46": "^3.0.0"
+    "@types/tr46": "^3.0.3",
+    "ethers": "^6.9.0"
   },
   "peerDependencies": {
-    "ethers": "^6",
-    "tsup": "^6"
+    "ethers": "^6"
   },
   "license": "MIT"
 }

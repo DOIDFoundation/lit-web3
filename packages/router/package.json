@@ -4,6 +4,6 @@
   "description": "A router for Lit with hash mode.",
   "homepage": "https://lit.dev/",
   "peerDependencies": {
-    "lit": "^2"
+    "lit": "^3"
   }
 }
