@@ -1,96 +1,108 @@
-import { customElement, TailwindElement, html, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { customElement, TailwindElement, html, property, when, map } from '@lit-web3/dui/src/shared/TailwindElement'
 // Components
 import '@lit-web3/dui/src/dialog'
 import '@lit-web3/dui/src/button'
 import '@lit-web3/dui/src/doid-symbol'
 import '@lit-web3/dui/src/input/text'
-import icon from '@lit-web3/ethers/src/wallet/metamask/icon.svg'
-import DOID from '@lit-web3/ethers/src/wallet/doid'
-import style from './dialog.css?inline'
 import { Web3AuthNoModal } from '@web3auth/no-modal'
-import { CHAIN_NAMESPACES, OPENLOGIN_NETWORK, WALLET_ADAPTERS } from '@web3auth/base'
+import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
+import { Connector, InjectedConnector } from '@wagmi/core'
+import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
+import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
+import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
+import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
 
-@customElement('connect-doid-dialog')
-export class ConnectDOIDDialog extends TailwindElement(style) {
-  bindBridge: any = new StateController(this, bridgeStore)
-  @property({ type: String }) appName: string | undefined
-  @property({ type: String }) chainId: string | undefined
-  @property({ type: String }) rpcTarget: string | undefined
-  @state() step = 1
+import style from './dialog.css?inline'
+import iconMetamask from '../icons/metamask.svg'
+import iconCoinbase from '../icons/coinbase.svg'
+import iconWalletConnect from '../icons/walletconnect.svg'
+import { controller } from './controller'
+import { options } from './options'
+
+@customElement('doid-connect-dialog')
+export class DOIDConnectDialog extends TailwindElement(style) {
+  @property({ type: String }) appName = undefined
 
   private web3authInstance: Web3AuthNoModal | undefined
+
+  get wallets() {
+    let wallets: Connector[] = [
+      new MetaMaskConnector(),
+      new CoinbaseWalletConnector({ options: { appName: this.appName ?? 'DOID' } })
+    ].filter((wallet) => wallet.ready)
+    let injected = new InjectedConnector()
+    if (injected.ready && wallets.findIndex((wallet) => wallet.name == injected.name) < 0) {
+      wallets.push(injected)
+    }
+    if (options.walletConnectId) {
+      let wc = new WalletConnectConnector({
+        options: {
+          projectId: options.walletConnectId!
+        }
+      })
+      if (wc.ready) wallets.push(wc)
+    }
+    return wallets
+  }
 
   constructor() {
     super()
   }
 
-  async getWeb3auth() {
-    if (this.web3authInstance) return this.web3authInstance
+  get isWeb3AuthEnabled() {
+    return options.web3AuthClientId
+  }
 
+  getWalletIcon(connector: any) {
+    switch (connector.name) {
+      case 'MetaMask':
+        return iconMetamask
+      case 'Coinbase Wallet':
+        return iconCoinbase
+      case 'WalletConnect':
+        return iconWalletConnect
+    }
+    return undefined
+  }
+
+  getWalletImage(connector: any) {
+    let icon = this.getWalletIcon(connector)
+    if (icon) return html`<img class="m-auto w-6 h-6 object-contain select-none pointer-events-none" src="${icon}" />`
+    else return html`<i class="mdi mdi-puzzle-outline text-xl"></i> `
+  }
+
+  getWeb3auth() {
+    if (this.web3authInstance) return this.web3authInstance
+    if (!this.isWeb3AuthEnabled) {
+      throw new Error('Web3Auth Client ID is not configured.')
+    }
+
+    let chains = options.chains!
     const chainConfig = {
       chainNamespace: CHAIN_NAMESPACES.EIP155,
-      chainId: this.chainId,
-      rpcTarget: 'https://rpc.ankr.com/eth' // This is the mainnet RPC we have added, please pass on your own endpoint while creating an app
+      chainId: '0x' + chains[0].id.toString(16),
+      rpcTarget: chains[0].rpcUrls.default.http[0],
+      displayName: chains[0].name,
+      tickerName: chains[0].nativeCurrency?.name,
+      ticker: chains[0].nativeCurrency?.symbol,
+      blockExplorer: chains[0].blockExplorers?.default?.url
     }
     let web3auth = new Web3AuthNoModal({
-      clientId: import.meta.env.VITE_WEB3AUTH_CLIENTID, // Get your Client ID from the Web3Auth Dashboard
-      web3AuthNetwork:
-        import.meta.env.MODE === 'production' ? OPENLOGIN_NETWORK.SAPPHIRE_MAINNET : OPENLOGIN_NETWORK.SAPPHIRE_DEVNET,
+      clientId: options.web3AuthClientId!, // Get your Client ID from the Web3Auth Dashboard
+      web3AuthNetwork: options.web3AuthNetwork,
       chainConfig
     })
     this.web3authInstance = web3auth
 
-    const privateKeyProvider = new EthereumPrivateKeyProvider({
-      config: { chainConfig }
-    })
-
-    const openloginAdapter = new OpenloginAdapter({
-      adapterSettings: {
-        whiteLabel: {
-          appName: 'W3A Heroes',
-          appUrl: 'https://web3auth.io',
-          logoLight: 'https://web3auth.io/images/web3auth-logo.svg',
-          logoDark: 'https://web3auth.io/images/web3auth-logo---Dark.svg',
-          defaultLanguage: 'en', // en, de, ja, ko, zh, es, fr, pt, nl
-          mode: 'auto', // whether to enable dark mode. defaultValue: false
-          theme: {
-            primary: '#768729'
-          },
-          useLogoLoader: true
-        },
-        mfaSettings: {
-          deviceShareFactor: {
-            enable: true,
-            priority: 1,
-            mandatory: true
-          },
-          backUpShareFactor: {
-            enable: true,
-            priority: 2,
-            mandatory: false
-          },
-          socialBackupFactor: {
-            enable: true,
-            priority: 3,
-            mandatory: false
-          },
-          passwordFactor: {
-            enable: true,
-            priority: 4,
-            mandatory: false
-          }
-        }
-      },
-      loginSettings: {
-        mfaLevel: 'mandatory'
-      },
-      privateKeyProvider
-    })
-    web3auth.configureAdapter(openloginAdapter)
-    await web3auth.init()
+    web3auth.configureAdapter(
+      new OpenloginAdapter({
+        privateKeyProvider: new EthereumPrivateKeyProvider({
+          config: { chainConfig }
+        })
+      })
+    )
     return web3auth
   }
 
@@ -99,26 +111,22 @@ export class ConnectDOIDDialog extends TailwindElement(style) {
     this.emit('close')
   }
 
-  async connect(provider: any) {
-    let web3auth = await this.getWeb3auth()
-    const web3authProvider = await web3auth.connectTo(WALLET_ADAPTERS.OPENLOGIN, {
-      loginProvider: provider
-    })
-    console.log(web3authProvider)
-    bridgeStore.bridge.wallets.push({
-      name: 'doid',
-      title: 'DOID',
-      icon,
-      app: undefined,
-      import: async () => {
-        return new DOID()
-      }
-    })
-    console.log(await bridgeStore.bridge.select(1))
+  connectWeb3Auth(provider: any) {
+    return this.connect(
+      new Web3AuthConnector({
+        options: {
+          web3AuthInstance: this.getWeb3auth(),
+          loginParams: {
+            loginProvider: provider
+          }
+        }
+      })
+    )
   }
 
-  async connectMetamask() {
-    console.log(await bridgeStore.bridge.select(0))
+  connect(connector: any) {
+    controller.setConnector(connector)
+    return controller.connect()
   }
 
   override render() {
@@ -136,24 +144,34 @@ export class ConnectDOIDDialog extends TailwindElement(style) {
       </div>
       <div class="px-6 mt-2 text-center font-medium">
         <div class="button-container">
-          <button class="flex-none button" @click=${this.connectMetamask}>
-            <img class="m-auto w-5 h-5 object-contain select-none pointer-events-none" src=${icon} />
-          </button>
-          <dui-button icon @click=${() => this.connect('google')}>
-            <i class="mdi mdi-google text-xl"></i>
-          </dui-button>
-          <dui-button icon @click=${() => this.connect('apple')}>
-            <i class="mdi mdi-apple text-xl"></i>
-          </dui-button>
-          <dui-button icon @click=${() => this.connect('facebook')}>
-            <i class="mdi mdi-facebook text-xl"></i>
-          </dui-button>
-          <dui-button icon @click=${() => this.connect('twitter')}>
-            <i class="mdi mdi-twitter text-xl"></i>
-          </dui-button>
-          <dui-button icon @click=${() => this.connect('github')}>
-            <i class="mdi mdi-github text-xl"></i>
-          </dui-button>
+          ${map(
+            this.wallets,
+            (wallet) => html`
+              <button class="flex-none button" @click=${this.connect.bind(this, wallet)}>
+                ${this.getWalletImage(wallet)}
+              </button>
+            `
+          )}
+          ${when(
+            this.isWeb3AuthEnabled,
+            () => html`
+              <dui-button icon @click=${() => this.connectWeb3Auth('google')}>
+                <i class="mdi mdi-google text-xl"></i>
+              </dui-button>
+              <dui-button icon @click=${() => this.connectWeb3Auth('apple')}>
+                <i class="mdi mdi-apple text-xl"></i>
+              </dui-button>
+              <dui-button icon @click=${() => this.connectWeb3Auth('facebook')}>
+                <i class="mdi mdi-facebook text-xl"></i>
+              </dui-button>
+              <dui-button icon @click=${() => this.connectWeb3Auth('twitter')}>
+                <i class="mdi mdi-twitter text-xl"></i>
+              </dui-button>
+              <dui-button icon @click=${() => this.connectWeb3Auth('github')}>
+                <i class="mdi mdi-github text-xl"></i>
+              </dui-button>
+            `
+          )}
         </div>
         <div class="separator mt-4"></div>
         <p>

@@ -20,7 +20,7 @@
 
   .button,
   dui-button {
-    @apply w-10 h-10 border-2 rounded-full bg-transparent pt-0.5;
+    @apply w-10 h-10 border-2 rounded-full bg-transparent py-0.5;
   }
   .button {
     transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;

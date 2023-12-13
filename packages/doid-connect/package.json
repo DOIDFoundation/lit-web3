@@ -11,11 +11,14 @@
   "dependencies": {
     "@lit-web3/core": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
-    "@lit-web3/ethers": "workspace:latest",
+    "@wagmi/core": "^1.4.10",
     "@web3auth/base": "^7.2.0",
     "@web3auth/ethereum-provider": "^7.2.0",
     "@web3auth/no-modal": "^7.2.0",
-    "@web3auth/openlogin-adapter": "^7.2.0"
+    "@web3auth/openlogin-adapter": "^7.2.0",
+    "@web3auth/web3auth-wagmi-connector": "^5.0.1",
+    "@web3modal/wagmi": "^3.4.0",
+    "viem": "^1.19.13"
   },
   "peerDependencies": {
     "tsup": "^6"
