@@ -3,9 +3,9 @@ import { OPENLOGIN_NETWORK, OPENLOGIN_NETWORK_TYPE } from '@web3auth/base'
 
 export interface ConfigOptions {
   web3AuthClientId?: string
-  web3AuthNetwork: OPENLOGIN_NETWORK_TYPE
+  web3AuthNetwork?: OPENLOGIN_NETWORK_TYPE
   walletConnectId?: string
-  chains: Chain[]
+  chains?: Chain[]
 }
 
 export let options: ConfigOptions = {
@@ -16,4 +16,8 @@ export let options: ConfigOptions = {
 
 export function updateOptions(opts: ConfigOptions) {
   options = { ...options, ...opts }
+}
+
+export function updateChains(chains: Chain[]) {
+  options.chains = chains
 }

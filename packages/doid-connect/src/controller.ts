@@ -1,11 +1,27 @@
-import { Connector, InjectedConnector } from '@wagmi/core'
+import { Connector, ConnectorData, InjectedConnector, WalletClient } from '@wagmi/core'
+import { options } from './options'
+import { State, property } from '@lit-app/state'
 
-export class Controller {
-  private connector?: Connector
+export class Controller extends State {
+  @property() private connector?: Connector
+  @property() private connectedConnector?: Connector
 
-  public connect() {
-    if (!this.connector) this.connector = new InjectedConnector()
-    return this.connector.connect()
+  get connected(): boolean {
+    return Boolean(this.connectedConnector)
+  }
+
+  public getWalletClient(chainId?: number): Promise<WalletClient> {
+    if (!this.connectedConnector) throw new Error('Not connected')
+    return this.connectedConnector.getWalletClient({ chainId })
+  }
+
+  public connect(): Promise<Required<ConnectorData>> {
+    if (!this.connector) this.connector = new InjectedConnector({ chains: options.chains })
+    let connector = this.connector
+    return connector.connect().then((ret) => {
+      this.connectedConnector = connector
+      return ret
+    })
   }
 
   public setConnector(connector: Connector) {

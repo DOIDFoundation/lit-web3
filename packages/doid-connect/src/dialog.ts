@@ -25,6 +25,27 @@ import { options } from './options'
 export class DOIDConnectDialog extends TailwindElement(style) {
   @property({ type: String }) appName = undefined
 
+  /** Events emitted. */
+  static readonly EVENTS = {
+    /**
+     * Connected event.
+     *
+     * @event DOIDConnectDialog#connected
+     * @type {object}
+     * @property {ConnectorData} result - connect wallet result.
+     */
+    CONNECTED: 'connected',
+    /**
+     * Connection failed event.
+     *
+     * @event DOIDConnectDialog#error
+     * @type {Error}
+     */
+    ERROR: 'error',
+    /** Dialog closed event. */
+    CLOSE: 'close'
+  }
+
   private web3authInstance: Web3AuthNoModal | undefined
 
   get wallets() {
@@ -106,9 +127,12 @@ export class DOIDConnectDialog extends TailwindElement(style) {
     return web3auth
   }
 
+  /**
+   * @fires DOIDConnectDialog.EVENTS.CLOSE
+   */
   close() {
     this.remove()
-    this.emit('close')
+    this.emit(DOIDConnectDialog.EVENTS.CLOSE)
   }
 
   connectWeb3Auth(provider: any) {
@@ -124,9 +148,25 @@ export class DOIDConnectDialog extends TailwindElement(style) {
     )
   }
 
+  /**
+   * Connect wallet wtih connector
+   * @param {Connector} connector wagmi connector
+   * @returns wallet connection promise
+   * @fires DOIDConnectDialog.EVENTS.CONNECTED
+   * @fires DOIDConnectDialog.EVENTS.ERROR
+   */
   connect(connector: any) {
     controller.setConnector(connector)
-    return controller.connect()
+    return controller
+      .connect()
+      .then((result) => {
+        this.emit(DOIDConnectDialog.EVENTS.CONNECTED, result)
+        return result
+      })
+      .catch((error) => {
+        this.emit(DOIDConnectDialog.EVENTS.ERROR, error)
+        return error
+      })
   }
 
   override render() {
