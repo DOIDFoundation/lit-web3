@@ -12,23 +12,27 @@
   }
 }
 
+sl-dialog {
+  --sl-z-index-dialog: 80;
+}
+
+img {
+  @apply object-contain select-none pointer-events-none;
+}
+
 .button-container {
+  sl-button {
+    --sl-input-border-width: 2px;
+    --sl-spacing-medium: 0;
+    img {
+      @apply w-6 h-6 mt-1.5;
+    }
+    svg {
+      @apply w-9 h-9;
+    }
+  }
   @apply flex justify-center space-x-2;
   .text {
     @apply hidden;
-  }
-
-  .button,
-  dui-button {
-    @apply w-10 h-10 border-2 rounded-full bg-transparent py-0.5;
-  }
-  .button {
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
-    &:hover {
-      background: var(--btnBgHover);
-    }
-    &:active {
-      background: var(--btnBgActive);
-    }
   }
 }

@@ -1,9 +1,10 @@
-import { customElement, TailwindElement, html, property, when, map } from '@lit-web3/dui/src/shared/TailwindElement'
-// Components
-import '@lit-web3/dui/src/dialog'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/doid-symbol'
-import '@lit-web3/dui/src/input/text'
+import { LitElement, PropertyValueMap, html, unsafeCSS } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
+import { when } from 'lit/directives/when.js'
+import { map } from 'lit/directives/map.js'
+import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
+import '@shoelace-style/shoelace/dist/components/button/button.js'
+
 import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
@@ -14,16 +15,26 @@ import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
 import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
 import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
 
+import TailwindBase from './tailwind.global.css?inline'
 import style from './dialog.css?inline'
 import iconMetamask from '../icons/metamask.svg'
 import iconCoinbase from '../icons/coinbase.svg'
 import iconWalletConnect from '../icons/walletconnect.svg'
+import iconPuzzle from '../icons/puzzle.svg'
+import iconDOID from '../icons/doid.svg'
 import { controller } from './controller'
 import { options } from './options'
+import { googleSvg } from './assets/svg/google'
+import { appleSvg } from './assets/svg/apple'
+import { facebookSvg } from './assets/svg/facebook'
+import { twitterSvg } from './assets/svg/twitter'
+import { githubSvg } from './assets/svg/github'
 
 @customElement('doid-connect-dialog')
-export class DOIDConnectDialog extends TailwindElement(style) {
-  @property({ type: String }) appName = undefined
+export class DOIDConnectDialog extends LitElement {
+  @property({ type: String }) appName = ''
+
+  static styles = [unsafeCSS(TailwindBase), unsafeCSS(style)]
 
   /** Events emitted. */
   static readonly EVENTS = {
@@ -47,6 +58,16 @@ export class DOIDConnectDialog extends TailwindElement(style) {
   }
 
   private web3authInstance: Web3AuthNoModal | undefined
+
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    super.firstUpdated(_changedProperties)
+    this.show()
+  }
+
+  // Element Events
+  emit<T>(type: string, detail?: T, options = []) {
+    this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
+  }
 
   get wallets() {
     let wallets: Connector[] = [
@@ -90,8 +111,8 @@ export class DOIDConnectDialog extends TailwindElement(style) {
 
   getWalletImage(connector: any) {
     let icon = this.getWalletIcon(connector)
-    if (icon) return html`<img class="m-auto w-6 h-6 object-contain select-none pointer-events-none" src="${icon}" />`
-    else return html`<i class="mdi mdi-puzzle-outline text-xl"></i> `
+    if (icon) return html`<img src="${icon}" />`
+    else return html`<img src="${iconPuzzle}" />`
   }
 
   getWeb3auth() {
@@ -124,6 +145,12 @@ export class DOIDConnectDialog extends TailwindElement(style) {
       })
     )
     return web3auth
+  }
+
+  show() {
+    return this.updateComplete.then(() => {
+      return this.shadowRoot?.querySelector('sl-dialog')?.show()
+    })
   }
 
   /**
@@ -169,11 +196,11 @@ export class DOIDConnectDialog extends TailwindElement(style) {
   }
 
   override render() {
-    return html`<dui-dialog @close=${this.close}>
-      <div slot="header" class="w-16 mx-auto mt-6 pl-4">
-        <doid-icon sm></doid-icon>
+    return html`<sl-dialog label="Connect your DOID" no-header @sl-after-hide=${this.close}>
+      <div class="w-16 h-16 mx-auto mt-5">
+        <img class="w-full h-full" src="${iconDOID}" />
       </div>
-      <div class="mb-8 -mt-2 text-center font-medium">
+      <div class="mb-6 mt-6 text-center font-medium">
         <h1 class="text-2xl mb-4">Welcome</h1>
         ${when(
           this.appName,
@@ -181,34 +208,28 @@ export class DOIDConnectDialog extends TailwindElement(style) {
           () => html`<p>Unlock your DOID to continue.</p>`
         )}
       </div>
-      <div class="px-6 mt-2 text-center font-medium">
+      <div class="px-5 pb-5 mt-2 text-center font-medium">
         <div class="button-container">
           ${map(
             this.wallets,
             (wallet) => html`
-              <button class="flex-none button" @click=${this.connect.bind(this, wallet)}>
+              <sl-button size="medium" circle @click=${this.connect.bind(this, wallet)}>
                 ${this.getWalletImage(wallet)}
-              </button>
+              </sl-button>
             `
           )}
           ${when(
             this.isWeb3AuthEnabled,
             () => html`
-              <dui-button icon @click=${() => this.connectWeb3Auth('google')}>
-                <i class="mdi mdi-google text-xl"></i>
-              </dui-button>
-              <dui-button icon @click=${() => this.connectWeb3Auth('apple')}>
-                <i class="mdi mdi-apple text-xl"></i>
-              </dui-button>
-              <dui-button icon @click=${() => this.connectWeb3Auth('facebook')}>
-                <i class="mdi mdi-facebook text-xl"></i>
-              </dui-button>
-              <dui-button icon @click=${() => this.connectWeb3Auth('twitter')}>
-                <i class="mdi mdi-twitter text-xl"></i>
-              </dui-button>
-              <dui-button icon @click=${() => this.connectWeb3Auth('github')}>
-                <i class="mdi mdi-github text-xl"></i>
-              </dui-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('google')}> ${googleSvg} </sl-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('apple')}> ${appleSvg} </sl-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('facebook')}>
+                ${facebookSvg}
+              </sl-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('twitter')}>
+                ${twitterSvg}
+              </sl-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('github')}> ${githubSvg} </sl-button>
             `
           )}
         </div>
@@ -218,6 +239,6 @@ export class DOIDConnectDialog extends TailwindElement(style) {
           <dui-link class="block">Sign up</dui-link>
         </p>
       </div>
-    </dui-dialog>`
+    </sl-dialog>`
   }
 }

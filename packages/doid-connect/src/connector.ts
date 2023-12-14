@@ -33,8 +33,8 @@ export class DOIDConnector extends EventEmitter {
         await Promise.all([import('./dialog')])
         const modal = document.createElement('doid-connect-dialog') as DOIDConnectDialog
         document.body.insertAdjacentElement('beforeend', modal)
-        modal.on(DOIDConnectDialog.EVENTS.CONNECTED, (ret: any) => resolve(ret))
-        modal.on(DOIDConnectDialog.EVENTS.ERROR, (err: any) => reject(err))
+        modal.addEventListener(DOIDConnectDialog.EVENTS.CONNECTED, (ret: any) => resolve(ret))
+        modal.addEventListener(DOIDConnectDialog.EVENTS.ERROR, (err: any) => reject(err))
       })
     } else {
       controller.setConnector(new InjectedConnector())

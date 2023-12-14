@@ -2,6 +2,7 @@ import { Chain, mainnet, goerli } from '@wagmi/core/chains'
 import { OPENLOGIN_NETWORK, OPENLOGIN_NETWORK_TYPE } from '@web3auth/base'
 
 export interface ConfigOptions {
+  appName?: string
   web3AuthClientId?: string
   web3AuthNetwork?: OPENLOGIN_NETWORK_TYPE
   walletConnectId?: string
