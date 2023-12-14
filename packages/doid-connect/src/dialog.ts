@@ -102,18 +102,17 @@ export class DOIDConnectDialog extends TailwindElement(style) {
 
     let chains = options.chains!
     const chainConfig = {
-      chainNamespace: CHAIN_NAMESPACES.EIP155,
       chainId: '0x' + chains[0].id.toString(16),
       rpcTarget: chains[0].rpcUrls.default.http[0],
       displayName: chains[0].name,
       tickerName: chains[0].nativeCurrency?.name,
       ticker: chains[0].nativeCurrency?.symbol,
-      blockExplorer: chains[0].blockExplorers?.default?.url
+      blockExplorer: chains[0].blockExplorers?.default?.url ?? ''
     }
     let web3auth = new Web3AuthNoModal({
       clientId: options.web3AuthClientId!, // Get your Client ID from the Web3Auth Dashboard
       web3AuthNetwork: options.web3AuthNetwork,
-      chainConfig
+      chainConfig: { ...chainConfig, chainNamespace: CHAIN_NAMESPACES.EIP155 }
     })
     this.web3authInstance = web3auth
 
