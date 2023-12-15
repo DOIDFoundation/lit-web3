@@ -20,6 +20,14 @@ export class DOIDConnector extends EventEmitter {
     return controller.connected
   }
 
+  get chainId() {
+    return controller.chainId
+  }
+
+  get account() {
+    return controller.account
+  }
+
   public getWalletClient(chainId?: number): Promise<WalletClient> {
     return controller.getWalletClient(chainId)
   }
@@ -37,7 +45,6 @@ export class DOIDConnector extends EventEmitter {
         modal.addEventListener(DOIDConnectDialog.EVENTS.ERROR, (err: any) => reject(err))
       })
     } else {
-      controller.setConnector(new InjectedConnector())
       return controller.connect()
     }
   }

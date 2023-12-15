@@ -4,28 +4,44 @@ import { State, property } from '@lit-app/state'
 
 export class Controller extends State {
   @property() private connector?: Connector
-  @property() private connectedConnector?: Connector
+  @property() private state?: ConnectorData
 
   get connected(): boolean {
-    return Boolean(this.connectedConnector)
+    return Boolean(this.connector)
+  }
+
+  get account() {
+    return this.state?.account
+  }
+
+  get chainId() {
+    return this.state?.chain?.id
   }
 
   public getWalletClient(chainId?: number): Promise<WalletClient> {
-    if (!this.connectedConnector) throw new Error('Not connected')
-    return this.connectedConnector.getWalletClient({ chainId })
+    if (!this.connector) throw new Error('Not connected')
+    return this.connector.getWalletClient({ chainId })
   }
 
-  public connect(): Promise<Required<ConnectorData>> {
-    if (!this.connector) this.connector = new InjectedConnector({ chains: options.chains })
-    let connector = this.connector
-    return connector.connect().then((ret) => {
-      this.connectedConnector = connector
-      return ret
+  public connect(connector?: Connector): Promise<Required<ConnectorData>> {
+    if (!connector) {
+      connector = new InjectedConnector({ chains: options.chains })
+    }
+    connector.once('connect', (data: ConnectorData) => {
+      this.connector = connector
+      this.state = data
     })
-  }
-
-  public setConnector(connector: Connector) {
-    this.connector = connector
+    connector.once('disconnect', () => {
+      this.connector = undefined
+    })
+    connector.on('change', (data: ConnectorData) => {
+      this.state = data
+    })
+    return connector.connect().then((data: Required<ConnectorData>) => {
+      this.connector = connector
+      this.state = data
+      return data
+    })
   }
 }
 

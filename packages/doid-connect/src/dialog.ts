@@ -69,14 +69,14 @@ export class DOIDConnectDialog extends LitElement {
     this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
   }
 
-  get wallets() {
-    let wallets: Connector[] = [
+  get connectors() {
+    let connectors: Connector[] = [
       new MetaMaskConnector(),
       new CoinbaseWalletConnector({ options: { appName: this.appName ?? 'DOID' } })
     ].filter((wallet) => wallet.ready)
     let injected = new InjectedConnector()
-    if (injected.ready && wallets.findIndex((wallet) => wallet.name == injected.name) < 0) {
-      wallets.push(injected)
+    if (injected.ready && connectors.findIndex((wallet) => wallet.name == injected.name) < 0) {
+      connectors.push(injected)
     }
     if (options.walletConnectId) {
       let wc = new WalletConnectConnector({
@@ -84,9 +84,9 @@ export class DOIDConnectDialog extends LitElement {
           projectId: options.walletConnectId!
         }
       })
-      if (wc.ready) wallets.push(wc)
+      if (wc.ready) connectors.push(wc)
     }
-    return wallets
+    return connectors
   }
 
   constructor() {
@@ -97,7 +97,7 @@ export class DOIDConnectDialog extends LitElement {
     return options.web3AuthClientId
   }
 
-  getWalletIcon(connector: any) {
+  getConnectorIcon(connector: any) {
     switch (connector.name) {
       case 'MetaMask':
         return iconMetamask
@@ -105,14 +105,9 @@ export class DOIDConnectDialog extends LitElement {
         return iconCoinbase
       case 'WalletConnect':
         return iconWalletConnect
+      default:
+        return iconPuzzle
     }
-    return undefined
-  }
-
-  getWalletImage(connector: any) {
-    let icon = this.getWalletIcon(connector)
-    if (icon) return html`<img src="${icon}" />`
-    else return html`<img src="${iconPuzzle}" />`
   }
 
   getWeb3auth() {
@@ -157,8 +152,13 @@ export class DOIDConnectDialog extends LitElement {
    * @fires DOIDConnectDialog.EVENTS.CLOSE
    */
   close() {
-    this.remove()
-    this.emit(DOIDConnectDialog.EVENTS.CLOSE)
+    this.shadowRoot
+      ?.querySelector('sl-dialog')
+      ?.hide()
+      .then(() => {
+        this.remove()
+        this.emit(DOIDConnectDialog.EVENTS.CLOSE)
+      })
   }
 
   connectWeb3Auth(provider: any) {
@@ -182,11 +182,11 @@ export class DOIDConnectDialog extends LitElement {
    * @fires DOIDConnectDialog.EVENTS.ERROR
    */
   connect(connector: any) {
-    controller.setConnector(connector)
     return controller
-      .connect()
+      .connect(connector)
       .then((result) => {
         this.emit(DOIDConnectDialog.EVENTS.CONNECTED, result)
+        this.close()
         return result
       })
       .catch((error) => {
@@ -211,25 +211,25 @@ export class DOIDConnectDialog extends LitElement {
       <div class="px-5 pb-5 mt-2 text-center font-medium">
         <div class="button-container">
           ${map(
-            this.wallets,
-            (wallet) => html`
-              <sl-button size="medium" circle @click=${this.connect.bind(this, wallet)}>
-                ${this.getWalletImage(wallet)}
+            this.connectors,
+            (connector) => html`
+              <sl-button size="medium" circle @click=${this.connect.bind(this, connector)}>
+                <img src="${this.getConnectorIcon(connector)}" />
               </sl-button>
             `
           )}
           ${when(
             this.isWeb3AuthEnabled,
             () => html`
-              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('google')}> ${googleSvg} </sl-button>
-              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('apple')}> ${appleSvg} </sl-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('google')}>${googleSvg}</sl-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('apple')}>${appleSvg}</sl-button>
               <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('facebook')}>
                 ${facebookSvg}
               </sl-button>
               <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('twitter')}>
                 ${twitterSvg}
               </sl-button>
-              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('github')}> ${githubSvg} </sl-button>
+              <sl-button size="medium" circle @click=${() => this.connectWeb3Auth('github')}>${githubSvg}</sl-button>
             `
           )}
         </div>
