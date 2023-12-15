@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, when, property } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, when, property, classMap } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { screenStore } from '@lit-web3/core/src/screen'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
@@ -14,6 +14,7 @@ export class DuiAddress extends TailwindElement(style) {
   bindScreen: any = new StateController(this, screenStore)
   @property() address?: string // !!! if not defined, use current wallet address
   @property({ type: Boolean }) avatar = false
+  @property({ type: Boolean }) hideAddr = false
   @property({ type: Boolean }) copy = false
   @property({ type: Boolean }) short = false // if false, auto short address
   @property() href?: string
@@ -29,13 +30,15 @@ export class DuiAddress extends TailwindElement(style) {
   }
 
   override render() {
-    return html`${when(
-      this.avatar,
-      () => html`<dui-address-avatar class="mr-1.5" .address=${this.addr}></dui-address-avatar>`
-    )}${when(
-      this.isLink,
-      () => html`<dui-link href=${this.href}>${this.showAddr}</dui-link>`,
-      () => html`${this.showAddr}`
-    )}${when(this.copy, () => html`<dui-copy-icon .value=${this.address}></dui-copy-icon>`)}`
+    return html`
+      <!-- Avatar -->
+      ${when(this.avatar, () => html`<dui-address-avatar .address=${this.addr}></dui-address-avatar>`)}
+      <!-- Address -->
+      ${when(!this.hideAddr, () =>
+        this.isLink ? html`<dui-link href=${this.href}>${this.showAddr}</dui-link>` : html`${this.showAddr}`
+      )}
+      <!-- Copy -->
+      ${when(this.copy, () => html`<dui-copy-icon .value=${this.addr}></dui-copy-icon>`)}
+    `
   }
 }

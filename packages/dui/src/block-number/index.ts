@@ -1,5 +1,5 @@
 import { PropertyValues } from 'lit'
-import { customElement, TailwindElement, html, classMap, state, when } from '../shared/TailwindElement'
+import { customElement, TailwindElement, html, classMap, state, when, keyed } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { sleep } from '@lit-web3/ethers/src/utils'
 
@@ -22,8 +22,8 @@ export class BlockNumber extends TailwindElement(style) {
     this.pending = false
   }
 
-  willUpdate(changed: PropertyValues<this>) {
-    if (changed.has('pending')) return
+  willUpdate(changedProps: PropertyValues<this>) {
+    if (changedProps.has('pending')) return
     this.motion()
   }
 

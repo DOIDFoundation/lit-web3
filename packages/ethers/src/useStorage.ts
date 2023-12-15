@@ -1,6 +1,6 @@
 import { getEnvKey } from './useBridge'
+import {nowTs} from './utils'
 
-const now = () => new Date().getTime()
 export const useStorage = async (name: string, { store = localStorage, withoutEnv = false, ttl = 0 } = {}) => {
   const withExpire = ttl > 0
   let saved = null
@@ -12,7 +12,7 @@ export const useStorage = async (name: string, { store = localStorage, withoutEn
       //
       if (withExpire) {
         const { ex, data } = saved
-        if (now > ex) {
+        if (nowTs() > ex) {
           remove()
           return null
         }
@@ -24,7 +24,7 @@ export const useStorage = async (name: string, { store = localStorage, withoutEn
   const set = async (data: unknown, { merge = false } = {}) => {
     const key = await getEnvKey(name, withoutEnv)
     if (merge) data = Object.assign((await get()) ?? {}, data)
-    const val = withExpire ? { data, ex: now() + ttl } : data
+    const val = withExpire ? { data, ex: nowTs() + ttl } : data
     store.setItem(key, JSON.stringify(val))
   }
   const remove = async () => store.removeItem(await getEnvKey(name, withoutEnv))

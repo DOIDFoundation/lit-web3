@@ -8,12 +8,16 @@
 }
 
 .dui-button {
-  @apply gap-1 text-white py-2 leading-tight text-sm sm_text-base rounded-md;
+  @apply inline-flex justify-center items-center gap-1 text-white py-2 leading-tight text-sm sm_text-base rounded-md whitespace-nowrap;
   background: var(--btnBg);
   &:not([dense]) {
     @apply px-3.5;
   }
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
   &:not([disabled]) {
     &:hover {
       background: var(--btnBgHover);
@@ -104,9 +108,17 @@
       }
     }
   }
+  &.text,
   &[text] {
     color: var(--btnBg);
     @apply bg-transparent border-transparent;
+    &[disabled],
+    &:disabled,
+    &[pending],
+    &.pending {
+      background: transparent !important;
+      color: var(--bgDisabled);
+    }
     &:hover,
     &:active {
       color: var(--btnBg);
@@ -127,7 +139,16 @@
       @apply px-2.5;
     }
     &[icon] {
-      @apply w-8 h-8;
+      @apply w-7 h-7;
+    }
+  }
+  &[lg] {
+    @apply text-lg py-2.5;
+    &:not([dense]) {
+      @apply px-4;
+    }
+    &[icon] {
+      @apply w-10 h-10 text-3xl;
     }
   }
   &[theme='dark'] {

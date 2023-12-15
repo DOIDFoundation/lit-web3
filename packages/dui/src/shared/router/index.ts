@@ -1,6 +1,6 @@
-// Router Guard for @lit-labs/router
+// Router Guard
 import emitter from '@lit-web3/core/src/emitter'
-import { Router } from '@lit-web3/router/src/router'
+import { Router } from '@lit-web3/router'
 import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
 export { Router }
 
@@ -12,7 +12,7 @@ export const routerPathroot = (path?: string) => routerGuard.router.getPathroot(
 
 export const scrollTop = (y = 0) => setTimeout(() => globalThis.scrollTo(0, y))
 
-// Trick for @lit-labs/router
+// Trick for router
 export const routerGuard = {
   router: <Router | any>undefined,
   injected: false,

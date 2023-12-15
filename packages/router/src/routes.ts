@@ -90,7 +90,6 @@ export class Routes implements ReactiveController {
    * {@link routes} match. Implicitly matches to the path "/*".
    */
   fallback?: BaseRouteConfig
-  // HashMode
   hashMode?: boolean
 
   /*

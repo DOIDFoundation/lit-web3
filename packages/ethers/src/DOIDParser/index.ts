@@ -60,7 +60,7 @@ export const parseFromString = async (src = ''): Promise<DOIDObject> => {
   return await cookDOID(DOIDName, token, decoded)
 }
 
-// @lit-labs/router maybe buggy here, if use it's goto('ab#1'), # will be encoded to %23
+// @lit-web3/router maybe buggy here, if use it's goto('ab#1'), # will be encoded to %23
 export const getKeyFromRouter = (name = '', tokenName = '', hash = '') => {
   ;[, tokenName] = location.href.split(name) ?? []
   return `${name}${tokenName ? `/${tokenName.replace(/^\//, '')}` : ''}`

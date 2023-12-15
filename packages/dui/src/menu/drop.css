@@ -6,3 +6,11 @@
   min-height: 9rem;
   border: 1px solid #ccc;
 }
+
+.dui-drop-toggle {
+  &.inverse {
+    & .mdi {
+      color: var(--textColor);
+    }
+  }
+}

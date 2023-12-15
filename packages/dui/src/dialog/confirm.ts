@@ -12,7 +12,7 @@ export class DuiConfirm extends TailwindElement([DuiDialog.styles, style]) {
   onClose() {
     this.emit('close')
   }
-  refClose() {
+  close() {
     this.el$.value?.close()
   }
   confirm() {
@@ -21,12 +21,13 @@ export class DuiConfirm extends TailwindElement([DuiDialog.styles, style]) {
 
   override render() {
     return html`<dui-dialog ${ref(this.el$)} @close=${this.onClose}>
+      <slot slot="header" name="header" class="font-bold"></slot>
       <slot></slot>
       <div slot="footer" class="w-full flex justify-between gap-4">
         <div></div>
         <div>
           <dui-button @click=${this.confirm}>Confirm</dui-button>
-          <dui-button @click=${this.refClose} class="minor">Close</dui-button>
+          <dui-button @click=${this.close} class="minor">Close</dui-button>
         </div>
       </div>
     </dui-dialog>`

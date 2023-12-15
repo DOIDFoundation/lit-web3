@@ -10,9 +10,9 @@ export { StateController } from '@lit-app/state'
 
 // Singleton Data
 class BridgeStore extends State {
-  @property({ value: 0 }) blockNumber!: number
-  @property({ value: undefined, type: Object }) bridge!: Bridge
-  @property({ value: 0 }) _account: string = ''
+  @property() blockNumber!: number
+  @property() bridge!: Bridge
+  @property() _account: string = ''
   constructor() {
     super()
     emitter.on('wallet-changed', () => {
@@ -76,25 +76,25 @@ class BlockPolling {
   getBlockNumber = async () => {
     this.block = await bridgeStore.bridge.provider.getBlockNumber()
   }
-  polling() {
+  polling = () => {
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       // Simulate block increment by per 12s
-      this.block += Math.floor((nowTs() - this.blockTs) / 12000)
+      if (this.blockTs) this.block += Math.floor((nowTs() - this.blockTs) / 12000)
       this.broadcast()
     }, this.interval)
   }
-  reset() {
+  reset = () => {
     clearTimeout(this.blockDebounce.timer)
     clearTimeout(this.timer)
     this.block = 0
     this.blockTs = 0
     Object.assign(this.blockDebounce, { timer: null, interval: 50 })
   }
-  async listenProvider() {
-    bridgeStore.bridge.provider.on('block', this.onBlock.bind(this))
+  listenProvider = async () => {
+    bridgeStore.bridge.provider.on('block', this.onBlock)
   }
-  onBlock(block: number) {
+  onBlock = (block: number) => {
     if (block <= this.block) return
     const { timer, interval } = this.blockDebounce
     if ((this.blockTs = nowTs()) - this.blockTs < interval) clearTimeout(timer)
@@ -102,8 +102,7 @@ class BlockPolling {
     if (this.block) Object.assign(this.blockDebounce, { timer: setTimeout(() => this.broadcast(block), interval) })
     this.block = block
   }
-  broadcast(block = this.block) {
-    // if (!block) block = (await bridgeStore.bridge.provider.getBlockNumber()) || this.block
+  broadcast = (block = this.block) => {
     emitter.emit('block-polling', block + '')
     this.polling()
   }
@@ -152,7 +151,7 @@ export const getSigner = async (account: string) =>
   (await getBridge()).provider.getSigner(account || (await getAccount()))
 export const getBlockNumber = async () => {
   const { blockNumber } = await useBridgeAsync()
-  return bridgeStore.blockNumber ?? blockNumber
+  return bridgeStore.blockNumber || blockNumber
 }
 export const getNonce = async (address?: string) => {
   if (!address) address = await getAccount()

@@ -20,7 +20,7 @@ export class DuiInputPwd extends EditableElement(TailwindElement(style)) {
 
   renderDefRight = () => {
     if (!this.toggle) return ``
-    return html`<dui-button tabindex="-1" sm icon @click=${this.toggleSwitch}
+    return html`<dui-button tabindex="-1" sm icon @click=${this.toggleSwitch} class="-mr-1"
       ><i class="mdi ${classMap(this.$c([this.hide ? 'mdi-eye-off-outline' : 'mdi-eye']))}"></i
     ></dui-button>`
   }

@@ -61,7 +61,6 @@ export class txReceipt {
   async wait(onlyAwaitHash = false): Promise<boolean> {
     return (async () => {
       let awaitRes = false
-      const eventMap = await getEventCodes(this.errorCodes)
       try {
         const tx = await this.txPromise
         this.onSent(tx)
@@ -75,13 +74,15 @@ export class txReceipt {
         this.hash = hash
         this.status = 2
         const checkReceipt = async () => {
-          const { status, events } = await tx.wait(1)
+          const { status, logs } = await tx.wait(1)
           if (status !== 1) {
             if (this.seq) this.seq.err = true
             throw new Error('Failed')
           }
+          // !!!TODO: This does not work with ethers@6
           // Parse event error
-          events.some(({ event, args }: any = {}) => {
+          const eventMap = await getEventCodes(this.errorCodes)
+          logs.some(({ event, args, topics }: any = {}) => {
             if (event === 'Failure') {
               let { info, detail, error } = args
               const code = error.toString() // Error Code

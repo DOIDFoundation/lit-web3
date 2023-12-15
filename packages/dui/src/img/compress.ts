@@ -1,7 +1,12 @@
-export const comporess = async (src: string, { maxW = 400 } = {}): Promise<string> => {
+const saveCache = (src: string, blobSrc?: string) =>
+  !blobSrc || src === blobSrc
+    ? sessionStorage.setItem(`err.${src}`, src)
+    : sessionStorage.setItem(`blob.${src}`, blobSrc)
+const fromCache = (src: string) => sessionStorage.getItem(`blob.${src}`) || sessionStorage.getItem(`err.${src}`)
+export const compress = async (src: string, { maxW = 400 } = {}): Promise<string> => {
   return new Promise((resolve) => {
     if (!src) return resolve('')
-    const cachedBlob = sessionStorage.getItem(`blob.${src}`)
+    const cachedBlob = fromCache(src)
     if (cachedBlob) return resolve(cachedBlob)
     const img = new Image()
     img.src = src
@@ -23,19 +28,28 @@ export const comporess = async (src: string, { maxW = 400 } = {}): Promise<strin
       ctx.drawImage(img, sx, sy, sw, sh, 0, 0, width, height)
       setUrl()
     }
+    img.onerror = () => {
+      saveCache(src)
+      resolve(src)
+    }
     const canvas$ = document.createElement('canvas')
     const ctx: any = canvas$.getContext('2d')
     const setUrl = () => {
-      canvas$.toBlob(
-        (blob: any) => {
-          const blobSrc = URL.createObjectURL(blob)
-          sessionStorage.setItem(`blob.${src}`, blobSrc)
-          resolve(blobSrc)
-        },
-        'image/png',
-        1
-      )
+      try {
+        canvas$.toBlob(
+          (blob: any) => {
+            const blobSrc = URL.createObjectURL(blob)
+            saveCache(src, blobSrc)
+            resolve(blobSrc)
+          },
+          'image/png',
+          1
+        )
+      } catch {
+        saveCache(src)
+        resolve(src)
+      }
     }
   })
 }
-export default comporess
+export default compress

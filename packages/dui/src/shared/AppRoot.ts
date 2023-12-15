@@ -4,7 +4,7 @@ import '@webcomponents/webcomponentsjs/webcomponents-loader.js'
 import 'lit/polyfill-support.js'
 //
 import { TailwindElement, html, customElement } from './TailwindElement'
-import type { RouteConfig } from '@lit-labs/router'
+import type { RouteConfig } from '@lit-web3/router'
 import { fallbackRender, fallbackEnter } from './router/fallback'
 import { Router, routerGuard } from './router'
 import emitter from '@lit-web3/core/src/emitter'
@@ -23,7 +23,7 @@ export default function ({ routes = <RouteConfig[]>[], hashMode = false } = {}) 
         hashMode,
         fallback: {
           render: fallbackRender,
-          enter: async (params) => await fallbackEnter(this._router, params)
+          enter: async (params: any) => await fallbackEnter(this._router, params)
         }
       })
     )

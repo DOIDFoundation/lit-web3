@@ -13,13 +13,20 @@
     &.sparse {
       @apply px-4;
     }
+    &.full {
+      @apply max-w-none;
+    }
   }
-  .dui-select {
-    @apply whitespace-nowrap;
+  .dui-option {
+    @apply whitespace-nowrap select-none;
     & > li {
       @apply flex items-center gap-2 py-2 px-4 hover_bg-gray-50 cursor-pointer;
+
+      &:hover {
+        @apply bg-gray-50;
+      }
       &.active {
-        @apply bg-gray-100;
+        @apply bg-gray-200 cursor-default;
       }
       & > .mdi:first-child {
         @apply text-gray-600;
@@ -30,8 +37,7 @@
     @apply inline-block;
     width: var(--doidLogoW);
     height: var(--doidLogoH);
-    background: url(../i/doid-logo.svg) no-repeat center;
-    background-size: contain;
+    background: url(../i/doid-logo.svg) no-repeat center / contain;
   }
   .mdi-discord {
     @apply bg-none;
@@ -46,6 +52,20 @@
   }
   .mdi-loading {
     @apply inline-flex animate-spin;
+  }
+  .bgBlur {
+    @apply fixed w-screen;
+    &::before {
+      content: '';
+      @apply absolute block left-0 top-0 bottom-0 right-0 w-screen h-full;
+      transition: background 0.2s;
+      will-change: background;
+    }
+    &.active::before {
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.65) 100%);
+      transform: translateZ(0);
+      backdrop-filter: blur(12px);
+    }
   }
   .canScroll {
     scrollbar-width: thin;

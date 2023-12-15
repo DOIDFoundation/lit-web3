@@ -4,7 +4,7 @@ import { JsonRpcProvider as provider } from 'ethers'
 import { html, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
 import { StateController } from '@lit-app/state'
 import { walletStore } from '~/store'
-import type { RouteConfig } from '@lit-labs/router'
+import type { RouteConfig } from '@lit-web3/router'
 
 const isProd = import.meta.env.MODE === 'production'
 useBridge({

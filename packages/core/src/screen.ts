@@ -10,11 +10,12 @@ export const breakpoints = {
   '2xl': 1536
 }
 
-export const match = (v: number) => window.matchMedia(`(max-width: ${v}px)`).matches
+export const match = (v: number) => globalThis.matchMedia(`(max-width: ${v}px)`).matches
 
 type Screen = {
   isMobi: boolean
   md: boolean
+  lg: boolean
   ratio: number
   ts: number
   interacted: boolean
@@ -22,19 +23,23 @@ type Screen = {
 export const screen: Screen = {
   isMobi: match(breakpoints.lg),
   md: match(breakpoints.md),
-  ratio: window.devicePixelRatio ?? 2,
+  lg: match(breakpoints.lg),
+  ratio: globalThis.devicePixelRatio ?? 2,
   ts: 1,
   interacted: false
 }
 
 class ScreenStore extends State {
-  @property({ value: screen, type: Object }) screen!: Screen
+  @property({ value: screen }) screen!: Screen
   constructor() {
     super()
     const ro = new ResizeObserver(() => {
-      this.screen.ts++
-      this.screen.isMobi = match(breakpoints.lg)
-      this.screen.md = match(breakpoints.md)
+      this.screen = Object.assign({}, this.screen, {
+        ts: this.screen.ts++,
+        isMobi: match(breakpoints.md),
+        md: match(breakpoints.md),
+        lg: match(breakpoints.lg)
+      })
       emitter.emit('force-request-update')
     })
     ro.observe(document.documentElement)
@@ -48,14 +53,14 @@ class ScreenStore extends State {
 }
 export const screenStore = new ScreenStore()
 
-window.addEventListener('resize', () => (screen.ratio = window.devicePixelRatio), { passive: true })
+globalThis.addEventListener('resize', () => (screen.ratio = globalThis.devicePixelRatio), { passive: true })
 
 export const setInteracted = () => {
   screen.interacted = true
-  window.removeEventListener('keydown', setInteracted)
-  window.removeEventListener('click', setInteracted)
+  globalThis.removeEventListener('keydown', setInteracted)
+  globalThis.removeEventListener('click', setInteracted)
 }
-window.addEventListener('keydown', setInteracted, { once: true })
-window.addEventListener('click', setInteracted, { once: true })
+globalThis.addEventListener('keydown', setInteracted, { once: true })
+globalThis.addEventListener('click', setInteracted, { once: true })
 
 export default screen

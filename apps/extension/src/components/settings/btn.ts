@@ -23,7 +23,7 @@ export class SettingsBtn extends TailwindElement(null) {
     return html`<dui-drop btnIcon .show=${this.menu} @change=${(e: CustomEvent) => (this.menu = e.detail)}>
       <i slot="button" class="text-xl mdi mdi-dots-vertical"></i>
       <!-- Content -->
-      <ul class="dui-select">
+      <ul class="dui-option">
         <li @click=${() => this.go2('https://doid.tech')}><i class="mdi mdi-information"></i>About</li>
         <li @click=${() => this.go2('https://discord.gg/N9emnzwAzm')}>
           <i class="mdi mdi-comment-question"></i>Support

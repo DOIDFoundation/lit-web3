@@ -3,6 +3,7 @@
   --txt3: #f9d3a3;
   --bg2: #fffbf6;
   --bg3: #373737;
+  --bgDisabled: #a1a1a1;
 
   --radius: 1rem;
   --btn_radius: 0.25rem;
@@ -32,6 +33,8 @@
   --btnBgSuccess: var(--btn-bg-success, #4caf50);
   --btnBgSuccessHover: var(--btn-bg-success-hover, #53b257);
   --btnBgSuccessActive: var(--btn-bg-success-active, #60b864);
+  /* Forms */
+  --formBorderFocus: var(--btnBg);
   /* DOIDs */
   --doidLogoW: var(--doid-logo-w, 120px);
   --doidLogoH: var(--doid-logo-h, 36px);

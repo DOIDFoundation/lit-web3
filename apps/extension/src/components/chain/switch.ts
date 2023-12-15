@@ -44,7 +44,7 @@ export class ChainSwitch extends TailwindElement(style) {
         ><chain-symbol .chain=${uiNetworks.currentNetwork}></chain-symbol>${uiNetworks.currentNetwork?.abbr}</span
       >
       <!-- Content -->
-      <ul class="dui-select">
+      <ul class="dui-option">
         ${repeat(
           uiNetworks.currentNetworks,
           (network) =>

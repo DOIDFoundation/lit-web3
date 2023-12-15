@@ -1,3 +1,6 @@
+:host {
+  @apply inline-flex items-center;
+}
 .dui-input-switch {
   @apply relative inline-flex w-8 h-4 rounded-full box-content bg-gray-400 transition-all select-none cursor-pointer;
   border: 1px solid transparent;
@@ -14,7 +17,7 @@
   &[disabled] {
     @apply cursor-default bg-gray-200;
     &.checked {
-      @apply !bg-blue-300;
+      background: var(--bgDisabled) !important;
     }
   }
   &.sm {

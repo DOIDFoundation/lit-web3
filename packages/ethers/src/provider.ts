@@ -1,7 +1,7 @@
 import { JsonRpcProvider, BrowserProvider, WebSocketProvider } from 'ethers'
 import Network from './networks'
 import emitter from '@lit-web3/core/src/emitter'
-import { getChainIdSync } from './detectEthereum'
+import { getChainId, getChainIdSync } from './detectEthereum'
 
 class Provider {
   public provider: BrowserProvider | JsonRpcProvider | WebSocketProvider | any
@@ -9,18 +9,22 @@ class Provider {
   public storage: any
   constructor(options: useBridgeOptions = {}) {
     let { chainId } = options
-    const { provider, persistent } = options
+    const { persistent } = options
     if (!persistent) this.storage = sessionStorage.getItem('chainId')
+    // Try chainId
     if (!chainId) {
       // !!! ethereum.chainId is deprecated, but this may make getter faster
       if (window.ethereum?.chainId) chainId = getChainIdSync()
       else if (this.storage) chainId = this.storage
     }
+    // Try chainId again
+    if (!chainId) getChainId().then((chainId: any) => chainId && this.update({ chainId }))
+    // Init
     if (chainId) chainId = `0x${(+chainId).toString(16)}`
     this.network = new Network(chainId)
-    this.provider = this.update({ chainId })
+    this.update({ chainId })
   }
-  update(options: useBridgeOptions = {}) {
+  update = async (options: useBridgeOptions = {}) => {
     let { chainId } = options
     const { persistent, provider, rpc } = options
     if (!persistent) {
@@ -43,7 +47,6 @@ class Provider {
       this.provider = new _provider(_rpc)
     }
     emitter.emit('network-change', '')
-    return this.provider
   }
   get request() {
     const { ethereum } = window

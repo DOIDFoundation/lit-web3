@@ -13,21 +13,23 @@ export class DuiPrompt extends TailwindElement([DuiDialog.styles, style]) {
   onClose() {
     this.emit('close')
   }
-  refClose() {
+  close() {
     this.el$.value?.close()
   }
 
   override render() {
     return html`<dui-dialog ${ref(this.el$)} @close=${this.onClose}>
+      <slot slot="header" name="header" class="font-bold"></slot>
       <slot></slot>
       ${when(
         this.button,
-        () => html`<div slot="footer" class="w-full flex justify-between gap-4">
-          <div></div>
-          <div>
-            <dui-button @click=${this.refClose} class="minor">Close</dui-button>
-          </div>
-        </div>`
+        () =>
+          html`<div slot="footer" class="w-full flex justify-between gap-4">
+            <div></div>
+            <div>
+              <dui-button text @click=${this.close}>Close</dui-button>
+            </div>
+          </div>`
       )}
     </dui-dialog>`
   }

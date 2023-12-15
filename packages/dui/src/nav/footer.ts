@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement } from '../shared/TailwindElement'
+import { TailwindElement, html, property, classMap, customElement } from '../shared/TailwindElement'
 // Components
 import '../block-number'
 import '../link'
@@ -6,10 +6,11 @@ import '../link'
 import style from './footer.css?inline'
 @customElement('dui-footer')
 export class DuiFooter extends TailwindElement(style) {
+  @property({ type: Boolean }) full = false
   render() {
     return html`
       <footer class="dui-footer">
-        <div class="dui-container flex justify-between items-center gap-4">
+        <div class="dui-container flex justify-between items-center gap-4${classMap({ full: this.full })}">
           <div class="flex gap-3 items-center opacity-80 lg_w-40">
             <slot name="block"><block-number></block-number></slot>
             <slot name="left"></slot>

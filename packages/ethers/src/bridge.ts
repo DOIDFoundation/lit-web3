@@ -3,7 +3,7 @@ import icon from './wallet/metamask/icon.svg'
 import { shortAddress } from './utils'
 import Provider from './provider'
 import { getNetwork } from './networks'
-import detectEthereum, { getAccounts } from './detectEthereum'
+import detectEthereum, { getAccounts, ensureMetaMaskInjected } from './detectEthereum'
 import { WalletState, emitWalletChange } from './wallet'
 import { EtherNetworks } from './constants/networks'
 import MetaMask from './wallet/metamask'
@@ -33,7 +33,7 @@ export const Wallets: WalletList = [
 ]
 
 class WalletStore extends State {
-  @property({ value: undefined, type: Object }) wallet!: any
+  @property() wallet!: any
   get account(): string {
     return this.wallet?.account ?? ''
   }
@@ -75,6 +75,7 @@ export class Bridge {
           iconUrls: ['']
         })
       try {
+        ethereum.on('chainChanged', () => window.location.reload())
         await ethereum.request({
           method,
           params: [param]
@@ -130,9 +131,9 @@ export class Bridge {
         if (this.wallet?.inited) return
         let { ethereum } = window
         if (autoConnect || !ethereum) ethereum = await detectEthereum()
-        if (ethereum?.isMetaMask && localStorage.getItem('metamask.injected')) {
+        if (ensureMetaMaskInjected()) {
           this.connectedAccounts = (await getAccounts(ethereum)) || []
-          if (this.connectedAccounts[0]) await this.select(0)
+          if (this.connectedAccounts[0]) await this.select(0, false)
         }
         this.connecting = undefined
         this.alreadyTried = true
@@ -154,14 +155,14 @@ export class Bridge {
       this.selected = undefined
     }
   }
-  async select(i: number = 0) {
+  async select(i: number = 0, force = true) {
     const selected = (this.selected = this.wallets[i])
     if (!this.promise)
       this.promise = (async () => {
         if (!selected.app) selected.app = await selected.import()
         const wallet = selected.app
         try {
-          await wallet.connect()
+          await wallet.connect({ force })
         } catch (err) {
           throw err
         } finally {

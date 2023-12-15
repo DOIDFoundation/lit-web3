@@ -9,7 +9,7 @@ export class LoadingIcon extends TailwindElement('') {
       case 'block':
         return html`<div class="block mx-auto my-8 text-center text-xl"><i class="mdi mdi-loading mx-1"></i></div>`
       default:
-        return html`<i class="mdi mdi-loading mr-1"></i> Loading...`
+        return html`<i class="mdi mdi-loading mr-1"></i> <slot>Loading...</slot>`
     }
   }
 }

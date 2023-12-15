@@ -1,5 +1,6 @@
-import { resolve, dirname } from 'node:path'
+import path, { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
 import { defineConfig, splitVendorChunkPlugin, normalizePath } from 'vite'
 //
 import { VitePWA } from 'vite-plugin-pwa'
@@ -10,6 +11,7 @@ import { config } from 'dotenv'
 // Polyfills
 import legacy from '@vitejs/plugin-legacy'
 import mkcert from 'vite-plugin-mkcert'
+
 // Env
 config()
 const cwd = process.cwd()
@@ -59,7 +61,7 @@ export const viteConfig = (options = {}) => {
         rollupOptions: {
           // external: /^lit/
           // input: {
-          //   main: resolve(process.cwd(), 'index.html')
+          //   main: resolve(cwd, 'index.html')
           // }
         }
       },
@@ -144,7 +146,7 @@ export const viteConfig = (options = {}) => {
         ...(viteConfigOptions.legacy === false
           ? []
           : [
-              //TODO: Disabled for `BigInt` error (@vitejs/plugin-legacy@4.1.1)
+              //TODO: Disabled for `BigInt` error (@vitejs/plugin-legacy@5.2.0)
               // legacy({
               //   polyfills: ['web.url', 'es.object.from-entries']
               // })
