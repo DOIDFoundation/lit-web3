@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import '@shoelace-style/shoelace/dist/components/button/button'
 import '@shoelace-style/shoelace/dist/themes/light.css'
-import './dialog'
+import './connectDialog'
 
 @customElement('doid-connect-button')
 export class DOIDConnectButton extends LitElement {
@@ -15,11 +15,6 @@ export class DOIDConnectButton extends LitElement {
   }
   close() {
     this.dialog = false
-  }
-
-  connectedCallback(): void {
-    super.connectedCallback()
-    this.open()
   }
 
   override render() {

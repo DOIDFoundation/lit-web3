@@ -10,6 +10,11 @@ export class ViewHome extends TailwindElement('') {
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)
 
+  connectedCallback(): void {
+    super.connectedCallback()
+    this.updateComplete.then(() => this.doidConnector.connect())
+  }
+
   get accountEthers(): Promise<string> {
     return this.doidConnectorEthers.signer.then((signer) => {
       return signer.address
@@ -22,7 +27,13 @@ export class ViewHome extends TailwindElement('') {
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
           <p>Is connected: ${this.doidConnector.connected}</p>
-          ${when(this.doidConnector.connected, () => html`Address: ${this.doidConnector.account}`)}
+          ${when(
+            this.doidConnector.connected,
+            () => html`
+              <p>Address: ${this.doidConnector.account}</p>
+              <p>DOID: ${this.doidConnector.doid}</p>
+            `
+          )}
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status(ethers)</h1>
           <p>Is connected: ${this.doidConnectorEthers.connected}</p>

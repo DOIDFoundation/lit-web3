@@ -1,0 +1,5 @@
+:host {
+  .name::part(input) {
+    @apply text-right pr-0;
+  }
+}

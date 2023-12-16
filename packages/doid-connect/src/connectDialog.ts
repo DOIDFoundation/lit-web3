@@ -1,7 +1,8 @@
 import { LitElement, PropertyValueMap, html, unsafeCSS } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import { map } from 'lit/directives/map.js'
+import './components/signup'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 
@@ -9,53 +10,51 @@ import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
 import { OpenloginAdapter } from '@web3auth/openlogin-adapter'
-import { Connector, InjectedConnector } from '@wagmi/core'
+import { Chain, ChainNotConfiguredError, Connector, InjectedConnector } from '@wagmi/core'
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
 import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
 import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
 import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
 
 import TailwindBase from './tailwind.global.css?inline'
-import style from './dialog.css?inline'
+import style from './connectDialog.css?inline'
 import iconMetamask from '../icons/metamask.svg'
 import iconCoinbase from '../icons/coinbase.svg'
 import iconWalletConnect from '../icons/walletconnect.svg'
 import iconPuzzle from '../icons/puzzle.svg'
 import iconDOID from '../icons/doid.svg'
-import { controller } from './controller'
+import { ConnectorData, ErrNotRegistered, controller } from './controller'
 import { options } from './options'
 import { googleSvg } from './assets/svg/google'
 import { appleSvg } from './assets/svg/apple'
 import { facebookSvg } from './assets/svg/facebook'
 import { twitterSvg } from './assets/svg/twitter'
 import { githubSvg } from './assets/svg/github'
+import EventEmitter from 'eventemitter3'
+import { createRef, ref } from 'lit/directives/ref.js'
+import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
+import { DOIDSignup } from './components/signup'
+
+export interface Events {
+  connect(data: ConnectorData): void
+  close(): void
+  error(error: Error): void
+}
 
 @customElement('doid-connect-dialog')
 export class DOIDConnectDialog extends LitElement {
   @property({ type: String }) appName = ''
+  @property({ type: Boolean }) signup = false
+  @property() chainId?: Chain['id']
+  @state() signupAccount?: Address
 
   static styles = [unsafeCSS(TailwindBase), unsafeCSS(style)]
 
-  /** Events emitted. */
-  static readonly EVENTS = {
-    /**
-     * Connected event.
-     *
-     * @event DOIDConnectDialog#connected
-     * @type {object}
-     * @property {ConnectorData} result - connect wallet result.
-     */
-    CONNECTED: 'connected',
-    /**
-     * Connection failed event.
-     *
-     * @event DOIDConnectDialog#error
-     * @type {Error}
-     */
-    ERROR: 'error',
-    /** Dialog closed event. */
-    CLOSE: 'close'
-  }
+  public readonly events = new EventEmitter<Events>()
+  protected emit = this.events.emit.bind(this.events)
+  public on = this.events.on.bind(this.events)
+  public once = this.events.once.bind(this.events)
+  public off = this.events.off.bind(this.events)
 
   private web3authInstance: Web3AuthNoModal | undefined
 
@@ -64,22 +63,18 @@ export class DOIDConnectDialog extends LitElement {
     this.show()
   }
 
-  // Element Events
-  emit<T>(type: string, detail?: T, options = []) {
-    this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
-  }
-
   get connectors() {
     let connectors: Connector[] = [
-      new MetaMaskConnector(),
-      new CoinbaseWalletConnector({ options: { appName: this.appName ?? 'DOID' } })
+      new MetaMaskConnector({ chains: options.chains }),
+      new CoinbaseWalletConnector({ chains: options.chains, options: { appName: this.appName ?? 'DOID' } })
     ].filter((wallet) => wallet.ready)
-    let injected = new InjectedConnector()
+    let injected = new InjectedConnector({ chains: options.chains })
     if (injected.ready && connectors.findIndex((wallet) => wallet.name == injected.name) < 0) {
       connectors.push(injected)
     }
     if (options.walletConnectId) {
       let wc = new WalletConnectConnector({
+        chains: options.chains,
         options: {
           projectId: options.walletConnectId!
         }
@@ -112,21 +107,26 @@ export class DOIDConnectDialog extends LitElement {
 
   getWeb3auth() {
     if (this.web3authInstance) return this.web3authInstance
-    if (!this.isWeb3AuthEnabled) {
+    if (!options.web3AuthClientId) {
       throw new Error('Web3Auth Client ID is not configured.')
     }
 
     let chains = options.chains!
+    let chain = this.chainId ? chains.find((c) => c.id == this.chainId) : chains[0]
+    if (!chain)
+      throw this.chainId
+        ? new ChainNotConfiguredError({ chainId: this.chainId, connectorId: 'Web3Auth' })
+        : new Error('chains is not configured.')
     const chainConfig = {
-      chainId: '0x' + chains[0].id.toString(16),
-      rpcTarget: chains[0].rpcUrls.default.http[0],
-      displayName: chains[0].name,
-      tickerName: chains[0].nativeCurrency?.name,
-      ticker: chains[0].nativeCurrency?.symbol,
-      blockExplorer: chains[0].blockExplorers?.default?.url ?? ''
+      chainId: '0x' + chain.id.toString(16),
+      rpcTarget: chain.rpcUrls.default.http[0],
+      displayName: chain.name,
+      tickerName: chain.nativeCurrency?.name,
+      ticker: chain.nativeCurrency?.symbol,
+      blockExplorer: chain.blockExplorers?.default?.url ?? ''
     }
     let web3auth = new Web3AuthNoModal({
-      clientId: options.web3AuthClientId!, // Get your Client ID from the Web3Auth Dashboard
+      clientId: options.web3AuthClientId, // Get your Client ID from the Web3Auth Dashboard
       web3AuthNetwork: options.web3AuthNetwork,
       chainConfig: { ...chainConfig, chainNamespace: CHAIN_NAMESPACES.EIP155 }
     })
@@ -142,9 +142,10 @@ export class DOIDConnectDialog extends LitElement {
     return web3auth
   }
 
+  private dialogRef = createRef<SlDialog>()
   show() {
     return this.updateComplete.then(() => {
-      return this.shadowRoot?.querySelector('sl-dialog')?.show()
+      return this.dialogRef.value?.show()
     })
   }
 
@@ -152,18 +153,16 @@ export class DOIDConnectDialog extends LitElement {
    * @fires DOIDConnectDialog.EVENTS.CLOSE
    */
   close() {
-    this.shadowRoot
-      ?.querySelector('sl-dialog')
-      ?.hide()
-      .then(() => {
-        this.remove()
-        this.emit(DOIDConnectDialog.EVENTS.CLOSE)
-      })
+    this.dialogRef.value?.hide().then(() => {
+      this.remove()
+      this.emit('close')
+    })
   }
 
   connectWeb3Auth(provider: any) {
     return this.connect(
       new Web3AuthConnector({
+        chains: options.chains,
         options: {
           web3AuthInstance: this.getWeb3auth(),
           loginParams: {
@@ -174,6 +173,7 @@ export class DOIDConnectDialog extends LitElement {
     )
   }
 
+  private signupRef = createRef<DOIDSignup>()
   /**
    * Connect wallet wtih connector
    * @param {Connector} connector wagmi connector
@@ -181,26 +181,53 @@ export class DOIDConnectDialog extends LitElement {
    * @fires DOIDConnectDialog.EVENTS.CONNECTED
    * @fires DOIDConnectDialog.EVENTS.ERROR
    */
-  connect(connector: any) {
-    return controller
-      .connect(connector)
-      .then((result) => {
-        this.emit(DOIDConnectDialog.EVENTS.CONNECTED, result)
-        this.close()
-        return result
-      })
-      .catch((error) => {
-        this.emit(DOIDConnectDialog.EVENTS.ERROR, error)
-        return error
-      })
+  private async connect(connector: any): Promise<ConnectorData> {
+    const chainId = this.chainId
+    try {
+      let result = await controller.connect({ chainId, connector })
+      this.emit('connect', result)
+      this.close()
+      return result
+    } catch (error) {
+      if (error instanceof ErrNotRegistered) {
+        this.signup = true
+        this.signupAccount = error.account
+        return new Promise<ConnectorData>(async (resolve, reject) => {
+          await this.updateComplete
+          this.signupRef.value!.on('signup', async (name) => {
+            try {
+              let result = await controller.connect({ chainId, connector })
+              this.emit('connect', result)
+              this.close()
+              resolve(result)
+            } catch (e) {
+              reject(e)
+            }
+          })
+        })
+      } else if (error instanceof Error) {
+        this.emit('error', error)
+        throw error
+      }
+    }
   }
 
   override render() {
-    return html`<sl-dialog label="Connect your DOID" no-header @sl-after-hide=${this.close}>
+    return html`<sl-dialog label="Connect your DOID" no-header @sl-after-hide=${this.close} ${ref(this.dialogRef)}>
       <div class="w-16 h-16 mx-auto mt-5">
         <img class="w-full h-full" src="${iconDOID}" />
       </div>
-      <div class="mb-6 mt-6 text-center font-medium">
+      ${when(
+        !this.signup,
+        this.renderConnect.bind(this),
+        () => html`<doid-signup .account=${this.signupAccount} ${ref(this.signupRef)}></doid-signup>`
+      )}
+    </sl-dialog>`
+  }
+
+  renderConnect() {
+    return html`
+      <div class="my-6 text-center font-medium">
         <h1 class="text-2xl mb-4">Welcome</h1>
         ${when(
           this.appName,
@@ -234,11 +261,15 @@ export class DOIDConnectDialog extends LitElement {
           )}
         </div>
         <div class="separator mt-4"></div>
-        <p>
-          Don't have a DOID?
-          <dui-link class="block">Sign up</dui-link>
-        </p>
+        <p>Don't have a DOID?</p>
+        <sl-button
+          variant="text"
+          @click=${() => {
+            this.signup = true
+          }}
+          >Sign up</sl-button
+        >
       </div>
-    </sl-dialog>`
+    `
   }
 }

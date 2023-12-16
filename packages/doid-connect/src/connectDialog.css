@@ -21,6 +21,7 @@ img {
 }
 
 .button-container {
+  @apply flex justify-center space-x-2;
   sl-button {
     --sl-input-border-width: 2px;
     --sl-spacing-medium: 0;
@@ -30,9 +31,5 @@ img {
     svg {
       @apply w-9 h-9;
     }
-  }
-  @apply flex justify-center space-x-2;
-  .text {
-    @apply hidden;
   }
 }

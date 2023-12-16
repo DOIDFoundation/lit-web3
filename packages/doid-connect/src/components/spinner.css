@@ -1,0 +1,24 @@
+:host {
+  --speed: 3s;
+}
+
+.spinner__track,
+.spinner__indicator {
+  r: calc(0.5em - var(--track-width) / 2);
+  cx: 0.5em;
+  cy: 0.5em;
+}
+
+.spinner__indicator {
+  stroke-dasharray: 30% 210%;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(1080deg);
+  }
+}

@@ -1,5 +1,8 @@
-import { Chain, mainnet, goerli } from '@wagmi/core/chains'
+import { Chain, mainnet, sepolia } from '@wagmi/core/chains'
 import { OPENLOGIN_NETWORK, OPENLOGIN_NETWORK_TYPE } from '@web3auth/base'
+import { doid, doidTestnet } from './chains'
+
+export { OPENLOGIN_NETWORK } from '@web3auth/base'
 
 export interface ConfigOptions {
   appName?: string
@@ -7,12 +10,18 @@ export interface ConfigOptions {
   web3AuthNetwork?: OPENLOGIN_NETWORK_TYPE
   walletConnectId?: string
   chains?: Chain[]
+  doidNetwork?: Chain
 }
 
 export let options: ConfigOptions = {
-  chains: [mainnet, goerli],
-  web3AuthNetwork:
-    import.meta.env.MODE === 'production' ? OPENLOGIN_NETWORK.SAPPHIRE_MAINNET : OPENLOGIN_NETWORK.SAPPHIRE_DEVNET
+  chains: [doid, doidTestnet, mainnet, sepolia],
+  doidNetwork: doid,
+  web3AuthNetwork: OPENLOGIN_NETWORK.SAPPHIRE_MAINNET
+}
+
+if (import.meta?.env?.MODE !== 'production') {
+  options.doidNetwork = doidTestnet
+  options.web3AuthNetwork = OPENLOGIN_NETWORK.SAPPHIRE_DEVNET
 }
 
 export function updateOptions(opts: ConfigOptions) {
@@ -20,5 +29,6 @@ export function updateOptions(opts: ConfigOptions) {
 }
 
 export function updateChains(chains: Chain[]) {
+  if (chains.findIndex((chain) => chain.id == options.doidNetwork!.id) == -1) chains.push(options.doidNetwork!)
   options.chains = chains
 }
