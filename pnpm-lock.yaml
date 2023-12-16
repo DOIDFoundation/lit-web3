@@ -407,8 +407,8 @@ importers:
         specifier: workspace:latest
         version: link:../doid-connect
       '@wagmi/core':
-        specifier: ^1.4.11
-        version: 1.4.11(react@18.2.0)(typescript@5.1.6)(viem@1.19.14)
+        specifier: ^1.4.10
+        version: 1.4.10(react@18.2.0)(typescript@5.1.6)(viem@1.19.14)
       ethers:
         specifier: ^6
         version: 6.9.0
@@ -4791,18 +4791,6 @@ packages:
       - zod
     dev: false
 
-  /@safe-global/safe-apps-provider@0.18.1(typescript@5.1.6):
-    resolution: {integrity: sha512-V4a05A3EgJcriqtDoJklDz1BOinWhC6P0hjUSxshA4KOZM7rGPCTto/usXs09zr1vvL28evl/NldSTv97j2bmg==}
-    dependencies:
-      '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.1.6)
-      events: 3.3.0
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-      - zod
-    dev: false
-
   /@safe-global/safe-apps-sdk@8.0.0(typescript@5.1.6):
     resolution: {integrity: sha512-gYw0ki/EAuV1oSyMxpqandHjnthZjYYy+YWpTAzf8BqfXM3ItcZLpjxfg+3+mXW8HIO+3jw6T9iiqEXsqHaMMw==}
     dependencies:
@@ -4819,7 +4807,7 @@ packages:
     resolution: {integrity: sha512-XJbEPuaVc7b9n23MqlF6c+ToYIS3f7P2Sel8f3cSBQ9WORE4xrSuvhMpK9fDSFqJ7by/brc+rmJR/5HViRr0/w==}
     dependencies:
       '@safe-global/safe-gateway-typescript-sdk': 3.13.3
-      viem: 1.19.13(typescript@5.1.6)
+      viem: 1.19.14(typescript@5.1.6)
     transitivePeerDependencies:
       - bufferutil
       - typescript
@@ -5644,8 +5632,8 @@ packages:
       - zod
     dev: false
 
-  /@wagmi/connectors@3.1.9(react@18.2.0)(typescript@5.1.6)(viem@1.19.14):
-    resolution: {integrity: sha512-q7Hz6WDnvOcZ/EPzuFgilirSwyoWYo1owowHmHqHTxEu0yu6HFNQGuaMNK9hsM/XCHeCisW/ZdUvudQSBUVpHQ==}
+  /@wagmi/connectors@3.1.8(react@18.2.0)(typescript@5.1.6)(viem@1.19.14):
+    resolution: {integrity: sha512-J6m8xWFw/Qb4V6VeERazEgfXPztx7wDWCfmUSrfSM54SSjdaFprAOZlcAMqBtibqH8HgnPvbdFA0DEOHbeX2ag==}
     peerDependencies:
       typescript: '>=5.0.4'
       viem: '>=0.3.35'
@@ -5655,7 +5643,7 @@ packages:
     dependencies:
       '@coinbase/wallet-sdk': 3.7.2
       '@ledgerhq/connect-kit-loader': 1.1.2
-      '@safe-global/safe-apps-provider': 0.18.1(typescript@5.1.6)
+      '@safe-global/safe-apps-provider': 0.17.1(typescript@5.1.6)
       '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.1.6)
       '@walletconnect/ethereum-provider': 2.10.6(@types/react@18.2.45)(react@18.2.0)
       '@walletconnect/legacy-provider': 2.0.0
@@ -5725,8 +5713,8 @@ packages:
       - zod
     dev: false
 
-  /@wagmi/core@1.4.11(react@18.2.0)(typescript@5.1.6)(viem@1.19.14):
-    resolution: {integrity: sha512-H6y5v+PpvYbT5Qsk7PTVu5MtcSqudDqGZC/LZFV6Y+UeJlBsnfJNy5+cPEzKmvaz+6tSyVPGCF9aWK+sNdC0sQ==}
+  /@wagmi/core@1.4.10(react@18.2.0)(typescript@5.1.6)(viem@1.19.14):
+    resolution: {integrity: sha512-XJ5iSWZKOZSgQP3LFn/QHJqLGoX53SiBKc0/6s7KkVc68VmFenrZymNRg3fSwBsINlZgRVWpSj2lAVsl8IjSgw==}
     peerDependencies:
       typescript: '>=5.0.4'
       viem: '>=0.3.35'
@@ -5734,7 +5722,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@wagmi/connectors': 3.1.9(react@18.2.0)(typescript@5.1.6)(viem@1.19.14)
+      '@wagmi/connectors': 3.1.8(react@18.2.0)(typescript@5.1.6)(viem@1.19.14)
       abitype: 0.8.7(typescript@5.1.6)
       eventemitter3: 4.0.7
       typescript: 5.1.6

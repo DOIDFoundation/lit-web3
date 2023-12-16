@@ -1,5 +1,5 @@
 import EventEmitter from 'events'
-import { options, updateChains, updateOptions } from './options'
+import { updateChains, updateOptions } from './options'
 import { controller } from './controller'
 import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
 import { DOIDConnectDialog } from './connectDialog'

@@ -194,7 +194,7 @@ export class DOIDConnectDialog extends LitElement {
         this.signupAccount = error.account
         return new Promise<ConnectorData>(async (resolve, reject) => {
           await this.updateComplete
-          this.signupRef.value!.on('signup', async (name) => {
+          this.signupRef.value!.on('signup', async () => {
             try {
               let result = await controller.connect({ chainId, connector })
               this.emit('connect', result)
@@ -207,8 +207,8 @@ export class DOIDConnectDialog extends LitElement {
         })
       } else if (error instanceof Error) {
         this.emit('error', error)
-        throw error
       }
+      throw error
     }
   }
 
