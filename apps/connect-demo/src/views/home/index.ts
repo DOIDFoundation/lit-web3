@@ -46,12 +46,12 @@ export class ViewHome extends TailwindElement('') {
           </dui-button>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect without modal dialog</h1>
-          <dui-button sm @click=${() => this.doidConnector.connect(false)}>
+          <dui-button sm @click=${() => this.doidConnector.connect({ noModal: true })}>
             <p>Connect Wallet</p>
           </dui-button>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect using ethers</h1>
-          <dui-button sm @click=${() => this.doidConnectorEthers.connect(false)}>
+          <dui-button sm @click=${() => this.doidConnectorEthers.connect({ noModal: true })}>
             <p>Connect Wallet</p>
           </dui-button>
 
