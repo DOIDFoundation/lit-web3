@@ -1,4 +1,3 @@
-import EventEmitter from 'events'
 import { updateChains, updateOptions } from './options'
 import { controller } from './controller'
 import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
@@ -6,9 +5,8 @@ import { DOIDConnectDialog } from './connectDialog'
 import { StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
 
-export class DOIDConnector extends EventEmitter {
+export class DOIDConnector {
   constructor(host?: ReactiveControllerHost) {
-    super()
     if (host) this.bindState(host)
   }
 
@@ -32,20 +30,13 @@ export class DOIDConnector extends EventEmitter {
     return controller.doid
   }
 
-  public getDOID(address: Address) {
-    return controller.getDOID(address)
-  }
-
-  public getDOIDAddress(name: string) {
-    return controller.getDOIDAddress(name)
-  }
-
-  public getWalletClient(chainId?: number): Promise<WalletClient> {
-    return controller.getWalletClient(chainId)
-  }
-
+  public getDOID = controller.getDOID.bind(controller)
+  public getDOIDAddress = controller.getDOIDAddress.bind(controller)
+  public getWalletClient = controller.getWalletClient.bind(controller)
   public updateOptions = updateOptions
   public updateChains = updateChains
+  public disconnect = controller.disconnect.bind(controller)
+  public switchChain = controller.switchChain.bind(controller)
 
   public async connect({
     chainId,
@@ -63,6 +54,7 @@ export class DOIDConnector extends EventEmitter {
       document.body.insertAdjacentElement('beforeend', modal)
       modal.on('connect', (event) => resolve(event.detail))
       modal.on('error', (event) => reject(event.detail))
+      modal.on('close', () => reject(new Error('User rejected the request.')))
     })
   }
 }

@@ -147,6 +147,9 @@ importers:
       '@lit-web3/dui':
         specifier: workspace:latest
         version: link:../../packages/dui
+      '@lit-web3/ethers':
+        specifier: workspace:latest
+        version: link:../../packages/ethers
     devDependencies:
       buffer:
         specifier: ^6.0.3

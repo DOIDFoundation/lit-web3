@@ -1,24 +1,67 @@
 import { TailwindElement, html, until, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { customElement } from 'lit/decorators.js'
 // Components
+import icon from '@lit-web3/dui/src/i/doid.svg'
+import '@doidfoundation/connect'
 import { DOIDConnector } from '@doidfoundation/connect'
 import { DOIDConnectorEthers } from '@doidfoundation/connect-ethers'
 import '@lit-web3/dui/src/input/text'
+import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { WalletState, emitWalletChange } from '@lit-web3/ethers/src/wallet'
 
 @customElement('view-home')
 export class ViewHome extends TailwindElement('') {
+  bindBridge: any = new StateController(this, bridgeStore)
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)
 
   connectedCallback(): void {
     super.connectedCallback()
     this.updateComplete.then(() => this.doidConnector.connect())
+
+    const connector = this.doidConnectorEthers
+    let wallet: Wallet = {
+      state: WalletState,
+      get accounts() {
+        return [this.account]
+      },
+      get account() {
+        return connector.account as string
+      },
+      updateProvider(chainId: string) {
+        connector.getWalletClient().then((client) => client.switchChain({ id: Number(chainId) }))
+      },
+      async connect() {
+        this.state = WalletState.CONNECTING
+        return connector
+          .connect()
+          .then(() => (this.state = WalletState.CONNECTED))
+          .catch(() => (this.state = WalletState.DISCONNECTED))
+      },
+      async disconnect() {
+        await connector.disconnect()
+        this.state = WalletState.DISCONNECTED
+        emitWalletChange()
+      },
+      install: () => {}
+    }
+    bridgeStore.bridge.wallets.push({
+      name: 'DOID',
+      title: 'DOID',
+      icon: icon,
+      app: wallet,
+      import: async () => {}
+    })
   }
 
   get accountEthers(): Promise<string> {
     return this.doidConnectorEthers.signer.then((signer) => {
       return signer.address
     })
+  }
+
+  connectEthers() {
+    return bridgeStore.bridge.select(bridgeStore.bridge.wallets.findIndex((wallet) => wallet.name == 'DOID'))
   }
 
   render() {
@@ -40,6 +83,8 @@ export class ViewHome extends TailwindElement('') {
           ${when(this.doidConnectorEthers.connected, () => html`Address: ${until(this.accountEthers)}`)}
         </div>
         <div class="flex-auto">
+          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with DOID connect button</h1>
+          <doid-connect-button appName="Demo App"></doid-connect-button>
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with modal dialog</h1>
           <dui-button sm @click=${this.doidConnector.connect}>
             <p>Connect Wallet</p>
@@ -51,7 +96,7 @@ export class ViewHome extends TailwindElement('') {
           </dui-button>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect using ethers</h1>
-          <dui-button sm @click=${() => this.doidConnectorEthers.connect({ noModal: true })}>
+          <dui-button sm @click=${() => this.connectEthers()}>
             <p>Connect Wallet</p>
           </dui-button>
 
