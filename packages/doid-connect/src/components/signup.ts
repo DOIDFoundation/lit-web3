@@ -95,8 +95,8 @@ export class DOIDSignup extends LitElement {
           this.inputHelpText = err.details
         } else {
           this.inputHelpText = err
-          console.error(err)
         }
+        console.error(err)
       })
   }
 

@@ -12,6 +12,7 @@ export interface ConfigOptions {
   chains?: Chain[]
   /** `doid | doidTestnet` */
   doidNetwork?: Chain
+  themeMode?: 'light' | 'dark'
   web3AuthEnabled?: boolean
   web3AuthClientId?: string // Get your Client ID from the Web3Auth Dashboard
   web3AuthNetwork?: WEB3AUTH_NETWORK_TYPE

@@ -67,6 +67,20 @@ export class ViewHome extends TailwindElement('') {
   render() {
     return html`
       <div class="dui-container my-8 mx-auto flex flex-row-reverse space-x-2 space-x-reverse">
+        <dui-button
+          class="static right-0"
+          @click=${() => {
+            this.doidConnector.updateOptions({ themeMode: 'light' })
+          }}
+          >light</dui-button
+        >
+        <dui-button
+          class="static right-0"
+          @click=${() => {
+            this.doidConnector.updateOptions({ themeMode: 'dark' })
+          }}
+          >dark</dui-button
+        >
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
           <p>Is connected: ${this.doidConnector.connected}</p>

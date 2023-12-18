@@ -1,13 +1,15 @@
-import { LitElement, PropertyValueMap, html, nothing, unsafeCSS } from 'lit'
+import { LitElement, PropertyValueMap, html, nothing, svg, unsafeCSS } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import './components/signup'
 import './components/connectButtons'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
+import themeDark from '@shoelace-style/shoelace/dist/themes/dark.styles.js'
+import themeLight from '@shoelace-style/shoelace/dist/themes/light.styles.js'
 import { Chain } from '@wagmi/core'
 import style from './connectDialog.css?inline'
-import iconDOID from './assets/icons/doid.svg'
+import { doidSvg } from './assets/svg/doid'
 import { ErrNotRegistered, controller } from './controller'
 import { createRef, ref } from 'lit/directives/ref.js'
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
@@ -27,7 +29,7 @@ export class DOIDConnectDialog extends LitElement {
   @property() chainId?: Chain['id']
   @state() connectedWithoutDOID = false
 
-  static styles = [BaseCss, unsafeCSS(style)]
+  static styles = [BaseCss, unsafeCSS(style), themeLight, themeDark]
 
   // Element Events
   emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventDetailType<Events, T>, options = []) {
@@ -95,10 +97,14 @@ export class DOIDConnectDialog extends LitElement {
   }
 
   override render() {
-    return html`<sl-dialog label="Connect your DOID" no-header @sl-after-hide=${this.close} ${ref(this.dialogRef)}>
-      <div class="w-16 h-16 mx-auto mt-5">
-        <img class="w-full h-full" src="${iconDOID}" />
-      </div>
+    return html`<sl-dialog
+      label="Connect your DOID"
+      no-header
+      @sl-after-hide=${this.close}
+      ${ref(this.dialogRef)}
+      class="${options.themeMode == 'dark' ? 'sl-theme-dark' : 'sl-theme-light'}"
+    >
+      <div class="icon w-16 h-16 mx-auto mt-5">${doidSvg}</div>
       ${when(
         !this.signup,
         this.renderConnect.bind(this),

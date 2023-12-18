@@ -14,4 +14,11 @@
 
 sl-dialog {
   --sl-z-index-dialog: 80;
+  .icon svg {
+    @apply w-full h-full;
+  }
+}
+
+.sl-theme-dark .icon svg {
+  fill: #d4d4d4;
 }
