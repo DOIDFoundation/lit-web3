@@ -1,4 +1,11 @@
-import { Connector, ConnectorData as WagmiConnectorData, InjectedConnector, WalletClient } from '@wagmi/core'
+import {
+  Connector,
+  ConnectorData as WagmiConnectorData,
+  InjectedConnector,
+  WalletClient,
+  SwitchChainNotSupportedError,
+  ConnectorNotFoundError
+} from '@wagmi/core'
 import { options } from './options'
 import { State, property } from '@lit-app/state'
 import {
@@ -167,6 +174,18 @@ export class Controller extends State {
       this.state = undefined
     })
     return connector.connect({ chainId }).then(onConnect)
+  }
+
+  public async disconnect() {
+    await this.connector?.disconnect()
+    this.connector = undefined
+    this.state = undefined
+  }
+
+  public switchChain(chainId: number) {
+    if (!this.connector) throw new ConnectorNotFoundError()
+    if (!this.connector?.switchChain) throw new SwitchChainNotSupportedError({ connector: this.connector })
+    return this.connector?.switchChain(chainId)
   }
 }
 

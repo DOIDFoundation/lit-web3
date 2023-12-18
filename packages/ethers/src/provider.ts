@@ -18,7 +18,7 @@ class Provider {
     }
     if (chainId) chainId = `0x${(+chainId).toString(16)}`
     this.network = new Network(chainId)
-    this.provider = this.update({ chainId })
+    this.provider = provider ?? this.update({ chainId })
   }
   update(options: useBridgeOptions = {}) {
     let { chainId } = options

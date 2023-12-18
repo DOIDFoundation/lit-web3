@@ -12,7 +12,7 @@ export class AppMain extends TailwindElement('') {
     return html`
       <dui-header>
         <p slot="center" class="font-bold">Wallet Demo</p>
-        <doid-connect-button appName="Demo App" slot="wallet"></doid-connect-button>
+        <doid-connect-button appName="Demo App" slot="right"></doid-connect-button>
       </dui-header>
       <main class="dui-app-main">
         <slot></slot>

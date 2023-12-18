@@ -11,7 +11,8 @@
     "@doidfoundation/connect": "workspace:latest",
     "@doidfoundation/connect-ethers": "workspace:latest",
     "@lit-web3/core": "workspace:latest",
-    "@lit-web3/dui": "workspace:latest"
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest"
   },
   "license": "MIT",
   "devDependencies": {

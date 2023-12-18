@@ -30,20 +30,13 @@ export class DOIDConnector {
     return controller.doid
   }
 
-  public getDOID(address: Address) {
-    return controller.getDOID(address)
-  }
-
-  public getDOIDAddress(name: string) {
-    return controller.getDOIDAddress(name)
-  }
-
-  public getWalletClient(chainId?: number): Promise<WalletClient> {
-    return controller.getWalletClient(chainId)
-  }
-
+  public getDOID = controller.getDOID.bind(controller)
+  public getDOIDAddress = controller.getDOIDAddress.bind(controller)
+  public getWalletClient = controller.getWalletClient.bind(controller)
   public updateOptions = updateOptions
   public updateChains = updateChains
+  public disconnect = controller.disconnect.bind(controller)
+  public switchChain = controller.switchChain.bind(controller)
 
   public async connect({
     chainId,

@@ -4,9 +4,12 @@ import { customElement } from 'lit/decorators.js'
 import { DOIDConnector } from '@doidfoundation/connect'
 import { DOIDConnectorEthers } from '@doidfoundation/connect-ethers'
 import '@lit-web3/dui/src/input/text'
+import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
+import { WalletState } from '@lit-web3/ethers/src/wallet'
 
 @customElement('view-home')
 export class ViewHome extends TailwindElement('') {
+  bindBridge: any = new StateController(this, bridgeStore)
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)
 
@@ -19,6 +22,33 @@ export class ViewHome extends TailwindElement('') {
     return this.doidConnectorEthers.signer.then((signer) => {
       return signer.address
     })
+  }
+
+  connectEthers() {
+    const connector = this.doidConnectorEthers
+    let wallet: Wallet = {
+      state: WalletState,
+      get accounts() {
+        return [this.account]
+      },
+      get account() {
+        return connector.account as string
+      },
+      updateProvider(chainId: string) {
+        connector.getWalletClient().then((client) => client.switchChain({ id: Number(chainId) }))
+      },
+      connect: connector.connect,
+      disconnect: connector.disconnect,
+      install: () => {}
+    }
+    let index = bridgeStore.bridge.wallets.push({
+      name: 'DOID',
+      title: 'DOID',
+      icon: 'DOID',
+      app: wallet,
+      import: async () => {}
+    })
+    bridgeStore.bridge.select(index - 1)
   }
 
   render() {
@@ -51,7 +81,7 @@ export class ViewHome extends TailwindElement('') {
           </dui-button>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect using ethers</h1>
-          <dui-button sm @click=${() => this.doidConnectorEthers.connect({ noModal: true })}>
+          <dui-button sm @click=${() => this.connectEthers()}>
             <p>Connect Wallet</p>
           </dui-button>
 
