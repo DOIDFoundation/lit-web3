@@ -1,6 +1,6 @@
-import http from '@lit-web3/core/src/http'
-import { fetchNFTType } from '@lit-web3/core/src/MIMETypes'
-import { normalizeUri } from '@lit-web3/core/src/uri'
+import http from '@doid/core/src/http'
+import { fetchNFTType } from '@doid/core/src/MIMETypes'
+import { normalizeUri } from '@doid/core/src/uri'
 import { sleep, nowTs } from '../utils'
 
 export const normalize = async (data: Record<string, any>): Promise<Meta> => {

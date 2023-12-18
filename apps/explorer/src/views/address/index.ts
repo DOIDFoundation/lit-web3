@@ -1,7 +1,7 @@
 import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { screenStore } from '@lit-web3/core/src/screen'
+import { screenStore } from '@doid/core/src/screen'
 import { ownerNames } from '@lit-web3/ethers/src/nsResolver'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components

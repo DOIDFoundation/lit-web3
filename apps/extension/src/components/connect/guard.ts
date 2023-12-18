@@ -10,7 +10,7 @@ import {
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
 import popupMessenger from '~/lib.next/messenger/popup'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '@lit-web3/dui/src/button'

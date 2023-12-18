@@ -1,7 +1,7 @@
-import { DOIDConnector, options } from '@doidfoundation/connect'
+import { DOIDConnector, options } from '@doid/connect'
 import { WalletClient } from '@wagmi/core'
 import { BrowserProvider, JsonRpcSigner } from 'ethers'
-import { controller } from '@doidfoundation/connect/src/controller'
+import { controller } from '@doid/connect/src/controller'
 
 function walletClientToSigner(walletClient: WalletClient) {
   const { account, chain, transport } = walletClient

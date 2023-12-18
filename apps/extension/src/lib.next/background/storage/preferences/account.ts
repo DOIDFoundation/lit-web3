@@ -1,7 +1,7 @@
 // deps: preferences/base.ts, keyring's events
 // TODO: Is this necessary for now?  we've already stored DOIDs on KeyringController
 // import { normalize as normalizeAddress } from '@metamask/eth-sig-util'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 
 import { getPreferences } from './base'
 

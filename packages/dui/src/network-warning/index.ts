@@ -1,7 +1,7 @@
 import { customElement, TailwindElement, html, when, state, classMap } from '../shared/TailwindElement'
 import { animate } from '@lit-labs/motion'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { screenStore } from '@lit-web3/core/src/screen'
+import { screenStore } from '@doid/core/src/screen'
 // Components
 import '../link'
 

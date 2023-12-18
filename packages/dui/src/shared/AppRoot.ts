@@ -7,7 +7,7 @@ import { TailwindElement, html, customElement } from './TailwindElement'
 import type { RouteConfig } from '@lit-web3/router'
 import { fallbackRender, fallbackEnter } from './router/fallback'
 import { Router, routerGuard } from './router'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { debounce } from '@lit-web3/ethers/src/utils'
 
 import '~/variables-override.css' // -> /apps/*/src/variables-override.css

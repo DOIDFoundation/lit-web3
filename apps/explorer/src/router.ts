@@ -2,8 +2,8 @@ import { html } from 'lit'
 // import { keyed } from 'lit/directives/keyed.js'
 // import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 // import { isAddress } from 'ethers'
-// import emitter from '@lit-web3/core/src/emitter'
-// import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
+// import emitter from '@doid/core/src/emitter'
+// import { safeDecodeURIComponent } from '@doid/core/src/uri'
 
 export const routes = [
   {

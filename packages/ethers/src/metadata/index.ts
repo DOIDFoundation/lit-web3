@@ -1,5 +1,5 @@
-import http from '@lit-web3/core/src/http'
-import { normalizeUri, isInstantUri } from '@lit-web3/core/src/uri'
+import http from '@doid/core/src/http'
+import { normalizeUri, isInstantUri } from '@doid/core/src/uri'
 import { useStorage } from '../useStorage'
 import { attachSlug } from '../DOIDParser'
 import { storageOpt, normalize } from './shared'

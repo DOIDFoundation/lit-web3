@@ -1,7 +1,7 @@
 import { customElement, TailwindElement, html, state, when, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 // Components
 import '@lit-web3/dui/src/address/avatar'
 import '@lit-web3/dui/src/address/name'

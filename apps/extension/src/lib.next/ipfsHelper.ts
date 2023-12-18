@@ -2,7 +2,7 @@
 import * as IPFS from 'ipfs-core'
 import * as w3name from 'w3name'
 import { Web3Storage } from 'web3.storage'
-import http from '@lit-web3/core/src/http'
+import http from '@doid/core/src/http'
 import { HDNodeWallet, toBeArray } from 'ethers'
 
 import { keys } from '@libp2p/crypto'

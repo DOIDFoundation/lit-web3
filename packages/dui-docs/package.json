@@ -6,7 +6,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@lit-web3/core": "workspace:latest",
+    "@doid/core": "workspace:latest",
     "@lit-web3/dui": "workspace:latest"
   },
   "devDependencies": {

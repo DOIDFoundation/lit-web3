@@ -1,5 +1,5 @@
 import { TailwindElement, html, customElement, when, property, state, classMap } from '../shared/TailwindElement'
-import { screenStore, StateController } from '@lit-web3/core/src/screen'
+import { screenStore, StateController } from '@doid/core/src/screen'
 // Components
 import '../connect-wallet/btn'
 import '../block-number'

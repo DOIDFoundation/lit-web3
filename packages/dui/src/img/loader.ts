@@ -11,7 +11,7 @@ import {
   ref,
   createRef
 } from '../shared/TailwindElement'
-import { isInstantUri } from '@lit-web3/core/src/uri'
+import { isInstantUri } from '@doid/core/src/uri'
 import { LazyElement } from '../shared/LazyElement'
 import compress from './compress'
 // Styles

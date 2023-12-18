@@ -10,8 +10,8 @@ import {
   ref,
   createRef
 } from '../shared/TailwindElement'
-import { NFTType, MediaType, fetchMediaType } from '@lit-web3/core/src/MIMETypes'
-import emitter from '@lit-web3/core/src/emitter'
+import { NFTType, MediaType, fetchMediaType } from '@doid/core/src/MIMETypes'
+import emitter from '@doid/core/src/emitter'
 // Components
 import '../img/loader'
 import './video'

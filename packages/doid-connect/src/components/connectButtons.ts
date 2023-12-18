@@ -1,4 +1,4 @@
-import '@lit-web3/core/src/shims/node'
+import '@doid/core/src/shims/node'
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
@@ -12,10 +12,10 @@ import { appleSvg } from '../assets/svg/apple'
 import { facebookSvg } from '../assets/svg/facebook'
 import { twitterSvg } from '../assets/svg/twitter'
 import { githubSvg } from '../assets/svg/github'
-import iconMetamask from '../assets/icons/metamask.svg'
-import iconCoinbase from '../assets/icons/coinbase.svg'
-import iconWalletConnect from '../assets/icons/walletconnect.svg'
-import iconPuzzle from '../assets/icons/puzzle.svg'
+import iconMetamask from '../assets/icons/metamask.svg?inline'
+import iconCoinbase from '../assets/icons/coinbase.svg?inline'
+import iconWalletConnect from '../assets/icons/walletconnect.svg?inline'
+import iconPuzzle from '../assets/icons/puzzle.svg?inline'
 import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
@@ -63,7 +63,6 @@ export class DOIDConnectButtons extends LitElement {
       connectors.push(injected)
     }
     if (options.walletConnectEnabled) {
-      debugger
       let wc = new WalletConnectConnector({
         chains: options.chains,
         options: {

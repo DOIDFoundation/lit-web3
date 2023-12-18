@@ -1,4 +1,4 @@
-import shimBuffer from '@lit-web3/core/src/shims/node/buffer'
+import shimBuffer from '@doid/core/src/shims/node/buffer'
 
 let promise: any
 export default async () => {

@@ -1,7 +1,7 @@
 import { isAddress } from 'ethers'
 import getAddressEncoder from '../address-encoder'
 import uts from './uts'
-import { safeDecodeURIComponent } from '@lit-web3/core/src/uri'
+import { safeDecodeURIComponent } from '@doid/core/src/uri'
 
 export const bareTLD = (name = '') => name.replace(/\.+$/, '').replace(/\.[^.]+$/, '')
 export const wrapTLD = (name = '') => bareTLD(name) + '.doid'

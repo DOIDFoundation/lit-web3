@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { BACKGROUND_EVENTS } from '~/lib.next/constants/events'
 import { openPopup } from '~/lib.next/background/notifier'
 import { popupStorage } from '~/lib.next/background/storage/popupStorage'

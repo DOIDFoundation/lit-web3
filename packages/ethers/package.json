@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.22",
-    "@lit-web3/core": "workspace:latest",
+    "@doid/core": "workspace:latest",
     "tr46": "^4.1.1"
   },
   "devDependencies": {

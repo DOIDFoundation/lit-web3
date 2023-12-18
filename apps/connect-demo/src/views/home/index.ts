@@ -2,9 +2,9 @@ import { TailwindElement, html, until, when } from '@lit-web3/dui/src/shared/Tai
 import { customElement } from 'lit/decorators.js'
 // Components
 import icon from '@lit-web3/dui/src/i/doid.svg'
-import '@doidfoundation/connect'
-import { DOIDConnector } from '@doidfoundation/connect'
-import { DOIDConnectorEthers } from '@doidfoundation/connect-ethers'
+import '@doid/connect'
+import { DOIDConnector } from '@doid/connect'
+import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/src/input/text'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { WalletState, emitWalletChange } from '@lit-web3/ethers/src/wallet'

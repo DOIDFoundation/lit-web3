@@ -1,5 +1,5 @@
 import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { routerPathroot } from '@lit-web3/dui/src/shared/router'
 import { routes } from '~/router'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'

@@ -6,7 +6,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@lit-web3/core": "workspace:latest"
+    "@doid/core": "workspace:latest"
   },
   "devDependencies": {
     "tsup": "^7.2.0"

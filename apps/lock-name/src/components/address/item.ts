@@ -9,7 +9,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { scrollTop } from '@lit-web3/dui/src/shared/router'
 
 // Components

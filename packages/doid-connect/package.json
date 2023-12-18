@@ -1,25 +1,25 @@
 {
-  "name": "@doidfoundation/connect",
-  "version": "0.0.4",
+  "name": "@doid/connect",
+  "version": "0.1.0",
   "scripts": {
     "build": "tsup index.ts --outDir ./lib --format esm,cjs --dts --clean",
     "prepublishOnly": "npm run build"
   },
   "type": "module",
   "dependencies": {
-    "@lit-web3/core": "workspace:latest",
+    "@doid/core": "workspace:latest",
     "@shoelace-style/shoelace": "^2.12.0",
+    "@wagmi/core": "^1.4.10",
     "@web3auth/base": "^7.2.0",
     "@web3auth/ethereum-provider": "^7.2.0",
     "@web3auth/no-modal": "^7.2.0",
     "@web3auth/openlogin-adapter": "^7.2.0",
     "@web3auth/web3auth-wagmi-connector": "^5.0.1",
-    "lit": "^2.8.0"
+    "lit": "^3",
+    "viem": "^1.19.13"
   },
   "peerDependencies": {
-    "@wagmi/core": "^1.4.10",
-    "tsup": "^6",
-    "viem": "^1.19.13"
+    "tsup": "^6"
   },
   "license": "MIT"
 }

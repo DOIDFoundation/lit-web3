@@ -1,6 +1,6 @@
 import type { onMessage } from 'webext-bridge/background'
 import { ExtContext, MessageContext } from '~/lib.next/constants'
-import emitter, { EventEmitter } from '@lit-web3/core/src/emitter'
+import emitter, { EventEmitter } from '@doid/core/src/emitter'
 import { logger } from '~/lib.next/logger'
 
 export class Messenger implements MESSENGER {

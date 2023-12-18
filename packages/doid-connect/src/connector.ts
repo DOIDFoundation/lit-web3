@@ -1,6 +1,6 @@
 import { updateChains, updateOptions } from './options'
 import { controller } from './controller'
-import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
+import { Chain, ConnectorData, WalletClient } from '@wagmi/core'
 import { DOIDConnectDialog } from './connectDialog'
 import { StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
@@ -32,7 +32,9 @@ export class DOIDConnector {
 
   public getDOID = controller.getDOID.bind(controller)
   public getDOIDAddress = controller.getDOIDAddress.bind(controller)
-  public getWalletClient = controller.getWalletClient.bind(controller)
+  public getWalletClient(chainId?: number): Promise<WalletClient> {
+    return controller.getWalletClient(chainId)
+  }
   public updateOptions = updateOptions
   public updateChains = updateChains
   public disconnect = controller.disconnect.bind(controller)

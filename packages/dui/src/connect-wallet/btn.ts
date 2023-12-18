@@ -1,6 +1,6 @@
 import { customElement, TailwindElement, html, state, when, property, classMap } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 // Components
 import './dialog'
 import '../address'

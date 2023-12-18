@@ -1,6 +1,6 @@
 // src: metamask-extension/app/scripts/platforms/extension.js
 import browser, { Tabs } from 'webextension-polyfill'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { routerGuard } from '@lit-web3/dui/src/shared/router'
 
 // Simple assert

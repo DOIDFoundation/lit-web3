@@ -1,7 +1,7 @@
 import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { routerPathname } from '@lit-web3/dui/src/shared/router'
 import '~/views/home'
 // Components

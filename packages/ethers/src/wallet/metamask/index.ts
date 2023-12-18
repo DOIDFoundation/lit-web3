@@ -1,9 +1,9 @@
 import MetaMaskOnboarding from './metamask-onboarding'
 import { getAddress } from 'ethers'
-import { emitErr } from '@lit-web3/core/src/emitter'
+import { emitErr } from '@doid/core/src/emitter'
 import { WalletState, emitWalletChange } from '../../wallet'
 import detectEthereum, { getChainId, getAccounts } from '../../detectEthereum'
-import screen from '@lit-web3/core/src/screen'
+import screen from '@doid/core/src/screen'
 
 class MetaMask implements Wallet {
   public onboarding: any

@@ -1,4 +1,4 @@
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 
 type Migration = Record<string, any>
 

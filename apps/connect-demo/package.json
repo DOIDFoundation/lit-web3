@@ -9,9 +9,9 @@
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
-    "@doidfoundation/connect": "workspace:latest",
-    "@doidfoundation/connect-ethers": "workspace:latest",
-    "@lit-web3/core": "workspace:latest",
+    "@doid/connect": "workspace:latest",
+    "@doid/connect-ethers": "workspace:latest",
+    "@doid/core": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest"
   },

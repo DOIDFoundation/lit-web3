@@ -11,7 +11,7 @@ import './register'
 import './details'
 
 import style from './name.css?inline'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 @customElement('view-name')
 export class ViewName extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)

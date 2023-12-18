@@ -1,6 +1,6 @@
 import { Wallet, keccak256, hexlify, toUtf8Bytes } from 'ethers'
 import { createKeyPair, sign } from '@erebos/secp256k1'
-import jsonRpcRequest from '@lit-web3/core/src/http/jsonRpcRequest'
+import jsonRpcRequest from '@doid/core/src/http/jsonRpcRequest'
 import { defaultNetwork } from '@lit-web3/doids/src/networks'
 import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { getEVMProvider } from '~/services/EVM/daemon'

@@ -1,5 +1,5 @@
 {
-  "name": "@doidfoundation/connect-ethers",
+  "name": "@doid/connect-ethers",
   "version": "0.0.1",
   "scripts": {
     "build": "tsup index.ts --outDir ./lib --format esm,cjs --dts --clean",
@@ -7,7 +7,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@doidfoundation/connect": "workspace:latest",
+    "@doid/connect": "workspace:latest",
     "@wagmi/core": "^1.4.12"
   },
   "peerDependencies": {

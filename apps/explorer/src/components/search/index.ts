@@ -2,7 +2,7 @@ import { TailwindElement, html, when, customElement, ref } from '@lit-web3/dui/s
 import { property, state } from 'lit/decorators.js'
 // import { searchStore, StateController } from './store'
 // import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
-// import emitter from '@lit-web3/core/src/emitter'
+// import emitter from '@doid/core/src/emitter'
 // import { wrapTLD, checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 // import { ValidateDOIDName } from '../validator/doid-name'
 // Components

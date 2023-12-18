@@ -1,6 +1,6 @@
 import { getKeyring } from '~/lib.next/keyring'
 import { ConnectsStorage } from '~/lib.next/background/storage/preferences'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 import { requestUnlock } from './unlock'
 import { names2DOIDs } from '~/services/shared'
 

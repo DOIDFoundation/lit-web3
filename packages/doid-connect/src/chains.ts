@@ -1,10 +1,8 @@
-import { defineChain } from 'viem'
+import { Chain, defineChain } from 'viem'
 import { fantomTestnet, goerli } from 'viem/chains'
 
-export * from '@wagmi/core/chains'
-
 // not ready yet
-export const doid = defineChain({
+export const doid: Chain = defineChain({
   ...goerli,
   contracts: {
     ...goerli.contracts,
@@ -16,7 +14,7 @@ export const doid = defineChain({
   }
 })
 
-export const doidTestnet = defineChain({
+export const doidTestnet: Chain = defineChain({
   ...fantomTestnet,
   contracts: {
     ...fantomTestnet.contracts,

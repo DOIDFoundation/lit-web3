@@ -10,7 +10,7 @@ import {
 } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import Network, { Networks } from '@lit-web3/ethers/src/networks'
-import emitter from '@lit-web3/core/src/emitter'
+import emitter from '@doid/core/src/emitter'
 // Components
 import '../dialog'
 import './state'
