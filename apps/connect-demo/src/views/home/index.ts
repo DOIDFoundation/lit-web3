@@ -56,38 +56,42 @@ export class ViewHome extends TailwindElement('') {
           </dui-button>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with Web3Auth</h1>
+          <dui-button sm class="mr-2" @click=${() => this.doidConnector.updateOptions({ web3AuthEnabled: true })}>
+            <p>Enable Web3Auth</p>
+          </dui-button>
+          <dui-button sm @click=${() => this.doidConnector.connect()}>
+            <p>Connect Wallet</p>
+          </dui-button>
           <dui-input-text
             id="web3authClientId"
             sm
             placeholder="Web3Auth ClientId"
-            class="max-w-sm flex mb-2"
+            class="max-w-sm flex my-2"
           ></dui-input-text>
           <dui-button
             sm
             @click=${() => this.doidConnector.updateOptions({ web3AuthClientId: this.$('#web3authClientId').value })}
-            class="mr-2"
           >
             <p>Set Web3Auth ClientId</p>
+          </dui-button>
+          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with WalletConnect</h1>
+          <dui-button sm class="mr-2" @click=${() => this.doidConnector.updateOptions({ walletConnectEnabled: true })}>
+            <p>Enable WalletConnect</p>
           </dui-button>
           <dui-button sm @click=${() => this.doidConnector.connect()}>
             <p>Connect Wallet</p>
           </dui-button>
-          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with WalletConnect</h1>
           <dui-input-text
             id="walletConnectId"
             sm
             placeholder="WalletConnect Project ID"
-            class="max-w-sm flex mb-2"
+            class="max-w-sm flex my-2"
           ></dui-input-text>
           <dui-button
             sm
             @click=${() => this.doidConnector.updateOptions({ walletConnectId: this.$('#walletConnectId').value })}
-            class="mr-2"
           >
             <p>Set WalletConnect Project Id</p>
-          </dui-button>
-          <dui-button sm @click=${() => this.doidConnector.connect()}>
-            <p>Connect Wallet</p>
           </dui-button>
         </div>
       </div>

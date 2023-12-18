@@ -1,0 +1,19 @@
+:host {
+  img {
+    @apply object-contain select-none pointer-events-none;
+  }
+  .button-container {
+    @apply flex justify-center space-x-2;
+
+    sl-button {
+      --sl-input-border-width: 2px;
+      --sl-spacing-medium: 0;
+      img {
+        @apply w-6 h-6 mt-1.5;
+      }
+      svg {
+        @apply w-9 h-9;
+      }
+    }
+  }
+}

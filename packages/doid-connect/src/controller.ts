@@ -131,9 +131,9 @@ export class Controller extends State {
       const reason = hexToString(`0x${code.substring(138)}`)
       throw new Error(reason)
     }
-    const name_ = await this.getDOID(address)
-    if (name_ != name) throw new Error(`fatal: ${address} is not resolved to ${name}`)
-    return name
+    const expect = name + '.doid'
+    if ((await this.getDOID(address)) != expect) throw new Error(`fatal: ${address} is not resolved to ${expect}`)
+    return expect
   }
 
   private setAccount(data: ConnectorData): Promise<ConnectorData> {
@@ -150,7 +150,7 @@ export class Controller extends State {
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorData> {
     if (!connector) {
-      connector = new InjectedConnector({ chains: options.chains })
+      connector = this.connector ?? new InjectedConnector({ chains: options.chains })
     }
     let onConnect = (data: WagmiConnectorData) => {
       this.connector = connector
