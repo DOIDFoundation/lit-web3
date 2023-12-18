@@ -56,13 +56,13 @@ export class DOIDConnector extends EventEmitter {
   } = {}): Promise<ConnectorData> {
     if (noModal) return controller.connect({ chainId })
 
-    return new Promise<Required<ConnectorData>>(async (resolve, reject) => {
+    return new Promise<ConnectorData>(async (resolve, reject) => {
       await Promise.all([import('./connectDialog')])
       const modal = document.createElement('doid-connect-dialog') as DOIDConnectDialog
       modal.chainId = chainId
       document.body.insertAdjacentElement('beforeend', modal)
-      modal.on('connect', (ret: any) => resolve(ret))
-      modal.on('error', (err: any) => reject(err))
+      modal.on('connect', (event) => resolve(event.detail))
+      modal.on('error', (event) => reject(event.detail))
     })
   }
 }

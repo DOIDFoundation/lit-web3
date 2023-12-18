@@ -74,8 +74,8 @@ export class DOIDSignup extends LitElement {
       this.showConnect = true
       this.updateComplete.then(() => {
         this.connectButtonsRef.value?.on('connect', () => this.register())
-        this.connectButtonsRef.value?.on('error', (err) => {
-          if (err instanceof ErrNotRegistered) {
+        this.connectButtonsRef.value?.on('error', (event) => {
+          if (event.detail instanceof ErrNotRegistered) {
             this.register()
           }
         })
