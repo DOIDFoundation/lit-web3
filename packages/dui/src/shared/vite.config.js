@@ -1,22 +1,26 @@
-const { resolve } = require('node:path')
-// const glob = require('glob')
-const { defineConfig, splitVendorChunkPlugin, normalizePath } = require('vite')
+import path, { resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+import { defineConfig, splitVendorChunkPlugin, normalizePath } from 'vite'
 //
-const { VitePWA } = require('vite-plugin-pwa')
-const { createHtmlPlugin } = require('vite-plugin-html')
-const { viteStaticCopy } = require('vite-plugin-static-copy')
-const { default: minifyHTMLLiterals } = require('rollup-plugin-minify-html-literals')
-const { config } = require('dotenv')
+import { VitePWA } from 'vite-plugin-pwa'
+import { createHtmlPlugin } from 'vite-plugin-html'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
+import minifyHTMLLiterals from 'rollup-plugin-minify-html-literals'
+import { config } from 'dotenv'
 // Polyfills
-const { default: legacy } = require('@vitejs/plugin-legacy')
-const { default: mkcert } = require('vite-plugin-mkcert')
+import legacy from '@vitejs/plugin-legacy'
+import mkcert from 'vite-plugin-mkcert'
 
 // Env
 config()
+const cwd = process.cwd()
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const { env } = process
+const [pathRoot, pathSrc] = [env.INIT_CWD, resolve(cwd, './src')]
 const appTitle = env.VITE_APP_TITLE || env.VITE_APP_NAME || env.npm_package_name
-const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.1.96/css/materialdesignicons.min.css"/>`
+const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7/css/materialdesignicons.min.css"/>`
 
 const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
@@ -24,7 +28,8 @@ const define = {
   global: 'globalThis'
 }
 
-const viteConfig = (options = {}) => {
+export const viteConfig = (options = {}) => {
+  const shimNode = (s) => resolve(__dirname, '../../../core/src/shims/node', s)
   const { server: { https = true } = {}, viteConfigOptions = {} } = options
   return ({ mode = '' }) => {
     const isDev = mode === 'development'
@@ -42,9 +47,13 @@ const viteConfig = (options = {}) => {
       },
       resolve: {
         alias: {
-          '~': resolve(process.cwd(), './src'),
+          '~': pathSrc + '/',
           // bugfix: crypto-addr-codec@0.1.7
-          'crypto-addr-codec': 'crypto-addr-codec/dist/index.js'
+          'crypto-addr-codec': 'crypto-addr-codec/dist/index.js',
+          // Node Shims
+          stream: shimNode('stream.ts'),
+          util: shimNode('util.js'),
+          assert: shimNode('assert.js')
         }
       },
       build: {
@@ -52,7 +61,7 @@ const viteConfig = (options = {}) => {
         rollupOptions: {
           // external: /^lit/
           // input: {
-          //   main: resolve(process.cwd(), 'index.html')
+          //   main: resolve(cwd, 'index.html')
           // }
         }
       },
@@ -62,7 +71,7 @@ const viteConfig = (options = {}) => {
       },
       plugins: [
         ...(https ? [mkcert()] : []),
-        minifyHTMLLiterals(),
+        minifyHTMLLiterals.default(),
         ...(viteConfigOptions.splitChunk === false ? [] : [splitVendorChunkPlugin()]),
         ...(viteConfigOptions.html === false
           ? []
@@ -137,12 +146,15 @@ const viteConfig = (options = {}) => {
         ...(viteConfigOptions.legacy === false
           ? []
           : [
-              //TODO: Disabled for `BigInt` error (@vitejs/plugin-legacy@4.1.1)
+              //TODO: Disabled for `BigInt` error (@vitejs/plugin-legacy@5.2.0)
               // legacy({
               //   polyfills: ['web.url', 'es.object.from-entries']
               // })
             ])
-      ]
+      ],
+      optimizeDeps: {
+        include: []
+      }
     }
     // options (shallow merge)
     const merge = (src, dest) => {
@@ -163,4 +175,4 @@ const viteConfig = (options = {}) => {
   }
 }
 
-module.exports = { viteConfig }
+export default { viteConfig }

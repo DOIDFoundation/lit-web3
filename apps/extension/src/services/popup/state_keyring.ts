@@ -1,7 +1,7 @@
 import backgroundMessenger from '~/lib.next/messenger/background'
 import { getKeyring } from '~/lib.next/keyring'
-import { ConnectsStorage } from '~/lib.next/background/storage/preferences'
-import { DOIDBodyParser, getDOIDs, assignConnects, getMultiChainAddress } from '~/middlewares'
+import { ConnectsStorage, networkStorage } from '~/lib.next/background/storage/preferences'
+import { DOIDBodyParser, getDOIDs, assignConnects, assignNetworks, getMultiChainAddress } from '~/middlewares'
 
 // Re-emit keyring events (emitted from ~/lib.next/keyring)
 const evtMap: Record<string, string> = {
@@ -19,7 +19,6 @@ export const internal_isunlock: BackgroundService = {
   middlewares: [],
   fn: async ({ res }) => {
     res.body = (await getKeyring()).isUnlocked
-    backgroundMessenger.log('is unlocked:', res.body)
   }
 }
 
@@ -28,7 +27,6 @@ export const internal_isinitialized: BackgroundService = {
   middlewares: [],
   fn: async ({ res }) => {
     res.body = (await getKeyring()).isInitialized
-    backgroundMessenger.log('is initialized:', res.body)
   }
 }
 
@@ -73,7 +71,6 @@ export const internal_getConnects: BackgroundService = {
     res.body = { connects }
   }
 }
-
 export const internal_connects_set: BackgroundService = {
   method: 'internal_connects_set',
   middlewares: [],
@@ -90,6 +87,32 @@ export const internal_connects_select: BackgroundService = {
   fn: async ({ req, res }) => {
     const { host, name } = req.body
     await ConnectsStorage.select(host, name)
+    res.body = 'ok'
+  }
+}
+
+export const internal_getNetworks: BackgroundService = {
+  method: 'internal_getNetworks',
+  middlewares: [assignNetworks],
+  fn: async ({ res, state }) => {
+    const { networks } = state
+    res.body = { networks }
+  }
+}
+export const internal_setNetworks: BackgroundService = {
+  method: 'internal_setNetworks',
+  middlewares: [],
+  fn: async ({ req, res }) => {
+    const { networks } = req.body
+    await networkStorage.set(networks)
+    res.body = 'ok'
+  }
+}
+export const internal_resetNetworks: BackgroundService = {
+  method: 'internal_resetNetworks',
+  middlewares: [],
+  fn: async ({ res }) => {
+    await networkStorage.reset()
     res.body = 'ok'
   }
 }

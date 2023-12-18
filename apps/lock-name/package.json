@@ -1,6 +1,7 @@
 {
   "name": "@lit-web3/lock-name",
   "version": "0.5.9",
+  "type": "module",
   "description": "",
   "private": true,
   "scripts": {

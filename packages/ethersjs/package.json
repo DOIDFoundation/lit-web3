@@ -1,0 +1,15 @@
+{
+  "name": "@lit-web3/ethersjs",
+  "version": "0.9.2",
+  "scripts": {
+    "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "tsup": "^7.2.0"
+  },
+  "peerDependencies": {
+    "ethers": "^6"
+  },
+  "license": "MIT"
+}

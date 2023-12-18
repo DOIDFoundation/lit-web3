@@ -1,7 +1,7 @@
 // Inpage Provider
 import { initialize } from '@lit-web3/solana-wallet-standard/src'
 import { WalletEvent, DOIDSolana } from '@lit-web3/solana-wallet-standard/src/window'
-import { PublicKey, Transaction, VersionedTransaction, SendOptions } from '@solana/web3.js'
+import { PublicKey, Transaction, VersionedTransaction, SendOptions } from '~/services/Solana/solana-web3'
 import inpageMessenger from '~/lib.next/messenger/inpage'
 import { EventEmitter } from 'eventemitter3'
 import { decodeBase58, encodeBase58, toBeArray } from 'ethers'

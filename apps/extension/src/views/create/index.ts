@@ -20,7 +20,7 @@ import '~/components/phrase'
 import '~/components/pwd-equal'
 
 import style from './create.css?inline'
-import { AddressType, phraseToAddress } from '~/lib.next/keyring/phrase'
+import { phraseToAddress } from '~/lib.next/keyring/phrase'
 import // assignOverrides,
 // getABI,
 // getBridgeProvider,
@@ -83,7 +83,7 @@ export class ViewHome extends TailwindElement(style) {
   }
 
   onConfirmPhrase = async () => {
-    let address = await phraseToAddress(this.phrase, AddressType.eth)
+    let address = await phraseToAddress(this.phrase, 'ethereum')
     if (!address || typeof address != 'string' || !this.doid) return
     this.address = address
     if (await popupMessenger.send('internal_isinitialized')) {
@@ -101,7 +101,7 @@ export class ViewHome extends TailwindElement(style) {
       let addresses = (await phraseToAddress(this.phrase)) as MultiChainAddresses
       let wallet = Wallet.fromPhrase(this.phrase)
       let mainAddress = await wallet.getAddress()
-      if (mainAddress.toLowerCase() != addresses[AddressType.eth].toLowerCase())
+      if (mainAddress.toLowerCase() != addresses['ethereum'].toLowerCase())
         throw new Error('Internal Error: Addresses generated differs')
 
       // const name = await ipfsHelper._getIPNSNameFromStorage(this.phrase)
@@ -195,52 +195,54 @@ export class ViewHome extends TailwindElement(style) {
           [
             [
               Steps.EnterPhrase,
-              () => html`<doid-symbol sm class="block mt-12"> </doid-symbol>
-                <div class="my-4 text-xs">
-                  You are trying to create
-                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
-                </div>
-                <div class="my-4 text-xs">Enter your Secret Recovery Phrase</div>
-                <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
-                <div class="my-4 text-xs">
-                  This Secret Recovery Phrase will be used to create your DOID name and generate Main Addresses.
-                </div>
-                <div class="my-2 text-center">or</div>
-                <dui-button text class="w-full my-2" @click=${() => goto(`/generate-phrase`)}
-                  >Generate a Secret Recovery Phrase</dui-button
-                >
-                <div class="mt-4 flex justify-between">
-                  <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-                    ><i class="mdi mdi-arrow-left text-gray-500"></i
-                  ></dui-button>
-                  <dui-button
-                    ?disabled=${this.btnNextDisabled}
-                    @click=${this.onConfirmPhrase}
-                    class="secondary !rounded-full h-12 w-12"
-                    ><i class="mdi mdi-arrow-right"></i
-                  ></dui-button>
-                </div> `
+              () =>
+                html`<doid-symbol sm class="block mt-12"> </doid-symbol>
+                  <div class="my-4 text-xs">
+                    You are trying to create
+                    <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
+                  </div>
+                  <div class="my-4 text-xs">Enter your Secret Recovery Phrase</div>
+                  <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
+                  <div class="my-4 text-xs">
+                    This Secret Recovery Phrase will be used to create your DOID name and generate Main Addresses.
+                  </div>
+                  <div class="my-2 text-center">or</div>
+                  <dui-button text class="w-full my-2" @click=${() => goto(`/generate-phrase`)}
+                    >Generate a Secret Recovery Phrase</dui-button
+                  >
+                  <div class="mt-4 flex justify-between">
+                    <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                      ><i class="mdi mdi-arrow-left text-gray-500"></i
+                    ></dui-button>
+                    <dui-button
+                      ?disabled=${this.btnNextDisabled}
+                      @click=${this.onConfirmPhrase}
+                      class="secondary !rounded-full h-12 w-12"
+                      ><i class="mdi mdi-arrow-right"></i
+                    ></dui-button>
+                  </div> `
             ],
             [
               Steps.EnterPassword,
-              () => html`<doid-symbol class="block mt-12">
-                  <span slot="h1" class="text-base">Create password</span>
-                </doid-symbol>
-                <div class="my-4 text-xs">
-                  This password will unlock your DOID name(s) only on this device. DOID can not recover this password.
-                </div>
-                <pwd-equal class="mt-8" @change=${this.onPwdChange} @submit=${this.onConfirmCreation}></pwd-equal>
-                <div class="mt-4 flex justify-between">
-                  <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-                    ><i class="mdi mdi-arrow-left text-gray-500"></i
-                  ></dui-button>
-                  <dui-button
-                    ?disabled=${this.btnNextDisabled}
-                    @click=${this.onConfirmCreation}
-                    class="secondary !rounded-full h-12 w-12"
-                    ><i class="mdi mdi-arrow-right"></i
-                  ></dui-button>
-                </div> `
+              () =>
+                html`<doid-symbol class="block mt-12">
+                    <span slot="h1" class="text-base">Create password</span>
+                  </doid-symbol>
+                  <div class="my-4 text-xs">
+                    This password will unlock your DOID name(s) only on this device. DOID can not recover this password.
+                  </div>
+                  <pwd-equal class="mt-8" @change=${this.onPwdChange} @submit=${this.onConfirmCreation}></pwd-equal>
+                  <div class="mt-4 flex justify-between">
+                    <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                      ><i class="mdi mdi-arrow-left text-gray-500"></i
+                    ></dui-button>
+                    <dui-button
+                      ?disabled=${this.btnNextDisabled}
+                      @click=${this.onConfirmCreation}
+                      class="secondary !rounded-full h-12 w-12"
+                      ><i class="mdi mdi-arrow-right"></i
+                    ></dui-button>
+                  </div> `
             ],
             [
               Steps.CreateConfirm,
@@ -261,51 +263,55 @@ export class ViewHome extends TailwindElement(style) {
             ],
             [
               Steps.WaitTX,
-              () => html`<doid-symbol class="block mt-12"> </doid-symbol>
-                <div class="my-4 text-sm">
-                  You are creating
-                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
-                </div>
-                <div class="my-4 text-sm">With account ${this.address}</div>
+              () =>
+                html`<doid-symbol class="block mt-12"> </doid-symbol>
+                  <div class="my-4 text-sm">
+                    You are creating
+                    <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
+                  </div>
+                  <div class="my-4 text-sm">With account ${this.address}</div>
 
-                ${when(
-                  this.txPending,
-                  () => html`<i class="mdi mdi-loading"></i>
-                    <div class="my-4 text-sm">Waiting for transaction confirmation...</div>
-                    <div class="my-4 text-sm">
-                      <dui-link class="link ml-1 underline" .href=${this.txUrl}
-                        >View transaction <i class="mdi mdi-open-in-new"></i
-                      ></dui-link>
-                    </div>`
-                )}`
+                  ${when(
+                    this.txPending,
+                    () =>
+                      html`<i class="mdi mdi-loading"></i>
+                        <div class="my-4 text-sm">Waiting for transaction confirmation...</div>
+                        <div class="my-4 text-sm">
+                          <dui-link class="link ml-1 underline" .href=${this.txUrl}
+                            >View transaction <i class="mdi mdi-open-in-new"></i
+                          ></dui-link>
+                        </div>`
+                  )}`
             ],
             [
               Steps.Error,
-              () => html`<doid-symbol class="block mt-12"> </doid-symbol>
-                <div class="my-4 text-sm">
-                  Failed to create
-                  <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
-                </div>
-                <div class="my-4 text-sm">With ETH account ${this.address}(ETH)</div>
-                <div class="my-4 text-sm"><span class="text-red-500">${this.err}</span></div>
-                ${when(
-                  this.transaction?.hash,
-                  () => html`<div class="my-4 text-sm">
-                    <dui-link class="link ml-1 underline" .href=${this.txUrl}
-                      >View transaction <i class="mdi mdi-open-in-new"></i
-                    ></dui-link>
-                  </div>`
-                )}
-                <div class="mt-4 flex justify-between">
-                  <dui-button
-                    @click=${() => this.stepTo(Steps.CreateConfirm)}
-                    class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-                    ><i class="mdi mdi-arrow-left text-gray-500"></i
-                  ></dui-button>
-                  <dui-button disabled class="secondary !rounded-full h-12 w-12"
-                    ><i class="mdi mdi-arrow-right"></i
-                  ></dui-button>
-                </div> `
+              () =>
+                html`<doid-symbol class="block mt-12"> </doid-symbol>
+                  <div class="my-4 text-sm">
+                    Failed to create
+                    <dui-link class="uri ml-1 underline">${this.wrapName}</dui-link>
+                  </div>
+                  <div class="my-4 text-sm">With ETH account ${this.address}(ETH)</div>
+                  <div class="my-4 text-sm"><span class="text-red-500">${this.err}</span></div>
+                  ${when(
+                    this.transaction?.hash,
+                    () =>
+                      html`<div class="my-4 text-sm">
+                        <dui-link class="link ml-1 underline" .href=${this.txUrl}
+                          >View transaction <i class="mdi mdi-open-in-new"></i
+                        ></dui-link>
+                      </div>`
+                  )}
+                  <div class="mt-4 flex justify-between">
+                    <dui-button
+                      @click=${() => this.stepTo(Steps.CreateConfirm)}
+                      class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                      ><i class="mdi mdi-arrow-left text-gray-500"></i
+                    ></dui-button>
+                    <dui-button disabled class="secondary !rounded-full h-12 w-12"
+                      ><i class="mdi mdi-arrow-right"></i
+                    ></dui-button>
+                  </div> `
             ]
           ],
           () =>

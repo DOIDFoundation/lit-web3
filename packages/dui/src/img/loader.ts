@@ -13,7 +13,7 @@ import {
 } from '../shared/TailwindElement'
 import { isInstantUri } from '@lit-web3/core/src/uri'
 import { LazyElement } from '../shared/LazyElement'
-import comporess from './compress'
+import compress from './compress'
 // Styles
 import style from './loader.css?inline'
 
@@ -42,12 +42,12 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
   get isResizableSrc() {
     return this.src && /\?(w|width)=/.test(this.src)
   }
-  get requireComporess() {
+  get requireCompress() {
     return !this.isResizableSrc && !this.isInstantSrc && !this.blobSrc
   }
   get uri() {
     if (this.err || !this.show) return
-    return this.requireComporess ? this.blobSrc : this.src
+    return this.requireCompress ? this.blobSrc : this.src
   }
   get empty() {
     return !(this.src || this.blobSrc) || !(this.uri || this.uriset)
@@ -74,8 +74,8 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
   }
 
   protected shouldUpdate(props: Map<PropertyKey, unknown>): boolean {
-    if (props.has('src') && this.requireComporess) {
-      if (this.src) comporess(this.src).then((src) => (this.blobSrc = src))
+    if (props.has('src') && this.requireCompress) {
+      if (this.src) compress(this.src).then((src) => (this.blobSrc = src))
     }
     return true
   }
@@ -91,14 +91,15 @@ export class ImgLoader extends LazyElement(TailwindElement(style)) {
       class="${classMap({ loaded: this.firstLoaded, err: this.err, empty: this.empty, stop: this.stop })}"
       >${when(
         this.isResizableSrc ? this.uriset : this.uri,
-        () => html`<img
-          class="${classMap({ invisible: !this.firstLoaded, 'opacity-0': !this.firstLoaded })}"
-          src=${ifDefined(this.uri)}
-          srcset=${ifDefined(this.uriset)}
-          sizes=${ifDefined(this.autoSizes)}
-          @load=${this.onLoad}
-          @error=${this.onError}
-        />`
+        () =>
+          html`<img
+            class="${classMap({ invisible: !this.firstLoaded, 'opacity-0': !this.firstLoaded })}"
+            src=${ifDefined(this.uri)}
+            srcset=${ifDefined(this.uriset)}
+            sizes=${ifDefined(this.autoSizes)}
+            @load=${this.onLoad}
+            @error=${this.onError}
+          />`
       )}</i
     >`
   }

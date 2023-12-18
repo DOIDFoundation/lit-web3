@@ -1,3 +1,9 @@
+.bar {
+  @apply bg-gray-300;
+}
 .per {
-  background: linear-gradient(90deg, rgb(96, 184, 100) 0%, rgb(76, 175, 80) 100%);
+  @apply bg-green-600;
+  &.state {
+    background: linear-gradient(90deg, rgb(96, 184, 100) 0%, rgb(76, 175, 80) 100%);
+  }
 }

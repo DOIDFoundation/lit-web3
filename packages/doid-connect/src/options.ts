@@ -1,3 +1,4 @@
+import '@lit-web3/core/src/shims/node'
 import { Chain, mainnet, sepolia, doid, doidTestnet } from './chains'
 import { OPENLOGIN_NETWORK_TYPE as WEB3AUTH_NETWORK_TYPE } from '@web3auth/base'
 import { LOGIN_PROVIDER_TYPE as WEB3AUTH_PROVIDER_TYPE } from '@web3auth/openlogin-adapter'

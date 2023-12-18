@@ -8,8 +8,8 @@ import '../link'
 import style from './network-warning.css?inline'
 @customElement('network-warning')
 export class NetworkWarning extends TailwindElement(style) {
-  bindBridge: any = new StateController(this, bridgeStore)
-  bindScreen: any = new StateController(this, screenStore)
+  bindBridge = new StateController(this, bridgeStore)
+  bindScreen = new StateController(this, screenStore)
   @state() pending = false
 
   get bridge() {
@@ -19,7 +19,7 @@ export class NetworkWarning extends TailwindElement(style) {
     return this.bridge.network
   }
   get txt() {
-    if (this.network.unSupported) `Please connect to the Mainnet}.`
+    if (this.network.unSupported) `Please connect to the Mainnet.`
     if (this.network.mainnetOffline) return `Mainnet is not supported yet`
     if (!this.network.isMainnet) return `Note: You are currently connected to the ${this.bridge.network.title}`
     return ''

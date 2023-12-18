@@ -12,16 +12,19 @@ export class DuiTip extends TailwindElement('') {
   }
   onClose() {
     this.model = false
+    this.emit('close')
   }
 
   override render() {
-    return html`<dui-button @click=${this.show} sm icon
-        ><i class="text-base mdi mdi-help-circle-outline cursor-pointer"></i></dui-button
+    return html`<slot name="button" @click=${this.show}
+        ><dui-button icon
+          ><slot name="icon"><i class="mdi mdi-help-circle-outline cursor-pointer"></i></slot></dui-button></slot
       >${when(
         this.model,
-        () => html`<dui-prompt @close=${this.onClose}>
-          <slot></slot>
-        </dui-prompt>`
+        () =>
+          html`<dui-prompt @close=${this.onClose}>
+            <slot></slot>
+          </dui-prompt>`
       )}`
   }
 }

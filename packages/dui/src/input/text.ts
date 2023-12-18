@@ -51,8 +51,10 @@ export class DuiInputText extends TailwindElement(style) {
 
   firstUpdated() {
     if (this.autofocus) {
-      const $input = this.$('input')
-      $input!.focus()
+      setTimeout(() => {
+        const $input = this.$('input')
+        $input!.focus()
+      }, 100)
     }
   }
 

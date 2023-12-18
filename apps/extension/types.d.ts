@@ -68,11 +68,3 @@ declare module globalThis {
   var isFirstTimeProfileLoaded: boolean
 }
 declare module '@metamask/eth-keyring-controller'
-
-declare type ChainNet = {
-  name: string
-  title: string
-  icon?: string
-  coin?: string
-  color?: string
-}

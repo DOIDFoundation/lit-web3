@@ -31,7 +31,7 @@ export class dappMethodDoidSubcribe extends TailwindElement(style) {
   render() {
     return html`<div class="my-2">
       <p class="my-2">{ method: 'DOID_subscribe' } received messages:</p>
-      <textarea class="w-80 h-32 border">${html`${this.msgs.map((msg) => JSON.stringify(msg))}`}</textarea>
+      <textarea class="w-96 h-32 border">${html`${this.msgs.map((msg) => JSON.stringify(msg))}`}</textarea>
     </div>`
   }
 }

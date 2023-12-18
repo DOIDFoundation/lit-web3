@@ -3,8 +3,10 @@ let promise: any
 export default () => {
   return (
     promise ??
-    (promise = new Promise(async (resolve) =>
-      resolve(globalThis.Buffer ?? (globalThis.Buffer = (await import('buffer')).Buffer))
-    ))
+    (promise = new Promise(async (resolve) => {
+      if (!('Buffer' in globalThis))
+        Object.defineProperty(globalThis, 'Buffer', { value: (await import('./buffer.es6.js')).Buffer })
+      resolve(globalThis.Buffer)
+    }))
   )
 }

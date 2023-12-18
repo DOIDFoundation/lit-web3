@@ -52,6 +52,6 @@ export default defineManifest({
     matches: ['https://doid.tech/*'],
     ids: ['*']
   },
-  web_accessible_resources: [{ resources: ['public/inpage.js'], matches }, defineDynamicResource({ matches })],
+  web_accessible_resources: [{ resources: [], matches }, defineDynamicResource({ matches })],
   minimum_chrome_version: '80'
 })

@@ -5,8 +5,10 @@ declare module '*.css'
 declare module '*.css?inline'
 declare module '*.html'
 declare module '*.js'
-declare module '*.cjs'
 declare module '*.wasm'
+declare module '*.svg' {
+  export default SVGElement
+}
 //
 declare module 'safe-decode-uri-component'
 //

@@ -5,17 +5,16 @@
     "build": "tsup index.ts --outDir ./lib --format esm,cjs --dts --clean",
     "prepublishOnly": "npm run build"
   },
-  "main": "index.js",
-  "module": "index.js",
   "type": "module",
   "dependencies": {
-    "@shoelace-style/shoelace": "^2.9.0",
+    "@lit-web3/core": "workspace:latest",
+    "@shoelace-style/shoelace": "^2.12.0",
     "@web3auth/base": "^7.2.0",
     "@web3auth/ethereum-provider": "^7.2.0",
     "@web3auth/no-modal": "^7.2.0",
     "@web3auth/openlogin-adapter": "^7.2.0",
     "@web3auth/web3auth-wagmi-connector": "^5.0.1",
-    "lit": "^2.7.6"
+    "lit": "^2.8.0"
   },
   "peerDependencies": {
     "@wagmi/core": "^1.4.10",

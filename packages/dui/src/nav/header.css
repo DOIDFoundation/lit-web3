@@ -9,16 +9,19 @@
   }
 }
 .dui-header,
-.dui-header-placehodler {
+.dui-header-placeholder {
   @apply float-left w-full;
   height: var(--headerH);
-  background: var(--bg2);
   &::part(connect-wallet-btn) {
     @apply text-xs;
   }
 }
+.dui-header {
+  background: var(--bg2);
+}
 .dui-header.fixed {
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+  max-width: var(--appMaxW);
 }
 
 .nav-menu-btn-1,

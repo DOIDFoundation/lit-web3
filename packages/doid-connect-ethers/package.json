@@ -5,12 +5,10 @@
     "build": "tsup index.ts --outDir ./lib --format esm,cjs --dts --clean",
     "prepublishOnly": "npm run build"
   },
-  "main": "index.js",
-  "module": "index.js",
   "type": "module",
   "dependencies": {
     "@doidfoundation/connect": "workspace:latest",
-    "@wagmi/core": "^1.4.10"
+    "@wagmi/core": "^1.4.12"
   },
   "peerDependencies": {
     "ethers": "^6",

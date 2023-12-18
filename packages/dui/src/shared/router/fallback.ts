@@ -1,4 +1,4 @@
-import type { Router, Routes } from '@lit-labs/router'
+import type { Router, Routes } from '@lit-web3/router'
 import { html } from 'lit'
 
 export const fallbackRender = () => html`<span class="p-9 block text-center">Not Found</span>`

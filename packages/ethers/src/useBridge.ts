@@ -7,19 +7,16 @@ import { gasLimit, nowTs } from './utils'
 import { normalizeTxErr } from './parseErr'
 import { Contract, formatUnits } from 'ethers'
 export { StateController } from '@lit-app/state'
-// Singleton Data
-let bridgeInstance: any
-let blockNumber = 0
 
-// Proxify
-// declare some state
+// Singleton Data
 class BridgeStore extends State {
-  @property({ value: 0 }) blockNumber!: number
-  @property({ value: bridgeInstance, type: Object }) bridge!: Bridge
-  @property({ value: 0 }) _account: string = ''
+  @property() blockNumber!: number
+  @property() bridge!: Bridge
+  @property() _account: string = ''
   constructor() {
     super()
     emitter.on('wallet-changed', () => {
+      this.reset() //  Trick for bridge.network cantnot update immediately probs
       this._account = walletStore.account
     })
   }
@@ -59,6 +56,7 @@ class BlockPolling {
     this.interval = 15 * 1000
     this.blockTs = 0
     this.blockDebounce = { timer: null, interval: 50 }
+    this.getBlockNumber()
     // Events
     emitter.on('tx-success', () => this.broadcast())
     emitter.on('network-change', () => {
@@ -70,31 +68,33 @@ class BlockPolling {
     this.polling()
   }
   get block() {
-    return blockNumber
+    return bridgeStore.blockNumber
   }
   set block(v: number) {
-    blockNumber = v
     bridgeStore.blockNumber = v
   }
-  polling() {
+  getBlockNumber = async () => {
+    this.block = await bridgeStore.bridge.provider.getBlockNumber()
+  }
+  polling = () => {
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
       // Simulate block increment by per 12s
-      this.block += Math.floor((nowTs() - this.blockTs) / 12000)
+      if (this.blockTs) this.block += Math.floor((nowTs() - this.blockTs) / 12000)
       this.broadcast()
     }, this.interval)
   }
-  reset() {
+  reset = () => {
     clearTimeout(this.blockDebounce.timer)
     clearTimeout(this.timer)
     this.block = 0
     this.blockTs = 0
     Object.assign(this.blockDebounce, { timer: null, interval: 50 })
   }
-  async listenProvider() {
-    bridgeInstance.provider.on('block', this.onBlock.bind(this))
+  listenProvider = async () => {
+    bridgeStore.bridge.provider.on('block', this.onBlock)
   }
-  onBlock(block: number) {
+  onBlock = (block: number) => {
     if (block <= this.block) return
     const { timer, interval } = this.blockDebounce
     if ((this.blockTs = nowTs()) - this.blockTs < interval) clearTimeout(timer)
@@ -102,16 +102,15 @@ class BlockPolling {
     if (this.block) Object.assign(this.blockDebounce, { timer: setTimeout(() => this.broadcast(block), interval) })
     this.block = block
   }
-  broadcast(block = this.block) {
-    // if (!block) block = (await bridgeInstance.provider.getBlockNumber()) || this.block
+  broadcast = (block = this.block) => {
     emitter.emit('block-polling', block + '')
     this.polling()
   }
 }
 
 const initBridge = (options?: useBridgeOptions) => {
-  if (!bridgeInstance) {
-    bridgeStore.bridge = bridgeInstance = new Bridge(options)
+  if (!bridgeStore.bridge) {
+    bridgeStore.bridge = new Bridge(options)
     new BlockPolling()
   }
   return bridgeStore.bridge
@@ -123,8 +122,7 @@ const wrapBridge = () => {
     blockNumber: bridgeStore.blockNumber,
     stateTitle: bridgeStore.stateTitle,
     envKey: bridgeStore.envKey,
-    bridge: bridgeStore.bridge,
-    bridgeInstance
+    bridge: bridgeStore.bridge
   }
 }
 
@@ -153,11 +151,11 @@ export const getSigner = async (account: string) =>
   (await getBridge()).provider.getSigner(account || (await getAccount()))
 export const getBlockNumber = async () => {
   const { blockNumber } = await useBridgeAsync()
-  return bridgeStore.blockNumber ?? blockNumber
+  return bridgeStore.blockNumber || blockNumber
 }
 export const getNonce = async (address?: string) => {
   if (!address) address = await getAccount()
-  return await bridgeInstance.provider.getTransactionCount(address)
+  return await bridgeStore.bridge.provider.getTransactionCount(address)
 }
 export const getGraph = async (path = '') => ((await getNetwork()).graph ?? '') + path
 
@@ -165,7 +163,7 @@ export const getGraph = async (path = '') => ((await getNetwork()).graph ?? '') 
 // blockNumber, default: current block
 export const getBlockTimestamp = async ({ offset = 0, blockNumber = 0 } = {}) => {
   if (!blockNumber) blockNumber = await getBlockNumber()
-  const { timestamp } = await bridgeInstance.provider.getBlock(blockNumber - offset / 3)
+  const { timestamp } = await bridgeStore.bridge.provider.getBlock(blockNumber - offset / 3)
   return timestamp
 }
 
@@ -191,7 +189,7 @@ export const estimateGasLimit = async (
 
 export const assignOverrides = async (overrides: any, ...args: any[]) => {
   let [contract, method, parameters, { gasLimitPer, nonce } = <any>{}] = args
-  if (nonce || bridgeInstance.provider.nonce) overrides.nonce = nonce || bridgeInstance.provider.nonce
+  if (nonce || bridgeStore.bridge.provider.nonce) overrides.nonce = nonce || bridgeStore.bridge.provider.nonce
   let gasLimit
   try {
     if (gasLimitPer) {

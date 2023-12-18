@@ -4,7 +4,7 @@ import emitter from '@lit-web3/core/src/emitter'
 import { HardwareKeyringTypes } from './constants'
 import browser from 'webextension-polyfill'
 import { saveStateToStorage, loadStateFromStorage, storageKey } from '~/lib.next/background/storage/extStorage'
-import { phraseToAddress, AddressType } from '~/lib.next/keyring/phrase'
+import { phraseToAddress } from '~/lib.next/keyring/phrase'
 // import ipfsHelper from '~/lib.next/ipfsHelper'
 import { toUtf8String } from 'ethers'
 
@@ -73,8 +73,8 @@ class Keyring extends KeyringController {
   }
 
   // MultiChain
-  getMultiChainAddress = async (type?: AddressType) => {
-    return await phraseToAddress(this.phrase, type)
+  getMultiChainAddress = async (chainName?: ChainName) => {
+    return await phraseToAddress(this.phrase, chainName)
   }
 
   // Overrides
@@ -159,7 +159,6 @@ getKeyring().then(() => {
     if (!state) return console.warn('[To be confirmed] keyring state is undefined', state)
     const { keyrings, encryptionKey: loginToken, encryptionSalt: loginSalt } = state
     if (!keyrings) return console.warn('[To be confirmed] keyring state.keyrings is undefined', state)
-    // @ts-expect-error
     if (loginToken && loginSalt) await browser.storage.session.set({ loginToken, loginSalt })
 
     // TODO: Is this necessary for now?

@@ -1,4 +1,4 @@
-import { Connection, Keypair } from '@solana/web3.js'
+import { Connection } from '~/services/Solana/solana-web3'
 
 let provider: Connection
 let promise: any

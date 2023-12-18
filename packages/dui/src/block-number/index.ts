@@ -1,23 +1,20 @@
 import { PropertyValues } from 'lit'
-import { customElement, TailwindElement, html, classMap, state } from '../shared/TailwindElement'
-import { bridgeStore, StateController, getBlockNumber } from '@lit-web3/ethers/src/useBridge'
+import { customElement, TailwindElement, html, classMap, state, when, keyed } from '../shared/TailwindElement'
+import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { sleep } from '@lit-web3/ethers/src/utils'
 
 import style from './blockNumber.css?inline'
 
 @customElement('block-number')
 export class BlockNumber extends TailwindElement(style) {
-  bindBridge: any = new StateController(this, bridgeStore)
+  bindBridge = new StateController(this, bridgeStore)
   @state() pending = false
 
   get provider() {
     return bridgeStore.bridge.provider
   }
   get err() {
-    return this.provider.connecting || !this.provider.blockNumber
-  }
-  get blockNumber() {
-    return bridgeStore.blockNumber
+    return !this.provider.ready || !bridgeStore.blockNumber
   }
   async motion() {
     this.pending = true
@@ -25,14 +22,12 @@ export class BlockNumber extends TailwindElement(style) {
     this.pending = false
   }
 
-  willUpdate(changed: PropertyValues<this>) {
-    if (changed.has('pending')) return
+  willUpdate(changedProps: PropertyValues<this>) {
+    if (changedProps.has('pending')) return
     this.motion()
   }
 
   override render() {
-    getBlockNumber()
-    if (bridgeStore.blockNumber <= 0) return html``
     return html`
       <span
         class="blockNumber inline-flex items-center align-middle ${classMap({ pending: this.pending, err: this.err })}"
@@ -41,9 +36,16 @@ export class BlockNumber extends TailwindElement(style) {
           <i class="dot block"></i>
           <i class="mdi mdi-loading absolute pending"></i>
         </span>
-        <a href=${`${bridgeStore.bridge.network.current.scan}/block/${this.blockNumber}`} target="_blank" rel="noopener"
-          >${this.blockNumber}</a
-        >
+        ${when(
+          bridgeStore.blockNumber,
+          () =>
+            html`<a
+              href=${`${bridgeStore.bridge.network.current.scan}/block/${bridgeStore.blockNumber}`}
+              target="_blank"
+              rel="noopener"
+              >${bridgeStore.blockNumber}</a
+            >`
+        )}
       </span>
     `
   }

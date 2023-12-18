@@ -1,3 +1,4 @@
+import '@lit-web3/core/src/shims/node'
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
@@ -202,16 +203,17 @@ export class DOIDConnectButtons extends LitElement {
           () => html`
             ${map(
               options.web3AuthProviders,
-              (provider) => html`<sl-button
-                size="medium"
-                ?disabled=${this.connecting}
-                circle
-                @click=${this.connectWeb3Auth.bind(this, provider)}
-                >${when(
-                  this.connecting && this.connectingProvider == provider,
-                  () => html`<doid-spinner></doid-spinner>`
-                )}${this.getWeb3AuthIcon(provider)}</sl-button
-              >`
+              (provider) =>
+                html`<sl-button
+                  size="medium"
+                  ?disabled=${this.connecting}
+                  circle
+                  @click=${this.connectWeb3Auth.bind(this, provider)}
+                  >${when(
+                    this.connecting && this.connectingProvider == provider,
+                    () => html`<doid-spinner></doid-spinner>`
+                  )}${this.getWeb3AuthIcon(provider)}</sl-button
+                >`
             )}
           `
         )}

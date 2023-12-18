@@ -1,7 +1,8 @@
 export const ensureMetaMaskInjected = () => window.ethereum?.isMetaMask && localStorage.getItem('metamask.injected')
-export const getChainId = async () => await window.ethereum?.request({ method: 'eth_chainId' })
+export const getChainId = async () =>
+  ensureMetaMaskInjected() ? getChainIdSync() || (await window.ethereum?.request({ method: 'eth_chainId' })) : ''
 // !!! ethereum.chainId is deprecated, but this may make getter faster
-export const getChainIdSync = () => ensureMetaMaskInjected() && window.ethereum?.chainId
+export const getChainIdSync = () => (ensureMetaMaskInjected() ? window.ethereum?.chainId : '')
 export const getAccounts = (ethereum: any) => ethereum.request({ method: 'eth_accounts' })
 
 let resolved = false

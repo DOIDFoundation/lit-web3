@@ -184,9 +184,9 @@ export const routes = [
   },
   {
     name: 'connect',
-    path: '/connect/:host?/:chain?',
-    render: ({ host = '', chain = '' }) => {
-      return html`<view-connect .host=${safeDecodeURIComponent(host)} .chain=${chain}></view-connect>`
+    path: '/connect/:host?/:chainName?',
+    render: ({ host = '', chainName = '' }) => {
+      return html`<view-connect .host=${safeDecodeURIComponent(host)} .chainName=${chainName}></view-connect>`
     },
     enter: async () => {
       // if (await isConnected()) {
@@ -205,6 +205,18 @@ export const routes = [
     },
     enter: async () => {
       await import('~/views/notification')
+      return true
+    }
+  },
+  {
+    name: 'switchNetwork',
+    path: '/switchNetwork/:name/:id',
+    render: ({ name = '', id = '' }) => {
+      const key = [name, id].join('-')
+      return html`${keyed(key, html`<view-switch-network .chainNetwork=${{ name, id }}></view-switch-network>`)}`
+    },
+    enter: async () => {
+      await import('~/views/switchNetwork')
       return true
     }
   },

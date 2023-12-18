@@ -15,20 +15,20 @@
 }
 .chain-icon {
   @apply w-8 h-8 rounded-full bg-contain bg-center bg-no-repeat bg-white cursor-pointer;
-  &.eth {
+  &.ETH {
     background-image: url('~/assets/ethereum.svg');
   }
-  &.sol {
+  &.SOL {
     background-color: #000;
     background-image: url('~/assets/solana.svg');
   }
-  &.apt {
+  &.APT {
     background-image: url('~/assets/aptos.svg');
   }
-  &.bnb {
+  &.BNB {
     background-image: url('~/assets/bsc.svg');
   }
-  &.btc {
+  &.BTC {
     background-image: url('~/assets/bitcoin.svg');
   }
 }

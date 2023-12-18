@@ -7,7 +7,7 @@ let MultiCallProvider: any
 
 export const getMultiCallProvider = async () => {
   const {
-    bridgeInstance: { provider }
+    bridge: { provider }
   } = await useBridgeAsync()
   await provider.ready
   const { chainId: bridgeChainId } = await provider.getNetwork()

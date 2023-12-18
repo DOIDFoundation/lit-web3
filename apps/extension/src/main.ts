@@ -1,4 +1,3 @@
-// import '@lit-web3/core/src/shims/node'
 import AppRoot from './AppRoot.wallet'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { routes } from '~/router'
@@ -25,7 +24,9 @@ export class AppMain extends TailwindElement('') {
       !['/', '/popup.html', '/recover', '/restore', '/start', '/import', '/import2nd', '/import3rd', '/idle'].includes(
         pathname
       ) &&
-      !['/unlock', '/landing', '/create', '/generate-phrase', '/connect'].some((substr) => pathname.startsWith(substr))
+      !['/unlock', '/landing', '/create', '/generate-phrase', '/connect', '/switchNetwork'].some((substr) =>
+        pathname.startsWith(substr)
+      )
     const { style } = document.documentElement
     this.showHeader ? style.removeProperty('--header-height') : style.setProperty('--header-height', `0px`)
   }

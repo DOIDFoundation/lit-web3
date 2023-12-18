@@ -4,7 +4,7 @@ import '@lit-web3/dui/src/button'
 import '~/components/phrase'
 import '~/components/pwd-equal'
 
-import { AddressType, phraseToAddress } from '~/lib.next/keyring/phrase'
+import { phraseToAddress } from '~/lib.next/keyring/phrase'
 // import ipfsHelper from '~/lib.next/ipfsHelper'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
 import { StateController, walletStore } from '~/store'
@@ -119,7 +119,7 @@ export class ViewImport extends TailwindElement(null) {
 
     this.phrase = phrase
 
-    let ethAddress = await phraseToAddress(this.phrase, AddressType.eth)
+    let ethAddress = await phraseToAddress(this.phrase, 'ethereum')
 
     if (this.account.mainAddress.toLowerCase() != String(ethAddress).toLowerCase()) {
       this.err = `The Secret Recovery Phrase entered does not match ${this.account.mainAddress}`
@@ -153,32 +153,34 @@ export class ViewImport extends TailwindElement(null) {
               () =>
                 when(
                   this.pending,
-                  () => html`<doid-symbol sm class="block mt-12">
-                      <span slot="h1" class="text-base">Recovering ${this.account.name}</span>
-                    </doid-symbol>
-                    <div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
-                  () => html` <doid-symbol sm class="block mt-12"></doid-symbol>
-                    <div class="my-4 text-xs">
-                      You are recovering
-                      <dui-link class="uri ml-1 underline">${this.account.name}</dui-link>
-                    </div>
-                    <div class="my-4 text-xs">
-                      Enter the Secret Recovery Phrase of
-                      <dui-address class="mx-1" .address=${this.account.mainAddress}></dui-address>
-                    </div>
-                    <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
-                    <div class="w-full text-red-500">${this.err}</div>
-                    <div class="mt-4 flex justify-between">
-                      <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-                        ><i class="mdi mdi-arrow-left text-gray-500"></i
-                      ></dui-button>
-                      <dui-button
-                        ?disabled=${this.btnNextDisabled}
-                        @click=${this.onConfirmPhrase}
-                        class="secondary !rounded-full h-12 w-12"
-                        ><i class="mdi mdi-arrow-right"></i
-                      ></dui-button>
-                    </div>`
+                  () =>
+                    html`<doid-symbol sm class="block mt-12">
+                        <span slot="h1" class="text-base">Recovering ${this.account.name}</span>
+                      </doid-symbol>
+                      <div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
+                  () =>
+                    html` <doid-symbol sm class="block mt-12"></doid-symbol>
+                      <div class="my-4 text-xs">
+                        You are recovering
+                        <dui-link class="uri ml-1 underline">${this.account.name}</dui-link>
+                      </div>
+                      <div class="my-4 text-xs">
+                        Enter the Secret Recovery Phrase of
+                        <dui-address class="mx-1" .address=${this.account.mainAddress}></dui-address>
+                      </div>
+                      <phrase-to-secret class="my-4" @change=${this.onPhraseChange}></phrase-to-secret>
+                      <div class="w-full text-red-500">${this.err}</div>
+                      <div class="mt-4 flex justify-between">
+                        <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                          ><i class="mdi mdi-arrow-left text-gray-500"></i
+                        ></dui-button>
+                        <dui-button
+                          ?disabled=${this.btnNextDisabled}
+                          @click=${this.onConfirmPhrase}
+                          class="secondary !rounded-full h-12 w-12"
+                          ><i class="mdi mdi-arrow-right"></i
+                        ></dui-button>
+                      </div>`
                 )
             ],
             [
@@ -186,29 +188,35 @@ export class ViewImport extends TailwindElement(null) {
               () =>
                 when(
                   this.pending,
-                  () => html`<doid-symbol sm class="block mt-12">
-                      <span slot="h1" class="text-base">Recovering ${this.account.name}</span>
-                    </doid-symbol>
-                    <div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
-                  () => html`<doid-symbol sm class="block mt-12">
-                      <span slot="h1" class="text-base">Create password</span>
-                    </doid-symbol>
-                    <div class="my-4 text-xs">
-                      This password will unlock your DOID name(s) only on this device. DOID can not recover this
-                      password.
-                    </div>
-                    <pwd-equal class="mt-8" @change=${this.onPwdChange} @submit=${this.onCreateMainAddress}></pwd-equal>
-                    <div class="mt-4 flex justify-between">
-                      <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
-                        ><i class="mdi mdi-arrow-left text-gray-500"></i
-                      ></dui-button>
-                      <dui-button
-                        ?disabled=${this.btnNextDisabled}
-                        @click=${this.onCreateMainAddress}
-                        class="secondary !rounded-full h-12 w-12"
-                        ><i class="mdi mdi-arrow-right"></i
-                      ></dui-button>
-                    </div> `
+                  () =>
+                    html`<doid-symbol sm class="block mt-12">
+                        <span slot="h1" class="text-base">Recovering ${this.account.name}</span>
+                      </doid-symbol>
+                      <div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
+                  () =>
+                    html`<doid-symbol sm class="block mt-12">
+                        <span slot="h1" class="text-base">Create password</span>
+                      </doid-symbol>
+                      <div class="my-4 text-xs">
+                        This password will unlock your DOID name(s) only on this device. DOID can not recover this
+                        password.
+                      </div>
+                      <pwd-equal
+                        class="mt-8"
+                        @change=${this.onPwdChange}
+                        @submit=${this.onCreateMainAddress}
+                      ></pwd-equal>
+                      <div class="mt-4 flex justify-between">
+                        <dui-button @click=${this.back} class="!rounded-full h-12 outlined w-12 !border-gray-500 "
+                          ><i class="mdi mdi-arrow-left text-gray-500"></i
+                        ></dui-button>
+                        <dui-button
+                          ?disabled=${this.btnNextDisabled}
+                          @click=${this.onCreateMainAddress}
+                          class="secondary !rounded-full h-12 w-12"
+                          ><i class="mdi mdi-arrow-right"></i
+                        ></dui-button>
+                      </div> `
                 )
             ]
           ],

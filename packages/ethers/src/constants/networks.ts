@@ -1,9 +1,11 @@
 // All Networks
+export const native = { name: 'Ethereum', symbol: 'ETH', decimals: 18 }
 export const AllNetworks = {
   '0x1': {
     chainId: '0x1',
     title: 'Mainnet',
     name: 'mainnet',
+    native,
     // provider: 'https://rpc.ankr.com/eth',
     // providerWs: 'wss://rpc.ankr.com/ws'
     provider: 'https://mainnet.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',
@@ -15,6 +17,7 @@ export const AllNetworks = {
     chainId: '0xaa36a7',
     title: 'Sepolia Testnet',
     name: 'SepoliaTestnet',
+    native,
     // provider: 'https://rpc.sepolia.dev',
     // providerWs: 'wss://rpc.sepolia.dev/ws',
     provider: 'https://sepolia.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',
@@ -26,6 +29,7 @@ export const AllNetworks = {
     chainId: '0x5',
     title: 'Görli Testnet',
     name: 'GoerliTestnet',
+    native,
     // provider: 'https://rpc.goerli.dev',
     // providerWs: 'wss://rpc.goerli.dev/ws',
     provider: 'https://goerli.infura.io/v3/50e9845f779f4770a64fa6f47e238d10',

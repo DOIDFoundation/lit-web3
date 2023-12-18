@@ -1,6 +1,6 @@
 import { getKeyring } from '~/lib.next/keyring'
 import { ERR_METHOD_NOT_ALLOWED } from '~/lib.next/constants'
-import { ConnectsStorage } from '~/lib.next/background/storage/preferences'
+import { ConnectsStorage, networkStorage } from '~/lib.next/background/storage/preferences'
 
 export const getDOIDs: BackgroundMiddlware = async ({ req, state }, next) => {
   if (!req.headers.isInternal) throw new Error(ERR_METHOD_NOT_ALLOWED)
@@ -12,6 +12,12 @@ export const assignConnects: BackgroundMiddlware = async ({ req, state }, next) 
   if (!req.headers.isInternal) throw new Error(ERR_METHOD_NOT_ALLOWED)
   const connects = await ConnectsStorage.getAll()
   Object.assign(state, { connects })
+  next()
+}
+export const assignNetworks: BackgroundMiddlware = async ({ req, state }, next) => {
+  if (!req.headers.isInternal) throw new Error(ERR_METHOD_NOT_ALLOWED)
+  const networks = await networkStorage.getAll()
+  Object.assign(state, { networks })
   next()
 }
 

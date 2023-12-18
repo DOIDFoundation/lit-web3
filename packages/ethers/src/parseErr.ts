@@ -10,13 +10,11 @@ export const ErrorCodeMap: Record<string, string> = {
 export const parseRevertReason = async (err: any): Promise<string> => {
   let { reason = '', transaction } = err
   if (reason) {
-    err.message = reason
     if (!reason.includes(': ') && transaction) {
       const bridgeStore = await useBridgeAsync()
       try {
         const code = await bridgeStore.bridge.provider.call(transaction)
         reason = toUtf8String(code)
-        err.message = reason
       } catch {}
     }
   }
@@ -24,16 +22,16 @@ export const parseRevertReason = async (err: any): Promise<string> => {
 }
 
 export const normalizeTxErr = async (raw: any, callData?: any) => {
-  let { code = '' } = raw
-  const { error, data } = raw
-  if (code === 'ACTION_REJECTED') raw.code = code = 4001
-  if (error?.code && ![-32000, 4001].includes(error.code)) raw.code = code = error.code
-  if (data) raw.message = data.message
-  const customMsg = ErrorCodeMap[code] || ErrorCodeMap[raw.message]
-  if (customMsg) raw.message = customMsg
-  else await parseRevertReason(raw)
-  if (callData) raw.callData = callData
-  const err: any = new Error(code)
-  Object.assign(err, { code, message: `[${code}] ${raw.message}` })
+  let { code = '', message = '' } = raw
+  const errData = raw.data ?? raw.info
+  const error = raw.error ?? errData?.error?.data ?? errData?.error
+  if (errData?.error?.code) code = errData?.error?.code
+  if (error?.code && ![-32000, 4001].includes(error.code)) code = error.code
+  if (error?.message) message = error.message
+  const customMsg = ErrorCodeMap[code] || ErrorCodeMap[message] || (await parseRevertReason(raw))
+  if (customMsg) message = customMsg
+  const err = new Error(message)
+  if (!callData && errData?.payload) callData = [errData.payload.method, errData.payload.params]
+  Object.assign(err, { code, raw, callData })
   return err
 }

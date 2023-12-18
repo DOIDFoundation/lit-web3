@@ -5,52 +5,38 @@ import {
   state,
   property,
   repeat,
-  classMap,
-  styleMap
+  classMap
 } from '@lit-web3/dui/src/shared/TailwindElement'
-
-import { chainsDefault, ChainName, ChainCoin } from '~/lib.next/chain'
+import { uiNetworks, StateController } from '~/store/networkState'
 
 import style from './chain.css?inline'
-@customElement('network-list')
-export class networkList extends TailwindElement(style) {
+@customElement('chain-list')
+export class ChainList extends TailwindElement(style) {
+  bindNetworks = new StateController(this, uiNetworks)
+
   @property() class = ''
   @state() index = 0
 
-  @state() userChains = [
-    // { name: ChainName.bitcoin, title: 'Bitcoin', coin: ChainCoin.bitcoin }
-  ] as ChainNet[]
-
-  get allChains() {
-    return chainsDefault.concat(this.userChains)
-  }
-  get chain() {
-    return this.allChains[this.index]
-  }
-
-  switch = (idx: number) => {
-    this.index = idx
-    this.emit('switch', { ...this.chain })
+  select = (chain: ChainNetwork) => {
+    uiNetworks.selectChain(chain)
   }
   addChain = () => {}
 
   connectedCallback() {
-    this.emit('switch', { ...this.chain })
     super.connectedCallback()
   }
 
   render() {
+    if (!uiNetworks.inited) return ''
     return html`<div class="flex flex-col justify-center items-center ${classMap(this.$c([this.class]))}">
       ${repeat(
-        this.allChains,
-        (net: any, idx) =>
+        uiNetworks.chainTabs,
+        (chain: any) =>
           html`<div
-            class="chain-tab ${classMap({ active: net.name === this.chain.name })}"
-            @click=${() => this.switch(idx)}
+            class="chain-tab ${classMap({ active: chain.symbol === uiNetworks.currentBlockchain?.symbol })}"
+            @click=${() => this.select(chain)}
           >
-            <div class="chain-icon inline-flex justify-center items-center ${net?.coin}">
-              <!-- ${net.name.charAt(0)} -->
-            </div>
+            <div class="chain-icon inline-flex justify-center items-center ${chain?.symbol}"></div>
           </div>`
       )}
 

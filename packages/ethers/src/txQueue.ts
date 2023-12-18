@@ -6,8 +6,12 @@ class TxQueueStore extends State {
   constructor(key: string) {
     super()
     this.key = key
+    this.sync()
   }
   @property({ value: [] }) queue!: txSeq[]
+  sync() {
+    this.queue = JSON.parse(localStorage.getItem(this.key) || '[]')
+  }
   save() {
     this.queue = [...this.queue]
     localStorage.setItem(this.key, JSON.stringify(this.queue))
@@ -49,9 +53,9 @@ export class TxQueue {
   }
   async add(tx: txSeq) {
     if (!tx.chainId) {
-      const { network } = this.provider
-      tx.chainId = network.chainId
-      tx.scan = network.scan
+      const { _network } = this.provider
+      tx.chainId = _network.chainId.toString()
+      tx.scan = _network.scan
     }
     tx.pending = true
     this.queue.unshift(tx)

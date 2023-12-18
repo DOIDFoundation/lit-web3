@@ -5,10 +5,11 @@ import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import './tx-view'
 
 import style from './tx-state.css?inline'
+import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 @customElement('tx-state')
 export class TxState extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
-  @property({ type: Object }) tx: any
+  @property({ type: Object }) tx: txReceipt | undefined
   @property({ type: Boolean }) txType = false
   @property({ type: Boolean, attribute: true }) inline = false
   @property({ type: Boolean }) onlyAwaitHash = false
@@ -27,13 +28,13 @@ export class TxState extends TailwindElement(style) {
     return { success, failed, wait, almostSuccess }
   }
   get hashOk() {
-    return this.onlyAwaitHash && this.tx.hash
+    return this.onlyAwaitHash && this.tx?.hash
   }
 
   get state() {
     let [icon, txt, css] = ['', '', '']
     const { state } = this.opts
-    switch (this.tx.status) {
+    switch (this.tx?.status) {
       case -1:
         ;[icon, txt, css] = [this.icons.wait, state?.wait || `Waiting for confirmation` + '...', 'wait']
         break
@@ -49,15 +50,20 @@ export class TxState extends TailwindElement(style) {
       case 4:
         ;[icon, txt, css] = [this.icons.almostSuccess, this.tx.err?.message || `Almost Success`, 'warn']
         break
+      default:
+        ;[icon, txt, css] = [
+          this.tx ? this.icons.failed : this.icons.wait,
+          this.tx ? `Bad transaction status ${this.tx.status}}` : 'Making transaction...',
+          'wait'
+        ]
+        break
     }
     if (this.hashOk) [icon, txt, css] = [this.icons.success, state?.success || `Success`, 'success']
     return { icon, txt, css }
   }
 
   get txScanUri() {
-    const { hash } = this.tx
-    if (!hash) return ''
-    return `${this.bridge.network.current.scan}/tx/${hash}`
+    return this.tx?.hash ? `${this.bridge.network.current.scan}/tx/${this.tx.hash}` : ''
   }
 
   override render() {
@@ -66,10 +72,11 @@ export class TxState extends TailwindElement(style) {
     >
       <div class="tx-state-icon mx-auto ${classMap(this.$c([this.inline ? 'mr-2' : 'text-3xl my-3', this.state.css]))}">
         ${when(
-          this.tx.pending && !this.hashOk,
-          () => html`<slot name="pending">
-            <i class="mdi mdi-loading"></i>
-          </slot>`,
+          this.tx?.pending && !this.hashOk,
+          () =>
+            html`<slot name="pending">
+              <i class="mdi mdi-loading"></i>
+            </slot>`,
           () => html`<span>${unsafeHTML(this.state.icon)}</span>`
         )}
       </div>
@@ -78,10 +85,10 @@ export class TxState extends TailwindElement(style) {
       </div>
       <div class="flex gap-4">
         ${when(
-          this.tx.hash,
+          this.tx?.hash,
           () =>
             html`${when(
-              this.tx.success || this.tx.almostSuccess,
+              this.tx?.success || this.tx?.almostSuccess,
               () => html`<slot name="view"><tx-view .tx=${this.tx}></tx-view></slot>`,
               () => html`<tx-view .tx=${this.tx}></tx-view>`
             )}`

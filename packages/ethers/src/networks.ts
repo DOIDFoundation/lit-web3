@@ -1,7 +1,7 @@
 import { AllNetworks, unknownNetwork, EtherNetworks } from './constants/networks'
 
 const isProd = import.meta.env.MODE === 'production'
-const mainnetOffline = !!import.meta.env.VITE_APP_DISABLEMAINNET
+const mainnetOffline = !!import.meta.env.VITE_DISABLE_MAINNET
 export const Networks: Networks = AllNetworks
 
 export const [mainnetChainId, testnetS, testnetG] = EtherNetworks

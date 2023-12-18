@@ -2,7 +2,7 @@ import { TailwindElement, html, customElement, when, property, state } from '@li
 
 import { Mnemonic, HDNodeWallet, toBeArray } from 'ethers'
 import { AptosAccount } from 'aptos'
-import { Keypair as SolanaKeyPair } from '@solana/web3.js'
+import { Keypair as SolanaKeyPair } from '~/services/Solana/solana-web3'
 
 // Components
 import '@lit-web3/dui/src/input/text'

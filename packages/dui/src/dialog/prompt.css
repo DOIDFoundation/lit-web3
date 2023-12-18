@@ -3,4 +3,15 @@
     @apply pt-2 px-4 text-base;
     min-height: 100px;
   }
+  &::part(dialog-close) {
+  }
+  &::part(dialog-header) {
+    min-height: 0;
+  }
+  &::part(dialog-body) {
+    min-height: 0;
+  }
+  &::part(dialog-footer) {
+    min-height: 0;
+  }
 }

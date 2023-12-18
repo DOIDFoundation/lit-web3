@@ -1,0 +1,16 @@
+:host {
+  @apply inline-flex items-center whitespace-nowrap gap-1;
+}
+.chain-symbol {
+  @apply inline-flex items-center justify-center text-center leading-none w-full h-full bg-center bg-no-repeat bg-transparent bg-contain;
+  width: 1.3em;
+  height: 1.3em;
+  &.testnet {
+    @apply bg-gray-300 rounded-full text-gray-800;
+    &::before {
+      content: attr(icon);
+      @apply not-italic;
+      font-size: 0.9em;
+    }
+  }
+}

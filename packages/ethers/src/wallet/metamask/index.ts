@@ -2,7 +2,7 @@ import MetaMaskOnboarding from './metamask-onboarding'
 import { getAddress } from 'ethers'
 import { emitErr } from '@lit-web3/core/src/emitter'
 import { WalletState, emitWalletChange } from '../../wallet'
-import detectEthereum, { getChainId, getChainIdSync, getAccounts } from '../../detectEthereum'
+import detectEthereum, { getChainId, getAccounts } from '../../detectEthereum'
 import screen from '@lit-web3/core/src/screen'
 
 class MetaMask implements Wallet {
@@ -82,7 +82,7 @@ class MetaMask implements Wallet {
       this.onboarding.startOnboarding()
     }
   }
-  async connect() {
+  async connect({ force = false } = {}) {
     this.inited = true
     this.resetState()
     const ethereum = await detectEthereum()
@@ -93,7 +93,7 @@ class MetaMask implements Wallet {
       case WalletState.NOT_INSTALLED:
         return
     }
-    this.disconnect()
+    if (force) this.disconnect()
     if (!ethereum) return
     localStorage.setItem('metamask.injected', '1')
     this.state = WalletState.CONNECTING
