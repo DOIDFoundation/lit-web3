@@ -35,7 +35,7 @@ export class DOIDSignup extends LitElement {
 
   // Element Events
   emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventArgs<Events, T>, options = []) {
-    if (detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
+    if (!detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
     else this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
   }
   on<T extends EventTypes.EventNames<Events>>(type: T, listener: EventTypes.EventListenerFn<Events, T>, options?: any) {

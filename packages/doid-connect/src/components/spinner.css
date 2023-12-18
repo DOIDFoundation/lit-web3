@@ -10,7 +10,7 @@
 }
 
 .spinner__indicator {
-  stroke-dasharray: 30% 210%;
+  stroke-dasharray: 30% 215%;
 }
 
 @keyframes spin {

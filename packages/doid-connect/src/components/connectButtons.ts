@@ -18,7 +18,7 @@ import iconPuzzle from '../assets/icons/puzzle.svg'
 import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
-import { LOGIN_PROVIDER, LOGIN_PROVIDER_TYPE, OpenloginAdapter } from '@web3auth/openlogin-adapter'
+import { LOGIN_PROVIDER_TYPE, OpenloginAdapter } from '@web3auth/openlogin-adapter'
 import { Chain, ConnectorData, ChainNotConfiguredError, Connector, InjectedConnector } from '@wagmi/core'
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
 import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
@@ -43,7 +43,7 @@ export class DOIDConnectButtons extends LitElement {
 
   // Element Events
   emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventArgs<Events, T>, options = []) {
-    if (detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
+    if (!detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
     else this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
   }
   on<T extends EventTypes.EventNames<Events>>(type: T, listener: EventTypes.EventListenerFn<Events, T>, options?: any) {
@@ -191,10 +191,7 @@ export class DOIDConnectButtons extends LitElement {
             <sl-button size="medium" ?disabled=${this.connecting} circle @click=${this.connect.bind(this, connector)}>
               ${when(
                 this.connecting && this.connectingProvider == connector.name,
-                () =>
-                  html`<doid-spinner
-                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                  ></doid-spinner>`
+                () => html`<doid-spinner></doid-spinner>`
               )}
               <img src="${this.getConnectorIcon(connector)}" />
             </sl-button>
@@ -212,10 +209,7 @@ export class DOIDConnectButtons extends LitElement {
                 @click=${this.connectWeb3Auth.bind(this, provider)}
                 >${when(
                   this.connecting && this.connectingProvider == provider,
-                  () =>
-                    html`<doid-spinner
-                      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                    ></doid-spinner>`
+                  () => html`<doid-spinner></doid-spinner>`
                 )}${this.getWeb3AuthIcon(provider)}</sl-button
               >`
             )}

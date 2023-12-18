@@ -31,7 +31,7 @@ export class DOIDConnectDialog extends LitElement {
 
   // Element Events
   emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventArgs<Events, T>, options = []) {
-    if (detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
+    if (!detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
     else this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
   }
   on<T extends EventTypes.EventNames<Events>>(type: T, listener: EventTypes.EventListenerFn<Events, T>, options?: any) {
@@ -104,7 +104,7 @@ export class DOIDConnectDialog extends LitElement {
         this.renderConnect.bind(this),
         () =>
           html`<doid-signup
-            .label=${this.connectedWithoutDOID ? "You don't have a DOID yet." : nothing}
+            .label=${this.connectedWithoutDOID ? "You don't have a DOID yet, consider registering one." : nothing}
             ${ref(this.signupRef)}
           ></doid-signup>`
       )}
