@@ -1,4 +1,3 @@
-import EventEmitter from 'events'
 import { updateChains, updateOptions } from './options'
 import { controller } from './controller'
 import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
@@ -6,9 +5,8 @@ import { DOIDConnectDialog } from './connectDialog'
 import { StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
 
-export class DOIDConnector extends EventEmitter {
+export class DOIDConnector {
   constructor(host?: ReactiveControllerHost) {
-    super()
     if (host) this.bindState(host)
   }
 

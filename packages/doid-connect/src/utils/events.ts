@@ -1,17 +1,26 @@
 export declare namespace EventTypes {
-  export type ValidEventTypes = string | symbol | object
+  export type VoidEvent = (evt: Event) => void
+  export type DetailedEvent<T> = (evt: CustomEvent<T>) => void
 
-  export type EventNames<T extends ValidEventTypes> = T extends string | symbol ? T : keyof T
+  export type ValidTypes = string | symbol | object
+
+  export type EventNames<T extends ValidTypes> = T extends string | symbol ? T : keyof T
 
   export type ArgumentMap<T extends object> = {
-    [K in keyof T]: T[K] extends (arg: CustomEvent) => void ? Parameters<T[K]> : T[K] extends any[] ? T[K] : any[]
+    [K in keyof T]: T[K] extends (evt: any) => void ? Parameters<T[K]>[0] : Event
   }
 
-  export type EventListenerFn<T extends ValidEventTypes, K extends EventNames<T>> = T extends string | symbol
-    ? EventListener
-    : (...args: ArgumentMap<Exclude<T, string | symbol>>[Extract<K, keyof T>]) => void
+  export type EventType<T extends ValidTypes, K extends EventNames<T>> = ArgumentMap<
+    Exclude<T, string | symbol>
+  >[Extract<K, keyof T>]
 
-  export type EventArgs<T extends ValidEventTypes, K extends EventNames<T>> = T extends string | symbol
+  export type EventListenerFn<T extends ValidTypes, K extends EventNames<T>> = T extends string | symbol
+    ? EventListener
+    : (evt: EventType<T, K>) => void
+
+  export type EventDetailType<T extends ValidTypes, K extends EventNames<T>> = T extends string | symbol
     ? void
-    : ArgumentMap<Exclude<T, string | symbol>>[Extract<K, keyof T>][0]['detail']
+    : EventType<T, K> extends CustomEvent
+    ? EventType<T, K>['detail']
+    : void
 }

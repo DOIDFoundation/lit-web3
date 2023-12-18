@@ -29,8 +29,8 @@ import style from './connectButtons.css?inline'
 import { EventTypes } from '../utils/events'
 
 export interface Events {
-  connect(event: CustomEvent<ConnectorData>): void
-  error(event: CustomEvent<Error>): void
+  connect: EventTypes.DetailedEvent<ConnectorData>
+  error: EventTypes.DetailedEvent<Error>
 }
 
 @customElement('doid-connect-buttons')
@@ -42,7 +42,7 @@ export class DOIDConnectButtons extends LitElement {
   static styles = [BaseCss, unsafeCSS(style)]
 
   // Element Events
-  emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventArgs<Events, T>, options = []) {
+  emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventDetailType<Events, T>, options = []) {
     if (!detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
     else this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
   }
