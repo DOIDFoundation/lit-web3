@@ -54,6 +54,7 @@ export class DOIDConnector {
       document.body.insertAdjacentElement('beforeend', modal)
       modal.on('connect', (event) => resolve(event.detail))
       modal.on('error', (event) => reject(event.detail))
+      modal.on('close', () => reject(new Error('User rejected the request.')))
     })
   }
 }

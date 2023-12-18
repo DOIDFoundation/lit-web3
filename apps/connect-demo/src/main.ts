@@ -4,7 +4,6 @@ import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/T
 // Components
 import '@lit-web3/dui/src/nav/header'
 import '@lit-web3/dui/src/nav/footer'
-import '@doidfoundation/connect'
 
 @customElement('app-main')
 export class AppMain extends TailwindElement('') {
@@ -12,7 +11,6 @@ export class AppMain extends TailwindElement('') {
     return html`
       <dui-header>
         <p slot="center" class="font-bold">Wallet Demo</p>
-        <doid-connect-button appName="Demo App" slot="right"></doid-connect-button>
       </dui-header>
       <main class="dui-app-main">
         <slot></slot>
