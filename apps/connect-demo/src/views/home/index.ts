@@ -1,9 +1,9 @@
-import { TailwindElement, html, until, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { TailwindElement, createRef, html, ref, until, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { customElement } from 'lit/decorators.js'
 // Components
 import icon from '@lit-web3/dui/src/i/doid.svg'
 import '@doid/connect'
-import { DOIDConnector } from '@doid/connect'
+import { DOIDConnectButton, DOIDConnector } from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/src/input/text'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
@@ -12,6 +12,7 @@ import { WalletState, emitWalletChange } from '@lit-web3/ethers/src/wallet'
 @customElement('view-home')
 export class ViewHome extends TailwindElement('') {
   bindBridge: any = new StateController(this, bridgeStore)
+  private connectButtonRef = createRef<DOIDConnectButton>()
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)
 
@@ -67,20 +68,6 @@ export class ViewHome extends TailwindElement('') {
   render() {
     return html`
       <div class="dui-container my-8 mx-auto flex flex-row-reverse space-x-2 space-x-reverse">
-        <dui-button
-          class="static right-0"
-          @click=${() => {
-            this.doidConnector.updateOptions({ themeMode: 'light' })
-          }}
-          >light</dui-button
-        >
-        <dui-button
-          class="static right-0"
-          @click=${() => {
-            this.doidConnector.updateOptions({ themeMode: 'dark' })
-          }}
-          >dark</dui-button
-        >
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
           <p>Is connected: ${this.doidConnector.connected}</p>
@@ -89,6 +76,7 @@ export class ViewHome extends TailwindElement('') {
             () => html`
               <p>Address: ${this.doidConnector.account}</p>
               <p>DOID: ${this.doidConnector.doid}</p>
+              <dui-button sm @click=${() => this.doidConnector.disconnect()}>Disconnect</dui-button>
             `
           )}
 
@@ -98,7 +86,26 @@ export class ViewHome extends TailwindElement('') {
         </div>
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with DOID connect button</h1>
-          <doid-connect-button appName="Demo App"></doid-connect-button>
+          <doid-connect-button ${ref(this.connectButtonRef)} appName="Demo App"></doid-connect-button>
+          <dui-button
+            sm
+            class="ml-2"
+            @click=${() => {
+              this.connectButtonRef.value?.requestUpdate()
+              this.doidConnector.updateOptions({ themeMode: 'light' })
+            }}
+            >Theme light</dui-button
+          >
+          <dui-button
+            sm
+            class="ml-2"
+            @click=${() => {
+              this.connectButtonRef.value?.requestUpdate()
+              this.doidConnector.updateOptions({ themeMode: 'dark' })
+            }}
+            >Theme dark</dui-button
+          >
+
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with modal dialog</h1>
           <dui-button sm @click=${this.doidConnector.connect}>
             <p>Connect Wallet</p>
@@ -118,15 +125,25 @@ export class ViewHome extends TailwindElement('') {
           <dui-button sm class="mr-2" @click=${() => this.doidConnector.updateOptions({ web3AuthEnabled: true })}>
             <p>Enable Web3Auth</p>
           </dui-button>
+          <dui-button
+            sm
+            class="mr-2"
+            @click=${() => this.doidConnector.updateOptions({ web3AuthNetwork: 'sapphire_mainnet' })}
+          >
+            <p>Switch to Web3Auth Mainnet</p>
+          </dui-button>
           <dui-button sm @click=${() => this.doidConnector.connect()}>
             <p>Connect Wallet</p>
           </dui-button>
           <dui-input-text
             id="web3authClientId"
-            sm
+            value="BFLXJsHIHv_CgxalXixrZlytDYyf47hk64XDMXOj4vNVIGGJ9HMOyhvIbYmw3dWcwxaqadObQQSwFjR51FJvgVg"
             placeholder="Web3Auth ClientId"
-            class="max-w-sm flex my-2"
-          ></dui-input-text>
+            class="max-w-sm flex my-1"
+            ><p slot="msg">
+              Use your own id when developing or submit an issue on github to allow your domain.
+            </p></dui-input-text
+          >
           <dui-button
             sm
             @click=${() => this.doidConnector.updateOptions({ web3AuthClientId: this.$('#web3authClientId').value })}
@@ -142,10 +159,11 @@ export class ViewHome extends TailwindElement('') {
           </dui-button>
           <dui-input-text
             id="walletConnectId"
-            sm
+            value="f58e1488ccb9f5b7ef6f11ffa1cd8ba1"
             placeholder="WalletConnect Project ID"
             class="max-w-sm flex my-2"
-          ></dui-input-text>
+            ><p slot="msg">This default ID can only be used on doid.tech</p></dui-input-text
+          >
           <dui-button
             sm
             @click=${() => this.doidConnector.updateOptions({ walletConnectId: this.$('#walletConnectId').value })}
