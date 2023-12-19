@@ -43,27 +43,23 @@ export class DOIDConnector {
     return controller.account
   }
 
-  /** Addresses got from connected connector. */
-  get addresses() {
-    return controller.addresses
-  }
-
   /** Get DOID name by address. */
   public getDOID = controller.getDOID.bind(controller)
   /** Get address by DOID name. */
   public getDOIDAddress = controller.getDOIDAddress.bind(controller)
   /** Get a {@link WalletClient} object from connector. Useful for sending transactions. */
-  public getWalletClient(chainId?: number): Promise<WalletClient> {
-    return controller.getWalletClient(chainId)
-  }
+  public getWalletClient = controller.getWalletClient.bind(controller)
+
   public updateOptions = updateOptions
   public updateChains = updateChains
   public disconnect = controller.disconnect.bind(controller)
   public switchChain = controller.switchChain.bind(controller)
-
-  public tryConnect(chainId?: Chain['id']) {
-    return controller.getAddresses(chainId)
-  }
+  /**
+   * Subscribe state change.
+   * @param callback `(key: string, value: any, state: State) => void`
+   * @param nameOrNames key name, can be `connector`: connector changed, `connectorState`: account or network changed
+   */
+  public subscribe = controller.subscribe.bind(controller)
 
   public async connect({
     chainId,

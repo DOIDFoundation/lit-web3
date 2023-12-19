@@ -1,5 +1,5 @@
 import { TailwindElement, createRef, html, ref, until, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { customElement } from 'lit/decorators.js'
+import { customElement, state } from 'lit/decorators.js'
 // Components
 import icon from '@lit-web3/dui/src/i/doid.svg'
 import '@doid/connect'
@@ -8,6 +8,7 @@ import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/src/input/text'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { WalletState, emitWalletChange } from '@lit-web3/ethers/src/wallet'
+import { WalletClient } from '@wagmi/core'
 
 @customElement('view-home')
 export class ViewHome extends TailwindElement('') {
@@ -15,9 +16,14 @@ export class ViewHome extends TailwindElement('') {
   private connectButtonRef = createRef<DOIDConnectButton>()
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)
+  @state() private walletClient?: WalletClient
 
   connectedCallback(): void {
     super.connectedCallback()
+    const updateWalletClient = () =>
+      this.doidConnector.getWalletClient().then((walletClient) => (this.walletClient = walletClient))
+    this.doidConnector.subscribe(() => updateWalletClient())
+    updateWalletClient()
     const connector = this.doidConnectorEthers
     let wallet: Wallet = {
       state: WalletState,
@@ -53,10 +59,14 @@ export class ViewHome extends TailwindElement('') {
     })
   }
 
-  get accountEthers(): Promise<string> {
-    return this.doidConnectorEthers.signer.then((signer) => {
+  async accountEthers(): Promise<string | undefined> {
+    try {
+      let signer = await this.doidConnectorEthers.getSigner()
       return signer.address
-    })
+    } catch (e) {
+      console.error(e)
+      return undefined
+    }
   }
 
   connectEthers() {
@@ -68,7 +78,9 @@ export class ViewHome extends TailwindElement('') {
       <div class="dui-container my-8 mx-auto flex flex-row-reverse space-x-2 space-x-reverse">
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
-          <p>Connected addresses: ${this.doidConnector.addresses ?? 'empty'}</p>
+          <p>Account: ${JSON.stringify(this.walletClient?.account)}</p>
+          <p>Chain: ${this.walletClient?.chain}</p>
+          <p>Connected addresses: ${until(this.walletClient?.getAddresses(), 'empty')}</p>
           <p>Wallet connected: ${this.doidConnector.walletConnected}</p>
           <p>DOID connected: ${this.doidConnector.connected}</p>
           ${when(
@@ -81,8 +93,7 @@ export class ViewHome extends TailwindElement('') {
           )}
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status(ethers)</h1>
-          <p>Signer: ${until(this.doidConnectorEthers.signer.then((signer) => signer.address))}</p>
-          ${when(this.doidConnectorEthers.connected, () => html`Address: ${until(this.accountEthers)}`)}
+          <p>Signer: ${until(this.accountEthers(), 'loading')}</p>
         </div>
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with DOID connect button</h1>

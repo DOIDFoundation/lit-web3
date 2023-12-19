@@ -16,10 +16,6 @@ function walletClientToSigner(walletClient: WalletClient) {
 }
 
 export class DOIDConnectorEthers extends DOIDConnector {
-  get signer(): Promise<JsonRpcSigner> {
-    return this.getSigner()
-  }
-
   public getSigner(chainId?: number): Promise<JsonRpcSigner> {
     if (!chainId && options.chains) chainId = options.chains[0].id
     return controller.getWalletClient(chainId).then((client) => {

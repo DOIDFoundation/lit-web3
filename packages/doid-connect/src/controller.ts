@@ -30,7 +30,7 @@ import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
 import { LOGIN_PROVIDER_TYPE, OpenloginAdapter } from '@web3auth/openlogin-adapter'
 
-export type ConnectorData = WagmiConnectorData & {
+export type ConnectorState = WagmiConnectorData & {
   doid?: string
 }
 
@@ -48,25 +48,21 @@ const walletConnect = 'walletConnect'
 
 export class Controller extends State {
   @property() private connector?: Connector
-  @property() private state?: ConnectorData
-
-  /** Addresses got from connector with `eth_accounts` */
-  @property() public addresses?: Address[]
-
+  @property() private connectorState?: ConnectorState
   @storage({ key: 'doid_last_connector' })
   @property()
   private lastConnector?: string
 
-  private doidClient: PublicClient
+  private static doidClient: PublicClient
 
   constructor() {
     super()
 
-    this.doidClient = createPublicClient({
+    Controller.doidClient = createPublicClient({
       chain: options.doidNetwork,
       transport: http()
     })
-    if (this.lastConnector) this.setConnector(this.buildConnector(this.lastConnector))
+    if (this.lastConnector) this.resetStates(this.buildConnector(this.lastConnector))
   }
 
   protected buildConnector(type?: string): Connector {
@@ -108,9 +104,9 @@ export class Controller extends State {
     return connectors
   }
 
-  private web3authInstance: Web3AuthNoModal | undefined
+  private static web3authInstance: Web3AuthNoModal
   public web3AuthConnector(provider: LOGIN_PROVIDER_TYPE) {
-    if (!this.web3authInstance) {
+    if (!Controller.web3authInstance) {
       if (options.web3AuthEnabled && !options.web3AuthClientId) {
         throw new Error('Web3Auth Client ID is not configured.')
       }
@@ -134,7 +130,7 @@ export class Controller extends State {
         web3AuthNetwork: options.web3AuthNetwork,
         chainConfig: { ...chainConfig, chainNamespace: CHAIN_NAMESPACES.EIP155 }
       })
-      this.web3authInstance = web3auth
+      Controller.web3authInstance = web3auth
 
       web3auth.configureAdapter(
         new OpenloginAdapter({
@@ -148,7 +144,7 @@ export class Controller extends State {
     return new Web3AuthConnector({
       chains: options.chains,
       options: {
-        web3AuthInstance: this.web3authInstance,
+        web3AuthInstance: Controller.web3authInstance,
         loginParams: {
           loginProvider: provider
         }
@@ -163,26 +159,26 @@ export class Controller extends State {
 
   /** @returns connected with a valid DOID. */
   get connected(): boolean {
-    return Boolean(this.state?.doid)
+    return Boolean(this.connectorState?.doid)
   }
 
   /** @returns connected account. */
   get account(): Address | undefined {
-    return this.state?.account
+    return this.connectorState?.account
   }
 
   /** @returns DOID name of connected account. */
   get doid(): string | undefined {
-    return this.state?.doid
+    return this.connectorState?.doid
   }
 
   /** @returns chain id of connected connector */
   get chainId() {
-    return this.state?.chain?.id
+    return this.connectorState?.chain?.id
   }
 
   protected get doidContractAddress(): Address {
-    return this.doidClient.chain?.contracts?.ensRegistry?.address!
+    return Controller.doidClient.chain?.contracts?.ensRegistry?.address!
   }
 
   public getDOID(address: Address): Promise<string> {
@@ -191,7 +187,7 @@ export class Controller extends State {
     const contract = getContract({
       address: this.doidContractAddress,
       abi,
-      publicClient: this.doidClient
+      publicClient: Controller.doidClient
     })
     return contract.read.name([node])
   }
@@ -202,7 +198,7 @@ export class Controller extends State {
     const contract = getContract({
       address: this.doidContractAddress,
       abi,
-      publicClient: this.doidClient
+      publicClient: Controller.doidClient
     })
     return contract.read.addr([node])
   }
@@ -212,25 +208,13 @@ export class Controller extends State {
     return this.connector.getWalletClient({ chainId })
   }
 
-  /** Get addresses from connector with `eth_accounts` */
-  public async getAddresses(chainId?: number): Promise<Address[]> {
-    if (!this.connector) {
-      this.addresses = []
-    } else {
-      let client = await this.getWalletClient(chainId)
-      let addresses = await client.getAddresses()
-      this.addresses = addresses
-    }
-    return this.addresses
-  }
-
   /** Check status of a DOID name. @returns `available`|`registered`|`locked`|`reserved` */
   public checkDOID(name: string): Promise<string> {
     const abi = parseAbi(['function statusOfName(string _name) view returns (string status, address owner, uint id)'])
     const contract = getContract({
       address: this.doidContractAddress,
       abi,
-      publicClient: this.doidClient
+      publicClient: Controller.doidClient
     })
     return contract.read.statusOfName([name]).then((ret) => {
       return ret[0]
@@ -238,7 +222,7 @@ export class Controller extends State {
   }
 
   public async registerDOID(name: string): Promise<string> {
-    const doidChainId = this.doidClient.chain?.id!
+    const doidChainId = Controller.doidClient.chain?.id!
     const connector = this.connector!
     if ((await connector.getChainId()) != doidChainId) await connector.switchChain!(doidChainId)
     const walletClient = await connector.getWalletClient({ chainId: doidChainId })
@@ -251,12 +235,12 @@ export class Controller extends State {
     })
     const address = walletClient.account.address
     const hash = await contract.write.register([name, address])
-    const receipt = await this.doidClient.waitForTransactionReceipt({ hash })
+    const receipt = await Controller.doidClient.waitForTransactionReceipt({ hash })
     if (receipt.status === 'reverted') {
-      const txn = await this.doidClient.getTransaction({
+      const txn = await Controller.doidClient.getTransaction({
         hash: receipt.transactionHash
       })
-      const code = (await this.doidClient.call({
+      const code = (await Controller.doidClient.call({
         ...txn,
         gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
         maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
@@ -270,49 +254,37 @@ export class Controller extends State {
     return expect
   }
 
-  private setConnector(connector?: Connector) {
+  private resetStates(connector?: Connector) {
+    this.connectorState = undefined
     this.connector = connector
-    this.getAddresses()
   }
 
-  private setAccount(data: ConnectorData): Promise<ConnectorData> {
-    return this.getDOID(data.account!).then((doid) => {
-      if (!doid) {
-        this.state = undefined
-        throw new ErrNotRegistered('Not registered', data.account!)
-      }
-      data.doid = doid
-      this.state = data
-      return this.state
-    })
-  }
-
-  public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorData> {
+  public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorState> {
     if (!connector) {
       connector = this.connector ?? new InjectedConnector({ chains: options.chains })
     }
-    let onConnect = (data: WagmiConnectorData) => {
-      this.setConnector(connector)
+    const onConnect = (data: WagmiConnectorData): Promise<ConnectorState> => {
+      this.resetStates(connector)
       this.lastConnector = connector?.options.loginProvider?.name ?? connector?.id
-      return this.setAccount(data).then((state) => {
-        connector!.on('change', (data: WagmiConnectorData) => {
-          this.setAccount(data)
+      const saveStateWithDOID = (data: WagmiConnectorData) =>
+        this.getDOID(data.account!).then((doid) => {
+          if (!doid) throw new ErrNotRegistered('Not registered', data.account!)
+          this.connectorState = { ...data, doid }
+          return this.connectorState
         })
-        return state
-      })
+      connector!.on('change', saveStateWithDOID)
+      return saveStateWithDOID(data)
     }
     connector.once('connect', onConnect)
     connector.once('disconnect', () => {
-      this.setConnector()
-      this.state = undefined
+      this.resetStates()
     })
     return connector.connect({ chainId }).then(onConnect)
   }
 
   public async disconnect() {
     await this.connector?.disconnect()
-    this.setConnector()
-    this.state = undefined
+    this.resetStates()
   }
 
   public switchChain(chainId: number) {
