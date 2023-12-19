@@ -5,6 +5,8 @@ import { DOIDConnectDialog } from './connectDialog'
 import { StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
 
+export { type WalletClient } from '@wagmi/core'
+
 export class DOIDConnector {
   /**
    * Construct a connector and bind reactive host on demand.

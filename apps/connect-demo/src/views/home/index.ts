@@ -3,12 +3,11 @@ import { customElement, state } from 'lit/decorators.js'
 // Components
 import icon from '@lit-web3/dui/src/i/doid.svg'
 import '@doid/connect'
-import { DOIDConnectButton, DOIDConnector } from '@doid/connect'
+import { DOIDConnectButton, DOIDConnector, WalletClient } from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/src/input/text'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { WalletState, emitWalletChange } from '@lit-web3/ethers/src/wallet'
-import { WalletClient } from '@wagmi/core'
 
 @customElement('view-home')
 export class ViewHome extends TailwindElement('') {
