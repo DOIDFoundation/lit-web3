@@ -1,6 +1,6 @@
 :host {
   .button-container {
-    @apply justify-center;
+    @apply flex justify-center;
 
     sl-button {
       @apply relative mx-0.5;

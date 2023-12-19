@@ -4,10 +4,11 @@ import {
   InjectedConnector,
   WalletClient,
   SwitchChainNotSupportedError,
+  ChainNotConfiguredError,
   ConnectorNotFoundError
 } from '@wagmi/core'
 import { options } from './options'
-import { State, property } from '@lit-app/state'
+import { State, property, storage } from '@lit-app/state'
 import {
   Address,
   CallParameters,
@@ -20,6 +21,14 @@ import {
   namehash,
   parseAbi
 } from 'viem'
+import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
+import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
+import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
+import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
+import { CHAIN_NAMESPACES } from '@web3auth/base'
+import { Web3AuthNoModal } from '@web3auth/no-modal'
+import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
+import { LOGIN_PROVIDER_TYPE, OpenloginAdapter } from '@web3auth/openlogin-adapter'
 
 export type ConnectorData = WagmiConnectorData & {
   doid?: string
@@ -33,9 +42,21 @@ export class ErrNotRegistered extends Error {
   }
 }
 
+const metamask = 'metaMask'
+const coinbase = 'coinbaseWallet'
+const walletConnect = 'walletConnect'
+
 export class Controller extends State {
   @property() private connector?: Connector
   @property() private state?: ConnectorData
+
+  /** Addresses got from connector with `eth_accounts` */
+  @property() public addresses?: Address[]
+
+  @storage({ key: 'doid_last_connector' })
+  @property()
+  private lastConnector?: string
+
   private doidClient: PublicClient
 
   constructor() {
@@ -45,24 +66,117 @@ export class Controller extends State {
       chain: options.doidNetwork,
       transport: http()
     })
+    if (this.lastConnector) this.setConnector(this.buildConnector(this.lastConnector))
   }
 
+  protected buildConnector(type?: string): Connector {
+    switch (type) {
+      case metamask:
+        return new MetaMaskConnector({ chains: options.chains })
+      case coinbase:
+        return new CoinbaseWalletConnector({ chains: options.chains, options: { appName: options.appName ?? 'DOID' } })
+      case walletConnect:
+        return new WalletConnectConnector({
+          chains: options.chains,
+          options: {
+            projectId: options.walletConnectId!
+          }
+        })
+      default:
+        if (type) {
+          if (options.web3AuthEnabled && type in options.web3AuthProviders!) {
+            return this.web3AuthConnector(type as LOGIN_PROVIDER_TYPE)
+          }
+          console.warn(`Unsupported connector type: ${type}`)
+        }
+        return new InjectedConnector({ chains: options.chains })
+    }
+  }
+
+  public availableConnectors() {
+    let connectors: Connector[] = [this.buildConnector(metamask), this.buildConnector(coinbase)].filter(
+      (wallet) => wallet.ready
+    )
+    let injected = this.buildConnector()
+    if (injected.ready && connectors.findIndex((wallet) => wallet.name == injected.name) < 0) {
+      connectors.push(injected)
+    }
+    if (options.walletConnectEnabled) {
+      let wc = this.buildConnector(walletConnect)
+      if (wc.ready) connectors.push(wc)
+    }
+    return connectors
+  }
+
+  private web3authInstance: Web3AuthNoModal | undefined
+  public web3AuthConnector(provider: LOGIN_PROVIDER_TYPE) {
+    if (!this.web3authInstance) {
+      if (options.web3AuthEnabled && !options.web3AuthClientId) {
+        throw new Error('Web3Auth Client ID is not configured.')
+      }
+
+      let chains = options.chains!
+      let chain = this.chainId ? chains.find((c) => c.id == this.chainId) : chains[0]
+      if (!chain)
+        throw this.chainId
+          ? new ChainNotConfiguredError({ chainId: this.chainId, connectorId: 'Web3Auth' })
+          : new Error('chains is not configured.')
+      const chainConfig = {
+        chainId: '0x' + chain.id.toString(16),
+        rpcTarget: chain.rpcUrls.default.http[0],
+        displayName: chain.name,
+        tickerName: chain.nativeCurrency?.name,
+        ticker: chain.nativeCurrency?.symbol,
+        blockExplorer: chain.blockExplorers?.default?.url ?? ''
+      }
+      let web3auth = new Web3AuthNoModal({
+        clientId: options.web3AuthClientId!,
+        web3AuthNetwork: options.web3AuthNetwork,
+        chainConfig: { ...chainConfig, chainNamespace: CHAIN_NAMESPACES.EIP155 }
+      })
+      this.web3authInstance = web3auth
+
+      web3auth.configureAdapter(
+        new OpenloginAdapter({
+          privateKeyProvider: new EthereumPrivateKeyProvider({
+            config: { chainConfig }
+          })
+        })
+      )
+    }
+
+    return new Web3AuthConnector({
+      chains: options.chains,
+      options: {
+        web3AuthInstance: this.web3authInstance,
+        loginParams: {
+          loginProvider: provider
+        }
+      }
+    })
+  }
+
+  /** @returns connected to a connector. */
   get walletConnected(): boolean {
     return Boolean(this.connector)
   }
 
+  /** @returns connected with a valid DOID. */
   get connected(): boolean {
     return Boolean(this.state?.doid)
   }
 
+  /** @returns connected account. */
   get account(): Address | undefined {
     return this.state?.account
   }
 
+  /** @returns DOID name of connected account. */
   get doid(): string | undefined {
     return this.state?.doid
   }
 
+  /** @returns chain id of connected connector */
   get chainId() {
     return this.state?.chain?.id
   }
@@ -98,6 +212,20 @@ export class Controller extends State {
     return this.connector.getWalletClient({ chainId })
   }
 
+  /** Get addresses from connector with `eth_accounts` */
+  protected async getAddresses(chainId?: number): Promise<Address[]> {
+    if (!this.connector) {
+      this.addresses = []
+    } else {
+      let client = await this.getWalletClient(chainId)
+      let addresses = await client.getAddresses()
+      this.addresses = addresses
+    }
+    console.log('addresses:', this.addresses)
+    return this.addresses
+  }
+
+  /** Check status of a DOID name. @returns `available`|`registered`|`locked`|`reserved` */
   public checkDOID(name: string): Promise<string> {
     const abi = parseAbi(['function statusOfName(string _name) view returns (string status, address owner, uint id)'])
     const contract = getContract({
@@ -143,6 +271,11 @@ export class Controller extends State {
     return expect
   }
 
+  private setConnector(connector?: Connector) {
+    this.connector = connector
+    this.getAddresses()
+  }
+
   private setAccount(data: ConnectorData): Promise<ConnectorData> {
     return this.getDOID(data.account!).then((doid) => {
       if (!doid) {
@@ -160,7 +293,8 @@ export class Controller extends State {
       connector = this.connector ?? new InjectedConnector({ chains: options.chains })
     }
     let onConnect = (data: WagmiConnectorData) => {
-      this.connector = connector
+      this.setConnector(connector)
+      this.lastConnector = connector?.options.loginProvider?.name ?? connector?.id
       return this.setAccount(data).then((state) => {
         connector!.on('change', (data: WagmiConnectorData) => {
           this.setAccount(data)
@@ -170,7 +304,7 @@ export class Controller extends State {
     }
     connector.once('connect', onConnect)
     connector.once('disconnect', () => {
-      this.connector = undefined
+      this.setConnector()
       this.state = undefined
     })
     return connector.connect({ chainId }).then(onConnect)
@@ -178,7 +312,7 @@ export class Controller extends State {
 
   public async disconnect() {
     await this.connector?.disconnect()
-    this.connector = undefined
+    this.setConnector()
     this.state = undefined
   }
 

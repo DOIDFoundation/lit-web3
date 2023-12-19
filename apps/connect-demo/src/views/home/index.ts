@@ -18,8 +18,6 @@ export class ViewHome extends TailwindElement('') {
 
   connectedCallback(): void {
     super.connectedCallback()
-    this.updateComplete.then(() => this.doidConnector.connect())
-
     const connector = this.doidConnectorEthers
     let wallet: Wallet = {
       state: WalletState,
@@ -70,7 +68,9 @@ export class ViewHome extends TailwindElement('') {
       <div class="dui-container my-8 mx-auto flex flex-row-reverse space-x-2 space-x-reverse">
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
-          <p>Is connected: ${this.doidConnector.connected}</p>
+          <p>Connected addresses: ${this.doidConnector.addresses ?? 'empty'}</p>
+          <p>Wallet connected: ${this.doidConnector.walletConnected}</p>
+          <p>DOID connected: ${this.doidConnector.connected}</p>
           ${when(
             this.doidConnector.connected,
             () => html`
@@ -81,7 +81,7 @@ export class ViewHome extends TailwindElement('') {
           )}
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status(ethers)</h1>
-          <p>Is connected: ${this.doidConnectorEthers.connected}</p>
+          <p>Signer: ${until(this.doidConnectorEthers.signer.then((signer) => signer.address))}</p>
           ${when(this.doidConnectorEthers.connected, () => html`Address: ${until(this.accountEthers)}`)}
         </div>
         <div class="flex-auto">

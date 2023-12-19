@@ -6,6 +6,10 @@ import { StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
 
 export class DOIDConnector {
+  /**
+   * Construct a connector and bind reactive host on demand.
+   * @param host A {@link ReactiveControllerHost} to bind
+   */
   constructor(host?: ReactiveControllerHost) {
     if (host) this.bindState(host)
   }
@@ -14,24 +18,41 @@ export class DOIDConnector {
     return new StateController(host, controller)
   }
 
+  /** Check if connected with user selected connector. */
+  get walletConnected(): boolean {
+    return controller.walletConnected
+  }
+
+  /** Check if connected with a valid DOID. */
   get connected(): boolean {
     return controller.connected
   }
 
+  /** Get chain id of connected connector. */
   get chainId() {
     return controller.chainId
   }
 
-  get account() {
-    return controller.account
-  }
-
+  /** Get DOID name of connected account. */
   get doid() {
     return controller.doid
   }
 
+  /** Get account from connected connector. */
+  get account() {
+    return controller.account
+  }
+
+  /** Addresses got from connected connector. */
+  get addresses() {
+    return controller.addresses
+  }
+
+  /** Get DOID name by address. */
   public getDOID = controller.getDOID.bind(controller)
+  /** Get address by DOID name. */
   public getDOIDAddress = controller.getDOIDAddress.bind(controller)
+  /** Get a {@link WalletClient} object from connector. Useful for sending transactions. */
   public getWalletClient(chainId?: number): Promise<WalletClient> {
     return controller.getWalletClient(chainId)
   }

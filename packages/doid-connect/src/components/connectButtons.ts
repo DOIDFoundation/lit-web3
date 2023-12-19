@@ -18,15 +18,8 @@ import iconMetamask from '../assets/icons/metamask.svg?inline'
 import iconCoinbase from '../assets/icons/coinbase.svg?inline'
 import iconWalletConnect from '../assets/icons/walletconnect.svg?inline'
 import iconPuzzle from '../assets/icons/puzzle.svg?inline'
-import { Web3AuthNoModal } from '@web3auth/no-modal'
-import { CHAIN_NAMESPACES } from '@web3auth/base'
-import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
-import { LOGIN_PROVIDER_TYPE, OpenloginAdapter } from '@web3auth/openlogin-adapter'
-import { Chain, ConnectorData, ChainNotConfiguredError, Connector, InjectedConnector } from '@wagmi/core'
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
-import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
-import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
-import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
+import { LOGIN_PROVIDER_TYPE } from '@web3auth/openlogin-adapter'
+import { Chain, ConnectorData, Connector } from '@wagmi/core'
 import { BaseCss } from './globalCSS'
 import style from './connectButtons.css?inline'
 import { EventTypes, stopPropagation } from '../utils/events'
@@ -51,32 +44,6 @@ export class DOIDConnectButtons extends LitElement {
   }
   on<T extends EventTypes.EventNames<Events>>(type: T, listener: EventTypes.EventListenerFn<Events, T>, options?: any) {
     this.addEventListener(type, listener as EventListener, options)
-  }
-
-  private web3authInstance: Web3AuthNoModal | undefined
-
-  get connectors() {
-    let connectors: Connector[] = [
-      new MetaMaskConnector({ chains: options.chains }),
-      new CoinbaseWalletConnector({ chains: options.chains, options: { appName: options.appName ?? 'DOID' } })
-    ].filter((wallet) => wallet.ready)
-    let injected = new InjectedConnector({ chains: options.chains })
-    if (injected.ready && connectors.findIndex((wallet) => wallet.name == injected.name) < 0) {
-      connectors.push(injected)
-    }
-    if (options.walletConnectEnabled) {
-      let wc = new WalletConnectConnector({
-        chains: options.chains,
-        options: {
-          projectId: options.walletConnectId!
-        }
-      })
-      if (wc.ready) connectors.push(wc)
-    }
-    return connectors
-  }
-  get isWeb3AuthEnabled() {
-    return options.web3AuthEnabled
   }
 
   getConnectorIcon(connector: any) {
@@ -110,55 +77,8 @@ export class DOIDConnectButtons extends LitElement {
     }
   }
 
-  getWeb3Auth() {
-    if (this.web3authInstance) return this.web3authInstance
-    if (this.isWeb3AuthEnabled && !options.web3AuthClientId) {
-      throw new Error('Web3Auth Client ID is not configured.')
-    }
-
-    let chains = options.chains!
-    let chain = this.chainId ? chains.find((c) => c.id == this.chainId) : chains[0]
-    if (!chain)
-      throw this.chainId
-        ? new ChainNotConfiguredError({ chainId: this.chainId, connectorId: 'Web3Auth' })
-        : new Error('chains is not configured.')
-    const chainConfig = {
-      chainId: '0x' + chain.id.toString(16),
-      rpcTarget: chain.rpcUrls.default.http[0],
-      displayName: chain.name,
-      tickerName: chain.nativeCurrency?.name,
-      ticker: chain.nativeCurrency?.symbol,
-      blockExplorer: chain.blockExplorers?.default?.url ?? ''
-    }
-    let web3auth = new Web3AuthNoModal({
-      clientId: options.web3AuthClientId!,
-      web3AuthNetwork: options.web3AuthNetwork,
-      chainConfig: { ...chainConfig, chainNamespace: CHAIN_NAMESPACES.EIP155 }
-    })
-    this.web3authInstance = web3auth
-
-    web3auth.configureAdapter(
-      new OpenloginAdapter({
-        privateKeyProvider: new EthereumPrivateKeyProvider({
-          config: { chainConfig }
-        })
-      })
-    )
-    return web3auth
-  }
-
   connectWeb3Auth(provider: LOGIN_PROVIDER_TYPE) {
-    return this.connect(
-      new Web3AuthConnector({
-        chains: options.chains,
-        options: {
-          web3AuthInstance: this.getWeb3Auth(),
-          loginParams: {
-            loginProvider: provider
-          }
-        }
-      })
-    )
+    return this.connect(controller.web3AuthConnector(provider))
   }
   /**
    * Connect wallet wtih connector
@@ -169,8 +89,7 @@ export class DOIDConnectButtons extends LitElement {
    */
   private connect(connector: Connector) {
     this.connecting = true
-    this.connectingProvider =
-      connector instanceof Web3AuthConnector ? connector.options.loginParams!.loginProvider : connector.name
+    this.connectingProvider = connector.options.loginParams?.loginProvider ?? connector.name
     return controller
       .connect({ chainId: this.chainId, connector })
       .then((result) => {
@@ -188,7 +107,7 @@ export class DOIDConnectButtons extends LitElement {
     return html`
       <div class="button-container">
         ${map(
-          this.connectors,
+          controller.availableConnectors(),
           (connector) => html`
             <sl-tooltip placement="bottom" content="Unlock with ${connector.name}" @sl-after-hide=${stopPropagation}>
               <sl-button circle size="medium" ?disabled=${this.connecting} @click=${this.connect.bind(this, connector)}>
@@ -202,7 +121,7 @@ export class DOIDConnectButtons extends LitElement {
           `
         )}
         ${when(
-          this.isWeb3AuthEnabled,
+          options.web3AuthEnabled,
           () => html`
             ${map(
               options.web3AuthProviders,
