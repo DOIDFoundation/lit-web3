@@ -21,6 +21,9 @@ export declare namespace EventTypes {
   export type EventDetailType<T extends ValidTypes, K extends EventNames<T>> = T extends string | symbol
     ? void
     : EventType<T, K> extends CustomEvent
-    ? EventType<T, K>['detail']
-    : void
+      ? EventType<T, K>['detail']
+      : void
+}
+export function stopPropagation(event: Event) {
+  event.stopPropagation()
 }

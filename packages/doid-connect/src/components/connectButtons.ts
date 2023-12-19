@@ -4,6 +4,8 @@ import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import { map } from 'lit/directives/map.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
+import '@shoelace-style/shoelace/dist/components/icon/icon.js'
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js'
 import './spinner'
 import { controller } from '../controller'
 import { options } from '../options'
@@ -27,7 +29,7 @@ import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
 import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
 import { BaseCss } from './globalCSS'
 import style from './connectButtons.css?inline'
-import { EventTypes } from '../utils/events'
+import { EventTypes, stopPropagation } from '../utils/events'
 
 export interface Events {
   connect: EventTypes.DetailedEvent<ConnectorData>
@@ -188,13 +190,15 @@ export class DOIDConnectButtons extends LitElement {
         ${map(
           this.connectors,
           (connector) => html`
-            <sl-button size="medium" ?disabled=${this.connecting} circle @click=${this.connect.bind(this, connector)}>
-              ${when(
-                this.connecting && this.connectingProvider == connector.name,
-                () => html`<doid-spinner></doid-spinner>`
-              )}
-              <img src="${this.getConnectorIcon(connector)}" />
-            </sl-button>
+            <sl-tooltip placement="bottom" content="Unlock with ${connector.name}" @sl-after-hide=${stopPropagation}>
+              <sl-button circle size="medium" ?disabled=${this.connecting} @click=${this.connect.bind(this, connector)}>
+                <sl-icon label="Unlock with ${connector.name}" src="${this.getConnectorIcon(connector)}"></sl-icon>
+                ${when(
+                  this.connecting && this.connectingProvider == connector.name,
+                  () => html`<doid-spinner></doid-spinner>`
+                )}
+              </sl-button>
+            </sl-tooltip>
           `
         )}
         ${when(
@@ -202,17 +206,22 @@ export class DOIDConnectButtons extends LitElement {
           () => html`
             ${map(
               options.web3AuthProviders,
-              (provider) =>
-                html`<sl-button
-                  size="medium"
-                  ?disabled=${this.connecting}
-                  circle
-                  @click=${this.connectWeb3Auth.bind(this, provider)}
-                  >${when(
-                    this.connecting && this.connectingProvider == provider,
-                    () => html`<doid-spinner></doid-spinner>`
-                  )}${this.getWeb3AuthIcon(provider)}</sl-button
-                >`
+              (provider) => html`
+                <sl-tooltip placement="bottom" content="Unlock with ${provider}" @sl-after-hide=${stopPropagation}>
+                  <sl-button
+                    size="medium"
+                    ?disabled=${this.connecting}
+                    circle
+                    @click=${this.connectWeb3Auth.bind(this, provider)}
+                  >
+                    ${this.getWeb3AuthIcon(provider)}
+                    ${when(
+                      this.connecting && this.connectingProvider == provider,
+                      () => html`<doid-spinner></doid-spinner>`
+                    )}
+                  </sl-button>
+                </sl-tooltip>
+              `
             )}
           `
         )}
