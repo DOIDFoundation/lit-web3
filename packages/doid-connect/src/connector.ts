@@ -61,6 +61,10 @@ export class DOIDConnector {
   public disconnect = controller.disconnect.bind(controller)
   public switchChain = controller.switchChain.bind(controller)
 
+  public tryConnect(chainId?: Chain['id']) {
+    return controller.getAddresses(chainId)
+  }
+
   public async connect({
     chainId,
     noModal

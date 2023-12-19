@@ -213,7 +213,7 @@ export class Controller extends State {
   }
 
   /** Get addresses from connector with `eth_accounts` */
-  protected async getAddresses(chainId?: number): Promise<Address[]> {
+  public async getAddresses(chainId?: number): Promise<Address[]> {
     if (!this.connector) {
       this.addresses = []
     } else {
@@ -221,7 +221,6 @@ export class Controller extends State {
       let addresses = await client.getAddresses()
       this.addresses = addresses
     }
-    console.log('addresses:', this.addresses)
     return this.addresses
   }
 
