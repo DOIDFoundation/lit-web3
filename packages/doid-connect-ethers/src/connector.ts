@@ -15,7 +15,6 @@ export function walletClientToProvider(walletClient: WalletClient | PublicClient
 }
 
 export function walletClientToSigner(walletClient: WalletClient) {
-  walletClient.chain
   return new JsonRpcSigner(walletClientToProvider(walletClient), walletClient.account.address)
 }
 
