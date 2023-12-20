@@ -204,6 +204,7 @@ export class Controller extends State {
 
   public async getWalletClient(chainId?: number): Promise<WalletClient> {
     if (!this.connector) throw new Error('Not connected')
+    if (!chainId) chainId = this.chainId ?? options.chains?.[0].id
     return await this.connector.getWalletClient({ chainId })
   }
 
