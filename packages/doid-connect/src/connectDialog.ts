@@ -1,4 +1,4 @@
-import { LitElement, PropertyValueMap, html, nothing, svg, unsafeCSS } from 'lit'
+import { LitElement, PropertyValueMap, html, nothing, unsafeCSS } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import './components/signup'

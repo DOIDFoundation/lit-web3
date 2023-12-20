@@ -2,7 +2,7 @@ import { updateChains, updateOptions } from './options'
 import { controller } from './controller'
 import { Chain, ConnectorData, WalletClient } from '@wagmi/core'
 import { DOIDConnectDialog } from './connectDialog'
-import { StateController } from '@lit-app/state'
+import { State, StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
 
 export { type WalletClient } from '@wagmi/core'
@@ -16,9 +16,21 @@ export class DOIDConnector {
     if (host) this.bindState(host)
   }
 
+  /**
+   * Bind state changes to a reactive host.
+   * @returns A {@link StateController}
+   */
   public bindState(host: ReactiveControllerHost) {
     return new StateController(host, controller)
   }
+
+  /**
+   * Subscribe state changes.
+   * @param callback `(key: string, value: any, state: State) => void`
+   * @param nameOrNames key name, can be `connector`: connector changed, `connectorState`: account or network changed
+   * @see {@link State.subscribe}
+   */
+  public subscribe = controller.subscribe.bind(controller)
 
   /** Check if connected with user selected connector. */
   get walletConnected(): boolean {
@@ -50,18 +62,14 @@ export class DOIDConnector {
   /** Get address by DOID name. */
   public getDOIDAddress = controller.getDOIDAddress.bind(controller)
   /** Get a {@link WalletClient} object from connector. Useful for sending transactions. */
-  public getWalletClient = controller.getWalletClient.bind(controller)
+  public getWalletClient(chainId?: number): Promise<WalletClient> {
+    return controller.getWalletClient(chainId)
+  }
 
   public updateOptions = updateOptions
   public updateChains = updateChains
   public disconnect = controller.disconnect.bind(controller)
   public switchChain = controller.switchChain.bind(controller)
-  /**
-   * Subscribe state change.
-   * @param callback `(key: string, value: any, state: State) => void`
-   * @param nameOrNames key name, can be `connector`: connector changed, `connectorState`: account or network changed
-   */
-  public subscribe = controller.subscribe.bind(controller)
 
   public async connect({
     chainId,

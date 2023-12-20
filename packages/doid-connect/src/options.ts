@@ -4,8 +4,14 @@ import { doid, doidTestnet } from './chains'
 import { OPENLOGIN_NETWORK_TYPE as WEB3AUTH_NETWORK_TYPE } from '@web3auth/base'
 import { LOGIN_PROVIDER_TYPE as WEB3AUTH_PROVIDER_TYPE } from '@web3auth/openlogin-adapter'
 
-export { OPENLOGIN_NETWORK as WEB3AUTH_NETWORK } from '@web3auth/base'
-export { LOGIN_PROVIDER as WEB3AUTH_PROVIDER } from '@web3auth/openlogin-adapter'
+export {
+  OPENLOGIN_NETWORK as WEB3AUTH_NETWORK,
+  type OPENLOGIN_NETWORK_TYPE as WEB3AUTH_NETWORK_TYPE
+} from '@web3auth/base'
+export {
+  LOGIN_PROVIDER as WEB3AUTH_PROVIDER,
+  type LOGIN_PROVIDER_TYPE as WEB3AUTH_PROVIDER_TYPE
+} from '@web3auth/openlogin-adapter'
 
 export interface ConfigOptions {
   /** Name shown in connect dialog. */
