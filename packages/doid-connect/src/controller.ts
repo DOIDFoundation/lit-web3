@@ -202,9 +202,9 @@ export class Controller extends State {
     return contract.read.addr([node])
   }
 
-  public getWalletClient(chainId?: number): Promise<WalletClient> {
+  public async getWalletClient(chainId?: number): Promise<WalletClient> {
     if (!this.connector) throw new Error('Not connected')
-    return this.connector.getWalletClient({ chainId })
+    return await this.connector.getWalletClient({ chainId })
   }
 
   /** Check status of a DOID name. @returns `available`|`registered`|`locked`|`reserved` */

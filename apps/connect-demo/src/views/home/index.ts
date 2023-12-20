@@ -3,7 +3,7 @@ import { customElement, state } from 'lit/decorators.js'
 // Components
 import icon from '@lit-web3/dui/src/i/doid.svg'
 import '@doid/connect'
-import { DOIDConnectButton, DOIDConnector, WalletClient } from '@doid/connect'
+import { DOIDConnectButton, DOIDConnector, WalletClient, doidTestnet } from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/src/input/text'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
@@ -16,11 +16,15 @@ export class ViewHome extends TailwindElement('') {
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)
   @state() private walletClient?: WalletClient
+  @state() private doidResult?: string
 
   connectedCallback(): void {
     super.connectedCallback()
     const updateWalletClient = () =>
-      this.doidConnector.getWalletClient().then((walletClient) => (this.walletClient = walletClient))
+      this.doidConnector
+        .getWalletClient()
+        .then((walletClient) => (this.walletClient = walletClient))
+        .catch((e) => console.warn('Got error:', e))
     this.doidConnector.subscribe(() => updateWalletClient())
     updateWalletClient()
     const connector = this.doidConnectorEthers
@@ -63,13 +67,17 @@ export class ViewHome extends TailwindElement('') {
       let signer = await this.doidConnectorEthers.getSigner()
       return signer.address
     } catch (e) {
-      console.error(e)
+      console.warn('Got error:', e)
       return undefined
     }
   }
 
   connectEthers() {
     return bridgeStore.bridge.select(bridgeStore.bridge.wallets.findIndex((wallet) => wallet.name == 'DOID'))
+  }
+
+  async getDOID(address: string) {
+    this.doidResult = (await this.doidConnectorEthers.getProvider(doidTestnet.id).lookupAddress(address)) ?? 'not found'
   }
 
   render() {
@@ -93,6 +101,12 @@ export class ViewHome extends TailwindElement('') {
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status(ethers)</h1>
           <p>Signer: ${until(this.accountEthers(), 'loading')}</p>
+
+          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Resolve DOID</h1>
+          <dui-input-text id="address" placeholder="address" class="max-w-sm flex my-1"
+            ><p slot="msg">${this.doidResult}</p></dui-input-text
+          >
+          <dui-button sm @click=${() => this.getDOID(this.$('#address').value)}><p>Get DOID</p></dui-button>
         </div>
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with DOID connect button</h1>
