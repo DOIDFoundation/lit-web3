@@ -384,6 +384,9 @@ importers:
       tsup:
         specifier: ^6
         version: 6.7.0(postcss@8.4.32)(typescript@5.3.3)
+      viem:
+        specifier: ^1.19.13
+        version: 1.20.1(typescript@5.3.3)
 
   packages/doids:
     dependencies:

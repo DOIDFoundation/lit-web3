@@ -8,7 +8,8 @@
   "type": "module",
   "dependencies": {
     "@doid/connect": "workspace:latest",
-    "@wagmi/core": "^1.4.12"
+    "@wagmi/core": "^1.4.12",
+    "viem": "^1.19.13"
   },
   "peerDependencies": {
     "ethers": "^6",

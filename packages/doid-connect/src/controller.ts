@@ -4,7 +4,6 @@ import {
   InjectedConnector,
   WalletClient,
   SwitchChainNotSupportedError,
-  ChainNotConfiguredError,
   ConnectorNotFoundError
 } from '@wagmi/core'
 import { options } from './options'
@@ -114,9 +113,9 @@ export class Controller extends State {
       let chains = options.chains!
       let chain = this.chainId ? chains.find((c) => c.id == this.chainId) : chains[0]
       if (!chain)
-        throw this.chainId
-          ? new ChainNotConfiguredError({ chainId: this.chainId, connectorId: 'Web3Auth' })
-          : new Error('chains is not configured.')
+        throw new Error(
+          this.chainId ? `chain ${this.chainId} not found in options.chains` : 'options.chains is not configured.'
+        )
       const chainConfig = {
         chainId: '0x' + chain.id.toString(16),
         rpcTarget: chain.rpcUrls.default.http[0],
@@ -257,6 +256,7 @@ export class Controller extends State {
   private resetStates(connector?: Connector) {
     this.connectorState = undefined
     this.connector = connector
+    this.lastConnector = connector ? connector?.options.loginProvider?.name ?? connector?.id : ''
   }
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorState> {
@@ -265,7 +265,6 @@ export class Controller extends State {
     }
     const onConnect = (data: WagmiConnectorData): Promise<ConnectorState> => {
       this.resetStates(connector)
-      this.lastConnector = connector?.options.loginProvider?.name ?? connector?.id
       const saveStateWithDOID = (data: WagmiConnectorData) =>
         this.getDOID(data.account!).then((doid) => {
           if (!doid) throw new ErrNotRegistered('Not registered', data.account!)
