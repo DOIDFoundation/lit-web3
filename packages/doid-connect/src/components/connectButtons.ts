@@ -1,4 +1,4 @@
-import '@doid/core/src/shims/node'
+import '@doid/node-shims'
 import { LitElement, html, unsafeCSS } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'

@@ -1952,4 +1952,7 @@ function isSlowBuffer(obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isFastBuffer(obj.slice(0, 0))
 }
 
+if (!('Buffer' in globalThis)) Object.defineProperty(globalThis, 'Buffer', { value: Buffer })
+
 export { Buffer, INSPECT_MAX_BYTES, SlowBuffer, isBuffer, _kMaxLength as kMaxLength }
+export default Buffer

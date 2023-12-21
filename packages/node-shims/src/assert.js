@@ -58,7 +58,7 @@ var objectKeys =
 // AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import { isBuffer } from './buffer.es6.js'
+import { isBuffer } from './buffer.js'
 import { isPrimitive, inherits, isError, isFunction, isRegExp, isDate, inspect as utilInspect } from 'util'
 var pSlice = Array.prototype.slice
 var _functionsHaveNames

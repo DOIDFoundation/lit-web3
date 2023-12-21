@@ -1,0 +1,36 @@
+{
+  "name": "@doid/node-shims",
+  "version": "0.0.3",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./src/index.js"
+    },
+    "./*": {
+      "import": "./dist/*.js",
+      "default": "./src/*.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DOIDFoundation/lit-web3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DOIDFoundation/lit-web3/issues"
+  },
+  "scripts": {
+    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "readable-stream": "^4.5.1"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "tsup": "^7.2.0"
+  }
+}

@@ -29,7 +29,7 @@ const define = {
 }
 
 export const viteConfig = (options = {}) => {
-  const shimNode = (s) => resolve(__dirname, '../../../core/src/shims/node', s)
+  const shimNode = (s) => resolve(__dirname, '../../../node-shims/src', s)
   const { server: { https = true } = {}, viteConfigOptions = {} } = options
   return ({ mode = '' }) => {
     const isDev = mode === 'development'
