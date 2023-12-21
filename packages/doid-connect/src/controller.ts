@@ -3,8 +3,7 @@ import {
   ConnectorData as WagmiConnectorData,
   InjectedConnector,
   WalletClient,
-  SwitchChainNotSupportedError,
-  ConnectorNotFoundError
+  SwitchChainNotSupportedError
 } from '@wagmi/core'
 import { options } from './options'
 import { State, property, storage } from '@lit-app/state'
@@ -61,7 +60,6 @@ export class Controller extends State {
       chain: options.doidNetwork,
       transport: http()
     })
-    if (this.lastConnector) this.resetStates(this.buildConnector(this.lastConnector))
   }
 
   protected buildConnector(type?: string): Connector {
@@ -203,9 +201,11 @@ export class Controller extends State {
   }
 
   public async getWalletClient(chainId?: number): Promise<WalletClient> {
-    if (!this.connector) throw new Error('Not connected')
-    if (!chainId) chainId = this.chainId ?? (await this.connector.getChainId()) ?? options.chains?.[0].id
-    return await this.connector.getWalletClient({ chainId })
+    const connector = this.connector ?? this.buildConnector(this.lastConnector)
+    if (!connector) throw new Error('Not connected')
+    if (!chainId) chainId = this.chainId ?? (await connector.getChainId()) ?? options.chains?.[0].id
+    console.log('get walletclient', chainId, this.chainId)
+    return await connector.getWalletClient({ chainId })
   }
 
   /** Check status of a DOID name. @returns `available`|`registered`|`locked`|`reserved` */
@@ -223,7 +223,8 @@ export class Controller extends State {
 
   public async registerDOID(name: string): Promise<string> {
     const doidChainId = Controller.doidClient.chain?.id!
-    const connector = this.connector!
+    const connector = this.connector
+    if (!connector) throw new Error('Not connected')
     if ((await connector.getChainId()) != doidChainId) await connector.switchChain!(doidChainId)
     const walletClient = await connector.getWalletClient({ chainId: doidChainId })
 
@@ -262,7 +263,7 @@ export class Controller extends State {
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorState> {
     if (!connector) {
-      connector = this.connector ?? new InjectedConnector({ chains: options.chains })
+      connector = this.connector ?? this.buildConnector(this.lastConnector)
     }
     const onConnect = (data: WagmiConnectorData): Promise<ConnectorState> => {
       this.resetStates(connector)
@@ -296,9 +297,10 @@ export class Controller extends State {
   }
 
   public switchChain(chainId: number) {
-    if (!this.connector) throw new ConnectorNotFoundError()
-    if (!this.connector?.switchChain) throw new SwitchChainNotSupportedError({ connector: this.connector })
-    return this.connector?.switchChain(chainId)
+    const connector = this.connector
+    if (!connector) throw new Error('Not connected')
+    if (!connector?.switchChain) throw new SwitchChainNotSupportedError({ connector })
+    return connector?.switchChain(chainId)
   }
 }
 
