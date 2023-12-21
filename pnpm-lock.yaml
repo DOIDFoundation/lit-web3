@@ -339,6 +339,9 @@ importers:
       '@doid/core':
         specifier: workspace:latest
         version: link:../core
+      '@doid/name-validator':
+        specifier: workspace:^
+        version: link:../name-validator
       '@shoelace-style/shoelace':
         specifier: ^2.12.0
         version: 2.12.0(@types/react@18.2.45)
@@ -441,12 +444,12 @@ importers:
       '@doid/core':
         specifier: workspace:latest
         version: link:../core
+      '@doid/name-validator':
+        specifier: workspace:latest
+        version: link:../name-validator
       '@ensdomains/address-encoder':
         specifier: ^0.2.22
         version: 0.2.22
-      tr46:
-        specifier: ^4.1.1
-        version: 4.1.1
     devDependencies:
       '@types/tr46':
         specifier: ^3.0.3
@@ -464,6 +467,15 @@ importers:
       tsup:
         specifier: ^7.2.0
         version: 7.2.0(postcss@8.4.32)(typescript@5.3.3)
+
+  packages/name-validator:
+    dependencies:
+      tr46:
+        specifier: ^4.1.1
+        version: 4.1.1
+      tsup:
+        specifier: ^6
+        version: 6.7.0(postcss@8.4.32)(typescript@5.3.3)
 
   packages/router:
     dependencies:

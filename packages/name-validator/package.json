@@ -1,0 +1,16 @@
+{
+  "name": "@doid/name-validator",
+  "version": "0.0.1",
+  "scripts": {
+    "build": "tsup index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "type": "module",
+  "dependencies": {
+    "tr46": "^4.1.1"
+  },
+  "peerDependencies": {
+    "tsup": "^6"
+  },
+  "license": "MIT"
+}

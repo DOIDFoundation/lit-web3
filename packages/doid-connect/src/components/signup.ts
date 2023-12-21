@@ -16,6 +16,7 @@ import './connectButtons'
 import { DOIDConnectButtons } from './connectButtons'
 import { animate } from '@lit-labs/motion'
 import { EventTypes } from '../utils/events'
+import { toUnicode } from '@doid/name-validator'
 
 export interface Events {
   /** @param event.detail name signed up */
@@ -42,7 +43,7 @@ export class DOIDSignup extends LitElement {
     this.addEventListener(type, listener as EventListener, options)
   }
 
-  private inputRef: Ref<SlInput> = createRef()
+  private inputRef = createRef<SlInput>()
   private checkNameTimer?: any
   private checkNameSeq = 0
   private checkName() {
@@ -50,15 +51,32 @@ export class DOIDSignup extends LitElement {
 
     this.inputHelpText = ''
     this.readyToRegister = false
-    if (!this.inputRef.value?.value) {
+    const name = this.inputRef.value?.value
+    if (!name) {
       this.checking = false
       return
     }
-    this.checking = true
+    if (/\./.test(name)) {
+      this.inputHelpText = '. is not allowed'
+      return
+    }
 
     let checkNameSeq = ++this.checkNameSeq
     this.checkNameTimer = setTimeout(() => {
-      controller.checkDOID(this.inputRef.value?.value!).then((ret) => {
+      this.checking = true
+      let uts = toUnicode(name)
+      if (uts.error) {
+        this.inputHelpText = 'Name contains invalid character, try another one.'
+        this.checking = false
+        return
+      }
+      if (uts.length < 6) {
+        this.inputHelpText = 'Name too short'
+        this.checking = false
+        return
+      }
+      this.inputRef.value!.value = uts.domain
+      controller.checkDOID(uts.domain).then((ret) => {
         if (checkNameSeq != this.checkNameSeq) return
         this.checking = false
         this.readyToRegister = ret == 'available'
@@ -103,10 +121,17 @@ export class DOIDSignup extends LitElement {
   override render() {
     return html`
       <sl-animation name="fadeIn" easing="ease-in-out" duration="500" play iterations="1">
-        <div class="mt-6">
+        <form
+          class="mt-6"
+          @submit=${(event: Event) => {
+            event.preventDefault()
+            if (this.readyToRegister) this.register()
+          }}
+        >
           <h1 class="text-center text-2xl mb-4">Register</h1>
           ${when(!this.showConnect, () => html`<p class="text-center">${this.label}</p>`)}
           <sl-input
+            autocomplete="off"
             class="mx-auto my-4 max-w-min name"
             @sl-input=${this.checkName}
             ${ref(this.inputRef)}
@@ -128,6 +153,7 @@ export class DOIDSignup extends LitElement {
             () => html`
               <div class="text-center">
                 <sl-button
+                  type="submit"
                   variant="primary"
                   ?disabled=${!this.readyToRegister || this.registering}
                   @click=${this.register}
@@ -137,7 +163,7 @@ export class DOIDSignup extends LitElement {
               </div>
             `
           )}
-        </div>
+        </form>
       </sl-animation>
     `
   }
