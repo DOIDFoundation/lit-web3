@@ -204,7 +204,7 @@ export class Controller extends State {
 
   public async getWalletClient(chainId?: number): Promise<WalletClient> {
     if (!this.connector) throw new Error('Not connected')
-    if (!chainId) chainId = this.chainId ?? options.chains?.[0].id
+    if (!chainId) chainId = this.chainId ?? (await this.connector.getChainId()) ?? options.chains?.[0].id
     return await this.connector.getWalletClient({ chainId })
   }
 
@@ -266,12 +266,20 @@ export class Controller extends State {
     }
     const onConnect = (data: WagmiConnectorData): Promise<ConnectorState> => {
       this.resetStates(connector)
-      const saveStateWithDOID = (data: WagmiConnectorData) =>
-        this.getDOID(data.account!).then((doid) => {
+      const saveStateWithDOID = async (data: WagmiConnectorData) => {
+        // clear doid if account changed
+        if (this.connectorState?.doid && data.account && this.connectorState?.account != data.account)
+          this.connectorState.doid = undefined
+        // apply changes
+        this.connectorState = { ...this.connectorState, ...data }
+        // check if we need to get doid
+        if (!this.connectorState.doid) {
+          let doid = await this.getDOID(this.connectorState.account!)
           if (!doid) throw new ErrNotRegistered('Not registered', data.account!)
-          this.connectorState = { ...data, doid }
-          return this.connectorState
-        })
+          this.connectorState.doid = doid
+        }
+        return this.connectorState
+      }
       connector!.on('change', saveStateWithDOID)
       return saveStateWithDOID(data)
     }
