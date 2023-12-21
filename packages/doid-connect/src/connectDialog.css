@@ -1,17 +1,24 @@
-.separator {
-  @apply flex uppercase text-xs font-medium w-full mb-6;
-  &::before,
-  &::after {
-    @apply h-2;
-    flex: 1 0 auto;
-    content: '';
-    border-bottom: 1px solid #d4d4d8;
+:host {
+  sl-dialog {
+    --sl-z-index-dialog: 80;
+    .separator {
+      @apply flex uppercase text-xs font-medium w-full mb-6;
+      &::before,
+      &::after {
+        @apply h-2;
+        flex: 1 0 auto;
+        content: '';
+        border-bottom: 1px solid #d4d4d8;
+      }
+      span {
+        flex: 0.2 0 auto;
+      }
+    }
+    .icon svg {
+      @apply w-full h-full;
+    }
   }
-  span {
-    flex: 0.2 0 auto;
+  .sl-theme-dark .icon svg {
+    fill: #d4d4d4;
   }
-}
-
-sl-dialog {
-  --sl-z-index-dialog: 80;
 }

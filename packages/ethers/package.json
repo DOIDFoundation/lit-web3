@@ -6,13 +6,13 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@ensdomains/address-encoder": "^0.2.22",
     "@doid/core": "workspace:latest",
-    "tr46": "^4.1.1"
+    "@doid/name-validator": "workspace:latest",
+    "@ensdomains/address-encoder": "^0.2.22"
   },
   "devDependencies": {
     "@types/tr46": "^3.0.3",
-    "ethers": "^6.9.0"
+    "ethers": "^6.9.1"
   },
   "peerDependencies": {
     "ethers": "^6"

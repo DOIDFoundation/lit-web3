@@ -1,5 +1,5 @@
 {
-  "name": "@doid/connect-ethers",
+  "name": "@doid/name-validator",
   "version": "0.0.1",
   "scripts": {
     "build": "tsup index.ts --outDir ./lib --format esm,cjs --dts --clean",
@@ -7,12 +7,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@doid/connect": "workspace:latest",
-    "@wagmi/core": "^1.4.12",
-    "viem": "^1.20.3"
+    "tr46": "^4.1.1"
   },
   "peerDependencies": {
-    "ethers": "^6",
     "tsup": "^6"
   },
   "license": "MIT"

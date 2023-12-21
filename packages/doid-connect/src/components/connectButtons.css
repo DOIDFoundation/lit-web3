@@ -1,22 +1,21 @@
 :host {
-  doid-spinner {
-    @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl;
-    --track-width: 3px;
-  }
-  img {
-    @apply object-contain select-none pointer-events-none;
-  }
   .button-container {
-    @apply flex justify-center space-x-2;
+    @apply flex justify-center;
 
     sl-button {
+      @apply relative mx-0.5;
       --sl-input-border-width: 2px;
-      --sl-spacing-medium: 0;
-      img {
-        @apply w-6 h-6 mt-1.5;
+      sl-icon,
+      doid-spinner,
+      svg {
+        @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl;
+      }
+      doid-spinner {
+        @apply text-3xl;
+        --track-width: 3px;
       }
       svg {
-        @apply w-9 h-9;
+        @apply w-8 h-8;
       }
     }
   }

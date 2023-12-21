@@ -1,6 +1,8 @@
 import { Chain, defineChain } from 'viem'
 import { fantomTestnet, goerli } from 'viem/chains'
 
+export { type Chain } from 'viem'
+
 // not ready yet
 export const doid: Chain = defineChain({
   ...goerli,
