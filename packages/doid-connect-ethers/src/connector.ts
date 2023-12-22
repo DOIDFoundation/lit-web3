@@ -6,11 +6,13 @@ import { createPublicClient, http, webSocket } from 'viem'
 
 function walletClientToProvider(walletClient: WalletClient | PublicClient) {
   const { chain, transport } = walletClient
-  const network = {
-    chainId: chain.id,
-    name: chain.name,
-    ensAddress: chain.contracts?.ensRegistry?.address
-  }
+  const network = chain
+    ? {
+        chainId: chain.id,
+        name: chain.name,
+        ensAddress: chain.contracts?.ensRegistry?.address
+      }
+    : undefined
   return new BrowserProvider(transport, network)
 }
 

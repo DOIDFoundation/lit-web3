@@ -88,7 +88,7 @@ export class DOIDSignup extends LitElement {
   private connectButtonsRef = createRef<DOIDConnectButtons>()
 
   private register() {
-    if (!controller.walletConnected) {
+    if (!controller.account) {
       this.showConnect = true
       this.updateComplete.then(() => {
         this.connectButtonsRef.value?.on('connect', () => this.register())

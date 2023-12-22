@@ -109,9 +109,9 @@ export class DOIDConnectButtons extends LitElement {
         ${map(
           controller.availableConnectors(),
           (connector) => html`
-            <sl-tooltip placement="bottom" content="Unlock with ${connector.name}" @sl-after-hide=${stopPropagation}>
+            <sl-tooltip placement="bottom" content="${connector.name}" @sl-after-hide=${stopPropagation}>
               <sl-button circle size="medium" ?disabled=${this.connecting} @click=${this.connect.bind(this, connector)}>
-                <sl-icon label="Unlock with ${connector.name}" src="${this.getConnectorIcon(connector)}"></sl-icon>
+                <sl-icon label="${connector.name}" src="${this.getConnectorIcon(connector)}"></sl-icon>
                 ${when(
                   this.connecting && this.connectingProvider == connector.name,
                   () => html`<doid-spinner></doid-spinner>`
@@ -126,7 +126,7 @@ export class DOIDConnectButtons extends LitElement {
             ${map(
               options.web3AuthProviders,
               (provider) => html`
-                <sl-tooltip placement="bottom" content="Unlock with ${provider}" @sl-after-hide=${stopPropagation}>
+                <sl-tooltip placement="bottom" content="${provider}" @sl-after-hide=${stopPropagation}>
                   <sl-button
                     size="medium"
                     ?disabled=${this.connecting}

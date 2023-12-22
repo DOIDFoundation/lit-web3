@@ -1,79 +1,39 @@
 import { TailwindElement, createRef, html, ref, until, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { customElement, state } from 'lit/decorators.js'
 // Components
-import icon from '@lit-web3/dui/src/i/doid.svg'
 import '@doid/connect'
 import { DOIDConnectButton, DOIDConnector, WalletClient, doidTestnet } from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/src/input/text'
-import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { WalletState, emitWalletChange } from '@lit-web3/ethers/src/wallet'
 
 @customElement('view-home')
 export class ViewHome extends TailwindElement('') {
-  bindBridge: any = new StateController(this, bridgeStore)
   private connectButtonRef = createRef<DOIDConnectButton>()
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)
   @state() private walletClient?: WalletClient
+  @state() private accountEthers?: string
   @state() private doidResult?: string
 
+  private walletClientUpdater: any
   connectedCallback(): void {
     super.connectedCallback()
-    const updateWalletClient = () =>
-      this.doidConnector
-        .getWalletClient()
-        .then((walletClient) => (this.walletClient = walletClient))
-        .catch((e) => console.warn('Got error:', e))
-    this.doidConnector.subscribe(() => updateWalletClient())
+    const updateWalletClient = () => {
+      if (!this.walletClientUpdater) {
+        this.walletClientUpdater = this.doidConnector
+          .getWalletClient()
+          .then((walletClient) => (this.walletClient = walletClient))
+          .catch((e) => console.warn('Got error:', e))
+          .finally(() => (this.walletClientUpdater = undefined))
+      }
+    }
+    this.doidConnector.subscribe(updateWalletClient, ['account', 'chainId'])
     updateWalletClient()
-    const connector = this.doidConnectorEthers
-    let wallet: Wallet = {
-      state: WalletState,
-      get accounts() {
-        return [this.account]
-      },
-      get account() {
-        return connector.account as string
-      },
-      updateProvider(chainId: string) {
-        connector.getWalletClient().then((client) => client.switchChain({ id: Number(chainId) }))
-      },
-      async connect() {
-        this.state = WalletState.CONNECTING
-        return connector
-          .connect()
-          .then(() => (this.state = WalletState.CONNECTED))
-          .catch(() => (this.state = WalletState.DISCONNECTED))
-      },
-      async disconnect() {
-        await connector.disconnect()
-        this.state = WalletState.DISCONNECTED
-        emitWalletChange()
-      },
-      install: () => {}
-    }
-    bridgeStore.bridge.wallets.push({
-      name: 'DOID',
-      title: 'DOID',
-      icon: icon,
-      app: wallet,
-      import: async () => {}
-    })
   }
 
-  async accountEthers(): Promise<string | undefined> {
-    try {
-      let signer = await this.doidConnectorEthers.getSigner()
-      return signer.address
-    } catch (e) {
-      console.warn('Got error:', e)
-      return undefined
-    }
-  }
-
-  connectEthers() {
-    return bridgeStore.bridge.select(bridgeStore.bridge.wallets.findIndex((wallet) => wallet.name == 'DOID'))
+  async connectEthers() {
+    let signer = await this.doidConnectorEthers.getSigner()
+    this.accountEthers = signer.address
   }
 
   async getDOID(address: string) {
@@ -83,28 +43,40 @@ export class ViewHome extends TailwindElement('') {
   render() {
     return html`
       <div class="dui-container my-8 mx-auto flex flex-row-reverse space-x-2 space-x-reverse">
-        <div class="flex-auto">
+        <div class="flex-auto max-w-lg">
+          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">WalletClient status</h1>
+          <p>Account:</p>
+          <div class="whitespace-pre overflow-auto border font-mono text-xs max-h-12">
+            ${JSON.stringify(this.walletClient?.account, undefined, 1)}
+          </div>
+          <p>Chain:</p>
+          <div class="whitespace-pre overflow-auto border font-mono text-xs max-h-20">
+            ${JSON.stringify(this.walletClient?.chain, undefined, 1)}
+          </div>
+          <p>ChainId: <code>${until(this.walletClient?.getChainId())}</code></p>
+          <p>Connected addresses:</p>
+          <div class="whitespace-pre overflow-auto border font-mono text-xs max-h-12">
+            ${JSON.stringify(this.doidConnector.addresses, undefined, 1)}
+          </div>
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
-          <p>Account: ${JSON.stringify(this.walletClient?.account)}</p>
-          <p>Chain: ${this.walletClient?.chain}</p>
-          <p>Connected addresses: ${until(this.walletClient?.getAddresses(), 'empty')}</p>
-          <p>Wallet connected: ${this.doidConnector.walletConnected}</p>
-          <p>DOID connected: ${this.doidConnector.connected}</p>
+          <p>Wallet connected: <code>${this.doidConnector.ready}</code></p>
+          <p>DOID connected: <code>${this.doidConnector.connected}</code></p>
           ${when(
             this.doidConnector.connected,
             () => html`
-              <p>Address: ${this.doidConnector.account}</p>
-              <p>DOID: ${this.doidConnector.doid}</p>
+              <p>Address: <code>${this.doidConnector.account}</code></p>
+              <p>ChainId: <code>${this.doidConnector.chainId}</code></p>
+              <p>DOID: <code>${this.doidConnector.doid}</code></p>
               <dui-button sm @click=${() => this.doidConnector.disconnect()}>Disconnect</dui-button>
             `
           )}
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status(ethers)</h1>
-          <p>Signer: ${until(this.accountEthers(), 'loading')}</p>
+          <p>Signer: <code>${this.accountEthers ?? typeof this.accountEthers}</code></p>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Resolve DOID</h1>
           <dui-input-text id="address" placeholder="address" class="max-w-sm flex my-1"
-            ><p slot="msg">${this.doidResult}</p></dui-input-text
+            ><p slot="msg"><code>${this.doidResult}</code></p></dui-input-text
           >
           <dui-button sm @click=${() => this.getDOID(this.$('#address').value)}><p>Get DOID</p></dui-button>
         </div>
@@ -163,11 +135,10 @@ export class ViewHome extends TailwindElement('') {
             id="web3authClientId"
             value="BFLXJsHIHv_CgxalXixrZlytDYyf47hk64XDMXOj4vNVIGGJ9HMOyhvIbYmw3dWcwxaqadObQQSwFjR51FJvgVg"
             placeholder="Web3Auth ClientId"
-            class="max-w-sm flex my-1"
-            ><p slot="msg">
-              Use your own id when developing or submit an issue on github to allow your domain.
-            </p></dui-input-text
+            class="flex my-1"
           >
+            <p slot="msg">Use your own id when developing or submit an issue on github to allow your domain.</p>
+          </dui-input-text>
           <dui-button
             sm
             @click=${() => this.doidConnector.updateOptions({ web3AuthClientId: this.$('#web3authClientId').value })}
@@ -186,8 +157,9 @@ export class ViewHome extends TailwindElement('') {
             value="f58e1488ccb9f5b7ef6f11ffa1cd8ba1"
             placeholder="WalletConnect Project ID"
             class="max-w-sm flex my-2"
-            ><p slot="msg">This default ID can only be used on doid.tech</p></dui-input-text
           >
+            <p slot="msg">This default ID can only be used on doid.tech</p>
+          </dui-input-text>
           <dui-button
             sm
             @click=${() => this.doidConnector.updateOptions({ walletConnectId: this.$('#walletConnectId').value })}
