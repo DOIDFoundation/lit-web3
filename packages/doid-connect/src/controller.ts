@@ -173,6 +173,12 @@ export class Controller extends State {
     return Controller.doidClient.chain?.contracts?.ensRegistry?.address!
   }
 
+  public getAddresses(): Promise<Address[]> {
+    if (this.addresses) return Promise.resolve(this.addresses)
+    this.getConnector()
+    return this.updateAddressesPromise ?? Promise.resolve([])
+  }
+
   public getDOID(address: Address): Promise<string> {
     const node = namehash(address.substring(2).toLowerCase() + '.addr.reverse')
     const abi = parseAbi(['function name(bytes32) view returns (string)'])
@@ -195,11 +201,17 @@ export class Controller extends State {
     return contract.read.addr([node])
   }
 
-  private async updateAccounts(connector: Connector) {
+  private updateAddressesPromise?: Promise<Address[]>
+
+  private async updateAddresses(connector: Connector) {
     const provider = (await connector.getProvider()) as EIP1193Provider
     if (this.connector?.id != connector.id) return
-    const accounts = await provider.request({ method: 'eth_accounts' })
-    if (this.connector?.id == connector.id) this.addresses = accounts
+    this.updateAddressesPromise = provider.request({ method: 'eth_accounts' })
+    const accounts = await this.updateAddressesPromise
+    if (this.connector?.id == connector.id) {
+      this.addresses = accounts
+      this.updateAddressesPromise = undefined
+    }
   }
 
   private async updateChainId(connector: Connector) {
@@ -215,7 +227,7 @@ export class Controller extends State {
     // update account and doid when changes
     if (data.account && this.account != data.account) {
       this.account = data.account
-      this.updateAccounts(connector)
+      this.updateAddresses(connector)
       this.doid = await this.getDOID(data.account)
       if (!this.doid) throw new ErrNotRegistered('Not registered', data.account!)
     }
@@ -301,7 +313,7 @@ export class Controller extends State {
     if (!connector) return
     if (this.connector) this.connector.removeAllListeners()
 
-    this.updateAccounts(connector)
+    this.updateAddresses(connector)
     // not needed as only WalletConnect emits without any data
     // connector.on('connect', this.handleConnect.bind(this, connector))
     connector.on('disconnect', () => this.resetStates())

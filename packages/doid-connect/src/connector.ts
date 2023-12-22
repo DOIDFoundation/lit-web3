@@ -40,8 +40,13 @@ export class DOIDConnector {
   /** A list of addresses accessible */
   get addresses(): Address[] | undefined {
     // try get addresses for the first time
-    if (!controller.ready) controller.getConnector()
+    if (!controller.addresses) controller.getAddresses()
     return controller.addresses
+  }
+
+  /** A promise to get list of addresses accessible */
+  public getAddresses(): Promise<Address[]> {
+    return controller.getAddresses()
   }
 
   /** Check if connected with user selected connector. */
