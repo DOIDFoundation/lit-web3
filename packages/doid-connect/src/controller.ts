@@ -179,6 +179,12 @@ export class Controller extends State {
     return this.updateAddressesPromise ?? Promise.resolve([])
   }
 
+  public getChainId(): Promise<Chain['id']> {
+    if (this.chainId) return Promise.resolve(this.chainId)
+    this.getConnector()
+    return this.updateChainIdPromise ?? Promise.reject('Failed to get chainId')
+  }
+
   public getDOID(address: Address): Promise<string> {
     const node = namehash(address.substring(2).toLowerCase() + '.addr.reverse')
     const abi = parseAbi(['function name(bytes32) view returns (string)'])
@@ -214,9 +220,15 @@ export class Controller extends State {
     }
   }
 
+  private updateChainIdPromise?: Promise<number>
+
   private async updateChainId(connector: Connector) {
-    const chainId = await connector.getChainId()
-    if (this.connector?.id == connector.id) this.chainId = chainId
+    this.updateChainIdPromise = connector.getChainId()
+    const chainId = await this.updateChainIdPromise
+    if (this.connector?.id == connector.id) {
+      this.chainId = chainId
+      this.updateChainIdPromise = undefined
+    }
   }
 
   private async handleChange(connector: Connector, data: WagmiConnectorData) {

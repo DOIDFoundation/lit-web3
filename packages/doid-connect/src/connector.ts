@@ -64,8 +64,13 @@ export class DOIDConnector {
   /** Get chain id of connected connector. */
   get chainId() {
     // try get chainId for the first time
-    if (!controller.ready) controller.getConnector()
+    if (!controller.ready) controller.getChainId()
     return controller.chainId
+  }
+
+  /** A promise to get chainId. */
+  public getChainId() {
+    return controller.getChainId()
   }
 
   /** Get DOID name of connected account. */
