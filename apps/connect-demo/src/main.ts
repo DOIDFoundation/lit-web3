@@ -1,4 +1,4 @@
-import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
+import AppRoot from '@lit-web3/dui/src/shared/AppRoot'
 import { routes } from '~/router'
 import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
 // Components
@@ -10,12 +10,13 @@ export class AppMain extends TailwindElement('') {
   render() {
     return html`
       <dui-header>
-        <p slot="center" class="font-bold">Wallet Demo</p>
+        <p slot="center" class="font-bold text-xl">Wallet Demo</p>
+        <p slot="wallet"></p>
       </dui-header>
       <main class="dui-app-main">
         <slot></slot>
       </main>
-      <dui-footer></dui-footer>
+      <dui-footer><p slot="block"></p></dui-footer>
     `
   }
 }

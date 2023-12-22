@@ -1,6 +1,6 @@
 import { updateChains, updateOptions } from './options'
 import { controller } from './controller'
-import { Chain, ConnectorData, WalletClient } from '@wagmi/core'
+import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
 import { DOIDConnectDialog } from './connectDialog'
 import { State, StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
@@ -27,14 +27,28 @@ export class DOIDConnector {
   /**
    * Subscribe state changes.
    * @param callback `(key: string, value: any, state: State) => void`
-   * @param nameOrNames key name, can be `connector`: connector changed, `connectorState`: account or network changed
+   * @param nameOrNames key name, can be one or array of following
+   *    * `connector`: connector change, value: {@wagmi/core#Connector}
+   *    * `addresses`: accounts accessible change, value: {Address[]}
+   *    * `account`: account change, value: {Address}
+   *    * `chainId`: network change, value: {number}
+   *    * `doid`: doid change, value: {string}
    * @see {@link State.subscribe}
    */
   public subscribe = controller.subscribe.bind(controller)
 
+  /** A list of addresses accessible */
+  get addresses(): Address[] | undefined {
+    // try get addresses for the first time
+    if (!controller.ready) controller.getConnector()
+    return controller.addresses
+  }
+
   /** Check if connected with user selected connector. */
-  get walletConnected(): boolean {
-    return controller.walletConnected
+  get ready(): boolean {
+    // try get a connector for the first time
+    if (!controller.ready) controller.getConnector()
+    return controller.ready
   }
 
   /** Check if connected with a valid DOID. */
@@ -44,6 +58,8 @@ export class DOIDConnector {
 
   /** Get chain id of connected connector. */
   get chainId() {
+    // try get chainId for the first time
+    if (!controller.ready) controller.getConnector()
     return controller.chainId
   }
 
