@@ -1,6 +1,6 @@
 {
   "name": "@doid/node-shims",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "type": "module",
   "files": [
     "dist"
@@ -27,10 +27,13 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "readable-stream": "^4.5.1"
+    "@doid/node-assert": "workspace:latest",
+    "@doid/node-buffer": "workspace:latest",
+    "@doid/node-stream": "workspace:latest",
+    "@doid/node-util": "workspace:latest"
   },
-  "license": "MIT",
   "devDependencies": {
-    "tsup": "^7.2.0"
-  }
+    "tsup": "^8.0.1"
+  },
+  "license": "MIT"
 }

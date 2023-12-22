@@ -1,4 +1,5 @@
-import '@doid/node-shims/buffer'
+// TODO: remove crypto-addr-codec from vite.config.js
+import '@doid/node-buffer'
 
 let promise: any
 export default async () => {

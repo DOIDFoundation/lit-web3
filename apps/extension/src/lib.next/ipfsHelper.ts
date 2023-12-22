@@ -1,5 +1,6 @@
 // import { HDKey } from 'ethereum-cryptography/hdkey'
-import * as IPFS from 'ipfs-core'
+import { createHelia } from 'helia'
+import { ipns } from '@helia/ipns'
 import * as w3name from 'w3name'
 import { Web3Storage } from 'web3.storage'
 import http from '@doid/core/src/http'
@@ -14,7 +15,7 @@ class IPFSHelper {
   constructor() {
     // Create an IPFS instance
     // this may need extra parameters
-    this.ipfs = IPFS.create()
+    this.ipfs = createHelia()
   }
 
   // Get the json data of the ipns name
@@ -22,13 +23,15 @@ class IPFSHelper {
   async readJsonData({ key = '', cid = '' } = {}) {
     const _ipfs = await this.ipfs
     // Resolve the IPNS name(pbK) to a CID
-    const _cid = cid ?? (await _ipfs.name.resolve(key)).cid
-    if (_cid === undefined) {
-      return new Promise<object>((resolve, reject) => {
-        return resolve({})
-      })
-    }
-    return await this._readIPFS(cid)
+    // TODO: Migrating this: https://github.com/ipfs/helia/wiki/Migrating-from-js-IPFS
+    // const name = ipns(_ipfs, [key])
+    // const _cid = cid ?? (await _ipfs.name.resolve(key)).cid
+    // if (_cid === undefined) {
+    //   return new Promise<object>((resolve, reject) => {
+    //     return resolve({})
+    //   })
+    // }
+    // return await this._readIPFS(cid)
   }
 
   // Update ipfs data and update relative ipns

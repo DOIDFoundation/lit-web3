@@ -9,7 +9,7 @@
     "cryptocurrency-icons": "^0.18.1"
   },
   "devDependencies": {
-    "tsup": "^7.2.0"
+    "tsup": "^8.0.1"
   },
   "license": "MIT"
 }

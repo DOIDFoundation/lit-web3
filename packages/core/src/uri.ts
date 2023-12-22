@@ -1,4 +1,4 @@
-import safeDecodeURIComponent from 'safe-decode-uri-component'
+import * as safeDecodeURIComponent from 'safe-decode-uri-component'
 export { safeDecodeURIComponent }
 
 // Just encode reserved characters

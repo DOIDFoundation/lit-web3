@@ -1,0 +1,38 @@
+{
+  "name": "@doid/node-stream",
+  "version": "0.0.3",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./src/index.js",
+    "./*": "./src/*.js"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./*": "./dist/*.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DOIDFoundation/lit-web3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DOIDFoundation/lit-web3/issues"
+  },
+  "scripts": {
+    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@doid/node-buffer": "workspace:latest",
+    "@doid/node-process": "workspace:latest",
+    "@doid/node-util": "workspace:latest"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1"
+  },
+  "license": "MIT"
+}

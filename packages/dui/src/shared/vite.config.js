@@ -24,12 +24,10 @@ const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font
 
 const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
-  'import.meta.env.VITE_APP_MDI': JSON.stringify(mdi),
-  global: 'globalThis'
+  'import.meta.env.VITE_APP_MDI': JSON.stringify(mdi)
 }
 
 export const viteConfig = (options = {}) => {
-  const shimNode = (s) => resolve(__dirname, '../../../node-shims/src', s)
   const { server: { https = true } = {}, viteConfigOptions = {} } = options
   return ({ mode = '' }) => {
     const isDev = mode === 'development'
@@ -49,11 +47,7 @@ export const viteConfig = (options = {}) => {
         alias: {
           '~': pathSrc + '/',
           // bugfix: crypto-addr-codec@0.1.7
-          'crypto-addr-codec': 'crypto-addr-codec/dist/index.js',
-          // Node Shims
-          stream: shimNode('stream.ts'),
-          util: shimNode('util.js'),
-          assert: shimNode('assert.js')
+          'crypto-addr-codec': 'crypto-addr-codec/dist/index.js'
         }
       },
       build: {

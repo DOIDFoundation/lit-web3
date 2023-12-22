@@ -9,11 +9,14 @@
   "dependencies": {
     "@doid/connect": "workspace:latest",
     "@wagmi/core": "^1.4.12",
+    "ethers": "^6",
     "viem": "^1.20.3"
   },
   "peerDependencies": {
-    "ethers": "^6",
-    "tsup": "^6"
+    "ethers": "^6"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1"
   },
   "license": "MIT"
 }

@@ -32,6 +32,8 @@ import AutoImport from 'unplugin-auto-import/vite'
 
 export const sharedConfig = async (mode = '') => {
   return {
+    // TODO: @solana/web3 need `global.xxx`
+    define:{global: 'globalThis'},
     plugins: [
       // rewrite assets to use relative path
       {

@@ -28,7 +28,6 @@
     "urlpattern-polyfill": "^9.0.0"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.160",
     "@rollup/plugin-inject": "^5.0.5",
     "@rollup/plugin-terser": "^0.4.4",
     "@types/lodash": "^4.14.202",
@@ -54,6 +53,12 @@
     "vite-plugin-mkcert": "^1.17.1",
     "vite-plugin-pwa": "^0.17.4",
     "vite-plugin-static-copy": "^1.0.0"
+  },
+  "resolutions": {
+    "assert": "npm:@doid/node-assert",
+    "buffer": "npm:@doid/node-buffer",
+    "stream": "npm:@doid/node-stream",
+    "util": "npm:@doid/node-util"
   },
   "engines": {
     "node": ">=20"

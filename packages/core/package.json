@@ -1,21 +1,17 @@
 {
   "name": "@doid/core",
-  "version": "0.10.0",
+  "version": "0.11.0",
+  "type": "module",
   "scripts": {
     "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "localforage": "^1.10.0",
-    "readable-stream": "^4.5.1",
+    "@lit-app/state": "^0.8.4",
     "safe-decode-uri-component": "^1.2.1"
-  },
-  "peerDependencies": {
-    "lit": "^3"
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/readable-stream": "^4.0.10",
-    "tsup": "^7.2.0"
+    "tsup": "^8.0.1"
   }
 }
