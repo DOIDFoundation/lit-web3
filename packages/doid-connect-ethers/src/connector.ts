@@ -1,6 +1,6 @@
 import { DOIDConnector, options } from '@doid/connect'
 import { PublicClient, WalletClient } from '@wagmi/core'
-import { BrowserProvider, JsonRpcSigner } from 'ethers'
+import { BrowserProvider, JsonRpcSigner, Signer } from 'ethers'
 import { controller } from '@doid/connect/src/controller'
 import { createPublicClient, http, webSocket } from 'viem'
 
@@ -28,14 +28,14 @@ export class DOIDConnectorEthers extends DOIDConnector {
   }
 
   /** Get a signer */
-  public getSigner(chainId?: number): Promise<JsonRpcSigner> {
+  public getSigner(chainId?: number, account?: Address): Promise<Signer> {
     return controller.getWalletClient(chainId).then((client) => {
-      return this.walletClientToSigner(client)
+      return this.walletClientToSigner(client, account)
     })
   }
 
   /** Turn a walletClient to a signer */
-  public walletClientToSigner(walletClient: WalletClient) {
-    return new JsonRpcSigner(walletClientToProvider(walletClient), walletClient.account.address)
+  public walletClientToSigner(walletClient: WalletClient, account?: Address) {
+    return new JsonRpcSigner(walletClientToProvider(walletClient), account ?? walletClient.account.address)
   }
 }
