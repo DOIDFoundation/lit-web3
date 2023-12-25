@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 
 describe('Emitter', async () => {
   beforeEach(async () => {})

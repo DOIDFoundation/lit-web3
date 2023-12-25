@@ -10,7 +10,7 @@ import {
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
 import popupMessenger from '~/lib.next/messenger/popup'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import { goto } from '@lit-web3/dui/src/shared/router'
 // Components
 import '@lit-web3/dui/src/button'
@@ -76,41 +76,43 @@ export class AccountSwitch extends TailwindElement(null) {
       </div>
       ${when(
         uiConnects.isConnected,
-        () => html`<ul class="">
-          ${repeat(
-            this.names,
-            (name, i) =>
-              html`<li class="flex justify-between items-center gap-2 border-t-2 p-2">
-                <div class="flex-grow">
-                  <div class="flex items-center gap-2">
-                    <strong>${name}</strong>
+        () =>
+          html`<ul class="">
+            ${repeat(
+              this.names,
+              (name, i) =>
+                html`<li class="flex justify-between items-center gap-2 border-t-2 p-2">
+                  <div class="flex-grow">
+                    <div class="flex items-center gap-2">
+                      <strong>${name}</strong>
+                    </div>
+                    <div>
+                      ${when(
+                        this.name === name,
+                        //  Current
+                        () => html`<span class="text-xs text-gray-500">Active</span>`,
+                        //  Others
+                        () =>
+                          html`<dui-link @click=${() => this.select(name)}
+                            >${i === 0 && this.name !== name
+                              ? 'Connect to this account'
+                              : 'Switch to this account'}</dui-link
+                          >`
+                      )}
+                    </div>
                   </div>
-                  <div>
+                  <p>
                     ${when(
-                      this.name === name,
-                      //  Current
-                      () => html`<span class="text-xs text-gray-500">Active</span>`,
-                      //  Others
+                      !(i === 0 && this.name !== name),
                       () =>
-                        html`<dui-link @click=${() => this.select(name)}
-                          >${i === 0 && this.name !== name
-                            ? 'Connect to this account'
-                            : 'Switch to this account'}</dui-link
-                        >`
+                        html`<dui-button sm @click=${() => this.disconnect(name)} icon
+                          ><i class="mdi mdi-web-minus text-base" title="Disconnect this account"></i
+                        ></dui-button>`
                     )}
-                  </div>
-                </div>
-                <p>
-                  ${when(
-                    !(i === 0 && this.name !== name),
-                    () => html`<dui-button sm @click=${() => this.disconnect(name)} icon
-                      ><i class="mdi mdi-web-minus text-base" title="Disconnect this account"></i
-                    ></dui-button>`
-                  )}
-                </p>
-              </li>`
-          )}
-        </ul>`
+                  </p>
+                </li>`
+            )}
+          </ul>`
       )}
       ${when(
         !uiConnects.isConnected,
@@ -125,23 +127,24 @@ export class AccountSwitch extends TailwindElement(null) {
         </div>
         ${when(
           uiConnects.isConnected,
-          () => html`<div class="pt-3 px-2 border-t-2">
-            <p @click=${this.togglePermissions} class="flex justify-between items-center cursor-pointer">
-              <b class="block">Permissions</b
-              ><i
-                class="text-2xl leading-none mdi ${classMap(
-                  this.$c([this.permissions ? 'mdi-chevron-up' : 'mdi-chevron-down'])
-                )}"
-              ></i>
-            </p>
-            <div class="overflow-hidden transition-all ${classMap(this.$c([this.permissions ? 'h-14' : 'h-0']))}">
-              <p class="text-xs">You have authorized the following permissions:</p>
-              <p class="mt-1 pl-5 text-xs">
-                <i class="-ml-5 w-5 inline-block text-gray-400 mdi mdi-checkbox-marked"></i>See address, account
-                balance, activity and suggest transactions to approve
+          () =>
+            html`<div class="pt-3 px-2 border-t-2">
+              <p @click=${this.togglePermissions} class="flex justify-between items-center cursor-pointer">
+                <b class="block">Permissions</b
+                ><i
+                  class="text-2xl leading-none mdi ${classMap(
+                    this.$c([this.permissions ? 'mdi-chevron-up' : 'mdi-chevron-down'])
+                  )}"
+                ></i>
               </p>
-            </div>
-          </div>`
+              <div class="overflow-hidden transition-all ${classMap(this.$c([this.permissions ? 'h-14' : 'h-0']))}">
+                <p class="text-xs">You have authorized the following permissions:</p>
+                <p class="mt-1 pl-5 text-xs">
+                  <i class="-ml-5 w-5 inline-block text-gray-400 mdi mdi-checkbox-marked"></i>See address, account
+                  balance, activity and suggest transactions to approve
+                </p>
+              </div>
+            </div>`
         )}
       </div>
     </dui-dialog>`

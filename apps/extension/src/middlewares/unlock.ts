@@ -2,7 +2,7 @@ import { openPopup, updatePopup } from '~/lib.next/background/notifier'
 import { BACKGROUND_EVENTS, ERR_USER_DENIED } from '~/lib.next/constants'
 import { backgroundToPopup } from '~/lib.next/messenger/background'
 import { getKeyring } from '~/lib.next/keyring'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 
 export const waitingForPopup: { ctx: BackgroundMiddlwareCtx; next: Function }[] = []
 const userDenied = new Error(ERR_USER_DENIED)

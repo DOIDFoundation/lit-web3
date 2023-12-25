@@ -1,6 +1,6 @@
-import http from '@doid/core/src/http'
-import { fetchNFTType } from '@doid/core/src/MIMETypes'
-import { normalizeUri } from '@doid/core/src/uri'
+import http from '@doid/core/http'
+import { fetchNFTType } from '@doid/core/MIMETypes'
+import { normalizeUri } from '@doid/core/uri'
 import { sleep, nowTs } from '../utils'
 
 export const normalize = async (data: Record<string, any>): Promise<Meta> => {
@@ -46,9 +46,12 @@ export const throttle = async (provider: string, uri: string, interval = 1024): 
   pending[provider] = nowTs()
   try {
     meta = await http.get(uri)
-    setTimeout(() => {
-      pending[provider] = 0
-    }, Math.max(nowTs() - pending[provider], interval))
+    setTimeout(
+      () => {
+        pending[provider] = 0
+      },
+      Math.max(nowTs() - pending[provider], interval)
+    )
   } catch (err: any) {
     if (err.code === 403) throw err
     pending[provider] = 0

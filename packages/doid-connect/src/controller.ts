@@ -23,7 +23,6 @@ import {
 } from 'viem'
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
 import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
-import { normalizeChainId } from '@wagmi/connectors'
 import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
 import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
 import { CHAIN_NAMESPACES } from '@web3auth/base'
@@ -332,7 +331,7 @@ export class Controller extends State {
     connector.on('change', this.handleChange.bind(this, connector))
     // handle network change before connected as connectors only emit change after connected.
     if (this.providerChainChangedUnsubscribe) this.providerChainChangedUnsubscribe()
-    let onChainChanged = (chainId: string) => (this.chainId = normalizeChainId(chainId))
+    let onChainChanged = (chainId: string) => (this.chainId = parseInt(chainId))
     connector.getProvider().then((provider) => {
       if (this.connector?.id != connector!.id || !provider?.on) return
       let p = provider as EIP1193Provider

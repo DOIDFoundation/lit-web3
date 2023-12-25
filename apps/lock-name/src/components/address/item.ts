@@ -9,7 +9,7 @@ import {
 } from '@lit-web3/dui/src/shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import { scrollTop } from '@lit-web3/dui/src/shared/router'
 
 // Components
@@ -116,14 +116,15 @@ export class DoidAddrItem extends TailwindElement(style) {
           )}
           ${when(
             this.isOwner,
-            () => html`<dui-button @click=${this.setAddr} sm icon .disabled=${this.editDisabled}
-              ><i
-                class="mdi ${classMap({
-                  'mdi-pencil-off-outline': this.isEditing,
-                  'mdi-pencil-outline': !this.isEditing
-                })}"
-              ></i
-            ></dui-button>`
+            () =>
+              html`<dui-button @click=${this.setAddr} sm icon .disabled=${this.editDisabled}
+                ><i
+                  class="mdi ${classMap({
+                    'mdi-pencil-off-outline': this.isEditing,
+                    'mdi-pencil-outline': !this.isEditing
+                  })}"
+                ></i
+              ></dui-button>`
           )}
         </div>
       </div>

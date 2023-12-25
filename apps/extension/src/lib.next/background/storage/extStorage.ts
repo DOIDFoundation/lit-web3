@@ -3,7 +3,7 @@
 import browser from 'webextension-polyfill'
 import { checkForLastError } from '~/lib.next/utils.ext'
 import { throttle } from '@lit-web3/ethers/src/utils'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import Migrator from './Migrator'
 
 export enum storageKey {

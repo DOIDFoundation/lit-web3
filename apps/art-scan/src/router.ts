@@ -1,6 +1,6 @@
 import { html } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import { parseDOIDFromRouter, getKeyFromRouter } from '@lit-web3/ethers/src/DOIDParser'
 
 const cached: Map<string, unknown> = new Map()

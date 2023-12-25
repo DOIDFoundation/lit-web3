@@ -1,5 +1,5 @@
 import { TailwindElement, html, customElement, classMap, property } from '../shared/TailwindElement'
-import { screenStore, StateController } from '@doid/core/src/screen'
+import { screenStore, StateController } from '@doid/core/screen'
 
 import style from './nav.css?inline'
 @customElement('dui-nav')

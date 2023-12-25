@@ -1,6 +1,6 @@
 import { customElement, TailwindElement, html, when, property, classMap } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { screenStore } from '@doid/core/src/screen'
+import { screenStore } from '@doid/core/screen'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components
 import './avatar'

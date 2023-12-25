@@ -29,7 +29,7 @@ export async function jsonRpcRequest(
     }),
     headers,
     cache: 'default'
-  }).then((httpResponse) => httpResponse.json())
+  }).then((httpResponse: any) => httpResponse.json())
 
   if (!jsonRpcResponse || Array.isArray(jsonRpcResponse) || typeof jsonRpcResponse !== 'object') {
     throw new Error(`RPC endpoint ${rpcUrl} returned non-object response.`)

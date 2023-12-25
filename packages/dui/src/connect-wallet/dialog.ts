@@ -10,7 +10,7 @@ import {
 } from '../shared/TailwindElement'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import Network, { Networks } from '@lit-web3/ethers/src/networks'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 // Components
 import '../dialog'
 import './state'
@@ -69,54 +69,61 @@ export class ConnectWalletDialog extends TailwindElement(style) {
         ${when(
           this.step1,
           () => this.txt.header,
-          () => html`<i
-            @click="${this.back}"
-            class="inline-flex w-6 h-6 items-center justify-center cursor-pointer mdi mdi-arrow-left text-xl"
-          ></i>`
+          () =>
+            html`<i
+              @click="${this.back}"
+              class="inline-flex w-6 h-6 items-center justify-center cursor-pointer mdi mdi-arrow-left text-xl"
+            ></i>`
         )}
       </div>
       <!-- Step 1 -->
       ${when(
         this.step1,
-        () => html`<ul class="connect-wallet-list">
-            ${repeat(
-              this.bridge.wallets,
-              (item, i) => html`<li @click=${() => this.go(i)}>
-                <p class="relative flex items-center">
-                  <i class="i wallet-logo ${item.name}" style=${styleMap({ backgroundImage: `url(${item.icon})` })}></i>
-                  <span>${item.title}</span>
-                </p>
-                <i class="mdi mdi-arrow-right"></i>
-              </li>`
-            )}
-          </ul>
-          <div class="connect-wallet-intro">
-            <p>By connecting your wallet, you can execute the smart contract to lock the name you entered.</p>
-            <p>Lock name is free, you need to pay gas only to confirm the transaction.</p>
-            <p>
-              <a
-                class="uri"
-                href="https://etherscan.io/address/0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F#code"
-                target="_blank"
-                rel="noopener"
-                >The smart contract</a
-              >
-              is only for locking name. It's open sourced and verified.
-            </p>
-          </div>`
+        () =>
+          html`<ul class="connect-wallet-list">
+              ${repeat(
+                this.bridge.wallets,
+                (item, i) =>
+                  html`<li @click=${() => this.go(i)}>
+                    <p class="relative flex items-center">
+                      <i
+                        class="i wallet-logo ${item.name}"
+                        style=${styleMap({ backgroundImage: `url(${item.icon})` })}
+                      ></i>
+                      <span>${item.title}</span>
+                    </p>
+                    <i class="mdi mdi-arrow-right"></i>
+                  </li>`
+              )}
+            </ul>
+            <div class="connect-wallet-intro">
+              <p>By connecting your wallet, you can execute the smart contract to lock the name you entered.</p>
+              <p>Lock name is free, you need to pay gas only to confirm the transaction.</p>
+              <p>
+                <a
+                  class="uri"
+                  href="https://etherscan.io/address/0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F#code"
+                  target="_blank"
+                  rel="noopener"
+                  >The smart contract</a
+                >
+                is only for locking name. It's open sourced and verified.
+              </p>
+            </div>`
       )}
       <!-- Step 2 -->
       ${when(
         !this.step1 && this.bridge.selected,
-        () => html`<div class="text-2xl">
-          <div class="flex justify-center items-center flex-col">
-            <i
-              class="i wallet-logo ${this.bridge.selected?.name}"
-              style=${styleMap({ backgroundImage: `url(${this.bridge.selected?.icon})` })}
-            ></i>
-            <p class="mt-4"><connect-wallet-state></connect-wallet-state></p>
-          </div>
-        </div>`
+        () =>
+          html`<div class="text-2xl">
+            <div class="flex justify-center items-center flex-col">
+              <i
+                class="i wallet-logo ${this.bridge.selected?.name}"
+                style=${styleMap({ backgroundImage: `url(${this.bridge.selected?.icon})` })}
+              ></i>
+              <p class="mt-4"><connect-wallet-state></connect-wallet-state></p>
+            </div>
+          </div>`
       )}
     </dui-dialog>`
   }

@@ -1,7 +1,7 @@
 // Router Guard
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import { Router } from '@lit-web3/router'
-import { safeDecodeURIComponent } from '@doid/core/src/uri'
+import { safeDecodeURIComponent } from '@doid/core/uri'
 export { Router }
 
 const bareOrigin = (url: string) => url.replace(location.origin, '')

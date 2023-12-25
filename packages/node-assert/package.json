@@ -1,6 +1,6 @@
 {
   "name": "@doid/node-assert",
-  "version": "0.0.5",
+  "version": "0.1.1",
   "type": "module",
   "files": [
     "dist"
@@ -23,11 +23,11 @@
     "url": "https://github.com/DOIDFoundation/lit-web3/issues"
   },
   "scripts": {
-    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean",
+    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean --minify",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "util": "npm:@doid/node-util"
+    "@doid/node-util": "workspace:^0.1.2"
   },
   "devDependencies": {
     "tsup": "^8.0.1"

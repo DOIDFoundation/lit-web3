@@ -1,14 +1,14 @@
 // src: metamask-extension/app/scripts/platforms/extension.js
 import browser, { Tabs } from 'webextension-polyfill'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import { routerGuard } from '@lit-web3/dui/src/shared/router'
 
 // Simple assert
 export const envType = /^\/service-worker.*\.js$/.test(location.pathname)
   ? 'background'
   : window.innerWidth <= 768
-  ? 'popup'
-  : 'fullscreen'
+    ? 'popup'
+    : 'fullscreen'
 export const isPopup = envType === 'popup'
 export const isFullscreen = envType === 'fullscreen'
 export const isBackground = envType === 'background'

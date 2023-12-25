@@ -7,7 +7,7 @@ export type EventEmitter = {
   emit: Function
 }
 
-const emitter: EventEmitter = {
+export const emitter: EventEmitter = {
   on: (type: string, listener: EventListener, options = {}) => {
     globalThis.addEventListener(type, listener, options)
     return () => globalThis.removeEventListener(type, listener)

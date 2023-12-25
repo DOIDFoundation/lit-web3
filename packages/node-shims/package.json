@@ -1,6 +1,6 @@
 {
   "name": "@doid/node-shims",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "files": [
     "dist"
@@ -23,14 +23,14 @@
     "url": "https://github.com/DOIDFoundation/lit-web3/issues"
   },
   "scripts": {
-    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean",
+    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean --minify",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@doid/node-assert": "workspace:latest",
-    "@doid/node-buffer": "workspace:latest",
-    "@doid/node-stream": "workspace:latest",
-    "@doid/node-util": "workspace:latest"
+    "@doid/node-assert": "workspace:^0.1.1",
+    "@doid/node-buffer": "workspace:^0.1.1",
+    "@doid/node-stream": "workspace:^0.1.1",
+    "@doid/node-util": "workspace:^0.1.2"
   },
   "devDependencies": {
     "tsup": "^8.0.1"

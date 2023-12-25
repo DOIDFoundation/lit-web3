@@ -1,6 +1,6 @@
 import { Wallet, keccak256, hexlify, toUtf8Bytes } from 'ethers'
 import { createKeyPair, sign } from '@erebos/secp256k1'
-import jsonRpcRequest from '@doid/core/src/http/jsonRpcRequest'
+import jsonRpcRequest from '@doid/core/http/jsonRpcRequest'
 import { defaultNetwork } from '@lit-web3/doids/src/networks'
 import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { getEVMProvider } from '~/services/EVM/daemon'
@@ -16,7 +16,7 @@ const hexWithout0x = (hex: string) => {
 export const rpcRegistName = async (doid: string, account: string, phrase: string) => {
   const preferNet = await networkStorage.get('doid')
   if (!doid || !account || !phrase) return
-  const chainId= preferNet.id.padStart(+preferNet.id,'0')
+  const chainId = preferNet.id.padStart(+preferNet.id, '0')
   const owner = hexWithout0x(account).toLowerCase()
   const nameHex = hexWithout0x(hexlify(toUtf8Bytes(doid)))
 

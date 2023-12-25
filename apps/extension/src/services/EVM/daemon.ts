@@ -1,7 +1,7 @@
 import { getKeyring } from '~/lib.next/keyring'
 import { Wallet, HDNodeWallet, JsonRpcProvider, Provider } from 'ethers'
 import { networkStorage, ConnectsStorage } from '~/lib.next/background/storage/preferences'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import backgroundToInpage from '~/lib.next/messenger/background'
 import { names2Addresses } from '~/services/shared'
 

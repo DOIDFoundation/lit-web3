@@ -1,6 +1,6 @@
 {
   "name": "@doid/node-util",
-  "version": "0.0.7",
+  "version": "0.1.2",
   "type": "module",
   "files": [
     "dist"
@@ -23,11 +23,11 @@
     "url": "https://github.com/DOIDFoundation/lit-web3/issues"
   },
   "scripts": {
-    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean",
+    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean --minify",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@doid/node-process": "workspace:latest"
+    "@doid/node-process": "workspace:^0.1.1"
   },
   "devDependencies": {
     "tsup": "^8.0.1"

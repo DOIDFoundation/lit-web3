@@ -1,5 +1,4 @@
 import { LitElement, unsafeCSS, CSSResult } from 'lit'
-import { sleep } from '@lit-web3/ethers/src/utils'
 
 export declare class TAILWINDELEMENT extends LitElement {
   static styles: any
@@ -22,7 +21,7 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
       super()
       // Trick for external link, todo: use import svg instead
       // Todo: support unocss/twind
-      this.attachShadow({ mode: 'open' }).innerHTML = import.meta.env.VITE_APP_MDI
+      if (import.meta.env.VITE_APP_MDI) this.attachShadow({ mode: 'open' }).innerHTML = import.meta.env.VITE_APP_MDI
     }
     // classMap from arrayify
     $c(req: [] | Record<string, unknown>) {
@@ -50,7 +49,7 @@ export const TailwindElement = (styles: unknown | unknown[]): PublicConstructor<
       this.addEventListener(type, listener, options)
     }
     isDisconnected = async (force = false) => {
-      if (!force) await sleep(50)
+      if (!force) await new Promise((resolve) => setTimeout(resolve, 50))
       return !this.isConnected
     }
   }

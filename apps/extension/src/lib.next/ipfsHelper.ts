@@ -3,7 +3,7 @@ import { createHelia } from 'helia'
 import { ipns } from '@helia/ipns'
 import * as w3name from 'w3name'
 import { Web3Storage } from 'web3.storage'
-import http from '@doid/core/src/http'
+import http from '@doid/core/http'
 import { HDNodeWallet, toBeArray } from 'ethers'
 
 import { keys } from '@libp2p/crypto'

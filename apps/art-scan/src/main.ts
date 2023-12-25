@@ -1,5 +1,5 @@
 import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import { routerPathroot } from '@lit-web3/dui/src/shared/router'
 import { routes } from '~/router'
 import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
@@ -35,9 +35,10 @@ export class AppMain extends TailwindElement('') {
         <div slot="logo"><a class="text-base lg_text-lg font-semibold" href="/">ARTSCAN</a></div>
         ${when(
           !this.inRoot,
-          () => html`<div slot="wallet" class="w-56 text-xs lg_w-80 lg_sticky top-4 flex-shrink-0">
-            <search-bar lite sm></search-bar>
-          </div>`
+          () =>
+            html`<div slot="wallet" class="w-56 text-xs lg_w-80 lg_sticky top-4 flex-shrink-0">
+              <search-bar lite sm></search-bar>
+            </div>`
         )}
       </dui-header>
       <main class="dui-app-main pt-6">

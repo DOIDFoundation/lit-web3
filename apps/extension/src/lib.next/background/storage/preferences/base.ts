@@ -2,7 +2,7 @@
 // src: metamask-extension/app/scripts/controllers/preferences.js
 // import { getKeyring } from '~/lib.next/keyring'
 // import { normalize as normalizeAddress } from '@metamask/eth-sig-util'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 import { saveStateToStorage, storageKey, loadStateFromStorage } from '~/lib.next/background/storage/extStorage'
 import { ObservableStore } from '@metamask/obs-store'
 

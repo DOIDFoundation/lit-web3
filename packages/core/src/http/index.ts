@@ -48,7 +48,7 @@ const parseRes = function (response: any) {
 
 export type Jsonish = Record<string, unknown>
 
-const http = async function (uri: string, options: Jsonish = {}) {
+const _fetch = async function (uri: string, options: Jsonish = {}) {
   const opts = {
     method: 'GET',
     headers: {
@@ -79,14 +79,14 @@ export const mergeSearch = function (uri: string, json: Jsonish = {}) {
 export class Http {
   public fetch: Function
   constructor() {
-    this.fetch = http
+    this.fetch = _fetch
   }
   get(uri: string, json: Jsonish = {}, options?: {}) {
-    return http(mergeSearch(uri, json), options)
+    return _fetch(mergeSearch(uri, json), options)
   }
   post(uri: string, json = {}, { method = 'POST', form = false, search = false, headers = {} } = {}) {
     const body = form ? new URLSearchParams(json).toString() : JSON.stringify(json)
-    return http(search ? mergeSearch(uri, json) : uri, {
+    return _fetch(search ? mergeSearch(uri, json) : uri, {
       method,
       headers: {
         'Content-Type': form ? 'application/x-www-form-urlencoded' : 'application/json',
@@ -100,4 +100,5 @@ export class Http {
   }
 }
 
-export default new Http()
+export const http = new Http()
+export default http

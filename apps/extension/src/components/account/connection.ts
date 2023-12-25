@@ -1,7 +1,7 @@
 import { customElement, TailwindElement, html, state, when, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 // Components
 import '@lit-web3/dui/src/address/avatar'
 import '@lit-web3/dui/src/address/name'
@@ -47,8 +47,8 @@ export class AccountSwitch extends TailwindElement(null) {
               this.isConnected
                 ? 'mdi-web-check text-teal-600'
                 : uiConnects.isConnected
-                ? 'mdi-web-cancel'
-                : 'mdi-web-cancel text-neutral-400'
+                  ? 'mdi-web-cancel'
+                  : 'mdi-web-cancel text-neutral-400'
             ])
           )}"
         ></i>

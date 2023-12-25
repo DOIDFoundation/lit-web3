@@ -1,4 +1,5 @@
-import { memoize } from 'lodash'
+// @ts-ignore
+import memoize from 'lodash.memoize'
 import { SECOND } from '../constants/time'
 
 const getFetchWithTimeout = memoize((timeout = SECOND * 30) => {

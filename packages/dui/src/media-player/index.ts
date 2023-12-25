@@ -10,8 +10,8 @@ import {
   ref,
   createRef
 } from '../shared/TailwindElement'
-import { NFTType, MediaType, fetchMediaType } from '@doid/core/src/MIMETypes'
-import emitter from '@doid/core/src/emitter'
+import { NFTType, MediaType, fetchMediaType } from '@doid/core/MIMETypes'
+import emitter from '@doid/core/emitter'
 // Components
 import '../img/loader'
 import './video'
@@ -124,18 +124,19 @@ export class DuiMediaPlayer extends TailwindElement(style) {
         <!-- Play button -->
         ${when(
           this.showPlayBtn,
-          () => html` <div
-            class="play-btn flex justify-center items-center w-8 h-8 right-2 bottom-2 absolute z-10 bg-black text-2xl rounded-full"
-          >
-            <svg viewBox="0 0 36 36">
-              <path
-                fill="#fff"
-                d=${this.playing
-                  ? 'M12,26 16,26 16,10 12,10zM21,26 25,26 25,10 21,10z'
-                  : 'M13.75,26 20.25,22 20.25,14 13.75,10zM20.25,22 25,18 25,18 20.25,14z'}
-              ></path>
-            </svg>
-          </div>`
+          () =>
+            html` <div
+              class="play-btn flex justify-center items-center w-8 h-8 right-2 bottom-2 absolute z-10 bg-black text-2xl rounded-full"
+            >
+              <svg viewBox="0 0 36 36">
+                <path
+                  fill="#fff"
+                  d=${this.playing
+                    ? 'M12,26 16,26 16,10 12,10zM21,26 25,26 25,10 21,10z'
+                    : 'M13.75,26 20.25,22 20.25,14 13.75,10zM20.25,22 25,18 25,18 20.25,14z'}
+                ></path>
+              </svg>
+            </div>`
         )}
       </div>
       <!-- Zoom in in dialog -->

@@ -1,5 +1,5 @@
-import http from '@doid/core/src/http'
-import { normalizeUri, isInstantUri } from '@doid/core/src/uri'
+import http from '@doid/core/http'
+import { normalizeUri, isInstantUri } from '@doid/core/uri'
 import { useStorage } from '../useStorage'
 import { attachSlug } from '../DOIDParser'
 import { storageOpt, normalize } from './shared'

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 
 import { mockApi } from '~/utils'
-import http, { isRelativePath, getBaseUri, mergeSearch } from '@doid/core/src/http'
+import http, { isRelativePath, getBaseUri, mergeSearch } from '@doid/core/http'
 
 describe('http', async () => {
   beforeEach(async () => {})

@@ -5,6 +5,7 @@ import '@doid/connect'
 import { DOIDConnectButton, DOIDConnector, WalletClient, doidTestnet } from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/src/input/text'
+import '@lit-web3/dui/src/button'
 
 @customElement('view-home')
 export class ViewHome extends TailwindElement('') {

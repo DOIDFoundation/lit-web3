@@ -1,7 +1,7 @@
 import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
 import { goto } from '@lit-web3/dui/src/shared/router'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { screenStore } from '@doid/core/src/screen'
+import { screenStore } from '@doid/core/screen'
 import { ownerNames } from '@lit-web3/ethers/src/nsResolver'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components
@@ -63,19 +63,20 @@ export class ViewAddress extends TailwindElement(style) {
         <!-- Tab -->
         ${when(
           this.address,
-          () => html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
-            <div>
-              <b>${screenStore.isMobi ? this.shortAddr : this.address}</b>${when(
-                this.itsme,
-                () => html`<span class="mx-1">(me)</span>`
-              )}
-            </div>
-            <div>
-              <dui-nav slot="center" part="dui-nav">
-                <dui-link href=${`${this.scan}/address/${this.address}`}>View on Explorer</dui-link>
-              </dui-nav>
-            </div>
-          </div>`
+          () =>
+            html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between">
+              <div>
+                <b>${screenStore.isMobi ? this.shortAddr : this.address}</b>${when(
+                  this.itsme,
+                  () => html`<span class="mx-1">(me)</span>`
+                )}
+              </div>
+              <div>
+                <dui-nav slot="center" part="dui-nav">
+                  <dui-link href=${`${this.scan}/address/${this.address}`}>View on Explorer</dui-link>
+                </dui-nav>
+              </div>
+            </div>`
         )}
         <!-- Names -->
         <doid-name-list

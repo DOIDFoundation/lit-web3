@@ -1,5 +1,5 @@
 import { checkDOIDName, wrapTLD } from '../nsResolver/checker'
-import { safeDecodeURIComponent, slugify } from '@doid/core/src/uri'
+import { safeDecodeURIComponent, slugify } from '@doid/core/uri'
 import { reverseDOIDName } from './query'
 
 export const attachSlug = (token: NFTToken): NFTToken => {

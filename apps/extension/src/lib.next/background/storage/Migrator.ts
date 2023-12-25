@@ -1,4 +1,4 @@
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 
 type Migration = Record<string, any>
 

@@ -1,6 +1,6 @@
 {
   "name": "@doid/name-validator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "files": [
     "dist"
@@ -23,7 +23,7 @@
     "url": "https://github.com/DOIDFoundation/lit-web3/issues"
   },
   "scripts": {
-    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean",
+    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean --minify",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

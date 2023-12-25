@@ -11,7 +11,7 @@ import './register'
 import './details'
 
 import style from './name.css?inline'
-import emitter from '@doid/core/src/emitter'
+import emitter from '@doid/core/emitter'
 @customElement('view-name')
 export class ViewName extends TailwindElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
@@ -79,20 +79,21 @@ export class ViewName extends TailwindElement(style) {
         <!-- Tab -->
         ${when(
           this.name,
-          () => html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between items-end">
-            <div>
-              <b class="text-lg">${this.name}</b>
-              ${when(this.name === 'doid', () => html`<em>(Registrant)</em>`)}
-            </div>
-            <div>
-              <dui-nav slot="center" part="dui-nav">
-                <dui-link href=${`/name/${this.name}/register`} alias=${`/name/${this.name}`} exact nav
-                  >Register</dui-link
-                >
-                <dui-link href=${`/name/${this.name}/details`} exact nav>Details</dui-link>
-              </dui-nav>
-            </div>
-          </div>`
+          () =>
+            html`<div class="border-b-2 flex my-4 px-3 pr-4 justify-between items-end">
+              <div>
+                <b class="text-lg">${this.name}</b>
+                ${when(this.name === 'doid', () => html`<em>(Registrant)</em>`)}
+              </div>
+              <div>
+                <dui-nav slot="center" part="dui-nav">
+                  <dui-link href=${`/name/${this.name}/register`} alias=${`/name/${this.name}`} exact nav
+                    >Register</dui-link
+                  >
+                  <dui-link href=${`/name/${this.name}/details`} exact nav>Details</dui-link>
+                </dui-nav>
+              </div>
+            </div>`
         )}
         ${when(
           bridgeStore.noAccount,

@@ -1,6 +1,6 @@
 // SubGraph API
 import Network from '../networks'
-import http, { Jsonish } from '@doid/core/src/http'
+import http, { Jsonish } from '@doid/core/http'
 
 export const SubGraph: ChainConf = {
   scan: {
