@@ -1,6 +1,7 @@
-import { LitElement, html, unsafeCSS } from 'lit'
-import { customElement, property, state } from 'lit/decorators.js'
-import { when } from 'lit/directives/when.js'
+// import { LitElement, html, unsafeCSS } from 'lit'
+import { html, TailwindElement, unsafeCSS, customElement, property, state, when, createRef, ref } from '@doid/ui-core'
+// import { customElement, property, state } from 'lit/decorators.js'
+// import { when } from 'lit/directives/when.js'
 import { map } from 'lit/directives/map.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/icon/icon.js'
@@ -19,7 +20,7 @@ import iconWalletConnect from '../assets/icons/walletconnect.svg?inline'
 import iconPuzzle from '../assets/icons/puzzle.svg?inline'
 import { LOGIN_PROVIDER_TYPE } from '@web3auth/openlogin-adapter'
 import { Chain, ConnectorData, Connector } from '@wagmi/core'
-import { BaseCss } from './globalCSS'
+// import { BaseCss } from './globalCSS'
 import style from './connectButtons.css?inline'
 import { EventTypes, stopPropagation } from '../utils/events'
 
@@ -29,21 +30,10 @@ export interface Events {
 }
 
 @customElement('doid-connect-buttons')
-export class DOIDConnectButtons extends LitElement {
+export class DOIDConnectButtons extends TailwindElement([style]) {
   @property() chainId?: Chain['id']
   @state() connecting = false
   @state() connectingProvider = ''
-
-  static styles = [BaseCss, unsafeCSS(style)]
-
-  // Element Events
-  emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventDetailType<Events, T>, options = []) {
-    if (!detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
-    else this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
-  }
-  on<T extends EventTypes.EventNames<Events>>(type: T, listener: EventTypes.EventListenerFn<Events, T>, options?: any) {
-    this.addEventListener(type, listener as EventListener, options)
-  }
 
   getConnectorIcon(connector: any) {
     switch (connector.name) {

@@ -1,7 +1,7 @@
 import { LitElement, html, nothing, unsafeCSS } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
-import { Ref, createRef, ref } from 'lit/directives/ref.js'
+import { createRef, ref } from 'lit/directives/ref.js'
 import style from './signup.css?inline'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/animation/animation.js'

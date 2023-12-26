@@ -7,6 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import minifyHTMLLiterals from 'rollup-plugin-minify-html-literals'
+
 import { config } from 'dotenv'
 // Polyfills
 import legacy from '@vitejs/plugin-legacy'
@@ -65,7 +66,7 @@ export const viteConfig = (options = {}) => {
       },
       plugins: [
         ...(https ? [mkcert()] : []),
-        minifyHTMLLiterals.default(),
+        ...(isDev ? [] : [(minifyHTMLLiterals.default ?? minifyHTMLLiterals)()]),
         ...(viteConfigOptions.splitChunk === false ? [] : [splitVendorChunkPlugin()]),
         ...(viteConfigOptions.html === false
           ? []

@@ -1,4 +1,3 @@
-if (!('global' in globalThis)) Object.defineProperty(globalThis, 'global', { value: globalThis })
 import { Chain, mainnet, sepolia } from '@wagmi/core'
 import { doid, doidTestnet } from './chains'
 import { OPENLOGIN_NETWORK_TYPE as WEB3AUTH_NETWORK_TYPE } from '@web3auth/base'

@@ -111,8 +111,8 @@ export class DOIDConnector {
       const modal = document.createElement('doid-connect-dialog') as DOIDConnectDialog
       modal.chainId = chainId
       document.body.insertAdjacentElement('beforeend', modal)
-      modal.on('connect', (event) => resolve(event.detail))
-      modal.on('error', (event) => reject(event.detail))
+      modal.on('connect', (event: CustomEvent) => resolve(event.detail))
+      modal.on('error', (event: CustomEvent) => reject(event.detail))
       modal.on('close', () => reject(new Error('User rejected the request.')))
     })
   }

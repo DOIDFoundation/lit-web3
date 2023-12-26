@@ -1,7 +1,7 @@
 import { DOIDConnector, options } from '@doid/connect'
 import { PublicClient, WalletClient } from '@wagmi/core'
 import { BrowserProvider, JsonRpcSigner, Signer } from 'ethers'
-import { controller } from '@doid/connect/src/controller'
+import { controller } from '@doid/connect/controller'
 import { createPublicClient, http, webSocket } from 'viem'
 
 function walletClientToProvider(walletClient: WalletClient | PublicClient) {

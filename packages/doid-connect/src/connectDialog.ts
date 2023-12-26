@@ -1,44 +1,30 @@
-import { LitElement, PropertyValueMap, html, nothing, unsafeCSS } from 'lit'
-import { customElement, property, state } from 'lit/decorators.js'
-import { when } from 'lit/directives/when.js'
+import { PropertyValueMap, nothing } from 'lit'
+import { html, TailwindElement, customElement, property, state, when, createRef, ref } from '@doid/ui-core'
 import './components/signup'
 import './components/connectButtons'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
-import themeDark from '@shoelace-style/shoelace/dist/themes/dark.styles.js'
-import themeLight from '@shoelace-style/shoelace/dist/themes/light.styles.js'
 import { Chain } from '@wagmi/core'
 import style from './connectDialog.css?inline'
 import { doidSvg } from './assets/svg/doid'
 import { ErrNotRegistered, controller } from './controller'
-import { createRef, ref } from 'lit/directives/ref.js'
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import { DOIDSignup } from './components/signup'
 import { Events as ConnectEvents, DOIDConnectButtons } from './components/connectButtons'
-import { BaseCss } from './components/globalCSS'
 import { options } from './options'
 import { EventTypes } from './utils/events'
+import themeDark from '@shoelace-style/shoelace/dist/themes/dark.styles.js?inline'
+import themeLight from '@shoelace-style/shoelace/dist/themes/light.styles.js?inline'
 
 export interface Events extends ConnectEvents {
   close: EventTypes.VoidEvent
 }
 
 @customElement('doid-connect-dialog')
-export class DOIDConnectDialog extends LitElement {
+export class DOIDConnectDialog extends TailwindElement([themeLight, themeDark, style]) {
   @property({ type: Boolean }) signup = false
   @property() chainId?: Chain['id']
   @state() connectedWithoutDOID = false
-
-  static styles = [BaseCss, unsafeCSS(style), themeLight, themeDark]
-
-  // Element Events
-  emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventDetailType<Events, T>, options = []) {
-    if (!detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
-    else this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
-  }
-  on<T extends EventTypes.EventNames<Events>>(type: T, listener: EventTypes.EventListenerFn<Events, T>, options?: any) {
-    this.addEventListener(type, listener as EventListener, options)
-  }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     super.firstUpdated(_changedProperties)

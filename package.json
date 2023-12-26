@@ -15,25 +15,17 @@
     "url": "https://github.com/DOIDFoundation/lit-web3/issues"
   },
   "dependencies": {
-    "@aptos-labs/wallet-adapter-core": "2.5.1",
     "@floating-ui/dom": "^1.5.3",
     "@lit-app/state": "^0.8.4",
     "@lit-labs/motion": "^1.0.6",
     "@webcomponents/webcomponentsjs": "^2.8.0",
-    "cross-env": "^7.0.3",
     "ethers": "^6.9.1",
-    "events": "^3.3.0",
     "lit": "^3.1.0",
     "urlpattern-polyfill": "^9.0.0"
   },
   "devDependencies": {
-    "@rollup/plugin-inject": "^5.0.5",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@types/lodash": "^4.14.202",
     "@vitejs/plugin-legacy": "^5.2.0",
     "autoprefixer": "^10.4.16",
-    "dotenv": "^16.3.1",
-    "loglevel": "^1.8.1",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.32",
     "postcss-import": "^15.1.0",
@@ -44,7 +36,6 @@
     "rollup-plugin-minify-html-literals": "^1.2.6",
     "sass": "^1.69.5",
     "tailwindcss": "^3.4.0",
-    "terser": "^5.26.0",
     "typescript": "^5.3.3",
     "unplugin-auto-import": "^0.16.7",
     "vite": "^5.0.10",
@@ -57,7 +48,8 @@
     "assert": "npm:@doid/node-assert",
     "buffer": "npm:@doid/node-buffer",
     "stream": "npm:@doid/node-stream",
-    "util": "npm:@doid/node-util"
+    "util": "npm:@doid/node-util",
+    "rollup-plugin-minify-html-literals": "npm:rollup-plugin-minify-template-literals@^1.1.4"
   },
   "engines": {
     "node": ">=20"

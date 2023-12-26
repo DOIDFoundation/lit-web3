@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit'
+import { LitElement, html, CSSResult } from 'lit'
 import { customElement, property, state } from 'lit/decorators.js'
 import { when } from 'lit/directives/when.js'
 import '@shoelace-style/shoelace/dist/components/button/button'
@@ -31,7 +31,7 @@ export class DOIDConnectButton extends LitElement {
         >Connect</sl-button
       >
       <!-- Dialog -->
-      ${when(this.dialog, () => html`<doid-connect-dialog @close=${this.close} />`)}
+      ${when(this.dialog, () => html`<doid-connect-dialog @close=${this.close}></doid-connect-dialog>`)}
     `
   }
 }
