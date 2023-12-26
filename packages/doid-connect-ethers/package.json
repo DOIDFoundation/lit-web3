@@ -1,13 +1,27 @@
 {
   "name": "@doid/connect-ethers",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./*": "./dist/*.js"
+    }
+  },
   "scripts": {
-    "build": "tsup index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "build": "vite build",
     "prepublishOnly": "npm run build"
   },
   "type": "module",
   "dependencies": {
     "@doid/connect": "workspace:latest",
+    "@doid/ui-core": "workspace:latest",
     "@wagmi/core": "^1.4.12",
     "ethers": "^6",
     "viem": "^1.20.3"
