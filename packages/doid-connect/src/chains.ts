@@ -26,8 +26,8 @@ export const doidTestnet: Chain = defineChain({
     symbol: 'DOID'
   },
   rpcUrls: {
-    default: { http: ['https://rpc.testnet.doid.tech'] },
-    public: { http: ['https://rpc.testnet.doid.tech'] }
+    default: { http: ['https://rpc.testnet.doid.tech'], webSocket: ['ws://rpc.testnet.doid.tech/ws'] },
+    public: { http: ['https://rpc.testnet.doid.tech'], webSocket: ['ws://rpc.testnet.doid.tech/ws'] }
   },
   blockExplorers: {
     default: { name: 'DOIDScan', url: 'https://scan.testnet.doid.tech' }
