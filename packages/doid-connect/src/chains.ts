@@ -1,17 +1,27 @@
 import { Chain, defineChain } from 'viem'
-import { fantomTestnet, goerli } from 'viem/chains'
 
 export { type Chain, defineChain } from 'viem'
 
 // not ready yet
 export const doid: Chain = defineChain({
-  ...fantomTestnet,
+  id: 0xdddd,
+  name: 'DOID Testnet',
+  network: 'doid-testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'DOID',
+    symbol: 'DOID'
+  },
+  rpcUrls: {
+    default: { http: ['https://rpc.testnet.doid.tech'] },
+    public: { http: ['https://rpc.testnet.doid.tech'] }
+  },
+  blockExplorers: {
+    default: { name: 'DOID Testnet Explorer', url: 'https://scan.testnet.doid.tech' }
+  },
   contracts: {
-    ...fantomTestnet.contracts,
-    ...{
-      ensRegistry: {
-        address: '0x6974201EaAEb277888F6a4028d952E6A59F0baD1'
-      }
+    ensRegistry: {
+      address: '0x6974201EaAEb277888F6a4028d952E6A59F0baD1'
     }
   }
 })
@@ -26,11 +36,11 @@ export const doidTestnet: Chain = defineChain({
     symbol: 'DOID'
   },
   rpcUrls: {
-    default: { http: ['https://rpc.testnet.doid.tech'], webSocket: ['ws://rpc.testnet.doid.tech/ws'] },
-    public: { http: ['https://rpc.testnet.doid.tech'], webSocket: ['ws://rpc.testnet.doid.tech/ws'] }
+    default: { http: ['https://rpc.testnet.doid.tech'] },
+    public: { http: ['https://rpc.testnet.doid.tech'] }
   },
   blockExplorers: {
-    default: { name: 'DOIDScan', url: 'https://scan.testnet.doid.tech' }
+    default: { name: 'DOID Testnet Explorer', url: 'https://scan.testnet.doid.tech' }
   },
   contracts: {
     ensRegistry: {
