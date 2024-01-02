@@ -374,10 +374,10 @@ importers:
   packages/doid-connect-ethers:
     dependencies:
       '@doid/connect':
-        specifier: workspace:latest
+        specifier: workspace:^0.4
         version: link:../doid-connect
       '@lit-web3/base':
-        specifier: workspace:latest
+        specifier: workspace:^0.2
         version: link:../base
       '@wagmi/core':
         specifier: ^1.4.12

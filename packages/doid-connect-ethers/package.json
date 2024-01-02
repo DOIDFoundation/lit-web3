@@ -1,6 +1,6 @@
 {
   "name": "@doid/connect-ethers",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "type": "module",
   "files": [
     "dist"
@@ -20,8 +20,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@doid/connect": "workspace:latest",
-    "@lit-web3/base": "workspace:latest",
+    "@doid/connect": "workspace:^0.4",
+    "@lit-web3/base": "workspace:^0.2",
     "@wagmi/core": "^1.4.12",
     "ethers": "^6.9.1",
     "viem": "^1.21.4"
