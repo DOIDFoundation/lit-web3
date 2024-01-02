@@ -2,10 +2,11 @@ import { ThemeElement, createRef, html, ref, until, when } from '@lit-web3/dui/s
 import { customElement, state } from 'lit/decorators.js'
 // Components
 import '@doid/connect'
-import { DOIDConnectButton, DOIDConnector, WalletClient, doidTestnet } from '@doid/connect'
+import { DOIDConnectButton, DOIDConnector, WalletClient, doid, doidTestnet, fantomTestnet } from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/input/text'
 import '@lit-web3/dui/button'
+import '@lit-web3/dui/menu/drop'
 
 @customElement('view-home')
 export class ViewHome extends ThemeElement('') {
@@ -14,7 +15,10 @@ export class ViewHome extends ThemeElement('') {
   private doidConnectorEthers = new DOIDConnectorEthers(this)
   @state() private walletClient?: WalletClient
   @state() private accountEthers?: string
+  @state() private doidNetwork?: string
+  @state() private doidNetworkMenu?: boolean
   @state() private doidResult?: string
+  @state() private ensResult?: string
 
   private walletClientUpdater: any
   connectedCallback(): void {
@@ -37,8 +41,25 @@ export class ViewHome extends ThemeElement('') {
     this.accountEthers = signer.address
   }
 
+  switchNetwork(network: string) {
+    this.doidNetworkMenu = false
+    switch (network) {
+      case 'doid':
+        this.doidConnector.updateOptions({ doidNetwork: doid })
+        break
+      case 'doidTestnet':
+        this.doidConnector.updateOptions({ doidNetwork: doidTestnet })
+        break
+      case 'fantomTestnet':
+        this.doidConnector.updateOptions({ doidNetwork: fantomTestnet })
+        break
+    }
+    this.doidNetwork = network
+  }
+
   async getDOID(address: string) {
-    this.doidResult = (await this.doidConnectorEthers.getProvider(doidTestnet.id).lookupAddress(address)) ?? 'not found'
+    this.doidResult = (await this.doidConnectorEthers.getDOID(address)) ?? 'not found'
+    this.ensResult = (await this.doidConnectorEthers.getProvider(doidTestnet.id).lookupAddress(address)) ?? 'not found'
   }
 
   render() {
@@ -76,9 +97,22 @@ export class ViewHome extends ThemeElement('') {
           <p>Signer: <code>${this.accountEthers ?? typeof this.accountEthers}</code></p>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Resolve DOID</h1>
-          <dui-input-text id="address" placeholder="address" class="max-w-sm flex my-1"
-            ><p slot="msg"><code>${this.doidResult}</code></p></dui-input-text
+          <dui-drop
+            icon
+            btnSm
+            .show=${this.doidNetworkMenu}
+            @change=${(e: CustomEvent) => (this.doidNetworkMenu = e.detail)}
           >
+            <p slot="button">${this.doidNetwork ?? 'select doid network'}</p>
+            <ul class="dui-option">
+              <li @click="${this.switchNetwork.bind(this, 'doid')}" class="text-base">doid</li>
+              <li @click="${this.switchNetwork.bind(this, 'doidTestnet')}" class="text-base">doidTestnet</li>
+              <li @click="${this.switchNetwork.bind(this, 'fantomTestnet')}" class="text-base">fantomTestnet</li>
+            </ul>
+          </dui-drop>
+          <dui-input-text id="address" placeholder="address" class="max-w-sm flex my-1">
+            <p slot="msg">doid result: ${this.doidResult}<br />ens result: ${this.ensResult}</p>
+          </dui-input-text>
           <dui-button sm @click=${() => this.getDOID(this.$('#address').value)}><p>Get DOID</p></dui-button>
         </div>
         <div class="flex-auto">
