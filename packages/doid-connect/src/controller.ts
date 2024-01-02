@@ -64,7 +64,10 @@ export class Controller extends State {
 
   constructor() {
     super()
+    this.updateDoidClient()
+  }
 
+  public updateDoidClient() {
     Controller.doidClient = createPublicClient({
       chain: options.doidNetwork,
       transport: http()
