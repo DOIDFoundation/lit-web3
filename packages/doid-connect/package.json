@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@doid/name-validator": "workspace:latest",
+    "@lit-app/state": "^1.0.0",
     "@lit-labs/motion": "^1.0.6",
     "@lit-web3/base": "workspace:^0.2",
     "@shoelace-style/shoelace": "^2.12.0",

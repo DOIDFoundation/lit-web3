@@ -337,6 +337,9 @@ importers:
       '@doid/name-validator':
         specifier: workspace:latest
         version: link:../name-validator
+      '@lit-app/state':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@lit-labs/motion':
         specifier: ^1.0.6
         version: 1.0.6
