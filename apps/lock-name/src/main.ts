@@ -1,17 +1,17 @@
-import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
-import { TailwindElement, html, customElement, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import AppRoot from '@lit-web3/dui/shared/app-root.ethers'
+import { ThemeElement, html, customElement, when } from '@lit-web3/dui/shared/theme-element'
 import { routes } from '~/router'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
 // Components
-import '@lit-web3/dui/src/network-warning'
-import '@lit-web3/dui/src/nav/header'
-import '@lit-web3/dui/src/nav/nav'
-import '@lit-web3/dui/src/nav/footer'
-import '@lit-web3/dui/src/connect-wallet/btn'
+import '@lit-web3/dui/network-warning'
+import '@lit-web3/dui/nav/header'
+import '@lit-web3/dui/nav/nav'
+import '@lit-web3/dui/nav/footer'
+import '@lit-web3/dui/connect-wallet/btn'
 
 @customElement('app-main')
-export class AppMain extends TailwindElement('') {
+export class AppMain extends ThemeElement('') {
   bindBridge: any = new StateController(this, bridgeStore)
   get account() {
     return bridgeStore.bridge.account

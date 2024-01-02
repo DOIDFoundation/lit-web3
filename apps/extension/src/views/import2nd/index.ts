@@ -1,5 +1,5 @@
-import { TailwindElement, html, customElement, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement, when, state } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 import { accountStore } from '~/store/account'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
@@ -8,7 +8,7 @@ import '~/components/import'
 
 import style from './import2nd.css?inline'
 @customElement('import-2nd')
-export class ViewImport extends TailwindElement(style) {
+export class ViewImport extends ThemeElement(style) {
   @state() step = 1
 
   get account() {

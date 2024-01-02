@@ -3,7 +3,7 @@
 // 2. @crxjs/vite-plugin's hmr cannot watch for dist folder
 // Risk
 // 1. `public/inpage.js` will be regenerated & committed every time
-import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.js'
+import viteAppConfig from '@lit-web3/base/vite.config.app'
 import { sharedConfig } from './vite.config'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -36,5 +36,5 @@ export default async ({ mode = '' }) => {
     }
   }
   config.viteConfigOptions.html = false
-  return viteConfig(config)({ mode })
+  return viteAppConfig(config)({ mode })
 }

@@ -1,10 +1,10 @@
-import { TailwindElement, html, customElement, property, when, repeat } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, when, repeat } from '@lit-web3/dui/shared/theme-element'
 // Components
 import './item'
 
 import style from './list.css?inline'
 @customElement('doid-name-list')
-export class DoidNameList extends TailwindElement(style) {
+export class DoidNameList extends ThemeElement(style) {
   @property() names: NameInfo[] = []
   @property() pending = false
   @property() empty = false

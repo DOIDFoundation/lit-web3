@@ -1,5 +1,5 @@
 // Claim DOID name by passId
-import { TailwindElement, html } from './shared/TailwindElement'
+import { ThemeElement, html } from './shared/theme-element'
 import { customElement, property, state } from 'lit/decorators.js'
 import { getContract, assignOverrides } from '@lit-web3/ethers/src/useBridge'
 import { bridgeStore, StateController, getAccount } from '@lit-web3/ethers/src/useBridge'
@@ -27,7 +27,7 @@ export const claim = async (passId: number) => {
 }
 
 @customElement('doid-claim-name')
-export class DoidClaimName extends TailwindElement('') {
+export class DoidClaimName extends ThemeElement('') {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) nameInfo!: NameInfo
   @property({ type: Boolean }) sm = false
@@ -78,37 +78,39 @@ export class DoidClaimName extends TailwindElement('') {
       <!-- Tx Dialog -->
       ${when(
         this.dialog,
-        () => html`<dui-dialog @close=${() => this.close()}>
-          <div slot="header">Claim DOID name</div>
-          <!-- Content -->
-          <div class="min-h-10">
-            ${when(
-              !this.tx?.success,
-              () => html`
-                <div class="text-center">
-                  You are claiming for:
-                  <p class="text-black my-4 text-lg"><b class="text-blue-600">${this.name}</b>.doid</p>
-                  <p class="">
-                    ${html`Note: This pass <b class="text-base text-orange-500">#${this.passId}</b> will be burned after claiming.</b></b>`}
-                  </p>
-                </div>
-              `
-            )}
-            ${when(
-              this.txPending,
-              () => html`<tx-state
-                .tx=${this.tx}
-                .opts=${{ state: { success: `Success. You are the registrant of ${this.name}.doid now` } }}
-                ><dui-button slot="view" @click=${() => this.close(true)}>Close</dui-button></tx-state
-              >`,
-              () =>
-                html`<p class="mt-8 text-center">
-                  <dui-button class="success" @click=${this.claim}>Continue</dui-button>
-                </p>`
-            )}
-          </div>
-          <!-- Bottom -->
-        </dui-dialog>`
+        () =>
+          html`<dui-dialog @close=${() => this.close()}>
+            <div slot="header">Claim DOID name</div>
+            <!-- Content -->
+            <div class="min-h-10">
+              ${when(
+                !this.tx?.success,
+                () => html`
+                  <div class="text-center">
+                    You are claiming for:
+                    <p class="text-black my-4 text-lg"><b class="text-blue-600">${this.name}</b>.doid</p>
+                    <p class="">
+                      ${html`Note: This pass <b class="text-base text-orange-500">#${this.passId}</b> will be burned after claiming.</b></b>`}
+                    </p>
+                  </div>
+                `
+              )}
+              ${when(
+                this.txPending,
+                () =>
+                  html`<tx-state
+                    .tx=${this.tx}
+                    .opts=${{ state: { success: `Success. You are the registrant of ${this.name}.doid now` } }}
+                    ><dui-button slot="view" @click=${() => this.close(true)}>Close</dui-button></tx-state
+                  >`,
+                () =>
+                  html`<p class="mt-8 text-center">
+                    <dui-button class="success" @click=${this.claim}>Continue</dui-button>
+                  </p>`
+              )}
+            </div>
+            <!-- Bottom -->
+          </dui-dialog>`
       )}`
   }
 }

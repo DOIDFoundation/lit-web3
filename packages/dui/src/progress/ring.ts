@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -9,12 +9,12 @@ import {
   ref,
   createRef,
   classMap
-} from '../shared/TailwindElement'
+} from '../shared/theme-element'
 // Components
 
 import style from './ring.css?inline'
 @customElement('dui-progress-ring')
-export class DuiProgressRing extends TailwindElement(style) {
+export class DuiProgressRing extends ThemeElement(style) {
   el$: Ref<HTMLElement> = createRef()
 
   @property({ type: Number }) percent = 0

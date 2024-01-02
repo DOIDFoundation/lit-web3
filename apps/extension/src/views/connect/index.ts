@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -7,21 +7,21 @@ import {
   repeat,
   when,
   classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+} from '@lit-web3/dui/shared/theme-element'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
 import { multiChains } from '@lit-web3/chain/src'
 // Components
-import '@lit-web3/dui/src/address/name'
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/menu/drop'
+import '@lit-web3/dui/address/name'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/menu/drop'
 import '~/components/connect/hostInfo'
 
 import style from './connect.css?inline'
 
 @customElement('view-connect')
-export class ViewUnlock extends TailwindElement(style) {
+export class ViewUnlock extends ThemeElement(style) {
   bindKeyring: any = new StateController(this, uiKeyring)
   bindConnects: any = new StateController(this, uiConnects)
   @property() host = ''

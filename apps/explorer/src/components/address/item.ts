@@ -1,29 +1,21 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  when,
-  state,
-  classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, when, state, classMap } from '@lit-web3/dui/shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
-import emitter from '@doid/core/emitter'
-import { scrollTop } from '@lit-web3/dui/src/shared/router'
+import emitter from '@lit-web3/base/emitter'
+import { scrollTop } from '@lit-web3/router'
 
 // Components
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/address'
-import '@lit-web3/dui/src/copy/icon'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/address'
+import '@lit-web3/dui/copy/icon'
 import './set'
 
 // Style
 import style from './item.css?inline'
 
 @customElement('doid-addr-item')
-export class DoidAddrItem extends TailwindElement(style) {
+export class DoidAddrItem extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) item: any = {}
   @property({ type: Boolean }) owner = false

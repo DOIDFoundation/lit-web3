@@ -1,18 +1,18 @@
-import { TailwindElement, html, when, customElement, ref } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, when, customElement, ref } from '@lit-web3/dui/shared/theme-element'
 import { property, state } from 'lit/decorators.js'
 // import { searchStore, StateController } from './store'
 // import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
-// import emitter from '@doid/core/emitter'
+// import emitter from '@lit-web3/base/emitter'
 // import { wrapTLD, checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 // import { ValidateDOIDName } from '../validator/doid-name'
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
 
 // Style
 import style from './index.css?inline'
 @customElement('dui-block-search')
-export class duiBlockSearch extends TailwindElement(style) {
+export class duiBlockSearch extends ThemeElement(style) {
   // bindStore: any = new StateController(this, searchStore)
   // bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = 'Search names or addresses'

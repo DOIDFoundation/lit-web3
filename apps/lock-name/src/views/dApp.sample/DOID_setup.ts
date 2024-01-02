@@ -1,13 +1,13 @@
-import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, state } from '@lit-web3/dui/shared/theme-element'
 import { sleep } from '@lit-web3/ethers/src/utils'
 // Components
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/button'
 // import { ipnsBytes, setMainAddrAndIPNS, mainAddressByName } from '@lit-web3/ethers/src/nsResolver'
 
 const logger = (...args: any) => console.info(`[dApp]`, ...args)
 
 @customElement('dapp-method-doid-setup')
-export class dappMethodDoidSetup extends TailwindElement('') {
+export class dappMethodDoidSetup extends ThemeElement('') {
   @state() name = 'zzzxxx.doid'
   @state() err: any = null
   @state() pending = false

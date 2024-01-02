@@ -1,9 +1,9 @@
-import { TailwindElement, html, customElement, property, state, classMap, styleMap } from '../shared/TailwindElement'
+import { ThemeElement, html, customElement, property, state, classMap, styleMap } from '../shared/theme-element'
 // Components
 
 import style from './bar.css?inline'
 @customElement('dui-progress-bar')
-export class DuiProgressBar extends TailwindElement(style) {
+export class DuiProgressBar extends ThemeElement(style) {
   @property({ type: Number }) percent = 0
   @property({ type: Number }) randomTo = 0
   @property({ type: Number }) precision = 2

@@ -1,15 +1,15 @@
-import { TailwindElement, html, customElement, property } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
-import { searchStore, StateController } from '@lit-web3/dui/src/ns-search/store'
+import { ThemeElement, html, customElement, property } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
+import { searchStore, StateController } from '@lit-web3/dui/ns-search/store'
 // Components
-import '@lit-web3/dui/src/ns-search'
-import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/ns-search'
+import '@lit-web3/dui/doid-symbol'
 import '~/components/favorites/btn'
 import '~/components/names/list'
 
 import style from './search.css?inline'
 @customElement('view-search')
-export class ViewSearch extends TailwindElement(style) {
+export class ViewSearch extends ThemeElement(style) {
   bindStore: any = new StateController(this, searchStore)
   @property() keyword = ''
 

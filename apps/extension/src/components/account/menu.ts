@@ -1,23 +1,16 @@
-import {
-  customElement,
-  TailwindElement,
-  html,
-  property,
-  repeat,
-  classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { customElement, ThemeElement, html, property, repeat, classMap } from '@lit-web3/dui/shared/theme-element'
 
 // Components
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/address/avatar'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/address/avatar'
+import { goto } from '@lit-web3/router'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 import css from './menu.css?inline'
 
 @customElement('account-menu')
-export class AccountMenu extends TailwindElement(css) {
+export class AccountMenu extends ThemeElement(css) {
   bindKeyring: any = new StateController(this, uiKeyring)
 
   @property({ type: Boolean }) show = false
@@ -57,16 +50,17 @@ export class AccountMenu extends TailwindElement(css) {
         <div class="py-1">
           ${repeat(
             this.DOIDs,
-            (DOID) => html`<div class="menu-list" @click=${() => this.select(DOID)}>
-              <div class="menu-list-left">
-                <i
-                  class="menu-list-icon mdi mdi-check ${classMap(
-                    this.$c([this.selected?.name == DOID.name ? 'text-green-500' : 'invisible'])
-                  )}"
-                ></i>
-                <dui-name-address avatar short .name=${DOID.name} .address=${DOID.address}></dui-name-address>
-              </div>
-            </div>`
+            (DOID) =>
+              html`<div class="menu-list" @click=${() => this.select(DOID)}>
+                <div class="menu-list-left">
+                  <i
+                    class="menu-list-icon mdi mdi-check ${classMap(
+                      this.$c([this.selected?.name == DOID.name ? 'text-green-500' : 'invisible'])
+                    )}"
+                  ></i>
+                  <dui-name-address avatar short .name=${DOID.name} .address=${DOID.address}></dui-name-address>
+                </div>
+              </div>`
           )}
         </div>
 

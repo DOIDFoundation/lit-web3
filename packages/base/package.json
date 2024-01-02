@@ -1,0 +1,42 @@
+{
+  "name": "@lit-web3/base",
+  "version": "0.2.1",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./*.js": "./src/*.js",
+    "./*": {
+      "import": "./src/*",
+      "default": "./src/*.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DOIDFoundation/lit-web3",
+    "directory": "packages/base"
+  },
+  "dependencies": {
+    "@lit-app/state": "^1.0.0",
+    "@webcomponents/webcomponentsjs": "^2.8.0",
+    "urlpattern-polyfill": "^9.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-legacy": "^5.2.0",
+    "dotenv": "^16.3.1",
+    "fast-glob": "^3.3.2",
+    "rollup-plugin-minify-template-literals": "^1.1.4",
+    "vite": "^5.0.10",
+    "vite-plugin-dts": "^3.7.0",
+    "vite-plugin-html": "^3.2.1",
+    "vite-plugin-mkcert": "^1.17.1",
+    "vite-plugin-pwa": "^0.17.4",
+    "vite-plugin-static-copy": "^1.0.0"
+  },
+  "peerDependencies": {
+    "lit": "^3"
+  },
+  "license": "MIT"
+}

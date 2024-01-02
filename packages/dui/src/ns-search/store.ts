@@ -1,8 +1,8 @@
-import { State, property } from '@lit-app/state'
-export { StateController } from '@lit-app/state'
+import { State, property } from '@lit-web3/base/state'
+export { StateController } from '@lit-web3/base/state'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
-import { goto } from '../shared/router'
+import { goto } from '@lit-web3/router'
 
 class SearchStore extends State {
   @property({ value: false }) pending!: boolean

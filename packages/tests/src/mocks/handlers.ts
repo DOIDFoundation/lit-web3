@@ -6,7 +6,7 @@ export const posts = []
 
 const jsonPlaceHolder = graphql.link('https://jsonplaceholder.ir/graphql')
 // Define handlers that catch the corresponding requests and returns the mock data.
-export const handlers = [
+export const handlers: any[] = [
   http.get(`${mockApi}/empty.json`, () => {
     return new HttpResponse(JSON.stringify({}), {
       headers: {

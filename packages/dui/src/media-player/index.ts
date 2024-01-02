@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   customElement,
   html,
   state,
@@ -9,9 +9,9 @@ import {
   when,
   ref,
   createRef
-} from '../shared/TailwindElement'
+} from '../shared/theme-element'
 import { NFTType, MediaType, fetchMediaType } from '@doid/core/MIMETypes'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 // Components
 import '../img/loader'
 import './video'
@@ -20,7 +20,7 @@ import './audio'
 import style from './media-player.css?inline'
 
 @customElement('dui-media-player')
-export class DuiMediaPlayer extends TailwindElement(style) {
+export class DuiMediaPlayer extends ThemeElement(style) {
   player$: any = createRef()
   @property({ type: String }) class = ''
   @property({ type: Object }) meta?: Meta

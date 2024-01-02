@@ -1,24 +1,16 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  when,
-  classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, state, when, classMap } from '@lit-web3/dui/shared/theme-element'
 import { commit, getCommitment, clearCommitment, register, now } from '@lit-web3/ethers/src/nsResolver/registrar'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 // Components
-import '@lit-web3/dui/src/doid-claim-name'
-import '@lit-web3/dui/src/progress/bar'
-import '@lit-web3/dui/src/progress/ring'
-import '@lit-web3/dui/src/tx-state'
-import '@lit-web3/dui/src/tip'
+import '@lit-web3/dui/doid-claim-name'
+import '@lit-web3/dui/progress/bar'
+import '@lit-web3/dui/progress/ring'
+import '@lit-web3/dui/tx-state'
+import '@lit-web3/dui/tip'
 
 import style from './register.css?inline'
 @customElement('view-name-register')
-export class ViewNameRegister extends TailwindElement(style) {
+export class ViewNameRegister extends ThemeElement(style) {
   @property() name = ''
   @property({ type: Object }) nameInfo!: NameInfo
   @state() done = false
@@ -92,8 +84,8 @@ export class ViewNameRegister extends TailwindElement(style) {
 
   get = async () => {
     await this.getCommitment()
-    const { secret, ts } = this.commitment
-    if (ts && (now() - ts ?? 0) > 60 * 1000) this.goStep3()
+    const { secret, ts = 0 } = this.commitment
+    if (ts && now() - ts > 60 * 1000) this.goStep3()
     else if (secret) this.goStep2()
     this.ts++
   }
@@ -152,14 +144,16 @@ export class ViewNameRegister extends TailwindElement(style) {
     if (!this.nameInfo.available)
       return html`${when(
         this.nameInfo.itsme,
-        () => html`<div class="px-3">
-          <dui-button class="secondary" href=${this.detailsLink}
-            >Manage your name <i class="mdi mdi-chevron-right"></i
-          ></dui-button>
-        </div>`,
-        () => html`<div class="px-3">
-          This DOID name is already taken. <dui-link class="mx-1" href=${this.detailsLink}>See Details</dui-link>
-        </div>`
+        () =>
+          html`<div class="px-3">
+            <dui-button class="secondary" href=${this.detailsLink}
+              >Manage your name <i class="mdi mdi-chevron-right"></i
+            ></dui-button>
+          </div>`,
+        () =>
+          html`<div class="px-3">
+            This DOID name is already taken. <dui-link class="mx-1" href=${this.detailsLink}>See Details</dui-link>
+          </div>`
       )}`
     if (this.lockedByMe)
       return html`<div class="px-3">

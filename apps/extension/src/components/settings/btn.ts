@@ -1,11 +1,11 @@
-import { customElement, TailwindElement, html, state, when, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
+import { customElement, ThemeElement, html, state } from '@lit-web3/dui/shared/theme-element'
 import { uiKeyring, StateController } from '~/store/keyringState'
-import '@lit-web3/dui/src/menu/drop'
+import '@lit-web3/dui/menu/drop'
 import popupMessenger from '~/lib.next/messenger/popup'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 
 @customElement('settings-btn')
-export class SettingsBtn extends TailwindElement(null) {
+export class SettingsBtn extends ThemeElement(null) {
   bindKeyring: any = new StateController(this, uiKeyring)
 
   @state() menu = false

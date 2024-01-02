@@ -1,9 +1,9 @@
-import { TailwindElement, html, customElement, state, property, styleMap, when } from '../shared/TailwindElement'
+import { ThemeElement, html, customElement, state, property, styleMap, when } from '../shared/theme-element'
 import { getSymbol } from '@lit-web3/chain/src/symbol'
 
 import style from './symbol.css?inline'
 @customElement('chain-symbol')
-export class ChainSymbol extends TailwindElement(style) {
+export class ChainSymbol extends ThemeElement(style) {
   @property() chain?: ChainNetwork
   @property() symbol = ''
   @property({ type: Boolean }) text = false

@@ -1,5 +1,5 @@
 import { PropertyValueMap, nothing } from 'lit'
-import { html, TailwindElement, customElement, property, state, when, createRef, ref } from '@doid/ui-core'
+import { html, TailwindElement, customElement, property, state, when, createRef, ref } from '@lit-web3/base'
 import './components/signup'
 import './components/connectButtons'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
@@ -10,18 +10,12 @@ import { doidSvg } from './assets/svg/doid'
 import { ErrNotRegistered, controller } from './controller'
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import { DOIDSignup } from './components/signup'
-import { Events as ConnectEvents, DOIDConnectButtons } from './components/connectButtons'
+import { DOIDConnectButtons } from './components/connectButtons'
 import { options } from './options'
-import { EventTypes } from './utils/events'
-import themeDark from '@shoelace-style/shoelace/dist/themes/dark.styles.js?inline'
-import themeLight from '@shoelace-style/shoelace/dist/themes/light.styles.js?inline'
-
-export interface Events extends ConnectEvents {
-  close: EventTypes.VoidEvent
-}
+import commonCSS from './assets/css'
 
 @customElement('doid-connect-dialog')
-export class DOIDConnectDialog extends TailwindElement([themeLight, themeDark, style]) {
+export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
   @property({ type: Boolean }) signup = false
   @property() chainId?: Chain['id']
   @state() connectedWithoutDOID = false
@@ -41,11 +35,11 @@ export class DOIDConnectDialog extends TailwindElement([themeLight, themeDark, s
    */
   show() {
     return this.updateComplete.then(() => {
-      this.connectButtonsRef.value?.on('connect', (event) => {
+      this.connectButtonsRef.value?.on('connect', (event: CustomEvent) => {
         this.emit('connect', event.detail)
         this.close()
       })
-      this.connectButtonsRef.value?.on('error', async (event) => {
+      this.connectButtonsRef.value?.on('error', async (event: CustomEvent) => {
         let error = event.detail
         if (error instanceof ErrNotRegistered) {
           this.connectedWithoutDOID = true

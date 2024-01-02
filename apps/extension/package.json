@@ -21,12 +21,13 @@
   "keywords": [],
   "dependencies": {
     "@aptos-labs/wallet-adapter-core": "2.5.1",
+    "@doid/core": "workspace:latest",
     "@erebos/keccak256": "^0.13.1",
     "@erebos/secp256k1": "^0.10.0",
-    "@libp2p/crypto": "^1.0.17",
-    "@lit-web3/chain": "workspace:latest",
-    "@doid/core": "workspace:latest",
     "@helia/ipns": "^3.0.1",
+    "@libp2p/crypto": "^1.0.17",
+    "@lit-web3/base": "workspace:latest",
+    "@lit-web3/chain": "workspace:latest",
     "@lit-web3/doids": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
@@ -48,13 +49,13 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.21",
-    "@ffflorian/jszip-cli": "^3.5.6",
+    "@ffflorian/jszip-cli": "^3.6.2",
     "@types/chrome": "latest",
     "@types/webextension-polyfill": "^0.10.7",
     "cross-env": "^7.0.3",
     "crx": "^5.0.1",
     "rimraf": "^5.0.5",
-    "unplugin-auto-import": "^0.15.3",
+    "unplugin-auto-import": "^0.16.7",
     "webextension-polyfill": "^0.10.0"
   },
   "license": "MIT"

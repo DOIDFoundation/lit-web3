@@ -1,13 +1,13 @@
-import { TailwindElement, html } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html } from '@lit-web3/dui/shared/theme-element'
 import { customElement } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 // Components
-import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/doid-symbol'
 
 import style from './help.css?inline'
 
 @customElement('view-help')
-export class ViewHelp extends TailwindElement(style) {
+export class ViewHelp extends ThemeElement(style) {
   links = [
     { name: 'Twitter', icon: 'twitter', uri: import.meta.env.VITE_APP_TWITTER },
     { name: 'Discord', icon: 'discord', uri: import.meta.env.VITE_APP_DISCORD }

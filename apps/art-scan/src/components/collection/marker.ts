@@ -1,9 +1,9 @@
-import { TailwindElement, html, customElement, property } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property } from '@lit-web3/dui/shared/theme-element'
 // Components
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/link'
 
 @customElement('coll-marker')
-export class CollMarker extends TailwindElement('') {
+export class CollMarker extends ThemeElement('') {
   @property() DOID?: DOIDObject
 
   get doid() {

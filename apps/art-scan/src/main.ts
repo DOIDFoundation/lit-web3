@@ -1,18 +1,18 @@
-import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
-import emitter from '@doid/core/emitter'
-import { routerPathroot } from '@lit-web3/dui/src/shared/router'
+import AppRoot from '@lit-web3/dui/shared/app-root.ethers'
+import emitter from '@lit-web3/base/emitter'
+import { routerPathroot } from '@lit-web3/router'
 import { routes } from '~/router'
-import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, state, when } from '@lit-web3/dui/shared/theme-element'
 // Components
 import '~/components/search-bar'
-import '@lit-web3/dui/src/network-warning'
-import '@lit-web3/dui/src/nav/header'
-import '@lit-web3/dui/src/nav/footer'
-import '@lit-web3/dui/src/nav/nav'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/network-warning'
+import '@lit-web3/dui/nav/header'
+import '@lit-web3/dui/nav/footer'
+import '@lit-web3/dui/nav/nav'
+import '@lit-web3/dui/link'
 
 @customElement('app-main')
-export class AppMain extends TailwindElement('') {
+export class AppMain extends ThemeElement('') {
   @state() inRoot = false
 
   chkView = () => {

@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -7,20 +7,20 @@ import {
   when,
   repeat,
   classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+} from '@lit-web3/dui/shared/theme-element'
 import { accountStore } from '~/store/account'
 import { walletStore, StateController } from '~/store'
 import { genMnemonic } from '~/lib.next/keyring/phrase'
-import clipboard from '@lit-web3/dui/src/copy/clipboard'
+import clipboard from '@lit-web3/dui/copy/clipboard'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
 
 import style from './phrase.css?inline'
 @customElement('view-create-addresses')
-export class ViewAddress extends TailwindElement(style) {
+export class ViewAddress extends ThemeElement(style) {
   bindStore: any = new StateController(this, walletStore)
   @property() pwd = ''
   @property() placeholder = 'Password'

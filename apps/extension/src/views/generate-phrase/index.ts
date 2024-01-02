@@ -1,10 +1,10 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router/index'
+import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
 import './password'
 import './addresses'
 import './recovery'
@@ -15,7 +15,7 @@ import { StateController, walletStore } from '~/store'
 // const localStore = new LocalStore()
 
 @customElement('view-phrase')
-export class ViewPhrase extends TailwindElement(style) {
+export class ViewPhrase extends ThemeElement(style) {
   // state = new StateController(this, walletStore)
   constructor() {
     super()

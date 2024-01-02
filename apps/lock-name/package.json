@@ -12,8 +12,10 @@
   "keywords": [],
   "dependencies": {
     "@doid/core": "workspace:latest",
+    "@lit-web3/base": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
-    "@lit-web3/ethers": "workspace:latest"
+    "@lit-web3/ethers": "workspace:latest",
+    "@lit-web3/router": "workspace:latest"
   },
   "license": "MIT"
 }

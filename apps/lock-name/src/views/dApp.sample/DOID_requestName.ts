@@ -1,10 +1,10 @@
-import { TailwindElement, html, customElement, state, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, state, classMap } from '@lit-web3/dui/shared/theme-element'
 import { sleep } from '@lit-web3/ethers/src/utils'
 // Components
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/button'
 
 @customElement('dapp-method-doid-requestname')
-export class dappMethodDoidRequestname extends TailwindElement('') {
+export class dappMethodDoidRequestname extends ThemeElement('') {
   @state() res_DOID_requestName = ''
   @state() pending = false
   @state() res_DOID_name = ''

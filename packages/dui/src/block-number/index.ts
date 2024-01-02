@@ -1,13 +1,13 @@
 import { PropertyValues } from 'lit'
-import { customElement, TailwindElement, html, classMap, state, when, keyed } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, classMap, state, when } from '../shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { sleep } from '@lit-web3/ethers/src/utils'
 
 import style from './blockNumber.css?inline'
 
 @customElement('block-number')
-export class BlockNumber extends TailwindElement(style) {
-  bindBridge = new StateController(this, bridgeStore)
+export class BlockNumber extends ThemeElement(style) {
+  bindBridge: any = new StateController(this, bridgeStore)
   @state() pending = false
 
   get provider() {

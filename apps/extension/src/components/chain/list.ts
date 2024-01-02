@@ -1,18 +1,18 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   state,
   property,
   repeat,
   classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+} from '@lit-web3/dui/shared/theme-element'
 import { uiNetworks, StateController } from '~/store/networkState'
 
 import style from './chain.css?inline'
 @customElement('chain-list')
-export class ChainList extends TailwindElement(style) {
-  bindNetworks = new StateController(this, uiNetworks)
+export class ChainList extends ThemeElement(style) {
+  bindNetworks: any = new StateController(this, uiNetworks)
 
   @property() class = ''
   @state() index = 0

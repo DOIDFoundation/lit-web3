@@ -1,22 +1,22 @@
-import { TailwindElement, html, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, when, state } from '@lit-web3/dui/shared/theme-element'
 import { customElement } from 'lit/decorators.js'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { LENs, lockPass, checkNameExists, getInviteCode, getPassCateLen, getPassInfo } from '~/lib/locker'
 import { ref } from 'lit/directives/ref.js'
-import { replace } from '@lit-web3/dui/src/shared/router'
-import { ValidateDOIDName } from '@lit-web3/dui/src/validator/doid-name'
+import { replace } from '@lit-web3/router'
+import { ValidateDOIDName } from '@lit-web3/dui/validator/doid-name'
 // Components
-import '@lit-web3/dui/src/connect-wallet/btn'
-import '@lit-web3/dui/src/tx-state'
-import '@lit-web3/dui/src/dialog'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/connect-wallet/btn'
+import '@lit-web3/dui/tx-state'
+import '@lit-web3/dui/dialog'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/doid-symbol'
 
 import style from './lock.css?inline'
 @customElement('view-lock')
-export class ViewLock extends ValidateDOIDName(TailwindElement(style)) {
+export class ViewLock extends ValidateDOIDName(ThemeElement(style)) {
   bindBridge: any = new StateController(this, bridgeStore)
   @state() code = ''
   @state() name = ''
@@ -176,21 +176,22 @@ export class ViewLock extends ValidateDOIDName(TailwindElement(style)) {
                 html`<p class="px-3 mt-8 mb-4 w-full lg_w-96 text-left mx-auto">
                   Lock Pass ID: <b class="text-base">#${this.passInfo.id}</b>
                 </p>`,
-              () => html`<dui-input-text
-                @input=${this.onInputCode}
-                value=${this.code}
-                placeholder="Enter your invitation code"
-                required
-                ?disabled=${this.pendingTx}
-              >
-                <span slot="label">Invitation Code</span>
-                <span slot="tip">
-                  <dui-link href="/help">get invitation</dui-link>
-                </span>
-                <span slot="msg">
-                  ${when(this.errCode, () => html`<span class="text-red-500">${this.errCode}</span>`)}
-                </span>
-              </dui-input-text>`
+              () =>
+                html`<dui-input-text
+                  @input=${this.onInputCode}
+                  value=${this.code}
+                  placeholder="Enter your invitation code"
+                  required
+                  ?disabled=${this.pendingTx}
+                >
+                  <span slot="label">Invitation Code</span>
+                  <span slot="tip">
+                    <dui-link href="/help">get invitation</dui-link>
+                  </span>
+                  <span slot="msg">
+                    ${when(this.errCode, () => html`<span class="text-red-500">${this.errCode}</span>`)}
+                  </span>
+                </dui-input-text>`
             )}
           </div>
           <!-- Name -->
@@ -230,56 +231,59 @@ export class ViewLock extends ValidateDOIDName(TailwindElement(style)) {
         ${when(
           bridgeStore.noAccount,
           // Locked
-          () => html`<p class="my-8 text-center"><connect-wallet-btn></connect-wallet-btn></p>
-            <p class="text-xs w-full lg_w-2/5 my-8 mx-auto">
-              DOID<br />
-              YOUR DECENTRALIZED OPENID<br />SAFER FASTER AND EASIER ENTRANCE TO CHAINS, CONTACTS AND DAPPS
-            </p>`,
+          () =>
+            html`<p class="my-8 text-center"><connect-wallet-btn></connect-wallet-btn></p>
+              <p class="text-xs w-full lg_w-2/5 my-8 mx-auto">
+                DOID<br />
+                YOUR DECENTRALIZED OPENID<br />SAFER FASTER AND EASIER ENTRANCE TO CHAINS, CONTACTS AND DAPPS
+              </p>`,
           // Unlocked
-          () => html`<div class="my-8 text-center">
-              <dui-button ?disabled=${this.nextDisabled} ?pending=${this.nextPending} @click=${this.next}>
-                <span class="flex justify-center items-center">
-                  <span>Next</span>
-                  <i class="mdi -mr-1 ml-1 ${this.nextPending ? 'mdi-loading' : 'mdi-chevron-right'}"></i>
-                </span>
-              </dui-button>
-              <p class="mt-4 w-64 text-xs mx-auto text-red-500 break-words">${this.errTx}</p>
-            </div>
-            <p class="text-xs w-full my-8 mt-12 mx-auto text-center break-words">
-              Note: If your transaction reverted due to name confliction, your lock pass NFT will still be available for
-              other names later.
-            </p>`
+          () =>
+            html`<div class="my-8 text-center">
+                <dui-button ?disabled=${this.nextDisabled} ?pending=${this.nextPending} @click=${this.next}>
+                  <span class="flex justify-center items-center">
+                    <span>Next</span>
+                    <i class="mdi -mr-1 ml-1 ${this.nextPending ? 'mdi-loading' : 'mdi-chevron-right'}"></i>
+                  </span>
+                </dui-button>
+                <p class="mt-4 w-64 text-xs mx-auto text-red-500 break-words">${this.errTx}</p>
+              </div>
+              <p class="text-xs w-full my-8 mt-12 mx-auto text-center break-words">
+                Note: If your transaction reverted due to name confliction, your lock pass NFT will still be available
+                for other names later.
+              </p>`
         )}
 
         <!-- Tx Dialog -->
         ${when(
           this.dialog,
-          () => html`<dui-dialog @close=${this.close}>
-            <div slot="header">Locking your awesome name</div>
-            <!-- Content -->
-            <div class="min-h-10">
-              <div class="text-center">
+          () =>
+            html`<dui-dialog @close=${this.close}>
+              <div slot="header">Locking your awesome name</div>
+              <!-- Content -->
+              <div class="min-h-10">
+                <div class="text-center">
+                  ${when(
+                    this.name,
+                    () =>
+                      html`You are locking for:
+                        <p class="text-black text-base"><b class="text-blue-600">${this.name}</b>.doid</p>`,
+                    () =>
+                      html`You are minting passes without a name,<br />
+                        you can lock them later`
+                  )}
+                </div>
                 ${when(
-                  this.name,
-                  () => html`You are locking for:
-                    <p class="text-black text-base"><b class="text-blue-600">${this.name}</b>.doid</p>`,
+                  this.tx && !this.tx.ignored,
                   () =>
-                    html`You are minting passes without a name,<br />
-                      you can lock them later`
+                    html`<tx-state .tx=${this.tx} .opts=${{ state: { success: 'Success. Your name has been locked.' } }}
+                      ><dui-button slot="view" href="/passes">View My Pass</dui-button></tx-state
+                    >`,
+                  () => html``
                 )}
               </div>
-              ${when(
-                this.tx && !this.tx.ignored,
-                () => html`<tx-state
-                  .tx=${this.tx}
-                  .opts=${{ state: { success: 'Success. Your name has been locked.' } }}
-                  ><dui-button slot="view" href="/passes">View My Pass</dui-button></tx-state
-                >`,
-                () => html``
-              )}
-            </div>
-            <!-- Bottom -->
-          </dui-dialog>`
+              <!-- Bottom -->
+            </dui-dialog>`
         )}
       </div>
     </div>`

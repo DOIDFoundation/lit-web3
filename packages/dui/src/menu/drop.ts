@@ -1,6 +1,5 @@
 // Todo: ShadowRoot should be created as childNodes of document.body
-import { customElement, TailwindElement, html, property, state, classMap, when } from '../shared/TailwindElement'
-import type { TAILWINDELEMENT } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property, state, classMap, when } from '../shared/theme-element'
 import { animate } from '@lit-labs/motion'
 // Components
 import '../button'
@@ -11,7 +10,7 @@ import { sleep } from '@lit-web3/ethers/src/utils'
 const duration = 133
 
 @customElement('dui-drop')
-export class DuiDrop extends TailwindElement(style) implements TAILWINDELEMENT {
+export class DuiDrop extends ThemeElement(style) {
   @property({ type: Boolean, reflect: true }) show = false
   @property({ type: Boolean }) lg = false
   @property({ type: Boolean }) icon = false

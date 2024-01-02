@@ -1,10 +1,10 @@
-import { TailwindElement, html, customElement, property, classMap } from '../shared/TailwindElement'
+import { ThemeElement, html, customElement, property, classMap } from '../shared/theme-element'
 
 // Component
 // Styles
 import style from './index.css?inline'
 @customElement('dui-card')
-export class DuiCard extends TailwindElement(style) {
+export class DuiCard extends ThemeElement(style) {
   @property({ type: String }) class = ''
   @property({ type: String }) index = 1
 

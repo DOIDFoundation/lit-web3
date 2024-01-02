@@ -1,4 +1,4 @@
-import { TAILWINDELEMENT, Ref } from '../shared/TailwindElement'
+import { TAILWINDELEMENT, Ref } from '../shared/theme-element'
 import { createRef } from 'lit/directives/ref.js'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 

@@ -1,12 +1,12 @@
-import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 // Components
-import '@lit-web3/dui/src/ns-search'
-import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/ns-search'
+import '@lit-web3/dui/doid-symbol'
 
 import style from './home.css?inline'
 @customElement('view-home')
-export class ViewHome extends TailwindElement(style) {
+export class ViewHome extends ThemeElement(style) {
   goto = (e: CustomEvent) => {
     goto(`/search/${e.detail}`)
   }

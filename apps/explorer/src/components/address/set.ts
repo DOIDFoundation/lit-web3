@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -7,19 +7,19 @@ import {
   classMap,
   repeat,
   state
-} from '@lit-web3/dui/src/shared/TailwindElement'
+} from '@lit-web3/dui/shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { getSignerMessage, signMessage, setAddressByOwner } from '@lit-web3/ethers/src/nsResolver'
 import { useStorage } from '@lit-web3/ethers/src/useStorage'
 
 // Components
-import '@lit-web3/dui/src/step-card'
-import '@lit-web3/dui/src/dialog/prompt'
+import '@lit-web3/dui/step-card'
+import '@lit-web3/dui/dialog/prompt'
 // Styles
 import style from './set.css?inline'
 
 @customElement('doid-set-record-wallet')
-export class DoidSetRecordWallet extends TailwindElement(style) {
+export class DoidSetRecordWallet extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean }) owner = false
   @property({ type: Object }) coin: any = {}
@@ -172,86 +172,87 @@ export class DoidSetRecordWallet extends TailwindElement(style) {
           </div>
           ${when(
             this.isStep1,
-            () => html`<div @click=${this.showTip}>
-                <a href="javascript:void(0)" class="text-blue-400">Change address to set</a>
-              </div>
-              ${when(
-                this.dialog,
-                () => html`<dui-prompt @close=${this.close}>
-                  <div class="text-base">Open your wallet and switch to the address you want to set.</div>
-                </dui-prompt>`
-              )}`
+            () =>
+              html`<div @click=${this.showTip}>
+                  <a href="javascript:void(0)" class="text-blue-400">Change address to set</a>
+                </div>
+                ${when(
+                  this.dialog,
+                  () =>
+                    html`<dui-prompt @close=${this.close}>
+                      <div class="text-base">Open your wallet and switch to the address you want to set.</div>
+                    </dui-prompt>`
+                )}`
           )}
         </div>
         <div>
           ${when(
             this.pending && !this.ownerAddress,
             () => html``,
-            () => html`<div class="px-3">
-              <h3 class="text-base">Setting an address requires you to complete 2 steps</h3>
-              <div class="grid md_grid-cols-2 gap-4 my-4">
-                <dui-card index="1" class="rounded-md ${classMap({ done: this.step > 1, active: this.step >= 1 })}">
-                  <div slot="title">
-                    <b>SIGN A MESSAGE TO VERIFY YOUR ADDRESS</b>
-                  </div>
-                  <div slot="description" class="flex flex-col gap-2">
-                    <p>Your wallet will open and following message will be shown:</p>
-
-                    <div class="break-words break-all">
-                      ${when(
-                        this.msg,
-                        () =>
-                          html`<span class="text-gray-500">Message:</span> ${repeat(
-                              this.cookedMsg,
-                              (msg) => html`<p><b>${msg.title}</b>${msg.content}</p>`
-                            )}`
-                      )}
+            () =>
+              html`<div class="px-3">
+                <h3 class="text-base">Setting an address requires you to complete 2 steps</h3>
+                <div class="grid md_grid-cols-2 gap-4 my-4">
+                  <dui-card index="1" class="rounded-md ${classMap({ done: this.step > 1, active: this.step >= 1 })}">
+                    <div slot="title">
+                      <b>SIGN A MESSAGE TO VERIFY YOUR ADDRESS</b>
                     </div>
-                  </div>
-                </dui-card>
-                <dui-card index="2" class="rounded-md ${classMap({ done: this.step > 2, active: this.step >= 2 })}">
-                  <div slot="title">
-                    <b>Complete Setting</b>
-                  </div>
-                  <div slot="description" class="flex flex-col gap-2">
-                    <p class="break-words">
-                      You need to change your wallet back to
-                      ${when(
-                        !this.owner && !this.isStep1,
-                        () => html`${this.ownerAddress}`,
-                        () => html`the address`
-                      )}
-                      that owns <b>${this.name}</b>
-                    </p>
-                    <p>
-                      Click 'set' and your wallet will re-open. Only after the transaction is confirmed your address
-                      will be set.
-                    </p>
-                  </div>
-                </dui-card>
-              </div>
-              <div class="mt-4 text-center">
-                ${when(
-                  this.isStep1,
-                  () => html`<dui-button
-                    sm
-                    @click=${this.sign}
-                    ?disabled=${this.btnSignDisabled}
-                    ?pending=${this.pending}
-                    >Sign message<i
-                      class="mdi ml-2 ${classMap(this.$c([this.pending ? 'mdi-loading' : 'mdi-chevron-right']))}"
-                    ></i>
-                  </dui-button>`,
-                  () => html`<dui-button
-                    sm
-                    @click=${this.setAddr}
-                    ?disabled=${this.btnSetDisabled}
-                    ?pending=${this.pending}
-                    >Set<i class="mdi ml-2 ${classMap(this.$c([this.pending ? 'mdi-loading' : '']))}"></i>
-                  </dui-button>`
-                )}
-              </div>
-            </div>`
+                    <div slot="description" class="flex flex-col gap-2">
+                      <p>Your wallet will open and following message will be shown:</p>
+
+                      <div class="break-words break-all">
+                        ${when(
+                          this.msg,
+                          () =>
+                            html`<span class="text-gray-500">Message:</span> ${repeat(
+                                this.cookedMsg,
+                                (msg) => html`<p><b>${msg.title}</b>${msg.content}</p>`
+                              )}`
+                        )}
+                      </div>
+                    </div>
+                  </dui-card>
+                  <dui-card index="2" class="rounded-md ${classMap({ done: this.step > 2, active: this.step >= 2 })}">
+                    <div slot="title">
+                      <b>Complete Setting</b>
+                    </div>
+                    <div slot="description" class="flex flex-col gap-2">
+                      <p class="break-words">
+                        You need to change your wallet back to
+                        ${when(
+                          !this.owner && !this.isStep1,
+                          () => html`${this.ownerAddress}`,
+                          () => html`the address`
+                        )}
+                        that owns <b>${this.name}</b>
+                      </p>
+                      <p>
+                        Click 'set' and your wallet will re-open. Only after the transaction is confirmed your address
+                        will be set.
+                      </p>
+                    </div>
+                  </dui-card>
+                </div>
+                <div class="mt-4 text-center">
+                  ${when(
+                    this.isStep1,
+                    () =>
+                      html`<dui-button sm @click=${this.sign} ?disabled=${this.btnSignDisabled} ?pending=${this.pending}
+                        >Sign message<i
+                          class="mdi ml-2 ${classMap(this.$c([this.pending ? 'mdi-loading' : 'mdi-chevron-right']))}"
+                        ></i>
+                      </dui-button>`,
+                    () =>
+                      html`<dui-button
+                        sm
+                        @click=${this.setAddr}
+                        ?disabled=${this.btnSetDisabled}
+                        ?pending=${this.pending}
+                        >Set<i class="mdi ml-2 ${classMap(this.$c([this.pending ? 'mdi-loading' : '']))}"></i>
+                      </dui-button>`
+                  )}
+                </div>
+              </div>`
           )}
         </div>
       </div>

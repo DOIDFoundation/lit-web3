@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 ::selection {
   background-color: var(--sl-color-primary-200);
   color: var(--sl-color-neutral-900);

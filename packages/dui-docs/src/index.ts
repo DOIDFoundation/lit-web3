@@ -1,11 +1,11 @@
-import { customElement, TailwindElement, html, when, state, property } from '@lit-web3/dui/src/shared/TailwindElement'
+import { customElement, ThemeElement, html, when, state, property } from '@lit-web3/dui/shared/theme-element'
 // Components
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/dialog'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/dialog'
 
 import style from './index.css?inline'
 @customElement('dui-components')
-export class DuiComponents extends TailwindElement(style) {
+export class DuiComponents extends ThemeElement(style) {
   @property({ type: String }) class = ''
   @state() dialog = false
   open() {

@@ -1,5 +1,5 @@
-import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.js'
+import viteAppConfig from '@lit-web3/base/vite.config.app'
 
 export default ({ mode = '' }) => {
-  return viteConfig({ server: { port: 4809 } })({ mode })
+  return viteAppConfig({ server: { port: 4809 } })({ mode })
 }

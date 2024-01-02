@@ -1,18 +1,18 @@
-// import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-// import { goto } from '@lit-web3/dui/src/shared/router'
+// import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
+// import { goto } from '@lit-web3/router'
 // import { keyringStore } from '~/store/keyringState'
 // import { getAddress } from '~/lib.next/keyring/phrase'
 // import { StateController, walletStore } from '~/store'
 // import { accountStore } from '~/store/account'
 
 // // Components
-// import '@lit-web3/dui/src/input/text'
-// import '@lit-web3/dui/src/button'
+// import '@lit-web3/dui/input/text'
+// import '@lit-web3/dui/button'
 // import '~/components/pwd-equal'
 
 // import style from './import4th.css?inline'
 // @customElement('import-4th')
-// export class ViewImport extends TailwindElement(style) {
+// export class ViewImport extends ThemeElement(style) {
 //   state = new StateController(this, walletStore)
 //   bindStore: any = new StateController(this, keyringStore)
 //   bindAccount: any = new StateController(this, accountStore)

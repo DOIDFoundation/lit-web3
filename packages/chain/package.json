@@ -2,7 +2,7 @@
   "name": "@lit-web3/chain",
   "version": "0.0.1",
   "scripts": {
-    "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts --outDir ./lib --format esm --dts --clean",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

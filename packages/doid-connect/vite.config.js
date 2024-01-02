@@ -1,4 +1,4 @@
-import viteLibConfig, { resolveSrc } from '@doid/ui-core/vite.config.lib'
+import viteLibConfig, { resolveSrc } from '@lit-web3/base/vite.config.lib'
 
 export default ({ mode = '' }) => {
   return viteLibConfig({

@@ -1,14 +1,14 @@
-import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 // Components
 import '~/components/search-bar'
-import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/doid-symbol'
 
 // Style
 import style from './index.css?inline'
 import logo from '~/assets/logo.svg'
 @customElement('view-home')
-export class ViewHome extends TailwindElement(style) {
+export class ViewHome extends ThemeElement(style) {
   goto = (e: CustomEvent) => {
     const { token, uri, DOID } = e.detail
     if (token.name) goto(`/collection/${uri}`)

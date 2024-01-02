@@ -1,5 +1,5 @@
 import { customElement, property, state } from 'lit/decorators.js'
-import { TailwindElement, html, classMap } from '../shared/TailwindElement'
+import { ThemeElement, html, classMap } from '../shared/theme-element'
 
 const converter = (val: string | null, type: unknown, { lower = false, upper = false } = {}) => {
   if (val) {
@@ -12,7 +12,7 @@ const converter = (val: string | null, type: unknown, { lower = false, upper = f
 
 import style from './text.css?inline'
 @customElement('dui-input-text')
-export class DuiInputText extends TailwindElement(style) {
+export class DuiInputText extends ThemeElement(style) {
   @property({ type: String }) placeholder = ''
   @property({ type: String }) class = ''
   @property({ type: Boolean }) sm = false

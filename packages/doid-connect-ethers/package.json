@@ -1,6 +1,7 @@
 {
   "name": "@doid/connect-ethers",
   "version": "0.1.0",
+  "type": "module",
   "files": [
     "dist"
   ],
@@ -18,19 +19,12 @@
     "build": "vite build",
     "prepublishOnly": "npm run build"
   },
-  "type": "module",
   "dependencies": {
     "@doid/connect": "workspace:latest",
-    "@doid/ui-core": "workspace:latest",
+    "@lit-web3/base": "workspace:latest",
     "@wagmi/core": "^1.4.12",
-    "ethers": "^6",
-    "viem": "^1.20.3"
-  },
-  "peerDependencies": {
-    "ethers": "^6"
-  },
-  "devDependencies": {
-    "tsup": "^8.0.1"
+    "ethers": "^6.9.1",
+    "viem": "^1.21.4"
   },
   "license": "MIT"
 }

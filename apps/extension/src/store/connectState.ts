@@ -1,6 +1,6 @@
-export { StateController } from '@lit-app/state'
+export { StateController } from '@lit-web3/base/state'
 import popupMessenger from '~/lib.next/messenger/popup'
-import { State, property } from '@lit-app/state'
+import { State, property } from '@lit-web3/base/state'
 import { getActiveTabs } from '~/lib.next/utils.ext'
 import type { Tabs } from 'webextension-polyfill'
 

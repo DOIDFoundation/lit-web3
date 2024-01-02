@@ -1,4 +1,4 @@
-import { TAILWINDELEMENT } from '../shared/TailwindElement'
+import { TAILWINDELEMENT } from '../shared/theme-element'
 import { createRef } from 'lit/directives/ref.js'
 import { checkDOIDName, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 

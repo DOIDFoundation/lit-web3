@@ -1,13 +1,13 @@
-import { TailwindElement, html, customElement, state, property } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, state, property } from '@lit-web3/dui/shared/theme-element'
 import { sleep } from '@lit-web3/ethers/src/utils'
 // Components
-import '@lit-web3/dui/src/input/text'
+import '@lit-web3/dui/input/text'
 
 // Style
 import style from './sample.css?inline'
 
 @customElement('dapp-method-doid-subcribe')
-export class dappMethodDoidSubcribe extends TailwindElement(style) {
+export class dappMethodDoidSubcribe extends ThemeElement(style) {
   @property() name = 'zzzxxx.doid'
   @state() err: any = null
   @state() msgs: any[] = []

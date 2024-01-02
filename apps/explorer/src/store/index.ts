@@ -1,5 +1,5 @@
-export { StateController } from '@lit-app/state'
-import { State, property } from '@lit-app/state'
+export { StateController } from '@lit-web3/base/state'
+import { State, property } from '@lit-web3/base/state'
 // @ts-expect-error
 import WS from 'ws-sequence/src'
 import { defaultNetwork } from '@lit-web3/doids/src/networks'

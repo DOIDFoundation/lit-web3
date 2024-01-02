@@ -1,6 +1,6 @@
-import { customElement, TailwindElement, html, when, property, classMap } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, when, property } from '../shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { screenStore } from '@doid/core/screen'
+import { screenStore } from '@lit-web3/base/screen'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components
 import './avatar'
@@ -9,7 +9,7 @@ import '../copy/icon'
 
 import style from './address.css?inline'
 @customElement('dui-address')
-export class DuiAddress extends TailwindElement(style) {
+export class DuiAddress extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   bindScreen: any = new StateController(this, screenStore)
   @property() address?: string // !!! if not defined, use current wallet address

@@ -1,9 +1,9 @@
-import { TailwindElement, classMap, customElement, html, property } from './shared/TailwindElement'
+import { ThemeElement, classMap, customElement, html, property } from './shared/theme-element'
 
 import icon from './i/doid.svg'
 
 @customElement('doid-symbol')
-export class DoidSymbol extends TailwindElement('') {
+export class DoidSymbol extends ThemeElement('') {
   @property() icon = ''
   @property({ type: Boolean }) sm = false
   @property({ type: Boolean }) dense = false
@@ -19,7 +19,7 @@ export class DoidSymbol extends TailwindElement('') {
 }
 
 @customElement('doid-icon')
-export class DoidIcon extends TailwindElement('') {
+export class DoidIcon extends ThemeElement('') {
   @property({ type: Boolean }) sm = false
   render() {
     return html`<img

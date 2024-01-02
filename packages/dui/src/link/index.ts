@@ -1,19 +1,10 @@
-import emitter from '@doid/core/emitter'
-import {
-  TailwindElement,
-  html,
-  customElement,
-  classMap,
-  property,
-  state,
-  ifDefined,
-  when
-} from '../shared/TailwindElement'
-import { routerPathname, routerPathroot } from '../shared/router'
+import emitter from '@lit-web3/base/emitter'
+import { ThemeElement, html, customElement, classMap, property, state, ifDefined, when } from '../shared/theme-element'
+import { routerPathname, routerPathroot } from '@lit-web3/router'
 
 import style from './link.css?inline'
 @customElement('dui-link')
-export class DuiLink extends TailwindElement(style) {
+export class DuiLink extends ThemeElement(style) {
   @property({ type: String }) target = ''
   @property({ type: String }) class = ''
   @property() href?: string

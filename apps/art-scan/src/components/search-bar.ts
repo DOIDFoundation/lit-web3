@@ -1,10 +1,10 @@
-import { TailwindElement, html, property, customElement, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, property, customElement, when } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 // Components
-import '@lit-web3/dui/src/ns-search/entire'
+import '@lit-web3/dui/ns-search/entire'
 
 @customElement('search-bar')
-export class SearchBar extends TailwindElement('') {
+export class SearchBar extends ThemeElement('') {
   @property() default?: string
   @property() placeholder = 'DOID of artist or artwork'
   @property({ type: String }) label?: string

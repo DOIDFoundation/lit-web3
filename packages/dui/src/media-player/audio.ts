@@ -1,5 +1,5 @@
-import { TailwindElement, customElement } from '../shared/TailwindElement'
+import { ThemeElement, customElement } from '../shared/theme-element'
 import { PlayPauseAbleElement } from './audioish'
 
 @customElement('dui-audio')
-export class DuiAudeo extends PlayPauseAbleElement(TailwindElement(''), { tag: 'audio' }) {}
+export class DuiAudeo extends PlayPauseAbleElement(ThemeElement(''), { tag: 'audio' }) {}

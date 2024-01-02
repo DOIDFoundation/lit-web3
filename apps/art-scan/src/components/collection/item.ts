@@ -1,19 +1,19 @@
-import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, state, when } from '@lit-web3/dui/shared/theme-element'
 import { getColl } from '~/lib/query'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
-import '@lit-web3/dui/src/address'
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/media-player'
-import '@lit-web3/dui/src/loading/icon'
-import '@lit-web3/dui/src/loading/skeleton'
+import '@lit-web3/dui/address'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/media-player'
+import '@lit-web3/dui/loading/icon'
+import '@lit-web3/dui/loading/skeleton'
 import { getNetworkSync } from '@lit-web3/ethers/src/useBridge'
 import { getScanUrl } from '@lit-web3/ethers/src/constants/openScan'
 // Style
 import style from './item.css?inline'
 
 @customElement('doid-collection')
-export class DoidCollection extends TailwindElement(style) {
+export class DoidCollection extends ThemeElement(style) {
   @property() DOID?: DOIDObject
   @state() cooked?: DOIDObject
   @state() item?: Coll
@@ -103,57 +103,64 @@ export class DoidCollection extends TailwindElement(style) {
             () =>
               html`${when(
                 !this.err,
-                () => html`<div class="my-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
-                  <div class="media lg_col-span-2 flex flex-col gap-2 items-center p-4 lg_px-6 bg-gray-100 rounded-md">
-                    <dui-media-player autoplay class="w-full h-full" .meta=${this.meta}></dui-media-player>
-                    <loading-skeleton class="flex flex-col items-center" .expect=${this.meta?.name} num="3"
-                      ><div class="text-base mb-2">${this.meta?.name}</div>
-                      <div class="break-words break-all text-gray-500">${this.meta?.description}</div></loading-skeleton
+                () =>
+                  html`<div class="my-4 grid grid-cols-1 lg_grid-cols-5 gap-4 lg_gap-8">
+                    <div
+                      class="media lg_col-span-2 flex flex-col gap-2 items-center p-4 lg_px-6 bg-gray-100 rounded-md"
                     >
-                  </div>
-                  <div class="py-2 lg_mt-0 lg_col-span-3">
-                    <div class="flex lg_flex-col gap-2 mb-2">
-                      <b>Created by:</b>
-                      <span class="text-gray-500">${this.doid}</span>
-                    </div>
-                    <div class="flex lg_flex-col gap-2 mb-2">
-                      <b>Owned by:</b>
-                      <span class="text-gray-500"
-                        >${when(
-                          this.item?.doids?.length,
-                          () => html`${this.item?.doids?.at(0)?.name}`,
-                          () => html`<dui-address .address=${this.item?.owner}></dui-address>`
-                        )}</span
+                      <dui-media-player autoplay class="w-full h-full" .meta=${this.meta}></dui-media-player>
+                      <loading-skeleton class="flex flex-col items-center" .expect=${this.meta?.name} num="3"
+                        ><div class="text-base mb-2">${this.meta?.name}</div>
+                        <div class="break-words break-all text-gray-500">
+                          ${this.meta?.description}
+                        </div></loading-skeleton
                       >
                     </div>
-                    <div class="flex lg_flex-col gap-2 mb-2">
-                      <b>Marketplace:</b>
-                      <dui-link open href=${this.opensea.url}>${this.opensea.origin}</dui-link>
-                    </div>
+                    <div class="py-2 lg_mt-0 lg_col-span-3">
+                      <div class="flex lg_flex-col gap-2 mb-2">
+                        <b>Created by:</b>
+                        <span class="text-gray-500">${this.doid}</span>
+                      </div>
+                      <div class="flex lg_flex-col gap-2 mb-2">
+                        <b>Owned by:</b>
+                        <span class="text-gray-500"
+                          >${when(
+                            this.item?.doids?.length,
+                            () => html`${this.item?.doids?.at(0)?.name}`,
+                            () => html`<dui-address .address=${this.item?.owner}></dui-address>`
+                          )}</span
+                        >
+                      </div>
+                      <div class="flex lg_flex-col gap-2 mb-2">
+                        <b>Marketplace:</b>
+                        <dui-link open href=${this.opensea.url}>${this.opensea.origin}</dui-link>
+                      </div>
 
-                    <div class="mt-6 lg_mt-6">
-                      <div class="text-base mb-3"><b>Meta Info.</b></div>
-                      <div class="flex flex-col gap-2">
-                        <div class="flex gap-2 items-center">
-                          <span>Contract:</span>
-                          <dui-address
-                            href=${this.scan}
-                            class="lg_text-sm text-blue-500"
-                            .address=${this.item?.address}
-                          ></dui-address>
-                        </div>
-                        <div class="flex gap-2  text-xs lg_text-sm">
-                          <span>Token ID:</span>
-                          <span class="text-gray-500">${this.item?.tokenID}</span>
-                        </div>
-                        <div class="flex gap-2 items-center  text-xs lg_text-sm">
-                          <span>Chain:</span>
-                          <span><span class="text-gray-500">Ethereum</span><i class="mdi mdi-ethereum ml-1"></i></span>
+                      <div class="mt-6 lg_mt-6">
+                        <div class="text-base mb-3"><b>Meta Info.</b></div>
+                        <div class="flex flex-col gap-2">
+                          <div class="flex gap-2 items-center">
+                            <span>Contract:</span>
+                            <dui-address
+                              href=${this.scan}
+                              class="lg_text-sm text-blue-500"
+                              .address=${this.item?.address}
+                            ></dui-address>
+                          </div>
+                          <div class="flex gap-2  text-xs lg_text-sm">
+                            <span>Token ID:</span>
+                            <span class="text-gray-500">${this.item?.tokenID}</span>
+                          </div>
+                          <div class="flex gap-2 items-center  text-xs lg_text-sm">
+                            <span>Chain:</span>
+                            <span
+                              ><span class="text-gray-500">Ethereum</span><i class="mdi mdi-ethereum ml-1"></i
+                            ></span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>`
+                  </div>`
               )}`
           )}`
       )}

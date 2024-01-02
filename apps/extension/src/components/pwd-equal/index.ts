@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -9,9 +9,9 @@ import {
   Ref,
   ref,
   createRef
-} from '@lit-web3/dui/src/shared/TailwindElement'
-import '@lit-web3/dui/src/input/pwd'
-import { between } from '@lit-web3/dui/src/validator/string'
+} from '@lit-web3/dui/shared/theme-element'
+import '@lit-web3/dui/input/pwd'
+import { between } from '@lit-web3/dui/validator/string'
 
 import style from './confirm.css?inline'
 
@@ -21,7 +21,7 @@ enum StoreKey {
 }
 
 @customElement('pwd-equal')
-export class PwdEqual extends TailwindElement(style) {
+export class PwdEqual extends ThemeElement(style) {
   confirm$: Ref<HTMLInputElement> = createRef()
   @property({ type: String }) class = ''
   @state() pwd = ''

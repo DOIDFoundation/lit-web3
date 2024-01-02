@@ -1,13 +1,13 @@
-import { customElement, TailwindElement, html, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { customElement, ThemeElement, html, state } from '@lit-web3/dui/shared/theme-element'
 import { uiKeyring, StateController } from '~/store/keyringState'
 // Components
-import '@lit-web3/dui/src/address/name'
-import '@lit-web3/dui/src/menu/drop'
+import '@lit-web3/dui/address/name'
+import '@lit-web3/dui/menu/drop'
 import './menu'
 
 @customElement('account-switch')
-export class AccountSwitch extends TailwindElement(null) {
-  bindKeyring = new StateController(this, uiKeyring)
+export class AccountSwitch extends ThemeElement(null) {
+  bindKeyring: any = new StateController(this, uiKeyring)
 
   @state() menu = false
 

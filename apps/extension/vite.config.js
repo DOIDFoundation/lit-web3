@@ -26,14 +26,14 @@ try {
 }
 // E
 
-import { viteConfig } from '@lit-web3/dui/src/shared/vite.config.js'
+import viteAppConfig from '@lit-web3/base/vite.config.app'
 import manifest from './manifest.config'
 import AutoImport from 'unplugin-auto-import/vite'
 
 export const sharedConfig = async (mode = '') => {
   return {
     // TODO: @solana/web3 need `global.xxx`
-    define:{global: 'globalThis'},
+    define: { global: 'globalThis' },
     plugins: [
       // rewrite assets to use relative path
       {
@@ -86,5 +86,5 @@ export default async ({ mode = '' }) => {
     }
   }
 
-  return viteConfig(config)({ mode })
+  return viteAppConfig(config)({ mode })
 }

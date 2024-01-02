@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, when, ref, createRef, property, Ref } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, when, ref, createRef, property, Ref } from '../shared/theme-element'
 // Component
 import './index'
 import '../button'
@@ -7,7 +7,7 @@ import { DuiDialog } from './index'
 import style from './prompt.css?inline'
 @customElement('dui-prompt')
 // @ts-ignore
-export class DuiPrompt extends TailwindElement([DuiDialog.styles, style]) {
+export class DuiPrompt extends ThemeElement([DuiDialog.styles, style]) {
   @property({ type: Boolean }) button = false
   el$: Ref<DuiDialog> = createRef()
   onClose() {

@@ -1,5 +1,5 @@
 // deps: preferences/base.ts
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 import { getPreferences } from './base'
 
 // key: host, value: names

@@ -1,18 +1,18 @@
-import { TailwindElement, html, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, classMap } from '@lit-web3/dui/shared/theme-element'
 import { customElement, property, state } from 'lit/decorators.js'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { when } from 'lit/directives/when.js'
 import { getContracts } from '@lit-web3/ethers/src/useBridge'
 
 // Components
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/dialog'
-import '@lit-web3/dui/src/tx-state'
-import '@lit-web3/dui/src/doid-claim-name'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/dialog'
+import '@lit-web3/dui/tx-state'
+import '@lit-web3/dui/doid-claim-name'
 
 import style from './item.css?inline'
 @customElement('pass-item')
-export class PassItem extends TailwindElement(style) {
+export class PassItem extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) item: any = {}
   @state() tx: any = null

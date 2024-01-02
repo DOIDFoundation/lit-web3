@@ -1,15 +1,15 @@
-import { customElement, TailwindElement, html, state, when, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
+import { customElement, ThemeElement, html, state, when, classMap } from '@lit-web3/dui/shared/theme-element'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { uiConnects } from '~/store/connectState'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 // Components
-import '@lit-web3/dui/src/address/avatar'
-import '@lit-web3/dui/src/address/name'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/address/avatar'
+import '@lit-web3/dui/address/name'
+import '@lit-web3/dui/button'
 import './menu'
 
 @customElement('account-connection')
-export class AccountSwitch extends TailwindElement(null) {
+export class AccountSwitch extends ThemeElement(null) {
   bindKeyring: any = new StateController(this, uiKeyring)
   bindConnects: any = new StateController(this, uiConnects)
 

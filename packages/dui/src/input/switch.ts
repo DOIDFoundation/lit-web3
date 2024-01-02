@@ -1,10 +1,9 @@
-import { customElement, property, state } from 'lit/decorators.js'
-import { TailwindElement, html, classMap } from '../shared/TailwindElement'
+import { customElement, property, ThemeElement, html, classMap } from '../shared/theme-element'
 // Styles
 import style from './switch.css?inline'
 
 @customElement('dui-input-switch')
-export class DuiInputSwitch extends TailwindElement(style) {
+export class DuiInputSwitch extends ThemeElement(style) {
   @property({ type: Boolean }) checked = false
   @property({ type: Boolean, reflect: true }) readonly = false
   @property({ type: Boolean, reflect: true }) disabled = false

@@ -1,7 +1,7 @@
-import { TailwindElement, customElement, html, property } from '../shared/TailwindElement'
+import { ThemeElement, customElement, html, property } from '../shared/theme-element'
 
 @customElement('loading-icon')
-export class LoadingIcon extends TailwindElement('') {
+export class LoadingIcon extends ThemeElement('') {
   @property({ type: String }) type = 'inline'
 
   render() {

@@ -1,19 +1,19 @@
-import { TailwindElement, html, customElement, when, state, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, when, state, keyed } from '@lit-web3/dui/shared/theme-element'
 import { uiNetworks, StateController } from '~/store/networkState'
 import { uiKeyring } from '~/store/keyringState'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/address'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/address'
 import '~/components/chain/list'
 import '~/components/chain/accounts'
 
 import style from './main.css?inline'
 @customElement('view-main')
-export class ViewMain extends TailwindElement(style) {
-  bindKeyring = new StateController(this, uiKeyring)
-  bindNetworks = new StateController(this, uiNetworks)
+export class ViewMain extends ThemeElement(style) {
+  bindKeyring: any = new StateController(this, uiKeyring)
+  bindNetworks: any = new StateController(this, uiNetworks)
 
   get name() {
     return uiKeyring.selectedDOID?.name

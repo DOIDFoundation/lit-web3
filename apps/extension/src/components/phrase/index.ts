@@ -1,18 +1,18 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
   state,
   repeat,
   classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
-import '@lit-web3/dui/src/input/pwd'
+} from '@lit-web3/dui/shared/theme-element'
+import '@lit-web3/dui/input/pwd'
 import { PHRASE_LEN_MAP, validatePhrase } from '~/lib.next/keyring/phrase'
 
 import style from './phrase.css?inline'
 @customElement('phrase-to-secret')
-export class PhraseToSecret extends TailwindElement(style) {
+export class PhraseToSecret extends ThemeElement(style) {
   @property() class = ''
   @property({ type: String }) doid? = ''
   @property({ type: Number }) length = PHRASE_LEN_MAP[0]
@@ -77,21 +77,22 @@ export class PhraseToSecret extends TailwindElement(style) {
       <div class="grid grid-cols-2 lg_grid-cols-3 gap-4 my-4 lg_m-4">
         ${repeat(
           this.phrases,
-          (phrases: string, idx: number) => html`<div class="flex items-center gap-2 lg_gap-4">
-            <b class="block w-4 shrink-0 text-xs lg_text-base">${idx + 1}.</b>
-            <dui-input-pwd
-              .idx=${idx}
-              dense
-              ?autofocus=${idx === 0}
-              type="password"
-              @input=${(e: CustomEvent) => this.onInput(e, idx)}
-              @paste=${this.onPaste}
-              @submit=${this.submit}
-              .value=${phrases}
-              ?disabled=${this.pending}
-            >
-            </dui-input-pwd>
-          </div>`
+          (phrases: string, idx: number) =>
+            html`<div class="flex items-center gap-2 lg_gap-4">
+              <b class="block w-4 shrink-0 text-xs lg_text-base">${idx + 1}.</b>
+              <dui-input-pwd
+                .idx=${idx}
+                dense
+                ?autofocus=${idx === 0}
+                type="password"
+                @input=${(e: CustomEvent) => this.onInput(e, idx)}
+                @paste=${this.onPaste}
+                @submit=${this.submit}
+                .value=${phrases}
+                ?disabled=${this.pending}
+              >
+              </dui-input-pwd>
+            </div>`
         )}
       </div>
       <div class="w-full text-red-500">${this.err}</div>

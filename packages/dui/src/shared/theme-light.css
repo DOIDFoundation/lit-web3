@@ -1,7 +1,4 @@
-@tailwind base;
 @tailwind components;
-@tailwind utilities;
-
 @layer components {
   .dui-app-main {
     @apply float-left w-full pb-4 lg_pb-12;

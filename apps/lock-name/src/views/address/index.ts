@@ -1,20 +1,20 @@
-import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement, property, state, when } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { screenStore } from '@doid/core/screen'
+import { screenStore } from '@lit-web3/base/screen'
 import { ownerNames } from '@lit-web3/ethers/src/nsResolver'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components
-import '@lit-web3/dui/src/ns-search'
-import '@lit-web3/dui/src/doid-symbol'
-import '@lit-web3/dui/src/nav/nav'
+import '@lit-web3/dui/ns-search'
+import '@lit-web3/dui/doid-symbol'
+import '@lit-web3/dui/nav/nav'
 import '~/components/names/list'
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/nav/nav'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/nav/nav'
 
 import style from './address.css?inline'
 @customElement('view-address')
-export class ViewAddress extends TailwindElement(style) {
+export class ViewAddress extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   bindScreen: any = new StateController(this, screenStore)
   @property() address = ''

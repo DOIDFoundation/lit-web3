@@ -2,7 +2,7 @@
     "private": true,
     "name": "@lit-web3/solana-wallet-standard",
     "scripts": {
-        "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
+        "build": "tsup src/index.ts --outDir ./lib --format esm --dts --clean",
         "prepublishOnly": "npm run build"
     },
     "dependencies": {
@@ -13,7 +13,7 @@
     },
     "devDependencies": {
         "@types/bs58": "^4.0.4",
-        "@types/node-fetch": "^2.6.9",
+        "@types/node-fetch": "^2.6.10",
         "shx": "^0.3.4",
         "tsup": "^8.0.1"
     }

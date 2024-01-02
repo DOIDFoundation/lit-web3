@@ -1,12 +1,12 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
 import { decodeBase58, toBeArray } from 'ethers'
 
 // Components
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/button'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('view-notification')
-export class ViewStart extends TailwindElement(null) {
+export class ViewStart extends ThemeElement(null) {
   @state() message = ''
   @state() host = ''
   @property() ROUTE?: any

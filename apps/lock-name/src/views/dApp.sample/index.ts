@@ -1,10 +1,10 @@
-import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement } from '@lit-web3/dui/shared/theme-element'
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/input/pwd'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/nav/header'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/input/pwd'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/nav/header'
+import '@lit-web3/dui/link'
 // Methods
 import './DOID_requestName'
 import './DOID_setup'
@@ -14,7 +14,7 @@ import './EVM_subscribe'
 import style from './sample.css?inline'
 
 @customElement('view-dapp')
-export class ViewRestore extends TailwindElement(style) {
+export class ViewRestore extends ThemeElement(style) {
   render() {
     return html`<div class="sample my-4">
       <div class="dui-container text-sm">

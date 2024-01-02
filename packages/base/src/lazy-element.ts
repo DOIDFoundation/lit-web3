@@ -4,8 +4,8 @@
     dosth...
   }
 */
-import { TAILWINDELEMENT } from './TailwindElement'
-declare class LazyElementClass {
+import { TAILWINDELEMENT } from './tailwind-element'
+export declare class LazyElementClass {
   observe$?: HTMLElement
   observer?: IntersectionObserver
   onObserved: Function

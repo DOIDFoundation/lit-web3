@@ -1,15 +1,15 @@
-import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, state, when } from '@lit-web3/dui/shared/theme-element'
 
 // Components
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/button'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/button'
+import { goto } from '@lit-web3/router'
 
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { accountStore, StateController } from '~/store/account'
 
 @customElement('view-landing')
-export class ViewLanding extends TailwindElement(null) {
+export class ViewLanding extends ThemeElement(null) {
   bindStore: any = new StateController(this, accountStore)
 
   @state() name = ''
@@ -48,17 +48,18 @@ export class ViewLanding extends TailwindElement(null) {
         ${when(
           this.pending,
           () => html`<div class="flex justify-center"><i class="text-2xl mdi mdi-loading"></i></div>`,
-          () => html`<dui-button class="outlined w-full my-2" @click=${() => goto('/generate-phrase/1')}
-              >Generate main addresses for all chains for me</dui-button
-            >
-            <dui-button class="outlined w-full my-2" @click=${() => goto(`/import2nd`)}
-              >Use owner address(<dui-address class="mx-1" .address=${this.ownerAddress}></dui-address>) as main address
-              for ETH, main addresses for all other chains will be generated automatically</dui-button
-            >
-            <p class="my-1 text-center text-gray-500">or</p>
-            <dui-button class="outlined w-full my-2" @click=${() => goto(`/import`)}
-              >Use a Secret Recovery Phrase to generate main addresses for all chains</dui-button
-            >`
+          () =>
+            html`<dui-button class="outlined w-full my-2" @click=${() => goto('/generate-phrase/1')}
+                >Generate main addresses for all chains for me</dui-button
+              >
+              <dui-button class="outlined w-full my-2" @click=${() => goto(`/import2nd`)}
+                >Use owner address(<dui-address class="mx-1" .address=${this.ownerAddress}></dui-address>) as main
+                address for ETH, main addresses for all other chains will be generated automatically</dui-button
+              >
+              <p class="my-1 text-center text-gray-500">or</p>
+              <dui-button class="outlined w-full my-2" @click=${() => goto(`/import`)}
+                >Use a Secret Recovery Phrase to generate main addresses for all chains</dui-button
+              >`
         )}
       </div>
     </div>`

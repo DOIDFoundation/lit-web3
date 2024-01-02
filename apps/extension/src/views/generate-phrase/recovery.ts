@@ -1,19 +1,19 @@
-import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, state, when } from '@lit-web3/dui/shared/theme-element'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
 
 import style from './phrase.css?inline'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 import { StateController, walletStore } from '~/store'
 import { accountStore } from '~/store/account'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('view-recovery')
-export class ViewAddress extends TailwindElement(style) {
-  state = new StateController(this, walletStore)
+export class ViewAddress extends ThemeElement(style) {
+  state: any = new StateController(this, walletStore)
   bindAccount: any = new StateController(this, accountStore)
   @property() phrase = ''
   @property() pwd = ''

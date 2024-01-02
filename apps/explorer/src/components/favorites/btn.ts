@@ -1,19 +1,12 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, state, classMap } from '@lit-web3/dui/shared/theme-element'
 // Components
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/button'
 import { favor, getFavorites, exists } from './store'
 
 import style from './btn.css?inline'
 
 @customElement('doid-favorites-btn')
-export class DoidFavoritesBtn extends TailwindElement(style) {
+export class DoidFavoritesBtn extends ThemeElement(style) {
   @property() name = ''
   @state() favorites = getFavorites()
 

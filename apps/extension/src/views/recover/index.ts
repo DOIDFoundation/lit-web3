@@ -1,6 +1,6 @@
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
 import '~/components/phrase'
 import '~/components/pwd-equal'
 
@@ -11,21 +11,13 @@ import { StateController, walletStore } from '~/store'
 import { accountStore } from '~/store/account'
 import { uiKeyring } from '~/store/keyringState'
 
-import { goto } from '@lit-web3/dui/src/shared/router'
-import {
-  customElement,
-  html,
-  property,
-  state,
-  TailwindElement,
-  choose,
-  when
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { goto } from '@lit-web3/router'
+import { customElement, html, property, state, ThemeElement, choose, when } from '@lit-web3/dui/shared/theme-element'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 @customElement('view-recover')
-export class ViewImport extends TailwindElement(null) {
-  state = new StateController(this, walletStore)
+export class ViewImport extends ThemeElement(null) {
+  state: any = new StateController(this, walletStore)
   bindKeyring: any = new StateController(this, uiKeyring)
   bindAccount: any = new StateController(this, accountStore)
   @property() doidName = ''

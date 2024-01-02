@@ -1,21 +1,14 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  property,
-  state,
-  classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, state, classMap } from '@lit-web3/dui/shared/theme-element'
 import { uiNetworks, StateController } from '~/store/networkState'
 import { uiKeyring } from '~/store/keyringState'
 // Components
-import '@lit-web3/dui/src/address'
+import '@lit-web3/dui/address'
 import './switch'
 
 @customElement('account-list')
-export class accountList extends TailwindElement(null) {
-  bindKeyring = new StateController(this, uiKeyring)
-  bindNetworks = new StateController(this, uiNetworks)
+export class accountList extends ThemeElement(null) {
+  bindKeyring: any = new StateController(this, uiKeyring)
+  bindNetworks: any = new StateController(this, uiNetworks)
 
   @property() chain!: ChainNetwork
   @property() class = ''

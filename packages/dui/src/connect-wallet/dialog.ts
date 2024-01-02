@@ -1,16 +1,7 @@
-import {
-  customElement,
-  TailwindElement,
-  html,
-  property,
-  state,
-  when,
-  repeat,
-  styleMap
-} from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property, state, when, repeat, styleMap } from '../shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import Network, { Networks } from '@lit-web3/ethers/src/networks'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 // Components
 import '../dialog'
 import './state'
@@ -18,7 +9,7 @@ import './state'
 import style from './dialog.css?inline'
 
 @customElement('connect-wallet-dialog')
-export class ConnectWalletDialog extends TailwindElement(style) {
+export class ConnectWalletDialog extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean }) model: any
   @state() step = 1

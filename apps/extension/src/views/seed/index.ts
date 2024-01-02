@@ -1,17 +1,17 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
 
 import { Mnemonic, HDNodeWallet, toBeArray } from 'ethers'
 import { AptosAccount } from 'aptos'
 import { Keypair as SolanaKeyPair } from '~/services/Solana/solana-web3'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
 
 import style from './seed.css?inline'
 @customElement('view-seed')
-export class ViewSeed extends TailwindElement(style) {
+export class ViewSeed extends ThemeElement(style) {
   @property() placeholder = 'Secret Recovery Phrase'
   @state() pwd = null
   @state() phrase = 'hold scale hybrid tank dilemma bullet ship language attitude rug tennis host'

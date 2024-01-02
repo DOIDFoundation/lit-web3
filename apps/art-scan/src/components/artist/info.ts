@@ -1,13 +1,13 @@
-import { TailwindElement, html, customElement, property, state, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, state, keyed } from '@lit-web3/dui/shared/theme-element'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { queryHoldlNums } from '~/lib/query'
 // Components
-import '@lit-web3/dui/src/address'
+import '@lit-web3/dui/address'
 // Styles
 import style from './info.css?inline'
 
 @customElement('artist-info')
-export class ArtistInfo extends TailwindElement(style) {
+export class ArtistInfo extends ThemeElement(style) {
   @property() DOID?: DOIDObject
 
   @state() info?: NameInfo

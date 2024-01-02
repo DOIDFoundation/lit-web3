@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, property, when, classMap } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property, when, classMap } from '../shared/theme-element'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 
@@ -6,7 +6,7 @@ import { shortAddress } from '@lit-web3/ethers/src/utils'
 import './avatar'
 
 @customElement('dui-name-address')
-export class DuiNameAddress extends TailwindElement(null) {
+export class DuiNameAddress extends ThemeElement(null) {
   @property() name = ''
   @property() address = ''
   @property() DOID?: DOIDObject

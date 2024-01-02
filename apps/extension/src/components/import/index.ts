@@ -1,17 +1,17 @@
-import { TailwindElement, html, customElement, property, when, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, when, state } from '@lit-web3/dui/shared/theme-element'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { phraseMatch, phraseToAddress } from '~/lib.next/keyring/phrase'
 import popupMessenger from '~/lib.next/messenger/popup'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
 import '~/components/phrase'
 import '~/components/pwd-equal'
 
 const STEP = 2
 @customElement('reset-by-step')
-export class resetByPhrase extends TailwindElement(null) {
+export class resetByPhrase extends ThemeElement(null) {
   @property() doid: string | undefined = ''
   @property() address: string = ''
   @property() notify: boolean = true

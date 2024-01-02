@@ -1,10 +1,10 @@
-import { customElement, TailwindElement, html, when, state } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, when, state } from '../shared/theme-element'
 // Component
 import '../dialog/prompt'
 import '../button'
 
 @customElement('dui-tip')
-export class DuiTip extends TailwindElement('') {
+export class DuiTip extends ThemeElement('') {
   @state() model = false
 
   show() {

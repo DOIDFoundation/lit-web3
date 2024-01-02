@@ -1,7 +1,9 @@
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, splitVendorChunkPlugin } from 'vite'
-import minifyHTMLLiterals from 'rollup-plugin-minify-html-literals'
+// TODO: `rollup-plugin-minify-html-literals@1.2.6` is buggy so far
+// import minifyHTMLLiterals from 'rollup-plugin-minify-html-literals'
+import minifyHTMLLiterals from 'rollup-plugin-minify-template-literals'
 
 // Env
 import { config } from 'dotenv'
@@ -14,7 +16,7 @@ export const { env } = process
 export const [pathRoot, pathSrc] = [env.INIT_CWD, resolve(cwd, './src')]
 export const appTitle = env.VITE_APP_TITLE || env.VITE_APP_NAME || env.npm_package_name
 export const resolveSrc = (...args) => resolve(...[pathSrc, ...args])
-const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7/css/materialdesignicons.min.css"/>`
+export const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7/css/materialdesignicons.min.css"/>`
 
 export const define = {
   'import.meta.env.VITE_APP_VER': JSON.stringify(env.npm_package_version),
@@ -63,7 +65,7 @@ export const viteBaseConfig = (options = {}) => {
         modules: { generateScopedName: '[hash:base64:6]' }
       },
       plugins: [
-        ...(isDev ? [] : [(minifyHTMLLiterals.default ?? minifyHTMLLiterals)()]),
+        ...(isDev ? [] : [minifyHTMLLiterals()]),
         ...(viteConfigOptions.splitChunk === false ? [] : [splitVendorChunkPlugin()])
       ],
       optimizeDeps: {

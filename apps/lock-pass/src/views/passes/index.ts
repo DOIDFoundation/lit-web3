@@ -1,13 +1,13 @@
-import { TailwindElement, html, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, when } from '@lit-web3/dui/shared/theme-element'
 import { customElement, property, state } from 'lit/decorators.js'
 import { repeat } from 'lit/directives/repeat.js'
 import { getPasses, getPassCates, getNameByHash, getLockerContract } from '~/lib/locker'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { formatUnits } from 'ethers'
 // Components
-import '@lit-web3/dui/src/connect-wallet/btn'
+import '@lit-web3/dui/connect-wallet/btn'
 import '@lit-web3/dui/src/loading/icon'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/link'
 import './share'
 import './item'
 
@@ -15,7 +15,7 @@ import './item'
 
 import style from './list.css?inline'
 @customElement('view-passes')
-export class ViewPasses extends TailwindElement(style) {
+export class ViewPasses extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property() name = ''
   @state() passes: any[] = []
@@ -99,34 +99,40 @@ export class ViewPasses extends TailwindElement(style) {
           // Locked
           () => html`<div class="my-8 text-center"><connect-wallet-btn></connect-wallet-btn></div>`,
           // Unlocked
-          () => html`<section class="mt-6">
-              <h2 class="my-4 text-xl">My Lock Pass</h2>
-              <div class="py-4">
-                ${when(
-                  this.empty,
-                  // Empty
-                  () => html`No passes yet.`,
-                  () =>
-                    html`${when(
-                      this.pending,
-                      // Loading
-                      () => html`<loading-icon></loading-icon>`,
-                      // List
-                      () => html`<div class="pass-list grid md_grid-cols-2 gap-4">
-                        ${repeat(
-                          this.passes,
-                          (item: any) =>
-                            html`<pass-item @change=${this.getUserPassList} key=${item.id} .item=${item}></pass-item>`
-                        )}
-                      </div>`
-                    )}`
-                )}
-              </div>
-            </section>
-            <section class="mt-6">
-              <h2 class="text-xl mb-2">Share Lock Pass Invitations</h2>
-              ${this.passes.length ? html` <pass-share></pass-share>` : html``}
-            </section>`
+          () =>
+            html`<section class="mt-6">
+                <h2 class="my-4 text-xl">My Lock Pass</h2>
+                <div class="py-4">
+                  ${when(
+                    this.empty,
+                    // Empty
+                    () => html`No passes yet.`,
+                    () =>
+                      html`${when(
+                        this.pending,
+                        // Loading
+                        () => html`<loading-icon></loading-icon>`,
+                        // List
+                        () =>
+                          html`<div class="pass-list grid md_grid-cols-2 gap-4">
+                            ${repeat(
+                              this.passes,
+                              (item: any) =>
+                                html`<pass-item
+                                  @change=${this.getUserPassList}
+                                  key=${item.id}
+                                  .item=${item}
+                                ></pass-item>`
+                            )}
+                          </div>`
+                      )}`
+                  )}
+                </div>
+              </section>
+              <section class="mt-6">
+                <h2 class="text-xl mb-2">Share Lock Pass Invitations</h2>
+                ${this.passes.length ? html` <pass-share></pass-share>` : html``}
+              </section>`
         )}
       </div>
     </div>`

@@ -1,4 +1,4 @@
-import { State, property } from '@lit-app/state'
+import { State, property } from '@lit-web3/base/state'
 import useBridge, { bridgeStore, getNonce } from './useBridge'
 
 class TxQueueStore extends State {

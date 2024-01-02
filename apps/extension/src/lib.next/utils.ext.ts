@@ -1,7 +1,7 @@
 // src: metamask-extension/app/scripts/platforms/extension.js
 import browser, { Tabs } from 'webextension-polyfill'
-import emitter from '@doid/core/emitter'
-import { routerGuard } from '@lit-web3/dui/src/shared/router'
+import emitter from '@lit-web3/base/emitter'
+import { routerGuard } from '@lit-web3/router'
 
 // Simple assert
 export const envType = /^\/service-worker.*\.js$/.test(location.pathname)

@@ -1,16 +1,16 @@
-// import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-// import { goto } from '@lit-web3/dui/src/shared/router'
+// import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
+// import { goto } from '@lit-web3/router'
 // import { keyringStore } from '~/store/keyringState'
 // import { StateController, walletStore } from '~/store'
 
 // // Components
-// import '@lit-web3/dui/src/input/text'
-// import '@lit-web3/dui/src/button'
+// import '@lit-web3/dui/input/text'
+// import '@lit-web3/dui/button'
 // import '~/components/phrase'
 
 // import style from './import3rd.css?inline'
 // @customElement('import-3rd')
-// export class ViewImport extends TailwindElement(style) {
+// export class ViewImport extends ThemeElement(style) {
 //   bindStore: any = new StateController(this, keyringStore)
 //   @property() placeholder = 'e.g. satoshi.doid'
 //   @property() doidName = 'satoshi.doid'

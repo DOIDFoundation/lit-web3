@@ -1,7 +1,5 @@
-import { LitElement, html, nothing, unsafeCSS } from 'lit'
-import { customElement, state } from 'lit/decorators.js'
-import { when } from 'lit/directives/when.js'
-import { createRef, ref } from 'lit/directives/ref.js'
+import { nothing } from 'lit'
+import { html, TailwindElement, customElement, createRef, ref, state, when } from '@lit-web3/base'
 import style from './signup.css?inline'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/animation/animation.js'
@@ -11,37 +9,20 @@ import './spinner'
 import { TransactionExecutionError } from 'viem'
 import { ErrNotRegistered, controller } from '../controller'
 import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js'
-import { BaseCss } from './globalCSS'
+
 import './connectButtons'
 import { DOIDConnectButtons } from './connectButtons'
 import { animate } from '@lit-labs/motion'
-import { EventTypes } from '../utils/events'
 import { toUnicode } from '@doid/name-validator'
 
-export interface Events {
-  /** @param event.detail name signed up */
-  signup(event: CustomEvent<string>): void
-}
-
 @customElement('doid-signup')
-export class DOIDSignup extends LitElement {
+export class DOIDSignup extends TailwindElement([style]) {
   @state() readyToRegister = false
   @state() checking = false
   @state() inputHelpText = ''
   @state() label = 'Enter your desired name to register.'
   @state() showConnect = false
   @state() registering = false
-
-  static styles = [BaseCss, unsafeCSS(style)]
-
-  // Element Events
-  emit<T extends EventTypes.EventNames<Events>>(type: T, detail?: EventTypes.EventDetailType<Events, T>, options = []) {
-    if (!detail) this.dispatchEvent(new Event(type, { bubbles: false, composed: false, ...options }))
-    else this.dispatchEvent(new CustomEvent(type, { detail, bubbles: false, composed: false, ...options }))
-  }
-  on<T extends EventTypes.EventNames<Events>>(type: T, listener: EventTypes.EventListenerFn<Events, T>, options?: any) {
-    this.addEventListener(type, listener as EventListener, options)
-  }
 
   private inputRef = createRef<SlInput>()
   private checkNameTimer?: any
@@ -92,7 +73,7 @@ export class DOIDSignup extends LitElement {
       this.showConnect = true
       this.updateComplete.then(() => {
         this.connectButtonsRef.value?.on('connect', () => this.register())
-        this.connectButtonsRef.value?.on('error', (event) => {
+        this.connectButtonsRef.value?.on('error', (event: CustomEvent) => {
           if (event.detail instanceof ErrNotRegistered) {
             this.register()
           }

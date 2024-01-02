@@ -1,19 +1,19 @@
-import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto, replace } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement, property, state, when } from '@lit-web3/dui/shared/theme-element'
+import { goto, replace } from '@lit-web3/router'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 // Components
-import '@lit-web3/dui/src/ns-search'
-import '@lit-web3/dui/src/doid-symbol'
-import '@lit-web3/dui/src/nav/nav'
+import '@lit-web3/dui/ns-search'
+import '@lit-web3/dui/doid-symbol'
+import '@lit-web3/dui/nav/nav'
 import './register'
 import './details'
 
 import style from './name.css?inline'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 @customElement('view-name')
-export class ViewName extends TailwindElement(style) {
+export class ViewName extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: String }) name = ''
   @property() action = ''

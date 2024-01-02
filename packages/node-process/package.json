@@ -17,13 +17,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/DOIDFoundation/lit-web3.git"
-  },
-  "bugs": {
-    "url": "https://github.com/DOIDFoundation/lit-web3/issues"
+    "url": "https://github.com/DOIDFoundation/lit-web3",
+    "directory": "packages/node-process"
   },
   "scripts": {
-    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean --minify",
+    "build": "tsup src/*.js src/*.ts --outDir ./dist --format esm --dts --clean",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {

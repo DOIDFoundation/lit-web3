@@ -1,4 +1,4 @@
-import { State, property } from '@lit-app/state'
+import { State, property } from '@lit-web3/base/state'
 import icon from './wallet/metamask/icon.svg'
 import { shortAddress } from './utils'
 import Provider from './provider'

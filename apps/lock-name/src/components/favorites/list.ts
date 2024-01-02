@@ -1,15 +1,15 @@
-import { TailwindElement, html, customElement, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, state } from '@lit-web3/dui/shared/theme-element'
 import { getFavorites } from '~/components/favorites/store'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 // Components
-import '@lit-web3/dui/src/ns-search'
-import '@lit-web3/dui/src/doid-symbol'
+import '@lit-web3/dui/ns-search'
+import '@lit-web3/dui/doid-symbol'
 import '~/components/favorites/btn'
 import '~/components/names/list'
 
 import style from './list.css?inline'
 @customElement('doid-favorites')
-export class DoidFavorites extends TailwindElement(style) {
+export class DoidFavorites extends ThemeElement(style) {
   @state() favorites = getFavorites()
   @state() names: NameInfo[] = []
   @state() pending = false

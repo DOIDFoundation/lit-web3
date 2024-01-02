@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -7,7 +7,7 @@ import {
   repeat,
   when,
   keyed
-} from '@lit-web3/dui/src/shared/TailwindElement'
+} from '@lit-web3/dui/shared/theme-element'
 import { ownerRecords } from '@lit-web3/ethers/src/nsResolver'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { ZERO } from '@lit-web3/ethers/src/utils'
@@ -16,7 +16,7 @@ import '~/components/address/item'
 
 import style from './details.css?inline'
 @customElement('view-name-details')
-export class ViewNameDetails extends TailwindElement(style) {
+export class ViewNameDetails extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) info!: NameInfo
   @property({ type: String }) name = ''
@@ -69,16 +69,17 @@ export class ViewNameDetails extends TailwindElement(style) {
         <ul class="infos">
           ${repeat(
             this.details,
-            (detail) => html`<li class="single">
-              <strong>${detail.title}</strong>
-              <div class="info-cnt">
-                ${when(
-                  this.notOwned && !detail.registrant,
-                  () => html`Not owned`,
-                  () => html`<dui-address avatar copy .address=${detail.address} href=${detail.link}></dui-address>`
-                )}
-              </div>
-            </li>`
+            (detail) =>
+              html`<li class="single">
+                <strong>${detail.title}</strong>
+                <div class="info-cnt">
+                  ${when(
+                    this.notOwned && !detail.registrant,
+                    () => html`Not owned`,
+                    () => html`<dui-address avatar copy .address=${detail.address} href=${detail.link}></dui-address>`
+                  )}
+                </div>
+              </li>`
           )}
         </ul>
         <ul class="infos">

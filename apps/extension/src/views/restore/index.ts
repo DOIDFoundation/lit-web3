@@ -1,19 +1,19 @@
-import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, state, when } from '@lit-web3/dui/shared/theme-element'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/input/pwd'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/nav/header'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/input/pwd'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/nav/header'
+import '@lit-web3/dui/link'
 import '~/components/phrase'
 import '~/components/pwd-equal'
 // import swGlobal from '~/ext.scripts/sw/swGlobal'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 
 import style from './restore.css?inline'
 @customElement('view-restore')
-export class ViewRestore extends TailwindElement(style) {
+export class ViewRestore extends ThemeElement(style) {
   @state() name = ''
   @state() phrase = ''
   @state() pwd = ''

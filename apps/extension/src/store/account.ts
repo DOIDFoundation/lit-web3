@@ -1,6 +1,6 @@
-import { State, property } from '@lit-app/state'
+import { State, property } from '@lit-web3/base/state'
 // import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
-export { StateController } from '@lit-app/state'
+export { StateController } from '@lit-web3/base/state'
 import { rpcSearch } from '~/lib.next/peer_rpc'
 
 class AccountStore extends State {

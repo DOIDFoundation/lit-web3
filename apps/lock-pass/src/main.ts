@@ -1,14 +1,14 @@
-import AppRoot from '@lit-web3/dui/src/shared/AppRoot.ethers'
+import AppRoot from '@lit-web3/dui/shared/app-root.ethers'
 import { routes } from '~/router'
-import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement } from '@lit-web3/dui/shared/theme-element'
 // Components
-import '@lit-web3/dui/src/network-warning'
-import '@lit-web3/dui/src/nav/header'
-import '@lit-web3/dui/src/nav/nav'
-import '@lit-web3/dui/src/nav/footer'
+import '@lit-web3/dui/network-warning'
+import '@lit-web3/dui/nav/header'
+import '@lit-web3/dui/nav/nav'
+import '@lit-web3/dui/nav/footer'
 
 @customElement('app-main')
-export class AppMain extends TailwindElement('') {
+export class AppMain extends ThemeElement('') {
   render() {
     return html`
       <network-warning></network-warning>

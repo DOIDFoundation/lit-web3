@@ -1,6 +1,6 @@
-import { customElement, TailwindElement, html, state, when, property, classMap } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, state, when, property } from '../shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 // Components
 import './dialog'
 import '../address'
@@ -10,7 +10,7 @@ import '../button'
 
 import style from './btn.css?inline'
 @customElement('connect-wallet-btn')
-export class ConnectWalletBtn extends TailwindElement(style) {
+export class ConnectWalletBtn extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Boolean }) dropable = false
   @property({ type: Boolean }) hideAddr = false

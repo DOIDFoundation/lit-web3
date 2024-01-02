@@ -1,4 +1,4 @@
-import { TailwindElement, customElement, property, state, html, when, classMap } from '../shared/TailwindElement'
+import { ThemeElement, customElement, property, state, html, when, classMap } from '../shared/theme-element'
 import { EditableElement } from './editable'
 import './text'
 import '../button'
@@ -6,7 +6,7 @@ import '../button'
 import style from './text.css?inline'
 
 @customElement('dui-input-pwd')
-export class DuiInputPwd extends EditableElement(TailwindElement(style)) {
+export class DuiInputPwd extends EditableElement(ThemeElement(style)) {
   @property({ type: Boolean }) toggle = true
   @state() type = 'password'
 

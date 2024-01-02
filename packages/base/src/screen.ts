@@ -1,5 +1,5 @@
-import { State, property } from '@lit-app/state'
-export { StateController } from '@lit-app/state'
+import { State, property } from './state'
+export { StateController } from './state'
 import emitter from './emitter'
 
 export const breakpoints = {

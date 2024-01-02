@@ -1,7 +1,5 @@
 import { LitElement, unsafeCSS, CSSResult } from 'lit'
 import TailwindBase from './tailwind.base.css?inline'
-// import themeDark from '@shoelace-style/shoelace/dist/themes/dark.styles.js?inline'
-// import themeLight from '@shoelace-style/shoelace/dist/themes/light.styles.js?inline'
 
 export declare class TAILWINDELEMENT extends LitElement {
   static styles: any

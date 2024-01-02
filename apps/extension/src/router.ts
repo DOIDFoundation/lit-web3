@@ -1,9 +1,9 @@
 import { html } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
 
-// import emitter from '@doid/core/emitter'
+// import emitter from '@lit-web3/base/emitter'
 import { safeDecodeURIComponent } from '@doid/core/uri'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { isUnlock, isInit, keyringState } from '~/lib.next/popup'
 

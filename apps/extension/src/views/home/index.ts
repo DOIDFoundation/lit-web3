@@ -1,17 +1,17 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 import { uiKeyring, StateController } from '~/store/keyringState'
 import { accountStore } from '~/store/account'
 import { bareTLD, wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
 
 import style from './home.css?inline'
 import popupMessenger from '~/lib.next/messenger/popup'
 @customElement('view-home')
-export class ViewHome extends TailwindElement(style) {
+export class ViewHome extends ThemeElement(style) {
   account: any = new StateController(this, accountStore)
   bindKeyring: any = new StateController(this, uiKeyring)
   @property() placeholder = 'e.g. satoshi.doid'
@@ -80,9 +80,10 @@ export class ViewHome extends TailwindElement(style) {
                 ${when(
                   this.pending,
                   () => html`<i class="mdi mdi-loading text-xl"></i>`,
-                  () => html`<dui-button @click=${this.submit} icon sm
-                    ><i class="mdi mdi-arrow-right-bold-circle-outline text-xl"></i
-                  ></dui-button>`
+                  () =>
+                    html`<dui-button @click=${this.submit} icon sm
+                      ><i class="mdi mdi-arrow-right-bold-circle-outline text-xl"></i
+                    ></dui-button>`
                 )}
               </span>
             </dui-input-text>

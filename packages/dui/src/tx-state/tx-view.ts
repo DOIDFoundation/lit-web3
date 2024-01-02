@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, property } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property } from '../shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { shortAddress } from '@lit-web3/ethers/src/utils'
 // Components
@@ -6,7 +6,7 @@ import '../link'
 
 import style from './tx-view.css?inline'
 @customElement('tx-view')
-export class TxView extends TailwindElement(style) {
+export class TxView extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) tx: any
 

@@ -1,7 +1,7 @@
-import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement } from '@lit-web3/dui/shared/theme-element'
 
 @customElement('view-faq')
-export class ViewFaq extends TailwindElement('') {
+export class ViewFaq extends ThemeElement('') {
   render() {
     return html`<div class="view-faq">
       <div class="dui-container px-3">

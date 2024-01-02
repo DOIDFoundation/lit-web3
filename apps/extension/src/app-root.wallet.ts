@@ -1,8 +1,8 @@
-import AppRoot from '@lit-web3/dui/src/shared/AppRoot'
+import AppRoot from '@lit-web3/dui/shared/app-root'
 import useBridge from '@lit-web3/ethers/src/useBridge'
 import { JsonRpcProvider as provider } from 'ethers'
-import { html, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
-import { StateController } from '@lit-app/state'
+import { html, keyed } from '@lit-web3/dui/shared/theme-element'
+import { StateController } from '@lit-web3/base/state'
 import { walletStore } from '~/store'
 import type { RouteConfig } from '@lit-web3/router'
 

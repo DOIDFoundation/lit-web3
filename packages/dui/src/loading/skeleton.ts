@@ -1,9 +1,9 @@
-import { TailwindElement, customElement, html, property, classMap, repeat } from '../shared/TailwindElement'
+import { ThemeElement, customElement, html, property, classMap, repeat } from '../shared/theme-element'
 // Styles
 import style from './skeleton.css?inline'
 
 @customElement('loading-skeleton')
-export class LoadingSkeleton extends TailwindElement(style) {
+export class LoadingSkeleton extends ThemeElement(style) {
   @property({ type: Boolean }) expect = false
   @property({ type: Number }) num = 1
   @property({ type: String }) class = ''

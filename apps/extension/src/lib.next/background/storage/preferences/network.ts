@@ -1,5 +1,5 @@
 // deps: preferences/base.ts
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 import { multiChain } from '@lit-web3/chain/src'
 
 import { getPreferences } from './base'

@@ -1,12 +1,12 @@
 import { customElement, property } from 'lit/decorators.js'
-import { TailwindElement, html } from '../shared/TailwindElement'
+import { ThemeElement, html } from '../shared/theme-element'
 import { when } from 'lit/directives/when.js'
 import { ifDefined } from 'lit/directives/if-defined.js'
 
 import style from './button.css?inline'
 
 @customElement('dui-button')
-export class DuiButton extends TailwindElement(style) {
+export class DuiButton extends ThemeElement(style) {
   @property({ type: String }) label = ''
   @property({ type: String }) iconPos = 'left'
   @property({ type: String }) class = ''

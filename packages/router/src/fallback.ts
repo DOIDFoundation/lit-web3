@@ -1,7 +1,7 @@
-import type { Router, Routes } from '@lit-web3/router'
+import type { Router, Routes } from './lit-labs-router'
 import { html } from 'lit'
 
-export const fallbackRender = () => html`<span class="p-9 block text-center">Not Found</span>`
+export const fallbackRender = () => html`<div class="p-9 text-center">Not Found</div>`
 
 const trimPath = (path?: string) => path?.replace(/^index$/, '')
 
@@ -23,7 +23,7 @@ export const fallbackEnter = async (
       return false
     }
     if (path !== 'server-route') return true
-    await 0
+    await new Promise((resolve) => setTimeout(resolve, 0))
     router.routes.push({
       path: '/server-route',
       render: () => ''

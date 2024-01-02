@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   customElement,
   html,
   property,
@@ -10,16 +10,16 @@ import {
   Ref,
   ref,
   createRef
-} from '../shared/TailwindElement'
+} from '../shared/theme-element'
 import { isInstantUri } from '@doid/core/uri'
-import { LazyElement } from '../shared/LazyElement'
+import { LazyElement } from '@lit-web3/base/lazy-element'
 import compress from './compress'
 // Styles
 import style from './loader.css?inline'
 
 const resizePoints = [48, 64, 128, 256, 384, 512, 640, 750, 828, 1080, 1200, 1920, 2048, 3840]
 @customElement('img-loader')
-export class ImgLoader extends LazyElement(TailwindElement(style)) {
+export class ImgLoader extends LazyElement(ThemeElement(style)) {
   el$: Ref<HTMLElement> = createRef()
   @property({ type: String, attribute: true }) src?: string
   @property({ type: Boolean }) loaded = false

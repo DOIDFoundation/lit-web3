@@ -1,6 +1,6 @@
-import { TAILWINDELEMENT, state, property, ref, Ref, createRef } from '../shared/TailwindElement'
+import { TAILWINDELEMENT, state, property, ref, Ref, createRef } from '../shared/theme-element'
 import { html, unsafeStatic } from 'lit/static-html.js'
-import { screen } from '@doid/core/screen'
+import { screen } from '@lit-web3/base/screen'
 
 declare class PlayPauseAbleElementClass {}
 export const PlayPauseAbleElement = <T extends PublicConstructor<TAILWINDELEMENT>>(

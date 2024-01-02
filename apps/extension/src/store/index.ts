@@ -1,8 +1,8 @@
 import pify from 'pify'
 
-import { property, State } from '@lit-app/state'
+import { property, State } from '@lit-web3/base/state'
 
-export { StateController } from '@lit-app/state'
+export { StateController } from '@lit-web3/base/state'
 class Store extends State {
   @property({ value: false }) pending!: boolean
   @property() doidState: any

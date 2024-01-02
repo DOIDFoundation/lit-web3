@@ -1,23 +1,15 @@
-import {
-  TailwindElement,
-  html,
-  customElement,
-  when,
-  property,
-  state,
-  repeat
-} from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement, when, property, state, repeat } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/nav/header'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/nav/header'
+import '@lit-web3/dui/link'
 
 import style from './keyring.css?inline'
 @customElement('view-keyring')
-export class ViewKeyring extends TailwindElement(style) {
+export class ViewKeyring extends ThemeElement(style) {
   @property() placeholder = ''
   @state() pwd = ''
   @state() err = ''
@@ -45,19 +37,20 @@ export class ViewKeyring extends TailwindElement(style) {
         <div class="grid grid-cols-3 gap-4 m-4">
           ${repeat(
             this.phrases,
-            (phrase, i) => html`<div class="flex items-center gap-4">
-              <b class="block w-4">${i + 1}.</b>
-              <dui-input-text
-                dense
-                ?autofocus=${i === 0}
-                type="password"
-                @input=${this.onInput}
-                @submit=${this.submit}
-                value=${this.pwd}
-                ?disabled=${this.pending}
-              >
-              </dui-input-text>
-            </div>`
+            (phrase, i) =>
+              html`<div class="flex items-center gap-4">
+                <b class="block w-4">${i + 1}.</b>
+                <dui-input-text
+                  dense
+                  ?autofocus=${i === 0}
+                  type="password"
+                  @input=${this.onInput}
+                  @submit=${this.submit}
+                  value=${this.pwd}
+                  ?disabled=${this.pending}
+                >
+                </dui-input-text>
+              </div>`
           )}
         </div>
         <div class="my-2">

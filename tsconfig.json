@@ -8,7 +8,7 @@
     },
     "sourceMap": false,
     "noEmit": true,
-    "types": ["node"],
+    "types": ["node", "vite/client"],
     "target": "esnext",
     "module": "esnext",
     "lib": ["esnext", "dom", "dom.Iterable"],
@@ -32,7 +32,7 @@
     "skipLibCheck": true,
     "jsx": "preserve"
   },
-  "include": ["**/*.ts", "**/*.d.ts", "packages/ui/src/shared/vite.config.js"],
+  "include": ["**/*.ts", "**/*.d.ts"],
   "exclude": ["public", "dist", "vendor", "node_modules", ".vscode", ".git"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

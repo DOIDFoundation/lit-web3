@@ -1,21 +1,21 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   state,
   property,
   repeat,
   classMap
-} from '@lit-web3/dui/src/shared/TailwindElement'
+} from '@lit-web3/dui/shared/theme-element'
 import { uiNetworks, StateController } from '~/store/networkState'
 // Components
-import '@lit-web3/dui/src/menu/drop'
-import '@lit-web3/dui/src/chain/symbol'
+import '@lit-web3/dui/menu/drop'
+import '@lit-web3/dui/chain/symbol'
 
 import style from './chain.css?inline'
 @customElement('chain-switch')
-export class ChainSwitch extends TailwindElement(style) {
-  bindNetworks = new StateController(this, uiNetworks)
+export class ChainSwitch extends ThemeElement(style) {
+  bindNetworks: any = new StateController(this, uiNetworks)
 
   @property() chain!: ChainNetwork
   @state() menu = false

@@ -1,19 +1,19 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
 import popupMessenger from '~/lib.next/messenger/popup'
 import { openInFullscreen } from '~/lib.next/utils.ext'
 import { isUnlock } from '~/lib.next/popup'
 
 // Components
-import '@lit-web3/dui/src/input/pwd'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/pwd'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
 
 import style from './unlock.css?inline'
 import { StateController, walletStore } from '~/store'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 @customElement('view-unlock')
-export class ViewUnlock extends TailwindElement(style) {
-  state = new StateController(this, walletStore)
+export class ViewUnlock extends ThemeElement(style) {
+  state: any = new StateController(this, walletStore)
   @property() dest = '/'
   @property() placeholder = 'Password'
   @state() pwd = ''

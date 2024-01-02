@@ -1,21 +1,64 @@
 {
   "name": "@lit-web3/dui",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "type": "module",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts",
+    "./c/*": "./src/c/*.css",
+    "./button": "./src/button/index.ts",
+    "./ns-search": "./src/ns-search/index.ts",
+    "./address": "./src/address/index.ts",
+    "./link": "./src/link/index.ts",
+    "./pagination": "./src/pagination/index.ts",
+    "./media-player": "./src/media-player/index.ts",
+    "./dialog": "./src/dialog/index.ts",
+    "./step-card": "./src/step-card/index.ts",
+    "./tx-state": "./src/tx-state/index.ts",
+    "./tip": "./src/tip/index.ts",
+    "./network-warning": "./src/network-warning/index.ts"
+  },
+  "publicConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./*": "./dist/*.js",
+      "./c/*": "./dist/c/*.css",
+      "./button": "./dist/button/index.js",
+      "./ns-search": "./dist/ns-search/index.js",
+      "./address": "./dist/address/index.js",
+      "./link": "./dist/link/index.js",
+      "./pagination": "./dist/pagination/index.js",
+      "./media-player": "./dist/media-player/index.js",
+      "./dialog": "./dist/dialog/index.js",
+      "./step-card": "./dist/step-card/index.js",
+      "./tx-state": "./dist/tx-state/index.js",
+      "./tip": "./dist/tip/index.js",
+      "./network-warning": "./dist/network-warning/index.js"
+    }
+  },
   "scripts": {
-    "build": "tsup src/doid-symbol.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "build": "vite build",
     "prepublishOnly": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DOIDFoundation/lit-web3",
+    "directory": "packages/dui"
+  },
   "dependencies": {
-    "@lit-web3/chain": "workspace:latest",
     "@doid/core": "workspace:latest",
+    "@lit-labs/motion": "^1.0.6",
+    "@lit-web3/base": "workspace:latest",
+    "@lit-web3/chain": "workspace:latest",
     "@lit-web3/ethers": "workspace:latest",
     "@lit-web3/router": "workspace:latest",
-    "@metamask/jazzicon": "^2.0.0"
+    "@metamask/jazzicon": "^2.0.0",
+    "lit": "^3.1.0"
   },
-  "devDependencies": {
-    "dotenv": "^16.3.1",
-    "tsup": "^8.0.1"
-  },
+  "devDependencies": {},
   "license": "MIT"
 }

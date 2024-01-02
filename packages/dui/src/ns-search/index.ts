@@ -1,8 +1,8 @@
-import { TailwindElement, html, when, customElement, ref } from '../shared/TailwindElement'
+import { ThemeElement, html, when, customElement, ref } from '../shared/theme-element'
 import { property, state } from 'lit/decorators.js'
 import { searchStore, StateController } from './store'
 import { bridgeStore } from '@lit-web3/ethers/src/useBridge'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 import { wrapTLD, checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 import { ValidateDOIDName } from '../validator/doid-name'
 // Components
@@ -12,7 +12,7 @@ import '../button'
 // Style
 import style from './index.css?inline'
 @customElement('dui-ns-search')
-export class duiNsSearch extends ValidateDOIDName(TailwindElement(style), { allowAddress: true }) {
+export class duiNsSearch extends ValidateDOIDName(ThemeElement(style), { allowAddress: true }) {
   bindStore: any = new StateController(this, searchStore)
   bindBridge: any = new StateController(this, bridgeStore)
   @property() placeholder = 'Search names or addresses'

@@ -2,7 +2,7 @@ import { updateChains, updateOptions } from './options'
 import { controller } from './controller'
 import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
 import { DOIDConnectDialog } from './connectDialog'
-import { State, StateController } from '@lit-app/state'
+import { State, StateController } from '@lit-web3/base/state'
 import { ReactiveControllerHost } from 'lit'
 
 export { type WalletClient } from '@wagmi/core'

@@ -1,4 +1,4 @@
-import { TailwindElement, html, when, customElement, ref } from '../shared/TailwindElement'
+import { ThemeElement, html, when, customElement, ref } from '../shared/theme-element'
 import { property, state } from 'lit/decorators.js'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
 import { ValidateDOID } from '../validator/doid'
@@ -9,7 +9,7 @@ import '../button'
 // Style
 import style from './index.css?inline'
 @customElement('doid-search-entire')
-export class DoidSearchEntire extends ValidateDOID(TailwindElement(style)) {
+export class DoidSearchEntire extends ValidateDOID(ThemeElement(style)) {
   @property() placeholder = ''
   @property() default?: string
   @property({ type: Boolean }) entire = false

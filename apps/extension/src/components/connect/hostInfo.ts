@@ -1,12 +1,12 @@
-import { customElement, TailwindElement, html, ifDefined } from '@lit-web3/dui/src/shared/TailwindElement'
+import { customElement, ThemeElement, html, ifDefined } from '@lit-web3/dui/shared/theme-element'
 import { uiConnects, StateController } from '~/store/connectState'
 // Components
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/dialog'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/dialog'
 
 @customElement('connect-host-info')
-export class ConnectHostInfo extends TailwindElement(null) {
+export class ConnectHostInfo extends ThemeElement(null) {
   bindConnects: any = new StateController(this, uiConnects)
 
   connectedCallback() {

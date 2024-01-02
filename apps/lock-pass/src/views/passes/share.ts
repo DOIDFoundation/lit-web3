@@ -1,15 +1,15 @@
-import { TailwindElement, html } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html } from '@lit-web3/dui/shared/theme-element'
 import { customElement, property, state } from 'lit/decorators.js'
 
 import { getInviteCode, getInviteLimits } from '~/lib/locker'
 
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
-import '@lit-web3/dui/src/copy'
+import '@lit-web3/dui/copy'
 
 import style from './share.css?inline'
 @customElement('pass-share')
-export class SharePass extends TailwindElement(style) {
+export class SharePass extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property() name = ''
   @state() limit = '0'
@@ -61,8 +61,8 @@ ${this.shareText}</textarea
               ></dui-copy>
             `
           : +this.limit > 0
-          ? html`<dui-button sm @click="${this.genInviteCode}">Share</dui-button>`
-          : html``}
+            ? html`<dui-button sm @click="${this.genInviteCode}">Share</dui-button>`
+            : html``}
       </div>`
   }
 }

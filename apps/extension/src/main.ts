@@ -1,13 +1,13 @@
-import AppRoot from './AppRoot.wallet'
-import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import AppRoot from './app-root.wallet'
+import { ThemeElement, html, customElement, state, when } from '@lit-web3/dui/shared/theme-element'
 import { routes } from '~/router'
-import emitter from '@doid/core/emitter'
-import { routerPathname } from '@lit-web3/dui/src/shared/router'
+import emitter from '@lit-web3/base/emitter'
+import { routerPathname } from '@lit-web3/router'
 import '~/views/home'
 // Components
-import '@lit-web3/dui/src/doid-symbol'
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/nav/header'
+import '@lit-web3/dui/doid-symbol'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/nav/header'
 import '~/components/account/switch'
 import '~/components/account/connection'
 import '~/components/connect/guard'
@@ -15,7 +15,7 @@ import '~/components/settings/btn'
 // import { StateController, walletStore } from './store'
 
 @customElement('app-main')
-export class AppMain extends TailwindElement('') {
+export class AppMain extends ThemeElement('') {
   // state = new StateController(this, walletStore)
   @state() showHeader = false
   chkView = () => {

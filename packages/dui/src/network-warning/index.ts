@@ -1,15 +1,15 @@
-import { customElement, TailwindElement, html, when, state, classMap } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, when, state, classMap } from '../shared/theme-element'
 import { animate } from '@lit-labs/motion'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
-import { screenStore } from '@doid/core/screen'
+import { screenStore } from '@lit-web3/base/screen'
 // Components
 import '../link'
 
 import style from './network-warning.css?inline'
 @customElement('network-warning')
-export class NetworkWarning extends TailwindElement(style) {
-  bindBridge = new StateController(this, bridgeStore)
-  bindScreen = new StateController(this, screenStore)
+export class NetworkWarning extends ThemeElement(style) {
+  bindBridge: any = new StateController(this, bridgeStore)
+  bindScreen: any = new StateController(this, screenStore)
   @state() pending = false
 
   get bridge() {

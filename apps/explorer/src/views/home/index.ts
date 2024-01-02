@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   state,
@@ -8,20 +8,20 @@ import {
   repeat,
   classMap,
   keyed
-} from '@lit-web3/dui/src/shared/TailwindElement'
-import '@lit-web3/dui/src/doid-symbol'
-import '@lit-web3/dui/src/loading/icon'
+} from '@lit-web3/dui/shared/theme-element'
+import '@lit-web3/dui/doid-symbol'
+import '@lit-web3/dui/loading/icon'
 import '../../components/search/index'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 import { wsSend, uiBlocks, StateController } from '~/store'
 // import http from '@doid/core/http'
 // import { defaultNetwork } from '@lit-web3/doids/src/networks'
 // import jsonRpcRequest from '@doid/core/http/jsonRpcRequest'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/button'
 
 import style from './home.css?inline'
 @customElement('view-home')
-export class ViewHome extends TailwindElement(style) {
+export class ViewHome extends ThemeElement(style) {
   bindBlocks: any = new StateController(this, uiBlocks)
   @property() miner = ''
   @state() minerData = { data: [], totalPage: 0, page: 1, limit: 10, ts: 0 }

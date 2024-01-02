@@ -1,4 +1,4 @@
-// import { State, property, storage } from '@lit-app/state'
+// import { State, property, storage } from '@lit-web3/base/state'
 
 type OpenTabsIDs = {
   [key: number]: boolean

@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, property, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, when } from '@lit-web3/dui/shared/theme-element'
 // Components
 import '~/components/collection/marker'
 import '~/components/collection/list'
@@ -7,7 +7,7 @@ import '~/components/collection/item'
 import style from './index.css?inline'
 
 @customElement('view-collection')
-export class ViewCollection extends TailwindElement(style) {
+export class ViewCollection extends ThemeElement(style) {
   @property() DOID?: DOIDObject
 
   get tokenName() {
@@ -24,10 +24,12 @@ export class ViewCollection extends TailwindElement(style) {
         <coll-marker .DOID=${this.DOID} class="block mb-6"></coll-marker>
         ${when(
           this.tokenName,
-          () => html`<!-- collection -->
-            <doid-collection .DOID=${this.DOID}></doid-collection>`,
-          () => html`<!-- artist's collections -->
-            <doid-collections .DOID=${this.DOID}></doid-collections>`
+          () =>
+            html`<!-- collection -->
+              <doid-collection .DOID=${this.DOID}></doid-collection>`,
+          () =>
+            html`<!-- artist's collections -->
+              <doid-collections .DOID=${this.DOID}></doid-collections>`
         )}
       </div>
     </div>`

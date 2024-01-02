@@ -1,9 +1,9 @@
-import { TailwindElement, html, customElement, classMap, property } from '../shared/TailwindElement'
-import { screenStore, StateController } from '@doid/core/screen'
+import { ThemeElement, html, customElement, classMap, property } from '../shared/theme-element'
+import { screenStore, StateController } from '@lit-web3/base/screen'
 
 import style from './nav.css?inline'
 @customElement('dui-nav')
-export class DuiNav extends TailwindElement(style) {
+export class DuiNav extends ThemeElement(style) {
   bindScreen: any = new StateController(this, screenStore)
   @property({ type: Boolean }) menuable = false
   get asMenu() {

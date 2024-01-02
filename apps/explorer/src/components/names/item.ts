@@ -1,11 +1,11 @@
-import { TailwindElement, html, customElement, property, classMap } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement, property, classMap } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 // Components
 import '../favorites/btn'
 
 import style from './item.css?inline'
 @customElement('doid-name-item')
-export class DoidNameItem extends TailwindElement(style) {
+export class DoidNameItem extends ThemeElement(style) {
   @property() nameInfo!: NameInfo
 
   goto() {

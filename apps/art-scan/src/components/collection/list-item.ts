@@ -1,17 +1,17 @@
-import { TailwindElement, html, customElement, property, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import { LazyElement } from '@lit-web3/dui/src/shared/LazyElement'
+import { ThemeElement, html, customElement, property, state, when } from '@lit-web3/dui/shared/theme-element'
+import { LazyElement } from '@lit-web3/base/lazy-element'
 import DOIDParser from '@lit-web3/ethers/src/DOIDParser'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 import { getMetaData } from '@lit-web3/ethers/src/metadata'
 // Components
-import '@lit-web3/dui/src/link'
-import '@lit-web3/dui/src/media-player'
-import '@lit-web3/dui/src/loading/skeleton'
+import '@lit-web3/dui/link'
+import '@lit-web3/dui/media-player'
+import '@lit-web3/dui/loading/skeleton'
 // Styles
 import style from './list-item.css?inline'
 
 @customElement('doid-coll-item')
-export class DoidCollItem extends LazyElement(TailwindElement(style)) {
+export class DoidCollItem extends LazyElement(ThemeElement(style)) {
   @property() DOID?: DOIDObject
   @property() item: Coll = {}
   @state() cooked?: DOIDObject

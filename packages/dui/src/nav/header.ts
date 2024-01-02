@@ -1,5 +1,5 @@
-import { TailwindElement, html, customElement, when, property, state, classMap } from '../shared/TailwindElement'
-import { screenStore, StateController } from '@doid/core/screen'
+import { ThemeElement, html, customElement, when, property, state, classMap } from '../shared/theme-element'
+import { screenStore, StateController } from '@lit-web3/base/screen'
 // Components
 import '../connect-wallet/btn'
 import '../block-number'
@@ -9,7 +9,7 @@ import '../button'
 
 import style from './header.css?inline'
 @customElement('dui-header')
-export class DuiHeader extends TailwindElement(style) {
+export class DuiHeader extends ThemeElement(style) {
   bindScreen: any = new StateController(this, screenStore)
   @property({ type: Boolean }) menuable = false
   @property({ type: Boolean }) fixed = false

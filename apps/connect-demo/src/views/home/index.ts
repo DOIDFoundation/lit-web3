@@ -1,14 +1,14 @@
-import { TailwindElement, createRef, html, ref, until, when } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, createRef, html, ref, until, when } from '@lit-web3/dui/shared/theme-element'
 import { customElement, state } from 'lit/decorators.js'
 // Components
 import '@doid/connect'
 import { DOIDConnectButton, DOIDConnector, WalletClient, doidTestnet } from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
 
 @customElement('view-home')
-export class ViewHome extends TailwindElement('') {
+export class ViewHome extends ThemeElement('') {
   private connectButtonRef = createRef<DOIDConnectButton>()
   private doidConnector = new DOIDConnector(this)
   private doidConnectorEthers = new DOIDConnectorEthers(this)

@@ -1,11 +1,11 @@
-import { TailwindElement, html, customElement } from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { ThemeElement, html, customElement } from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 // Components
 import '~/components/favorites/list'
 
 import style from './favorites.css?inline'
 @customElement('view-favorites')
-export class ViewFavorites extends TailwindElement(style) {
+export class ViewFavorites extends ThemeElement(style) {
   render() {
     return html`<div class="view-favorites">
       <div class="dui-container">

@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -7,19 +7,19 @@ import {
   when,
   repeat,
   keyed
-} from '@lit-web3/dui/src/shared/TailwindElement'
+} from '@lit-web3/dui/shared/theme-element'
 import { nameInfo } from '@lit-web3/ethers/src/nsResolver'
 import { getColls } from '~/lib/query'
 
 // Components
-import '@lit-web3/dui/src/loading/icon'
+import '@lit-web3/dui/loading/icon'
 import './list-item'
-import '@lit-web3/dui/src/pagination'
+import '@lit-web3/dui/pagination'
 // Styles
 import style from './list.css?inline'
 
 @customElement('doid-collections')
-export class DoidCollections extends TailwindElement(style) {
+export class DoidCollections extends ThemeElement(style) {
   @property() DOID?: DOIDObject
 
   @state() pending = false
@@ -92,16 +92,17 @@ export class DoidCollections extends TailwindElement(style) {
       <!-- Pagination -->
       ${when(
         !this.err,
-        () => html`<dui-pagination
-          .pending=${this.pending}
-          .nomore=${this.nomore}
-          .firstLoad=${!this.ts}
-          .empty=${this.empty}
-          .pageSize=${this.pageSize}
-          .page=${this.page}
-          @loadmore=${this.loadmore}
-          ><span slot="empty">No collection yet.</span></dui-pagination
-        >`
+        () =>
+          html`<dui-pagination
+            .pending=${this.pending}
+            .nomore=${this.nomore}
+            .firstLoad=${!this.ts}
+            .empty=${this.empty}
+            .pageSize=${this.pageSize}
+            .page=${this.page}
+            @loadmore=${this.loadmore}
+            ><span slot="empty">No collection yet.</span></dui-pagination
+          >`
       )}
     </div>`
   }

@@ -1,13 +1,13 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/link'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/link'
 
 import style from './phrase.css?inline'
 @customElement('view-create-pwd')
-export class ViewPwd extends TailwindElement(style) {
+export class ViewPwd extends ThemeElement(style) {
   @property() placeholder = 'Password'
   @property() PASSWORD_MIN_LENGTH = 8
   @state() pwd = '123qwe123'

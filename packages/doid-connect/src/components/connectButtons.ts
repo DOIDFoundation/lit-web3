@@ -1,5 +1,4 @@
-// import { LitElement, html, unsafeCSS } from 'lit'
-import { html, TailwindElement, unsafeCSS, customElement, property, state, when, createRef, ref } from '@doid/ui-core'
+import { html, TailwindElement, customElement, property, state, when } from '@lit-web3/base'
 // import { customElement, property, state } from 'lit/decorators.js'
 // import { when } from 'lit/directives/when.js'
 import { map } from 'lit/directives/map.js'
@@ -20,7 +19,6 @@ import iconWalletConnect from '../assets/icons/walletconnect.svg?inline'
 import iconPuzzle from '../assets/icons/puzzle.svg?inline'
 import { LOGIN_PROVIDER_TYPE } from '@web3auth/openlogin-adapter'
 import { Chain, ConnectorData, Connector } from '@wagmi/core'
-// import { BaseCss } from './globalCSS'
 import style from './connectButtons.css?inline'
 import { EventTypes, stopPropagation } from '../utils/events'
 
@@ -66,7 +64,7 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
     }
   }
 
-  connectWeb3Auth(provider: LOGIN_PROVIDER_TYPE) {
+  connectWeb3Auth = (provider: LOGIN_PROVIDER_TYPE) => {
     return this.connect(controller.web3AuthConnector(provider))
   }
   /**
@@ -76,7 +74,7 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
    * @fires "connect"
    * @fires "error"
    */
-  private connect(connector: Connector) {
+  private connect = (connector: Connector) => {
     this.connecting = true
     this.connectingProvider = connector.options.loginParams?.loginProvider ?? connector.name
     return controller
@@ -99,7 +97,7 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
           controller.availableConnectors(),
           (connector) => html`
             <sl-tooltip placement="bottom" content="${connector.name}" @sl-after-hide=${stopPropagation}>
-              <sl-button circle size="medium" ?disabled=${this.connecting} @click=${this.connect.bind(this, connector)}>
+              <sl-button circle size="medium" ?disabled=${this.connecting} @click=${() => this.connect(connector)}>
                 <sl-icon label="${connector.name}" src="${this.getConnectorIcon(connector)}"></sl-icon>
                 ${when(
                   this.connecting && this.connectingProvider == connector.name,
@@ -120,7 +118,7 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
                     size="medium"
                     ?disabled=${this.connecting}
                     circle
-                    @click=${this.connectWeb3Auth.bind(this, provider)}
+                    @click=${() => this.connectWeb3Auth(provider)}
                   >
                     ${this.getWeb3AuthIcon(provider)}
                     ${when(

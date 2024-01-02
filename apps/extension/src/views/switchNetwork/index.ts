@@ -1,15 +1,15 @@
-import { TailwindElement, html, customElement, when, property, state } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, when, property, state } from '@lit-web3/dui/shared/theme-element'
 import { uiNetworks, StateController } from '~/store/networkState'
 import { getNetwork } from '@lit-web3/chain/src'
 import popupMessenger from '~/lib.next/messenger/popup'
 // Components
-import '@lit-web3/dui/src/button'
-import '@lit-web3/dui/src/chain/symbol'
+import '@lit-web3/dui/button'
+import '@lit-web3/dui/chain/symbol'
 import '~/components/connect/hostInfo'
 
 @customElement('view-switch-network')
-export class ViewSwitchNetwork extends TailwindElement(null) {
-  bindNetworks = new StateController(this, uiNetworks)
+export class ViewSwitchNetwork extends ThemeElement(null) {
+  bindNetworks: any = new StateController(this, uiNetworks)
 
   @property() chainNetwork!: ChainNetwork
 

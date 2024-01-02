@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, property, when, unsafeHTML, classMap } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property, when, unsafeHTML, classMap } from '../shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 
 // Components
@@ -7,7 +7,7 @@ import './tx-view'
 import style from './tx-state.css?inline'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 @customElement('tx-state')
-export class TxState extends TailwindElement(style) {
+export class TxState extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property({ type: Object }) tx: txReceipt | undefined
   @property({ type: Boolean }) txType = false

@@ -1,9 +1,9 @@
-import { customElement, TailwindElement, html, property } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property } from '../shared/theme-element'
 import jazzicon from '@metamask/jazzicon'
 
 import style from './avatar.css?inline'
 @customElement('ui-address-avatar')
-export class UIAddressAvatar extends TailwindElement(style) {
+export class UIAddressAvatar extends ThemeElement(style) {
   @property({ type: Number }) size = 16
   @property({ type: String }) address = ''
 

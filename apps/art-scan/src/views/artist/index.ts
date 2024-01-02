@@ -1,4 +1,4 @@
-import { TailwindElement, html, customElement, property, when, keyed } from '@lit-web3/dui/src/shared/TailwindElement'
+import { ThemeElement, html, customElement, property, when, keyed } from '@lit-web3/dui/shared/theme-element'
 // Components
 import '~/components/collection/list'
 import '~/components/artist/info'
@@ -6,7 +6,7 @@ import '~/components/artist/info'
 import style from './index.css?inline'
 
 @customElement('view-artist')
-export class ViewArtist extends TailwindElement(style) {
+export class ViewArtist extends ThemeElement(style) {
   @property() DOID?: DOIDObject
 
   get doid() {

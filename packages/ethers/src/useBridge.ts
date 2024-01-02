@@ -1,12 +1,12 @@
-import { State, property } from '@lit-app/state'
+import { State, property } from '@lit-web3/base/state'
 import Network, { Networks } from './networks'
 import Contracts from './constants/contracts'
 import { Bridge, walletStore } from './bridge'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 import { gasLimit, nowTs } from './utils'
 import { normalizeTxErr } from './parseErr'
 import { Contract, formatUnits } from 'ethers'
-export { StateController } from '@lit-app/state'
+export { StateController } from '@lit-web3/base/state'
 
 // Singleton Data
 class BridgeStore extends State {

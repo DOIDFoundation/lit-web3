@@ -1,5 +1,5 @@
 import {
-  TailwindElement,
+  ThemeElement,
   html,
   customElement,
   property,
@@ -7,15 +7,15 @@ import {
   choose,
   when
   // until
-} from '@lit-web3/dui/src/shared/TailwindElement'
-import { goto } from '@lit-web3/dui/src/shared/router'
+} from '@lit-web3/dui/shared/theme-element'
+import { goto } from '@lit-web3/router'
 import { Wallet } from 'ethers'
 import { defaultNetwork } from '@lit-web3/doids/src/networks'
 import { sleep, addressEquals } from '@lit-web3/ethers/src/utils'
 
 // Components
-import '@lit-web3/dui/src/input/text'
-import '@lit-web3/dui/src/button'
+import '@lit-web3/dui/input/text'
+import '@lit-web3/dui/button'
 import '~/components/phrase'
 import '~/components/pwd-equal'
 
@@ -46,7 +46,7 @@ enum Steps {
 }
 
 @customElement('view-create')
-export class ViewHome extends TailwindElement(style) {
+export class ViewHome extends ThemeElement(style) {
   @property() doid = ''
   @state() pending = false
   @state() btnNextDisabled = true

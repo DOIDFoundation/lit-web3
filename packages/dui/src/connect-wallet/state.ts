@@ -1,4 +1,4 @@
-import { customElement, TailwindElement, html, property, when, unsafeHTML } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property, when, unsafeHTML } from '../shared/theme-element'
 import { bridgeStore, StateController } from '@lit-web3/ethers/src/useBridge'
 import { WalletState } from '@lit-web3/ethers/src/wallet'
 import '../button'
@@ -6,7 +6,7 @@ import '../button'
 import style from './state.css?inline'
 
 @customElement('connect-wallet-state')
-export class ConnectWalletState extends TailwindElement(style) {
+export class ConnectWalletState extends ThemeElement(style) {
   bindBridge: any = new StateController(this, bridgeStore)
   @property() opts: any = {}
 

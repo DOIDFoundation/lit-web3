@@ -1,10 +1,10 @@
-import { customElement, TailwindElement, html, property } from '../shared/TailwindElement'
+import { customElement, ThemeElement, html, property } from '../shared/theme-element'
 // Components
 import './index'
 
 import style from './icon.css?inline'
 @customElement('dui-copy-icon')
-export class DuiCopyIcon extends TailwindElement(style) {
+export class DuiCopyIcon extends ThemeElement(style) {
   @property({ type: String }) value = ''
 
   override render() {

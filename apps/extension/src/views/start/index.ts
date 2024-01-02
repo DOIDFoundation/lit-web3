@@ -1,12 +1,12 @@
-import { TailwindElement, html, customElement, state, when } from '@lit-web3/dui/src/shared/TailwindElement'
-import '@lit-web3/dui/src/address'
-import '@lit-web3/dui/src/doid-symbol'
+import { ThemeElement, html, customElement, state, when } from '@lit-web3/dui/shared/theme-element'
+import '@lit-web3/dui/address'
+import '@lit-web3/dui/doid-symbol'
 import { wrapTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 import { accountStore, StateController } from '~/store/account'
-import { goto } from '@lit-web3/dui/src/shared/router'
+import { goto } from '@lit-web3/router'
 
 @customElement('view-start')
-export class ViewStart extends TailwindElement(null) {
+export class ViewStart extends ThemeElement(null) {
   bindStore: any = new StateController(this, accountStore)
 
   @state() name = ''

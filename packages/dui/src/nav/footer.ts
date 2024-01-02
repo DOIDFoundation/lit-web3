@@ -1,11 +1,11 @@
-import { TailwindElement, html, property, classMap, customElement } from '../shared/TailwindElement'
+import { ThemeElement, html, property, classMap, customElement } from '../shared/theme-element'
 // Components
 import '../block-number'
 import '../link'
 
 import style from './footer.css?inline'
 @customElement('dui-footer')
-export class DuiFooter extends TailwindElement(style) {
+export class DuiFooter extends ThemeElement(style) {
   @property({ type: Boolean }) full = false
   render() {
     return html`

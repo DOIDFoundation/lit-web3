@@ -1,6 +1,6 @@
 import { normalizeTxErr } from './parseErr'
 import { getTxQueue } from './txQueue'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 
 export const getEventCodes = async (name: any): Promise<any> => {
   if (!name) return {}

@@ -3,18 +3,18 @@
   "version": "0.10.0",
   "type": "module",
   "scripts": {
-    "build": "tsup src/index.ts --outDir ./lib --format esm,cjs --dts --clean",
+    "build": "tsup src/index.ts --outDir ./lib --format esm --dts --clean",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@doid/core": "workspace:latest",
+    "@lit-web3/base": "workspace:latest",
     "@doid/node-buffer": "workspace:latest",
     "@doid/name-validator": "workspace:latest",
     "@ensdomains/address-encoder": "^0.2.22"
   },
   "devDependencies": {
-    "@types/tr46": "^3.0.3",
-    "ethers": "^6.9.1"
+    "@types/tr46": "^3.0.3"
   },
   "peerDependencies": {
     "ethers": "^6"

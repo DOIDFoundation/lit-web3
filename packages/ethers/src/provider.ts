@@ -1,6 +1,6 @@
 import { JsonRpcProvider, BrowserProvider, WebSocketProvider } from 'ethers'
 import Network from './networks'
-import emitter from '@doid/core/emitter'
+import emitter from '@lit-web3/base/emitter'
 import { getChainId, getChainIdSync } from './detectEthereum'
 
 class Provider {
