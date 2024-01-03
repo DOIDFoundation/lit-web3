@@ -1,4 +1,4 @@
-import '@doid/node-buffer'
+import '@lit-web3/node-buffer'
 
 let promise: any
 export default async () => {

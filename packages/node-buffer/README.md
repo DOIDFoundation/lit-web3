@@ -8,16 +8,16 @@
 Import directly:
 
 ```javascript
-import { Buffer } from '@doid/node-buffer'
+import { Buffer } from '@lit-web3/node-buffer'
 ```
 
 Or declare resolutions in your root package.json.
 
 ```javascript
 {
-	"name": "your-app",
-	"resolutions": {
-		"buffer": "npm:@doid/node-buffer"
-	}
+  "name": "your-app",
+  "resolutions": {
+    "buffer": "npm:@lit-web3/node-buffer"
+  }
 }
 ```

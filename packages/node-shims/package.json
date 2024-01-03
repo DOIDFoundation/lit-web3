@@ -1,5 +1,5 @@
 {
-  "name": "@doid/node-shims",
+  "name": "@lit-web3/node-shims",
   "version": "0.1.1",
   "type": "module",
   "files": [
@@ -25,10 +25,10 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@doid/node-assert": "workspace:^",
-    "@doid/node-buffer": "workspace:^",
-    "@doid/node-stream": "workspace:^",
-    "@doid/node-util": "workspace:^"
+    "@lit-web3/node-assert": "workspace:^0.1",
+    "@lit-web3/node-buffer": "workspace:^0.1",
+    "@lit-web3/node-stream": "workspace:^0.1",
+    "@lit-web3/node-util": "workspace:^0.1"
   },
   "devDependencies": {
     "tsup": "^8.0.1"

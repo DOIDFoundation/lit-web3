@@ -1,5 +1,4 @@
 .DS_Store
-src
 .gitignore
 tsconfig.json
 lib._esm

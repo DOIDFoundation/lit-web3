@@ -8,7 +8,7 @@
 Import directly:
 
 ```javascript
-import assert from '@doid/node-assert'
+import assert from '@lit-web3/node-assert'
 ```
 
 Or declare resolutions in your root package.json.
@@ -17,7 +17,7 @@ Or declare resolutions in your root package.json.
 {
 	"name": "your-app",
 	"resolutions": {
-		"assert": "npm:@doid/node-assert"
+		"assert": "npm:@lit-web3/node-assert"
 	}
 }
 ```

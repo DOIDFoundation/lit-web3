@@ -5,7 +5,7 @@
 Import directly:
 
 ```javascript
-import '@doid/node-shims'
+import '@lit-web3/node-shims'
 ```
 
 And declare resolutions in your root package.json.
@@ -13,10 +13,10 @@ And declare resolutions in your root package.json.
 ```json
 {
 	"resolutions": {
-    "assert": "npm:@doid/node-assert",
-    "buffer": "npm:@doid/node-buffer",
-    "stream": "npm:@doid/node-stream",
-    "util": "npm:@doid/node-util"
+		"assert": "npm:@lit-web3/node-assert",
+		"buffer": "npm:@lit-web3/node-buffer",
+		"stream": "npm:@lit-web3/node-stream",
+		"util": "npm:@lit-web3/node-util"
 	}
 }
 ```

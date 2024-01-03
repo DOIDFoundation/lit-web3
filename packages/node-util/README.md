@@ -8,7 +8,7 @@
 Import directly:
 
 ```javascript
-import util from '@doid/node-util'
+import util from '@lit-web3/node-util'
 ```
 
 Or declare resolutions in your root package.json.
@@ -17,7 +17,7 @@ Or declare resolutions in your root package.json.
 {
 	"name": "your-app",
 	"resolutions": {
-		"util": "npm:@doid/node-util"
+		"util": "npm:@lit-web3/node-util"
 	}
 }
 ```

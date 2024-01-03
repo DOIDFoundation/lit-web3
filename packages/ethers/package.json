@@ -9,7 +9,7 @@
   "dependencies": {
     "@doid/core": "workspace:latest",
     "@lit-web3/base": "workspace:latest",
-    "@doid/node-buffer": "workspace:latest",
+    "@lit-web3/node-buffer": "workspace:latest",
     "@doid/name-validator": "workspace:latest",
     "@ensdomains/address-encoder": "^0.2.22"
   },

@@ -1,5 +1,5 @@
 {
-  "name": "@doid/node-assert",
+  "name": "@lit-web3/node-assert",
   "version": "0.1.1",
   "type": "module",
   "files": [
@@ -25,7 +25,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@doid/node-util": "workspace:^"
+    "@lit-web3/node-util": "workspace:^0.1"
   },
   "devDependencies": {
     "tsup": "^8.0.1"

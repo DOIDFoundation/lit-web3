@@ -1,6 +1,6 @@
 {
-  "name": "@doid/node-process",
-  "version": "0.1.1",
+  "name": "@lit-web3/node-process",
+  "version": "0.1.2",
   "type": "module",
   "files": [
     "dist"

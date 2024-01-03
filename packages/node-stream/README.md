@@ -8,7 +8,7 @@
 Import directly:
 
 ```javascript
-import { Stream } from '@doid/node-stream'
+import { Stream } from '@lit-web3/node-stream'
 ```
 
 Declare resolutions in your root package.json.
@@ -16,7 +16,7 @@ Declare resolutions in your root package.json.
 ```json
 {
 	"resolutions": {
-		"stream": "npm:@doid/node-stream"
+		"stream": "npm:@lit-web3/node-stream"
 	}
 }
 ```

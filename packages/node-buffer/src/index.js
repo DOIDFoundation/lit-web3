@@ -1,5 +1,5 @@
 // from: https://github.com/ionic-team/rollup-plugin-node-polyfills/tree/master/polyfills/buffer-es6.js
-import '@doid/node-process'
+import '@lit-web3/node-process'
 var lookup = []
 var revLookup = []
 var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array

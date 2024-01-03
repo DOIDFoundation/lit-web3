@@ -1,5 +1,5 @@
 {
-  "name": "@doid/node-stream",
+  "name": "@lit-web3/node-stream",
   "version": "0.1.1",
   "type": "module",
   "files": [
@@ -25,9 +25,9 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@doid/node-buffer": "workspace:^",
-    "@doid/node-process": "workspace:^",
-    "@doid/node-util": "workspace:^"
+    "@lit-web3/node-buffer": "workspace:^0.1",
+    "@lit-web3/node-process": "workspace:^0.1",
+    "@lit-web3/node-util": "workspace:^0.1"
   },
   "devDependencies": {
     "tsup": "^8.0.1"
