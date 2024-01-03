@@ -11,7 +11,7 @@ import {
   ref,
   createRef
 } from '../shared/theme-element'
-import { isInstantUri } from '@doid/core/uri'
+import { isInstantUri } from '@lit-web3/base/uri'
 import { LazyElement } from '@lit-web3/base/lazy-element'
 import compress from './compress'
 // Styles

@@ -1,5 +1,5 @@
 // For build web apps
-import { viteBaseConfig, mergeOptions, env, mdi } from './vite.config.base.js'
+import { viteBaseConfig, mergeOptions, resolveDir, env, mdi } from './vite.config.base.js'
 
 import { normalizePath } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -76,7 +76,7 @@ export const viteAppConfig = (options = {}) => {
                     rename: '404.html'
                   },
                   {
-                    src: normalizePath(resolve(__dirname, './.nojekyll')),
+                    src: normalizePath(resolveDir('./.nojekyll')),
                     dest: './'
                   }
                 ]

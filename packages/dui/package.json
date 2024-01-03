@@ -50,7 +50,6 @@
     "directory": "packages/dui"
   },
   "dependencies": {
-    "@doid/core": "workspace:latest",
     "@lit-labs/motion": "^1.0.6",
     "@lit-web3/base": "workspace:latest",
     "@lit-web3/chain": "workspace:latest",

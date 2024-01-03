@@ -10,7 +10,7 @@ import {
   ref,
   createRef
 } from '../shared/theme-element'
-import { NFTType, MediaType, fetchMediaType } from '@doid/core/MIMETypes'
+import { NFTType, MediaType, fetchMediaType } from '@lit-web3/base/MIMETypes'
 import emitter from '@lit-web3/base/emitter'
 // Components
 import '../img/loader'

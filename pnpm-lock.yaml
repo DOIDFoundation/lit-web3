@@ -96,9 +96,6 @@ importers:
 
   apps/explorer:
     dependencies:
-      '@doid/core':
-        specifier: workspace:latest
-        version: link:../../packages/core
       '@lit-web3/base':
         specifier: workspace:latest
         version: link:../../packages/base
@@ -344,7 +341,7 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6
       '@lit-web3/base':
-        specifier: workspace:^0.2
+        specifier: workspace:^0.3
         version: link:../base
       '@shoelace-style/shoelace':
         specifier: ^2.12.0
@@ -380,7 +377,7 @@ importers:
         specifier: workspace:^0.4
         version: link:../doid-connect
       '@lit-web3/base':
-        specifier: workspace:^0.2
+        specifier: workspace:^0.3
         version: link:../base
       '@wagmi/core':
         specifier: ^1.4.12
@@ -404,9 +401,6 @@ importers:
 
   packages/dui:
     dependencies:
-      '@doid/core':
-        specifier: workspace:latest
-        version: link:../core
       '@lit-labs/motion':
         specifier: ^1.0.6
         version: 1.0.6

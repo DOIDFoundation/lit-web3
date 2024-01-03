@@ -3,7 +3,6 @@ import { html } from 'lit'
 // import { checkDOIDName } from '@lit-web3/ethers/src/nsResolver/checker'
 // import { isAddress } from 'ethers'
 // import emitter from '@lit-web3/base/emitter'
-// import { safeDecodeURIComponent } from '@doid/core/uri'
 
 export const routes = [
   {

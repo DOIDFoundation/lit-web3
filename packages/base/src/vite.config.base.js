@@ -16,6 +16,8 @@ export const { env } = process
 export const [pathRoot, pathSrc] = [env.INIT_CWD, resolve(cwd, './src')]
 export const appTitle = env.VITE_APP_TITLE || env.VITE_APP_NAME || env.npm_package_name
 export const resolveSrc = (...args) => resolve(...[pathSrc, ...args])
+export const resolveCwd = (...args) => resolve(...[cwd, ...args])
+export const resolveDir = (...args) => resolve(...[__dirname, ...args])
 export const mdi = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7/css/materialdesignicons.min.css"/>`
 
 export const define = {
