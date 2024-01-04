@@ -6,7 +6,7 @@
         "prepublishOnly": "npm run build"
     },
     "dependencies": {
-        "@solana/wallet-standard-features": "^1.1.0",
+        "@solana/wallet-standard-features": "^1.2.0",
         "@solana/web3.js": "^1.87.6",
         "@wallet-standard/base": "^1.0.1",
         "@wallet-standard/features": "^1.0.3"

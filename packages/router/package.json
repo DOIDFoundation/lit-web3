@@ -1,22 +1,27 @@
 {
   "name": "@lit-web3/router",
-  "version": "0.2.1",
+  "version": "0.3.5",
   "type": "module",
   "files": [
-    "src",
     "dist"
   ],
   "exports": {
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./*": "./dist/*.js"
+    }
+  },
   "description": "A wrapper for @lit-labs/router with hash mode",
   "scripts": {
-    "build": "tsup src/*.ts --outDir ./dist --format esm --dts --clean",
+    "build": "tsup-node",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@lit-web3/base": "workspace:latest"
+    "@lit-web3/base": "workspace:^"
   },
   "devDependencies": {
     "@lit-labs/router": "^0.1.3",

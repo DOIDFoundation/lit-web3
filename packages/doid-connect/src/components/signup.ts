@@ -1,5 +1,5 @@
 import { nothing } from 'lit'
-import { html, TailwindElement, customElement, createRef, ref, state, when } from '@lit-web3/base'
+import { html, TailwindElement, customElement, createRef, ref, state, when } from '@lit-web3/base/tailwind-element'
 import style from './signup.css?inline'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/animation/animation.js'

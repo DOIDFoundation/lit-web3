@@ -25,10 +25,10 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@lit-web3/node-assert": "workspace:^0.1",
-    "@lit-web3/node-buffer": "workspace:^0.1",
-    "@lit-web3/node-stream": "workspace:^0.1",
-    "@lit-web3/node-util": "workspace:^0.1"
+    "@lit-web3/node-assert": "workspace:^",
+    "@lit-web3/node-buffer": "workspace:^",
+    "@lit-web3/node-stream": "workspace:^",
+    "@lit-web3/node-util": "workspace:^"
   },
   "devDependencies": {
     "tsup": "^8.0.1"

@@ -22,7 +22,7 @@
     "./tip": "./src/tip/index.ts",
     "./network-warning": "./src/network-warning/index.ts"
   },
-  "publicConfig": {
+  "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
       "./*": "./dist/*.js",

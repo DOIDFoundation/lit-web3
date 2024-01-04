@@ -31,7 +31,10 @@ export const viteLibConfig = (options = {}) => {
           external: [] // eg. ['lit', 'ethers']
         }
       },
-      plugins: [dts({ entryRoot: pathSrc })]
+      plugins: [dts({ entryRoot: pathSrc })],
+      viteConfigOptions: {
+        splitChunk: false
+      }
     }
     mergeOptions(libConfig, options)
     return viteBaseConfig(libConfig)({ mode })

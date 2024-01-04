@@ -1,18 +1,28 @@
 {
   "name": "@lit-web3/base",
-  "version": "0.3.0",
+  "version": "0.4.6",
   "type": "module",
   "files": [
-    "src"
+    "dist"
   ],
   "exports": {
     ".": "./src/index.ts",
-    "./*.js": "./src/*.js",
     "./*": {
-      "import": "./src/*",
-      "default": "./src/*.ts"
+      "import": "./src/*.js",
+      "default": "./src/*"
     },
-    "./http": "./src/http/index.js"
+    "./http": "./src/http/index.ts"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./*": "./dist/*.js",
+      "./http": "./dist/http/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup-node",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -21,23 +31,24 @@
   },
   "dependencies": {
     "@lit-app/state": "^1.0.0",
-    "@webcomponents/webcomponentsjs": "^2.8.0",
-    "urlpattern-polyfill": "^9.0.0"
-  },
-  "devDependencies": {
     "@vitejs/plugin-legacy": "^5.2.0",
+    "@webcomponents/webcomponentsjs": "^2.8.0",
     "dotenv": "^16.3.1",
     "fast-glob": "^3.3.2",
     "rollup-plugin-minify-template-literals": "^1.1.4",
-    "vite": "^5.0.10",
+    "urlpattern-polyfill": "^9.0.0",
     "vite-plugin-dts": "^3.7.0",
     "vite-plugin-html": "^3.2.1",
     "vite-plugin-mkcert": "^1.17.1",
     "vite-plugin-pwa": "^0.17.4",
     "vite-plugin-static-copy": "^1.0.0"
   },
+  "devDependencies": {
+    "tsup": "^8.0.1"
+  },
   "peerDependencies": {
-    "lit": "^3"
+    "lit": "^3",
+    "vite": "^5.0.10"
   },
   "license": "MIT"
 }

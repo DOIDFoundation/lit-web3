@@ -1,9 +1,7 @@
 // Claim DOID name by passId
-import { ThemeElement, html } from './shared/theme-element'
-import { customElement, property, state } from 'lit/decorators.js'
+import { ThemeElement, html, when, customElement, property, state } from './shared/theme-element'
 import { getContract, assignOverrides } from '@lit-web3/ethers/src/useBridge'
 import { bridgeStore, StateController, getAccount } from '@lit-web3/ethers/src/useBridge'
-import { when } from 'lit/directives/when.js'
 import { txReceipt } from '@lit-web3/ethers/src/txReceipt'
 import { bareTLD } from '@lit-web3/ethers/src/nsResolver/checker'
 // Components

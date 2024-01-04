@@ -1,4 +1,4 @@
-import { html, TailwindElement, customElement, property, state, when } from '@lit-web3/base'
+import { html, TailwindElement, customElement, property, state, when } from '@lit-web3/base/tailwind-element'
 // import { customElement, property, state } from 'lit/decorators.js'
 // import { when } from 'lit/directives/when.js'
 import { map } from 'lit/directives/map.js'

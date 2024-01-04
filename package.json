@@ -9,7 +9,7 @@
   "devDependencies": {
     "@floating-ui/dom": "^1.5.3",
     "autoprefixer": "^10.4.16",
-    "ethers": "^6.9.1",
+    "ethers": "^6.9.2",
     "lit": "^3.1.0",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.32",
@@ -17,7 +17,7 @@
     "postcss-nesting": "^12.0.2",
     "postcss-preset-env": "^9.3.0",
     "prettier": "^3.1.1",
-    "sass": "^1.69.6",
+    "sass": "^1.69.7",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.10"
@@ -26,7 +26,6 @@
     "assert": "npm:@lit-web3/node-assert",
     "buffer": "npm:@lit-web3/node-buffer",
     "stream": "npm:@lit-web3/node-stream",
-    "readable-stream": "npm:@lit-web3/node-stream",
     "util": "npm:@lit-web3/node-util"
   },
   "engines": {

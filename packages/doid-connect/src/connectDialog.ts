@@ -1,5 +1,14 @@
 import { PropertyValueMap, nothing } from 'lit'
-import { html, TailwindElement, customElement, property, state, when, createRef, ref } from '@lit-web3/base'
+import {
+  html,
+  TailwindElement,
+  customElement,
+  property,
+  state,
+  when,
+  createRef,
+  ref
+} from '@lit-web3/base/tailwind-element'
 import './components/signup'
 import './components/connectButtons'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
