@@ -2,7 +2,16 @@ import { ThemeElement, createRef, html, ref, until, when } from '@lit-web3/dui/s
 import { customElement, state } from 'lit/decorators.js'
 // Components
 import '@doid/connect'
-import { DOIDConnectButton, DOIDConnector, WalletClient, doid, doidTestnet, fantomTestnet } from '@doid/connect'
+import {
+  Chain,
+  doid,
+  DOIDConnectButton,
+  DOIDConnector,
+  doidTestnet,
+  fantomTestnet,
+  options,
+  WalletClient
+} from '@doid/connect'
 import { DOIDConnectorEthers } from '@doid/connect-ethers'
 import '@lit-web3/dui/input/text'
 import '@lit-web3/dui/button'
@@ -15,7 +24,7 @@ export class ViewHome extends ThemeElement('') {
   private doidConnectorEthers = new DOIDConnectorEthers(this)
   @state() private walletClient?: WalletClient
   @state() private accountEthers?: string
-  @state() private doidNetwork?: string
+  @state() private doidNetwork?: Chain
   @state() private doidNetworkMenu?: boolean
   @state() private doidResult?: string
   @state() private ensResult?: string
@@ -34,6 +43,7 @@ export class ViewHome extends ThemeElement('') {
     }
     this.doidConnector.subscribe(updateWalletClient, ['account', 'chainId'])
     updateWalletClient()
+    this.doidNetwork = options.doidNetwork
   }
 
   async connectEthers() {
@@ -41,16 +51,16 @@ export class ViewHome extends ThemeElement('') {
     this.accountEthers = signer.address
   }
 
-  switchNetwork(network: string) {
+  switchNetwork(network: Chain) {
     this.doidNetworkMenu = false
-    switch (network) {
-      case 'doid':
+    switch (network.id) {
+      case doid.id:
         this.doidConnector.updateOptions({ doidNetwork: doid })
         break
-      case 'doidTestnet':
+      case doidTestnet.id:
         this.doidConnector.updateOptions({ doidNetwork: doidTestnet })
         break
-      case 'fantomTestnet':
+      case fantomTestnet.id:
         this.doidConnector.updateOptions({ doidNetwork: fantomTestnet })
         break
     }
@@ -103,11 +113,11 @@ export class ViewHome extends ThemeElement('') {
             .show=${this.doidNetworkMenu}
             @change=${(e: CustomEvent) => (this.doidNetworkMenu = e.detail)}
           >
-            <p slot="button">${this.doidNetwork ?? 'select doid network'}</p>
+            <p slot="button">${this.doidNetwork?.name ?? 'select doid network'}</p>
             <ul class="dui-option">
-              <li @click="${this.switchNetwork.bind(this, 'doid')}" class="text-base">doid</li>
-              <li @click="${this.switchNetwork.bind(this, 'doidTestnet')}" class="text-base">doidTestnet</li>
-              <li @click="${this.switchNetwork.bind(this, 'fantomTestnet')}" class="text-base">fantomTestnet</li>
+              <!-- <li @click="${this.switchNetwork.bind(this, doid)}" class="text-base">${doid.name}</li> -->
+              <li @click="${this.switchNetwork.bind(this, doidTestnet)}" class="text-base">${doidTestnet.name}</li>
+              <li @click="${this.switchNetwork.bind(this, fantomTestnet)}" class="text-base">${fantomTestnet.name}</li>
             </ul>
           </dui-drop>
           <dui-input-text id="address" placeholder="address" class="max-w-sm flex my-1">

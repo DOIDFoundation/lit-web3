@@ -1,5 +1,5 @@
 import { Chain, mainnet, sepolia } from '@wagmi/core'
-import { doid, doidTestnet } from './chains'
+import { doid, doidTestnet, fantomTestnet } from './chains'
 import { OPENLOGIN_NETWORK_TYPE as WEB3AUTH_NETWORK_TYPE } from '@web3auth/base'
 import { LOGIN_PROVIDER_TYPE as WEB3AUTH_PROVIDER_TYPE } from '@web3auth/openlogin-adapter'
 
@@ -42,7 +42,7 @@ export interface ConfigOptions {
 }
 
 export let options: ConfigOptions = {
-  chains: [doid, doidTestnet, mainnet, sepolia],
+  chains: [doid, doidTestnet, mainnet, sepolia, fantomTestnet],
   doidNetwork: doid,
   web3AuthClientId: 'BIitWGD0AJRTfYzndkTlIiv1Nvpaac4kGNAQjRcBuR0OOjxpkhxqCVjxJ9FO1bf-yrVJs5NRzIRqLbmrVn5JCXg',
   web3AuthNetwork: 'sapphire_mainnet',

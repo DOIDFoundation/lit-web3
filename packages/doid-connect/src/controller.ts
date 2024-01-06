@@ -7,6 +7,7 @@ import {
   ConnectorNotFoundError
 } from '@wagmi/core'
 import { options } from './options'
+import { doidTestnet } from './chains'
 import { State, property, storage } from '@lit-web3/base/state'
 import {
   Address,
@@ -299,7 +300,10 @@ export class Controller extends State {
       walletClient
     })
     const address = walletClient.account.address
-    const hash = await contract.write.register([name, address])
+    const hash = await contract.write.register(
+      [name, address],
+      doidChainId == doidTestnet.id ? { gasPrice: 0n } : undefined
+    )
     const receipt = await Controller.doidClient.waitForTransactionReceipt({ hash })
     if (receipt.status === 'reverted') {
       const txn = await Controller.doidClient.getTransaction({
