@@ -13,6 +13,8 @@ import './components/signup'
 import './components/connectButtons'
 import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
+import '@shoelace-style/shoelace/dist/components/badge/badge'
+import '@shoelace-style/shoelace/dist/components/popup/popup.js'
 import { Chain } from '@wagmi/core'
 import style from './connectDialog.css?inline'
 import { doidSvg } from './assets/svg/doid'
@@ -21,6 +23,7 @@ import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import { DOIDSignup } from './components/signup'
 import { DOIDConnectButtons } from './components/connectButtons'
 import { options } from './options'
+import { doidTestnet } from './chains'
 import commonCSS from './assets/css'
 
 @customElement('doid-connect-dialog')
@@ -93,7 +96,13 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
       ${ref(this.dialogRef)}
       class="${options.themeMode == 'dark' ? 'sl-theme-dark' : 'sl-theme-light'}"
     >
-      <div class="icon w-16 h-16 mx-auto mt-5">${doidSvg}</div>
+      <div class="icon w-16 h-16 mx-auto mt-5 relative">
+        ${doidSvg}
+        ${when(
+          options.doidNetwork?.id == doidTestnet.id,
+          () => html`<sl-badge variant="danger" class="absolute text-xs -top-2 -right-12">testnet</sl-badge>`
+        )}
+      </div>
       ${when(
         !this.signup,
         this.renderConnect.bind(this),
