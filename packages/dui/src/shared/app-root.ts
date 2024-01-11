@@ -30,10 +30,6 @@ export default function ({ routes = <RouteConfig[]>[], hashMode = false } = {}) 
       emitter.on('force-request-update', () => this.forceUpdate())
     }
 
-    connectedCallback() {
-      super.connectedCallback()
-    }
-
     render() {
       return html`<app-main>${this._router.outlet()}</app-main>`
     }

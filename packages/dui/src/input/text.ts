@@ -18,6 +18,7 @@ export class DuiInputText extends ThemeElement(style) {
   @property({ type: Boolean }) sm = false
   @property({ type: Boolean }) dense = false
   @property({ type: Boolean }) disabled = false
+  @property({ type: Boolean }) readonly = false
   @property({ type: Boolean }) autofocus = false
   @property({ type: Boolean }) required = false
   @property({ type: Boolean }) lower = false
@@ -93,6 +94,7 @@ export class DuiInputText extends ThemeElement(style) {
       <input
         .type="${this.type}"
         .disabled="${this.disabled}"
+        .readonly="${this.readonly}"
         placeholder="${this.placeholder}"
         value="${this.value}"
         title="${this.title}"
