@@ -8,7 +8,12 @@ export const isInstantUri = (uri = ''): boolean => /^(data|blob):/.test(uri)
 
 export const getExt = (uri: string) => {
   if (!uri) return ''
-  const [, ext] = new URL(uri).pathname.match(/(\w+)$/) ?? []
+  let url
+  try {
+    url = new URL(uri)
+  } catch {}
+  if (!url) return ''
+  const [, ext] = new URL(url).pathname.match(/(\w+)$/) ?? []
   return ext
 }
 
