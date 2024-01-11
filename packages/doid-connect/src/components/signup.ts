@@ -137,7 +137,6 @@ export class DOIDSignup extends TailwindElement([style]) {
                   type="submit"
                   variant="primary"
                   ?disabled=${!this.readyToRegister || this.registering}
-                  @click=${this.register}
                   class=${this.registering ? 'cursor-wait' : nothing}
                   >Register</sl-button
                 >

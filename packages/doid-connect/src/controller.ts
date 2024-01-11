@@ -251,6 +251,7 @@ export class Controller extends State {
     if (this.connector?.id != connector!.id) throw new Error('Connector has changed, abort.')
     if (this.providerChainChangedUnsubscribe) this.providerChainChangedUnsubscribe()
     await this.handleChange(connector, data)
+    connector.on('change', this.handleChange.bind(this, connector))
     return { ...data, doid: this.doid }
   }
 
@@ -331,7 +332,6 @@ export class Controller extends State {
     // not needed as only WalletConnect emits without any data
     // connector.on('connect', this.handleConnect.bind(this, connector))
     connector.on('disconnect', () => this.resetStates())
-    connector.on('change', this.handleChange.bind(this, connector))
     // handle network change before connected as connectors only emit change after connected.
     if (this.providerChainChangedUnsubscribe) this.providerChainChangedUnsubscribe()
     let onChainChanged = (chainId: string) => (this.chainId = parseInt(chainId))
