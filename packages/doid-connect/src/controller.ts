@@ -94,7 +94,14 @@ export class Controller extends State {
           }
           console.warn(`Unsupported connector type: ${type}`)
         }
-        return new InjectedConnector({ chains: options.chains })
+        const connector = new InjectedConnector({ chains: options.chains })
+        if (!connector.ready) {
+          return new CoinbaseWalletConnector({
+            chains: options.chains,
+            options: { appName: options.appName ?? 'DOID' }
+          })
+        }
+        return connector
     }
   }
 
