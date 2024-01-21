@@ -21,7 +21,7 @@ export const doid: Chain = defineChain({
   },
   contracts: {
     ensRegistry: {
-      address: '0x8b2afF81fec4E7787AeeB257b5D99626651Ee43F'
+      address: '0x61412955195691E47c99f1Ca202A0e558db24393'
     },
     multicall3: {
       address: '0xcA11bde05977b3631167028862bE2a173976CA11'
