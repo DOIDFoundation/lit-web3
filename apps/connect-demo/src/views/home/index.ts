@@ -115,7 +115,7 @@ export class ViewHome extends ThemeElement('') {
           >
             <p slot="button">${this.doidNetwork?.name ?? 'select doid network'}</p>
             <ul class="dui-option">
-              <!-- <li @click="${this.switchNetwork.bind(this, doid)}" class="text-base">${doid.name}</li> -->
+              <li @click="${this.switchNetwork.bind(this, doid)}" class="text-base">${doid.name}</li>
               <li @click="${this.switchNetwork.bind(this, doidTestnet)}" class="text-base">${doidTestnet.name}</li>
               <li @click="${this.switchNetwork.bind(this, fantomTestnet)}" class="text-base">${fantomTestnet.name}</li>
             </ul>
