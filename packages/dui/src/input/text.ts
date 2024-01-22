@@ -3,7 +3,6 @@ import { ThemeElement, html, classMap } from '../shared/theme-element'
 
 const converter = (val: string | null, type: unknown, { lower = false, upper = false } = {}) => {
   if (val) {
-    val = val?.trim()
     if (lower) val = val.toLowerCase()
     else if (upper) val = val.toUpperCase()
   }
@@ -69,10 +68,10 @@ export class DuiInputText extends ThemeElement(style) {
 
   onInput(e: Event) {
     e.stopImmediatePropagation()
-    let val = (e.target as HTMLInputElement).value.trim()
+    let val = (e.target as HTMLInputElement).value
     this.value = converter(val, null, { lower: this.lower, upper: this.upper }) || ''
     this.updateVal()
-    this.emit('input', val)
+    this.emit('input', val.trim())
   }
   onKeyup = (e: KeyboardEvent) => {
     if (e.key === 'Enter') {
