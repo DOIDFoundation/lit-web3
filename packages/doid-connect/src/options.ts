@@ -46,7 +46,7 @@ export let options: ConfigOptions = {
   doidNetwork: doid,
   web3AuthClientId: 'BIitWGD0AJRTfYzndkTlIiv1Nvpaac4kGNAQjRcBuR0OOjxpkhxqCVjxJ9FO1bf-yrVJs5NRzIRqLbmrVn5JCXg',
   web3AuthNetwork: 'sapphire_mainnet',
-  web3AuthProviders: ['google', 'apple', 'facebook', 'twitter', 'github']
+  web3AuthProviders: ['twitter']
 }
 
 if (import.meta?.env?.MODE !== 'production') {

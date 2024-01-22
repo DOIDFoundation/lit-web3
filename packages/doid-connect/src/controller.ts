@@ -152,7 +152,20 @@ export class Controller extends State {
         new OpenloginAdapter({
           privateKeyProvider: new EthereumPrivateKeyProvider({
             config: { chainConfig }
-          })
+          }),
+          adapterSettings: {
+            loginConfig: {
+              twitter: {
+                verifier: 'doid-auth0',
+                typeOfLogin: 'jwt',
+                verifierSubIdentifier: 'twitter',
+                clientId: 'R2WBTkKbr25H373Xapi38hyl9AsOgbsI',
+                jwtParameters: {
+                  domain: 'https://dev-jr45ovxdmdpgxydm.us.auth0.com'
+                }
+              }
+            }
+          }
         })
       )
     }
