@@ -29,6 +29,7 @@ import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
 import { LOGIN_PROVIDER_TYPE, OpenloginAdapter } from '@web3auth/openlogin-adapter'
+import { doid } from './chains'
 
 export type ConnectorState = WagmiConnectorData & {
   doid?: string
@@ -60,6 +61,17 @@ export class Controller extends State {
   @property()
   private lastConnector?: string
 
+  public readonly web3AuthEnabled = true
+  private get web3AuthClientId() {
+    return options.doidNetwork?.id == doid.id
+      ? 'BIitWGD0AJRTfYzndkTlIiv1Nvpaac4kGNAQjRcBuR0OOjxpkhxqCVjxJ9FO1bf-yrVJs5NRzIRqLbmrVn5JCXg'
+      : 'BFLXJsHIHv_CgxalXixrZlytDYyf47hk64XDMXOj4vNVIGGJ9HMOyhvIbYmw3dWcwxaqadObQQSwFjR51FJvgVg'
+  }
+  private get web3AuthNetwork() {
+    return options.doidNetwork?.id == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
+  }
+  public readonly web3AuthProviders: LOGIN_PROVIDER_TYPE[] = ['twitter', 'github']
+
   private static doidClient: PublicClient
 
   constructor() {
@@ -89,7 +101,7 @@ export class Controller extends State {
         })
       default:
         if (type && type != 'injected') {
-          if (options.web3AuthEnabled && type in options.web3AuthProviders!) {
+          if (this.web3AuthEnabled && type in this.web3AuthProviders) {
             return this.web3AuthConnector(type as LOGIN_PROVIDER_TYPE)
           }
           console.warn(`Unsupported connector type: ${type}`)
@@ -123,7 +135,7 @@ export class Controller extends State {
   private static web3authInstance: Web3AuthNoModal
   public web3AuthConnector(provider: LOGIN_PROVIDER_TYPE) {
     if (!Controller.web3authInstance) {
-      if (options.web3AuthEnabled && !options.web3AuthClientId) {
+      if (this.web3AuthEnabled && !this.web3AuthClientId) {
         throw new Error('Web3Auth Client ID is not configured.')
       }
 
@@ -142,8 +154,8 @@ export class Controller extends State {
         blockExplorer: chain.blockExplorers?.default?.url ?? ''
       }
       let web3auth = new Web3AuthNoModal({
-        clientId: options.web3AuthClientId!,
-        web3AuthNetwork: options.web3AuthNetwork,
+        clientId: this.web3AuthClientId!,
+        web3AuthNetwork: this.web3AuthNetwork,
         chainConfig: { ...chainConfig, chainNamespace: CHAIN_NAMESPACES.EIP155 }
       })
       Controller.web3authInstance = web3auth
