@@ -162,34 +162,6 @@ export class ViewHome extends ThemeElement('') {
             <p>Connect Wallet</p>
           </dui-button>
 
-          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with Web3Auth</h1>
-          <dui-button sm class="mr-2" @click=${() => this.doidConnector.updateOptions({ web3AuthEnabled: true })}>
-            <p>Enable Web3Auth</p>
-          </dui-button>
-          <dui-button
-            sm
-            class="mr-2"
-            @click=${() => this.doidConnector.updateOptions({ web3AuthNetwork: 'sapphire_mainnet' })}
-          >
-            <p>Switch to Web3Auth Mainnet</p>
-          </dui-button>
-          <dui-button sm @click=${() => this.doidConnector.connect()}>
-            <p>Connect Wallet</p>
-          </dui-button>
-          <dui-input-text
-            id="web3authClientId"
-            value="BFLXJsHIHv_CgxalXixrZlytDYyf47hk64XDMXOj4vNVIGGJ9HMOyhvIbYmw3dWcwxaqadObQQSwFjR51FJvgVg"
-            placeholder="Web3Auth ClientId"
-            class="flex my-1"
-          >
-            <p slot="msg">Use your own id when developing or submit an issue on github to allow your domain.</p>
-          </dui-input-text>
-          <dui-button
-            sm
-            @click=${() => this.doidConnector.updateOptions({ web3AuthClientId: this.$('#web3authClientId').value })}
-          >
-            <p>Set Web3Auth ClientId</p>
-          </dui-button>
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with WalletConnect</h1>
           <dui-button sm class="mr-2" @click=${() => this.doidConnector.updateOptions({ walletConnectEnabled: true })}>
             <p>Enable WalletConnect</p>

@@ -7,7 +7,6 @@ import '@shoelace-style/shoelace/dist/components/icon/icon.js'
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js'
 import './spinner'
 import { controller } from '../controller'
-import { options } from '../options'
 import { googleSvg } from '../assets/svg/google'
 import { appleSvg } from '../assets/svg/apple'
 import { facebookSvg } from '../assets/svg/facebook'
@@ -108,10 +107,10 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
           `
         )}
         ${when(
-          options.web3AuthEnabled,
+          controller.web3AuthEnabled,
           () => html`
             ${map(
-              options.web3AuthProviders,
+              controller.web3AuthProviders,
               (provider) => html`
                 <sl-tooltip placement="bottom" content="${provider}" @sl-after-hide=${stopPropagation}>
                   <sl-button
