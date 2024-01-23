@@ -153,16 +153,24 @@ export class Controller extends State {
           privateKeyProvider: new EthereumPrivateKeyProvider({
             config: { chainConfig }
           }),
+          loginSettings: {
+            extraLoginOptions: {
+              domain: 'https://auth.doid.tech'
+            }
+          },
           adapterSettings: {
             loginConfig: {
               twitter: {
                 verifier: 'doid-auth0',
                 typeOfLogin: 'jwt',
                 verifierSubIdentifier: 'twitter',
-                clientId: 'R2WBTkKbr25H373Xapi38hyl9AsOgbsI',
-                jwtParameters: {
-                  domain: 'https://dev-jr45ovxdmdpgxydm.us.auth0.com'
-                }
+                clientId: 'R2WBTkKbr25H373Xapi38hyl9AsOgbsI'
+              },
+              github: {
+                verifier: 'doid-auth0',
+                typeOfLogin: 'jwt',
+                verifierSubIdentifier: 'github',
+                clientId: 'R2WBTkKbr25H373Xapi38hyl9AsOgbsI'
               }
             }
           }
@@ -365,7 +373,8 @@ export class Controller extends State {
       }
     })
     this.connector = connector
-    this.lastConnector = connector ? connector?.options.loginProvider?.name ?? connector?.id : ''
+    console.log(connector)
+    this.lastConnector = connector ? connector?.loginParams?.loginProvider ?? connector?.id : ''
   }
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorState> {

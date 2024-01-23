@@ -108,7 +108,9 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
         this.renderConnect.bind(this),
         () =>
           html`<doid-signup
-            .label=${this.connectedWithoutDOID ? "You don't have a DOID yet, consider registering one." : nothing}
+            .label=${this.connectedWithoutDOID
+              ? 'You need to register a DOID account to use full services of this website.'
+              : nothing}
             ${ref(this.signupRef)}
           ></doid-signup>`
       )}

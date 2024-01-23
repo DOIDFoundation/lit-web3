@@ -109,7 +109,7 @@ export class DOIDSignup extends TailwindElement([style]) {
             if (this.readyToRegister) this.register()
           }}
         >
-          <h1 class="text-center text-2xl mb-4">Register</h1>
+          <h1 class="text-center text-xl mb-4">Register</h1>
           ${when(!this.showConnect, () => html`<p class="text-center">${this.label}</p>`)}
           <sl-input
             autocomplete="off"

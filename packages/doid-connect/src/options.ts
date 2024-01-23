@@ -33,7 +33,7 @@ export interface ConfigOptions {
   web3AuthClientId?: string
   /** Web3Auth network, `sapphire_mainnet` by default, `sapphire_devnet` when env mode development. */
   web3AuthNetwork?: WEB3AUTH_NETWORK_TYPE
-  /** Web3Auth openlogin providers, default to `['google', 'apple', 'facebook', 'twitter', 'github']` */
+  /** Web3Auth openlogin providers, default to `['twitter', 'github']` */
   web3AuthProviders?: WEB3AUTH_PROVIDER_TYPE[]
   /** Enable WalletConnect, default to false */
   walletConnectEnabled?: boolean
@@ -46,7 +46,7 @@ export let options: ConfigOptions = {
   doidNetwork: doid,
   web3AuthClientId: 'BIitWGD0AJRTfYzndkTlIiv1Nvpaac4kGNAQjRcBuR0OOjxpkhxqCVjxJ9FO1bf-yrVJs5NRzIRqLbmrVn5JCXg',
   web3AuthNetwork: 'sapphire_mainnet',
-  web3AuthProviders: ['twitter']
+  web3AuthProviders: ['twitter', 'github']
 }
 
 if (import.meta?.env?.MODE !== 'production') {
