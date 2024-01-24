@@ -127,7 +127,7 @@ export class ViewHome extends ThemeElement('') {
         </div>
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with DOID connect button</h1>
-          <doid-connect-button ${ref(this.connectButtonRef)} appName="Demo App"></doid-connect-button>
+          <doid-connect-button ${ref(this.connectButtonRef)} appName="DOID Connect Demo"></doid-connect-button>
           <dui-button
             sm
             class="ml-2"
