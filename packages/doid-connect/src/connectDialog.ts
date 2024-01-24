@@ -24,7 +24,7 @@ import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import { DOIDSignup } from './components/signup'
 import { DOIDConnectButtons } from './components/connectButtons'
 import { options } from './options'
-import { doidTestnet } from './chains'
+import { doid } from './chains'
 import commonCSS from './assets/css'
 
 const shortAddress = (address?: string, { leftLen = 6, rightLen = 4 } = {}) => {
@@ -120,8 +120,9 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
       <div class="icon w-16 h-16 mx-auto mt-5 relative">
         ${doidSvg}
         ${when(
-          options.doidNetwork?.id == doidTestnet.id,
-          () => html`<sl-badge variant="danger" class="absolute text-xs -top-2 -right-12">testnet</sl-badge>`
+          options.doidNetwork?.id == doid.id,
+          () => html`<sl-badge class="neutral absolute text-xs -top-2 -right-10">beta</sl-badge>`,
+          () => html`<sl-badge class="danger absolute text-xs -top-2 -right-12">testnet</sl-badge>`
         )}
       </div>
       ${when(

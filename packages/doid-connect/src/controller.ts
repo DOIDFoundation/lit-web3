@@ -140,6 +140,9 @@ export class Controller extends State {
 
   private static web3authInstance: Web3AuthNoModal
   public web3AuthConnector(provider: LOGIN_PROVIDER_TYPE) {
+    // force recreate web3authInstance to set sessionNamespace to provider.
+    // to avoid wrong account from cache when connect with different provider.
+    // because web3auth caches last account per sessionNamespace rather than per provider.
     // if (!Controller.web3authInstance) {
     {
       if (this.web3AuthEnabled && !this.web3AuthClientId) {
