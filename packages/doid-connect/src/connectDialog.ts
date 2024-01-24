@@ -7,7 +7,8 @@ import {
   state,
   when,
   createRef,
-  ref
+  ref,
+  classMap
 } from '@lit-web3/base/tailwind-element'
 import './components/signup'
 import './components/connectButtons'
@@ -18,7 +19,7 @@ import '@shoelace-style/shoelace/dist/components/popup/popup.js'
 import { Chain } from '@wagmi/core'
 import style from './connectDialog.css?inline'
 import { doidSvg } from './assets/svg/doid'
-import { ErrNotRegistered, controller } from './controller'
+import { ErrNotRegistered, controller, StateController } from './controller'
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import { DOIDSignup } from './components/signup'
 import { DOIDConnectButtons } from './components/connectButtons'
@@ -26,10 +27,19 @@ import { options } from './options'
 import { doidTestnet } from './chains'
 import commonCSS from './assets/css'
 
+const shortAddress = (address?: string, { leftLen = 6, rightLen = 4 } = {}) => {
+  if (!address) return
+  const len = address.length
+  return `${address.substring(0, leftLen)}...${address.substring(len - rightLen, len)}`
+}
+
 @customElement('doid-connect-dialog')
 export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
+  bindState: any = new StateController(this, controller)
+
   @property({ type: Boolean }) signup = false
   @property() chainId?: Chain['id']
+
   @state() connectedWithoutDOID = false
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -55,7 +65,11 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
         let error = event.detail
         if (error instanceof ErrNotRegistered) {
           this.connectedWithoutDOID = true
-          await this.showSignup()
+          // Close if accountChanged
+          controller.subscribe(async (_, acc) => {
+            this.close()
+          }, 'account')
+          this.showSignup()
         } else {
           this.emit('error', error)
         }
@@ -87,14 +101,21 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
       this.emit('close')
     })
   }
+  beforeClose = (e: CustomEvent) => {
+    if (e.detail.source === 'overlay' && this.connectedWithoutDOID) e.preventDefault()
+  }
+  connectedCallback() {
+    super.connectedCallback()
+  }
 
   override render() {
     return html`<sl-dialog
       label="Connect your DOID"
       no-header
+      @sl-request-close=${this.beforeClose}
       @sl-after-hide=${this.close}
       ${ref(this.dialogRef)}
-      class="${options.themeMode == 'dark' ? 'sl-theme-dark' : 'sl-theme-light'}"
+      class="${classMap(this.$c([options.themeMode == 'dark' ? 'sl-theme-dark' : 'sl-theme-light']))}"
     >
       <div class="icon w-16 h-16 mx-auto mt-5 relative">
         ${doidSvg}
@@ -109,7 +130,8 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
         () =>
           html`<doid-signup
             .label=${this.connectedWithoutDOID
-              ? 'You need to register a DOID account to use full services of this website.'
+              ? html`You need to register a DOID account for <b>${shortAddress(controller.account)}</b> to use full
+                  services of this website.`
               : nothing}
             ${ref(this.signupRef)}
           ></doid-signup>`

@@ -24,7 +24,7 @@ if (import.meta?.env?.MODE !== 'production') {
 }
 
 export function updateOptions(opts: ConfigOptions) {
-  options = { ...options, ...opts }
+  Object.assign(options, opts)
 }
 
 export function updateChains(chains: Chain[]) {

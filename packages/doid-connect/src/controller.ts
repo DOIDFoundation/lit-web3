@@ -8,6 +8,7 @@ import {
 } from '@wagmi/core'
 import { options } from './options'
 import { State, property, storage } from '@lit-web3/base/state'
+export { StateController } from '@lit-web3/base/state'
 import {
   Address,
   CallParameters,
@@ -310,8 +311,9 @@ export class Controller extends State {
   private async handleConnect(connector: Connector, data: WagmiConnectorData): Promise<ConnectorState> {
     if (this.connector?.id != connector!.id) throw new Error('Connector has changed, abort.')
     if (this.providerChainChangedUnsubscribe) this.providerChainChangedUnsubscribe()
-    await this.handleChange(connector, data)
+    // update address first
     connector.on('change', this.handleChange.bind(this, connector))
+    await this.handleChange(connector, data)
     return { ...data, doid: this.doid }
   }
 
