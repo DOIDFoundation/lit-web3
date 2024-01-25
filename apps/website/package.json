@@ -1,0 +1,17 @@
+{
+  "name": "@lit-web3/website",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "@lit-web3/base": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest"
+  },
+  "devDependencies": {}
+}
