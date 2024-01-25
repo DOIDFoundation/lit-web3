@@ -71,8 +71,10 @@ export class Controller extends State {
   private get web3AuthNetwork() {
     return options.doidNetwork?.id == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
   }
-  public get web3AuthProviders(): LOGIN_PROVIDER_TYPE[] {
-    return options.doidNetwork?.id == doid.id ? ['twitter', 'facebook', 'github'] : ['twitter', 'facebook', 'github']
+  public get web3AuthProviders(): (LOGIN_PROVIDER_TYPE | 'more')[] {
+    return options.doidNetwork?.id == doid.id
+      ? ['twitter', 'facebook', 'github', 'more']
+      : ['twitter', 'facebook', 'github', 'more']
   }
 
   private static doidClient: PublicClient
@@ -182,7 +184,7 @@ export class Controller extends State {
             }
           },
           adapterSettings: {
-            sessionNamespace: provider,
+            sessionNamespace: options.doidNetwork?.name + provider,
             whiteLabel: {
               appName: options.appName,
               logoDark: 'https://doid.tech/logo.svg',
@@ -207,6 +209,12 @@ export class Controller extends State {
                 typeOfLogin: 'facebook',
                 verifierSubIdentifier: 'facebook',
                 clientId: '402488142221460'
+              },
+              more: {
+                verifier: 'doid-auth0',
+                typeOfLogin: 'jwt',
+                verifierSubIdentifier: 'other',
+                clientId: 'dfXudeV0HvdftL0oYUJMTQRkq3inje2Q'
               }
             }
           }
