@@ -17,12 +17,10 @@ export class ConnectBtn extends ThemeElement(style) {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const { doid: curName, account } = await this.doidConnectorEthers.connect({ chainId: Number(this.chainId) })
+      const { doid: curName, account } = await this.doidConnectorEthers.connect({ chainId: +this.chainId })
       this.doidName = curName
       this.account = account ?? ''
-    } catch (e) {
-      console.error(e)
-    }
+    } catch {}
   }
 
   async connectedCallback() {
