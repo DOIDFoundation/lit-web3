@@ -72,7 +72,11 @@ export class Controller extends State {
   private get web3AuthNetwork() {
     return options.doidNetwork?.id == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
   }
-  public readonly web3AuthProviders: LOGIN_PROVIDER_TYPE[] = ['twitter', 'github']
+  public get web3AuthProviders(): (LOGIN_PROVIDER_TYPE | 'more')[] {
+    return options.doidNetwork?.id == doid.id
+      ? ['twitter', 'facebook', 'github', 'more']
+      : ['twitter', 'facebook', 'github', 'more']
+  }
 
   private static doidClient: PublicClient
 
@@ -98,12 +102,15 @@ export class Controller extends State {
         return new WalletConnectConnector({
           chains: options.chains,
           options: {
-            projectId: options.walletConnectId!
+            projectId: options.walletConnectId!,
+            metadata: {
+              name: options.appName ?? 'DOID'
+            }
           }
         })
       default:
         if (type && type != 'injected') {
-          if (this.web3AuthEnabled && type in this.web3AuthProviders) {
+          if (this.web3AuthEnabled && this.web3AuthProviders.includes(type)) {
             return this.web3AuthConnector(type as LOGIN_PROVIDER_TYPE)
           }
           console.warn(`Unsupported connector type: ${type}`)
@@ -136,7 +143,11 @@ export class Controller extends State {
 
   private static web3authInstance: Web3AuthNoModal
   public web3AuthConnector(provider: LOGIN_PROVIDER_TYPE) {
-    if (!Controller.web3authInstance) {
+    // force recreate web3authInstance to set sessionNamespace to provider.
+    // to avoid wrong account from cache when connect with different provider.
+    // because web3auth caches last account per sessionNamespace rather than per provider.
+    // if (!Controller.web3authInstance) {
+    {
       if (this.web3AuthEnabled && !this.web3AuthClientId) {
         throw new Error('Web3Auth Client ID is not configured.')
       }
@@ -168,11 +179,19 @@ export class Controller extends State {
             config: { chainConfig }
           }),
           loginSettings: {
+            mfaLevel: 'none',
             extraLoginOptions: {
               domain: 'https://auth.doid.tech'
             }
           },
           adapterSettings: {
+            sessionNamespace: options.doidNetwork?.name + provider,
+            whiteLabel: {
+              appName: options.appName,
+              logoDark: 'https://doid.tech/logo.svg',
+              logoLight: 'https://doid.tech/logo.svg',
+              theme: { primary: '#FFF' }
+            },
             loginConfig: {
               twitter: {
                 verifier: 'doid-auth0',
@@ -185,6 +204,18 @@ export class Controller extends State {
                 typeOfLogin: 'jwt',
                 verifierSubIdentifier: 'github',
                 clientId: 'R2WBTkKbr25H373Xapi38hyl9AsOgbsI'
+              },
+              facebook: {
+                verifier: 'doid-auth0',
+                typeOfLogin: 'facebook',
+                verifierSubIdentifier: 'facebook',
+                clientId: '402488142221460'
+              },
+              more: {
+                verifier: 'doid-auth0',
+                typeOfLogin: 'jwt',
+                verifierSubIdentifier: 'other',
+                clientId: 'dfXudeV0HvdftL0oYUJMTQRkq3inje2Q'
               }
             }
           }
@@ -392,7 +423,7 @@ export class Controller extends State {
       }
     })
     this.connector = connector
-    this.lastConnector = connector ? connector?.loginParams?.loginProvider ?? connector?.id : ''
+    this.lastConnector = connector ? connector.options.loginParams?.loginProvider ?? connector.id : ''
   }
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorState> {

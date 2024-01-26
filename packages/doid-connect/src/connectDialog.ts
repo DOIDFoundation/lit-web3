@@ -21,7 +21,7 @@ import { doidSvg } from './assets/svg/doid'
 import { ErrNotRegistered, controller, StateController } from './controller'
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import { options } from './options'
-import { doidTestnet } from './chains'
+import { doid } from './chains'
 import commonCSS from './assets/css'
 
 const shortAddress = (address?: string, { leftLen = 6, rightLen = 4 } = {}) => {
@@ -134,27 +134,26 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
       ${ref(this.dialogRef)}
       class="${classMap(this.$c([options.themeMode == 'dark' ? 'sl-theme-dark' : 'sl-theme-light']))}"
     >
-      <div class="h-80">
-        <!-- Connector Selection -->
-        <div class="icon w-16 h-16 mx-auto mt-5 relative">
-          ${doidSvg}
-          ${when(
-            options.doidNetwork?.id == doidTestnet.id,
-            () => html`<sl-badge variant="danger" class="absolute text-xs -top-2 -right-12">testnet</sl-badge>`
-          )}
-        </div>
-        <!-- Signup mode -->
+      <div class="icon w-16 h-16 mx-auto mt-5 relative">
+        ${doidSvg}
         ${when(
-          this.inSignupMode,
-          () =>
-            html`<doid-signup
-              @abort=${this.back}
-              .label=${html`You need to register a DOID account for <b>${shortAddress(controller.account)}</b> to use
-                full services of this website.`}
-              @success=${this.onSuccess}
-            ></doid-signup>`,
-          this.renderConnect
+          options.doidNetwork?.id == doid.id,
+          () => html`<sl-badge class="neutral absolute text-xs -top-2 -right-10">beta</sl-badge>`,
+          () => html`<sl-badge class="danger absolute text-xs -top-2 -right-12">testnet</sl-badge>`
         )}
+      </div>
+      <!-- Signup mode -->
+      ${when(
+        this.inSignupMode,
+        () =>
+          html`<doid-signup
+            @abort=${this.back}
+            .label=${html`You need to register a DOID account for <b>${shortAddress(controller.account)}</b> to use full
+              services of this website.`}
+            @success=${this.onSuccess}
+          ></doid-signup>`,
+        this.renderConnect
+      )}
       </div>
     </sl-dialog>`
   }
