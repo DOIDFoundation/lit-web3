@@ -86,7 +86,7 @@ export class DOIDSignup extends TailwindElement([style]) {
     controller
       .registerDOID(this.inputRef.value?.value!)
       .then((name) => {
-        this.emit('signup', name)
+        this.emit('success', name)
       })
       .catch((err) => {
         this.registering = false
@@ -98,6 +98,7 @@ export class DOIDSignup extends TailwindElement([style]) {
         console.error(err)
       })
   }
+  abort = () => this.emit('abort')
 
   override render() {
     return html`
@@ -113,7 +114,7 @@ export class DOIDSignup extends TailwindElement([style]) {
           ${when(!this.showConnect, () => html`<p class="text-center">${this.label}</p>`)}
           <sl-input
             autocomplete="off"
-            class="mx-auto my-4 max-w-min name"
+            class="mx-auto my-5 max-w-min name"
             @sl-input=${this.checkName}
             ${ref(this.inputRef)}
             autofocus
@@ -132,7 +133,7 @@ export class DOIDSignup extends TailwindElement([style]) {
               <doid-connect-buttons ${ref(this.connectButtonsRef)}></doid-connect-buttons>
             `,
             () => html`
-              <div class="text-center">
+              <div class="relative flex w-full justify-center items-center">
                 <sl-button
                   type="submit"
                   variant="primary"
@@ -140,6 +141,7 @@ export class DOIDSignup extends TailwindElement([style]) {
                   class=${this.registering ? 'cursor-wait' : nothing}
                   >Register</sl-button
                 >
+                <a class="absolute text-xs -mr-40 cursor-pointer opacity-60 underline" @click=${this.abort}>Abort</a>
               </div>
             `
           )}

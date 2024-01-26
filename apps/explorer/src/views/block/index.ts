@@ -18,7 +18,6 @@ export class ViewHome extends ThemeElement(style) {
   connectedCallback(): void {
     super.connectedCallback()
     if (this.height) {
-      console.log(this.height)
       this.pending = true
       // decodeURIComponent(this.blockObj)
       // this.blocks = JSON.parse(decodeURIComponent(this.blockObj))

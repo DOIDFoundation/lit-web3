@@ -83,8 +83,8 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
         this.connecting = false
       })
       .catch((error) => {
-        console.debug(`Connect failed with error: '${error.message}'`)
         this.emit('error', error)
+        console.debug(`Connect failed with error: '${error.message}'`)
         this.connecting = false
       })
   }
