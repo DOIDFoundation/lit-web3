@@ -8,6 +8,7 @@ import {
 } from '@wagmi/core'
 import { options } from './options'
 import { State, property, storage } from '@lit-web3/base/state'
+import emitter from '@lit-web3/base/emitter'
 export { StateController } from '@lit-web3/base/state'
 import {
   Address,
@@ -60,7 +61,7 @@ export class Controller extends State {
   @property() public doid?: string
   @storage({ key: 'doid_last_connector' })
   @property()
-  private lastConnector?: string
+  lastConnector?: string
 
   public readonly web3AuthEnabled = true
   private get web3AuthClientId() {
@@ -307,15 +308,19 @@ export class Controller extends State {
 
   private async handleChange(connector: Connector, data: WagmiConnectorData) {
     if (this.connector?.id != connector!.id) return
+    const { account, chain } = data
 
-    if (data.chain) this.chainId = data.chain.id
+    if (chain) this.chainId = chain.id
 
     // update account and doid when changes
-    if (data.account && this.account != data.account) {
-      this.account = data.account
+    if (account && this.account != account) {
+      this.doid = await this.getDOID(account)
+      this.account = account
       this.updateAddresses(connector)
-      this.doid = await this.getDOID(data.account)
-      if (!this.doid) throw new ErrNotRegistered('Not registered', data.account!)
+      if (!this.doid) {
+        emitter.emit('doid-connect-nosignup', { account })
+        throw new ErrNotRegistered('Not registered', account)
+      } else emitter.emit('doid-connect-ok', { account, doid: this.doid })
     }
   }
 
@@ -330,7 +335,11 @@ export class Controller extends State {
 
   public getConnector() {
     if (!this.connector) {
-      const connector = this.buildConnector(this.lastConnector)
+      var connector = this.buildConnector(this.lastConnector)
+      if (!connector.ready) {
+        console.log(`DOID: last connector ${this.lastConnector} not found, fallback to injected`)
+        connector = this.buildConnector()
+      }
       if (!connector.ready) throw new ConnectorNotFoundError()
       this.resetStates(connector)
       this.updateChainId(connector)

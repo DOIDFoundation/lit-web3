@@ -259,6 +259,18 @@ importers:
         specifier: workspace:latest
         version: link:../../packages/router
 
+  apps/website:
+    dependencies:
+      '@lit-web3/base':
+        specifier: workspace:latest
+        version: link:../../packages/base
+      '@lit-web3/dui':
+        specifier: workspace:latest
+        version: link:../../packages/dui
+      '@lit-web3/ethers':
+        specifier: workspace:latest
+        version: link:../../packages/ethers
+
   packages/base:
     dependencies:
       '@lit-app/state':
