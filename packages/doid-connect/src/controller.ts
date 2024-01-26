@@ -335,7 +335,11 @@ export class Controller extends State {
 
   public getConnector() {
     if (!this.connector) {
-      const connector = this.buildConnector(this.lastConnector)
+      var connector = this.buildConnector(this.lastConnector)
+      if (!connector.ready) {
+        console.log(`DOID: last connector ${this.lastConnector} not found, fallback to injected`)
+        connector = this.buildConnector()
+      }
       if (!connector.ready) throw new ConnectorNotFoundError()
       this.resetStates(connector)
       this.updateChainId(connector)
