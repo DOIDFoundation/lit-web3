@@ -19,10 +19,11 @@ export let options: ConfigOptions = {
   doidNetwork: doid
 }
 
-/* @__PURE__ */
-if (import.meta?.env?.MODE !== 'production') {
-  options.doidNetwork = doidTestnet
-}
+// remove this as import.meta.env only effects while building
+// /* @__PURE__ */
+// if (import.meta?.env?.MODE !== 'production') {
+//   options.doidNetwork = doidTestnet
+// }
 
 export function updateOptions(opts: ConfigOptions) {
   Object.assign(options, opts)
