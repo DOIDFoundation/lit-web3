@@ -19,7 +19,8 @@ export let options: ConfigOptions = {
   doidNetwork: doid
 }
 
-if (import.meta && import.meta.env?.MODE !== 'production') {
+/* @__PURE__ */
+if (import.meta?.env?.MODE !== 'production') {
   options.doidNetwork = doidTestnet
 }
 

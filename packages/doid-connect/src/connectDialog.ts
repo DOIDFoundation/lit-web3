@@ -63,19 +63,7 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
   }
 
   protected shouldUpdate(props: Map<PropertyKey, unknown>): boolean {
-    if (props.has('cur')) {
-      // Autoclose if changed account already signed up
-      const curAccount = (props.get('cur') as any)?.account
-      const changed = curAccount && curAccount !== controller.account
-      if (changed && controller.doid) {
-        this.emit('connect')
-        this.close()
-        return false
-      }
-    }
-    if (props.has('scene')) {
-      this.mode = this.scene
-    }
+    if (props.has('scene')) this.mode = this.scene
     return true
   }
 
@@ -91,12 +79,12 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
   unwatch = () => {}
   connectedCallback() {
     super.connectedCallback()
-    this.unwatch = controller.subscribe(
-      (key, val) => {
-        this.cur = { ...this.cur, [key]: val }
-      },
-      ['account', 'doid']
-    )
+    this.unwatch = controller.subscribe((_, val) => {
+      // Autoclose if changed account already signed up
+      if (this.inSignupMode && !controller.registering && val) {
+        this.onSuccess()
+      }
+    }, 'doid')
   }
   disconnectedCallback() {
     super.disconnectedCallback()

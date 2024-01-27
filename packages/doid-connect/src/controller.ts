@@ -367,6 +367,7 @@ export class Controller extends State {
     })
   }
 
+  registering = false
   public async registerDOID(name: string): Promise<string> {
     const doidChainId = Controller.doidClient.chain?.id!
     const connector = this.connector
@@ -381,20 +382,27 @@ export class Controller extends State {
       walletClient
     })
     const address = walletClient.account.address
-    const hash = await contract.write.register([name, address])
-    const receipt = await Controller.doidClient.waitForTransactionReceipt({ hash })
-    if (receipt.status === 'reverted') {
-      const txn = await Controller.doidClient.getTransaction({
-        hash: receipt.transactionHash
-      })
-      const code = (await Controller.doidClient.call({
-        ...txn,
-        gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
-        maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
-        maxPriorityFeePerGas: txn.type === 'eip1559' ? txn.maxPriorityFeePerGas : undefined
-      } as CallParameters)) as unknown as string
-      const reason = hexToString(`0x${code.substring(138)}`)
-      throw new Error(reason)
+    this.registering = true
+    try {
+      const hash = await contract.write.register([name, address])
+      const receipt = await Controller.doidClient.waitForTransactionReceipt({ hash })
+      if (receipt.status === 'reverted') {
+        const txn = await Controller.doidClient.getTransaction({
+          hash: receipt.transactionHash
+        })
+        const code = (await Controller.doidClient.call({
+          ...txn,
+          gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
+          maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
+          maxPriorityFeePerGas: txn.type === 'eip1559' ? txn.maxPriorityFeePerGas : undefined
+        } as CallParameters)) as unknown as string
+        const reason = hexToString(`0x${code.substring(138)}`)
+        throw new Error(reason)
+      }
+    } catch (err) {
+      throw err
+    } finally {
+      this.registering = false
     }
     const expect = name + '.doid'
     if ((await this.getDOID(address)) != expect) throw new Error(`fatal: ${address} is not resolved to ${expect}`)
