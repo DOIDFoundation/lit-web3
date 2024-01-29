@@ -261,6 +261,12 @@ importers:
 
   apps/website:
     dependencies:
+      '@doid/connect':
+        specifier: workspace:latest
+        version: link:../../packages/doid-connect
+      '@doid/connect-ethers':
+        specifier: workspace:latest
+        version: link:../../packages/doid-connect-ethers
       '@lit-web3/base':
         specifier: workspace:latest
         version: link:../../packages/base

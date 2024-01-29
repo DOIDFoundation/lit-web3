@@ -1,4 +1,4 @@
-import { ConfigOptions, options, updateChains, updateOptions } from './options'
+import { ConfigOptions, options, updateChains, updateChainId, updateOptions } from './options'
 import { controller } from './controller'
 import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
 import { DOIDConnectDialog } from './connectDialog'
@@ -97,6 +97,10 @@ export class DOIDConnector {
     const doidChainId = options.doidNetwork?.id
     updateOptions(opts)
     if (doidChainId != opts.doidNetwork?.id) controller.updateDoidClient()
+  }
+  public updateChainId = (chainId: number) => {
+    updateChainId(chainId)
+    if (options.doidNetwork?.id != chainId) controller.updateDoidClient()
   }
 
   public updateChains = updateChains
