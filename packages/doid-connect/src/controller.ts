@@ -73,9 +73,7 @@ export class Controller extends State {
     return options.doidNetwork?.id == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
   }
   public get web3AuthProviders(): (LOGIN_PROVIDER_TYPE | 'more')[] {
-    return options.doidNetwork?.id == doid.id
-      ? ['twitter', 'facebook', 'github', 'more']
-      : ['twitter', 'facebook', 'github', 'more']
+    return options.doidNetwork?.id == doid.id ? ['twitter', 'github', 'more'] : ['twitter', 'github', 'more']
   }
 
   private static doidClient: PublicClient
