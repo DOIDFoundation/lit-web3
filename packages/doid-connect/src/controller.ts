@@ -185,6 +185,8 @@ export class Controller extends State {
             }
           },
           adapterSettings: {
+            // safari blocks popup
+            uxMode: /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'redirect' : 'popup',
             sessionNamespace: options.doidNetwork?.name + provider,
             whiteLabel: {
               appName: options.appName,
