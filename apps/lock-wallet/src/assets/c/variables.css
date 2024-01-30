@@ -1,0 +1,48 @@
+:root {
+  --txt2: #c8c8c8;
+  --txt3: #f9d3a3;
+  --bg2: #fffbf6;
+  --bg3: #373737;
+  --bgDisabled: #a1a1a1;
+
+  --radius: 1rem;
+  --btn_radius: 0.25rem;
+
+  --a_color: #ff920f;
+  --a_hover_color: rgba(59, 130, 246, 0.88);
+  /* Overridable */
+  --textBase: var(--text-base, 14px);
+  --fontFamily: var(--font-family, 'Helvetica Neue', Arial, sans-serif);
+  --textColor: var(--text-color, rgb(55, 55, 55));
+  --headerH: var(--header-height, 60px);
+  --footerH: var(--footer-height, 60px);
+  --appMainH: calc(100vh - var(--headerH) - var(--footerH) - var(--networkWarnH, 0px));
+  --appMainBg: var(--app-main-bg, #fff);
+  /* Named colors */
+  --colorSecondary: var(--color-secondary, #1867c0);
+  --colorError: var(--color-error, #b00020);
+  --colorSuccess: var(--color-success, #4caf50);
+  --colorDark: var(--color-dark, #373737);
+  /* Buttons */
+  --btnBg: var(--btn-bg, #373737);
+  --btnBgHover: var(--btn-bg-hover, #1c1a1a);
+  --btnBgActive: var(--btn-bg-active, #373737);
+  --btnBgSecondary: var(--btn-bg-secondary, #1867c0);
+  --btnBgSecondaryHover: var(--btn-bg-secondary-hover, #2a73c5);
+  --btnBgSecondaryActive: var(--btn-bg-secondary-active, #4182cb);
+  --btnBgSuccess: var(--btn-bg-success, #4caf50);
+  --btnBgSuccessHover: var(--btn-bg-success-hover, #53b257);
+  --btnBgSuccessActive: var(--btn-bg-success-active, #60b864);
+  /* Forms */
+  --formBorderFocus: var(--btnBg);
+  /* DOIDs */
+  --doidLogoW: var(--doid-logo-w, 120px);
+  --doidLogoH: var(--doid-logo-h, 36px);
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --doidLogoW: var(--doid-logo-w, 60px);
+    --doidLogoH: var(--doid-logo-h, 21px);
+  }
+}

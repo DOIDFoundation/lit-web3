@@ -1,0 +1,25 @@
+{
+  "name": "@lit-web3/lock-wallet",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "dev": "vite --host --mode development",
+    "build": "vite build",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@doid/connect-ethers": "workspace:latest",
+    "@doid/core": "workspace:latest",
+    "@lit-web3/base": "workspace:latest",
+    "@lit-web3/dui": "workspace:latest",
+    "@lit-web3/ethers": "workspace:latest",
+    "@lit-web3/router": "workspace:latest",
+    "@types/qrcode": "^1.5.5",
+    "qrcode": "^1.5.3",
+    "viem": "^1.21.4"
+  },
+  "license": "MIT"
+}

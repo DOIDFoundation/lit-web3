@@ -1,0 +1,40 @@
+/*@import '@mdi/font/css/materialdesignicons.css'; */
+
+/* i.i {
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+  background: no-repeat center;
+  background-size: contain;
+} */
+/* .mdi {
+  font-family: 'Material Design Icons';
+  min-width: 1rem;
+  line-height: normal;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(-360deg);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+} */
+
+.token-icon {
+  @apply inline-flex justify-center items-center;
+  width: 1.3em;
+  height: 1.3em;
+  transform: scale(1.2);
+  background: url('../../assets/i/symbol/unknown.svg') no-repeat center;
+  &.ETH {
+    background-image: url('../../assets/i/symbol/ETH.svg');
+  }
+  &.FTM {
+    background-image: url('../../assets/i/symbol/FTM.svg');
+  }
+  &.DOID {
+    background-image: url('../../assets/i/symbol/DOID.svg');
+  }
+}
