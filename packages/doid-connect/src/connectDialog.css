@@ -19,11 +19,23 @@
     }
     sl-badge::part(base) {
       @apply bg-transparent border;
+    }
+    sl-badge.danger::part(base) {
       color: var(--sl-color-danger-600);
       border-color: var(--sl-color-danger-600);
+    }
+    sl-badge.neutral::part(base) {
+      color: var(--sl-color-neutral-600);
+      border-color: var(--sl-color-neutral-600);
     }
   }
   .sl-theme-dark .icon svg {
     fill: #d4d4d4;
+  }
+  a {
+    color: var(--sl-color-primary-600);
+    &:hover {
+      @apply underline;
+    }
   }
 }

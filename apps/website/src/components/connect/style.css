@@ -1,0 +1,11 @@
+.connect-btn {
+  @apply inline-flex justify-center items-center w-44 h-12 lg_w-80 lg_h-16 text-base lg_text-xl bg-white;
+  color: var(--bgColor);
+  font-family: var(--font-base);
+  &.hoverable {
+    @apply cursor-pointer;
+    &:hover {
+      @apply bg-white/95;
+    }
+  }
+}

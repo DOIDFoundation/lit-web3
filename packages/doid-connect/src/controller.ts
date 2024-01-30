@@ -8,6 +8,8 @@ import {
 } from '@wagmi/core'
 import { options } from './options'
 import { State, property, storage } from '@lit-web3/base/state'
+import emitter from '@lit-web3/base/emitter'
+export { StateController } from '@lit-web3/base/state'
 import {
   Address,
   CallParameters,
@@ -59,7 +61,7 @@ export class Controller extends State {
   @property() public doid?: string
   @storage({ key: 'doid_last_connector' })
   @property()
-  private lastConnector?: string
+  lastConnector?: string
 
   public readonly web3AuthEnabled = true
   private get web3AuthClientId() {
@@ -70,7 +72,9 @@ export class Controller extends State {
   private get web3AuthNetwork() {
     return options.doidNetwork?.id == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
   }
-  public readonly web3AuthProviders: LOGIN_PROVIDER_TYPE[] = ['twitter', 'github']
+  public get web3AuthProviders(): (LOGIN_PROVIDER_TYPE | 'more')[] {
+    return options.doidNetwork?.id == doid.id ? ['twitter', 'github', 'more'] : ['twitter', 'github', 'more']
+  }
 
   private static doidClient: PublicClient
 
@@ -96,12 +100,15 @@ export class Controller extends State {
         return new WalletConnectConnector({
           chains: options.chains,
           options: {
-            projectId: options.walletConnectId!
+            projectId: options.walletConnectId!,
+            metadata: {
+              name: options.appName ?? 'DOID'
+            }
           }
         })
       default:
         if (type && type != 'injected') {
-          if (this.web3AuthEnabled && type in this.web3AuthProviders) {
+          if (this.web3AuthEnabled && this.web3AuthProviders.includes(type)) {
             return this.web3AuthConnector(type as LOGIN_PROVIDER_TYPE)
           }
           console.warn(`Unsupported connector type: ${type}`)
@@ -134,7 +141,11 @@ export class Controller extends State {
 
   private static web3authInstance: Web3AuthNoModal
   public web3AuthConnector(provider: LOGIN_PROVIDER_TYPE) {
-    if (!Controller.web3authInstance) {
+    // force recreate web3authInstance to set sessionNamespace to provider.
+    // to avoid wrong account from cache when connect with different provider.
+    // because web3auth caches last account per sessionNamespace rather than per provider.
+    // if (!Controller.web3authInstance) {
+    {
       if (this.web3AuthEnabled && !this.web3AuthClientId) {
         throw new Error('Web3Auth Client ID is not configured.')
       }
@@ -166,11 +177,21 @@ export class Controller extends State {
             config: { chainConfig }
           }),
           loginSettings: {
+            mfaLevel: 'none',
             extraLoginOptions: {
               domain: 'https://auth.doid.tech'
             }
           },
           adapterSettings: {
+            // safari blocks popup
+            uxMode: /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'redirect' : 'popup',
+            sessionNamespace: options.doidNetwork?.name + provider,
+            whiteLabel: {
+              appName: options.appName,
+              logoDark: 'https://doid.tech/logo.svg',
+              logoLight: 'https://doid.tech/logo.svg',
+              theme: { primary: '#FFF' }
+            },
             loginConfig: {
               twitter: {
                 verifier: 'doid-auth0',
@@ -183,6 +204,18 @@ export class Controller extends State {
                 typeOfLogin: 'jwt',
                 verifierSubIdentifier: 'github',
                 clientId: 'R2WBTkKbr25H373Xapi38hyl9AsOgbsI'
+              },
+              facebook: {
+                verifier: 'doid-auth0',
+                typeOfLogin: 'facebook',
+                verifierSubIdentifier: 'facebook',
+                clientId: '402488142221460'
+              },
+              more: {
+                verifier: 'doid-auth0',
+                typeOfLogin: 'jwt',
+                verifierSubIdentifier: 'other',
+                clientId: 'dfXudeV0HvdftL0oYUJMTQRkq3inje2Q'
               }
             }
           }
@@ -275,29 +308,38 @@ export class Controller extends State {
 
   private async handleChange(connector: Connector, data: WagmiConnectorData) {
     if (this.connector?.id != connector!.id) return
+    const { account, chain } = data
 
-    if (data.chain) this.chainId = data.chain.id
+    if (chain) this.chainId = chain.id
 
     // update account and doid when changes
-    if (data.account && this.account != data.account) {
-      this.account = data.account
+    if (account && this.account != account) {
+      this.doid = await this.getDOID(account)
+      this.account = account
       this.updateAddresses(connector)
-      this.doid = await this.getDOID(data.account)
-      if (!this.doid) throw new ErrNotRegistered('Not registered', data.account!)
+      if (!this.doid) {
+        emitter.emit('doid-connect-nosignup', { account })
+        throw new ErrNotRegistered('Not registered', account)
+      } else emitter.emit('doid-connect-ok', { account, doid: this.doid })
     }
   }
 
   private async handleConnect(connector: Connector, data: WagmiConnectorData): Promise<ConnectorState> {
     if (this.connector?.id != connector!.id) throw new Error('Connector has changed, abort.')
     if (this.providerChainChangedUnsubscribe) this.providerChainChangedUnsubscribe()
-    await this.handleChange(connector, data)
+    // update address first
     connector.on('change', this.handleChange.bind(this, connector))
+    await this.handleChange(connector, data)
     return { ...data, doid: this.doid }
   }
 
   public getConnector() {
     if (!this.connector) {
-      const connector = this.buildConnector(this.lastConnector)
+      var connector = this.buildConnector(this.lastConnector)
+      if (!connector.ready) {
+        console.log(`DOID: last connector ${this.lastConnector} not found, fallback to injected`)
+        connector = this.buildConnector()
+      }
       if (!connector.ready) throw new ConnectorNotFoundError()
       this.resetStates(connector)
       this.updateChainId(connector)
@@ -325,6 +367,7 @@ export class Controller extends State {
     })
   }
 
+  registering = false
   public async registerDOID(name: string): Promise<string> {
     const doidChainId = Controller.doidClient.chain?.id!
     const connector = this.connector
@@ -339,20 +382,27 @@ export class Controller extends State {
       walletClient
     })
     const address = walletClient.account.address
-    const hash = await contract.write.register([name, address])
-    const receipt = await Controller.doidClient.waitForTransactionReceipt({ hash })
-    if (receipt.status === 'reverted') {
-      const txn = await Controller.doidClient.getTransaction({
-        hash: receipt.transactionHash
-      })
-      const code = (await Controller.doidClient.call({
-        ...txn,
-        gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
-        maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
-        maxPriorityFeePerGas: txn.type === 'eip1559' ? txn.maxPriorityFeePerGas : undefined
-      } as CallParameters)) as unknown as string
-      const reason = hexToString(`0x${code.substring(138)}`)
-      throw new Error(reason)
+    this.registering = true
+    try {
+      const hash = await contract.write.register([name, address])
+      const receipt = await Controller.doidClient.waitForTransactionReceipt({ hash })
+      if (receipt.status === 'reverted') {
+        const txn = await Controller.doidClient.getTransaction({
+          hash: receipt.transactionHash
+        })
+        const code = (await Controller.doidClient.call({
+          ...txn,
+          gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
+          maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
+          maxPriorityFeePerGas: txn.type === 'eip1559' ? txn.maxPriorityFeePerGas : undefined
+        } as CallParameters)) as unknown as string
+        const reason = hexToString(`0x${code.substring(138)}`)
+        throw new Error(reason)
+      }
+    } catch (err) {
+      throw err
+    } finally {
+      this.registering = false
     }
     const expect = name + '.doid'
     if ((await this.getDOID(address)) != expect) throw new Error(`fatal: ${address} is not resolved to ${expect}`)
@@ -385,8 +435,7 @@ export class Controller extends State {
       }
     })
     this.connector = connector
-    console.log(connector)
-    this.lastConnector = connector ? connector?.loginParams?.loginProvider ?? connector?.id : ''
+    this.lastConnector = connector ? connector.options.loginParams?.loginProvider ?? connector.id : ''
   }
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorState> {

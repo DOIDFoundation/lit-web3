@@ -1,9 +1,10 @@
-import { ConfigOptions, options, updateChains, updateOptions } from './options'
+import { ConfigOptions, options, updateChains, updateChainId, updateOptions } from './options'
 import { controller } from './controller'
 import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
 import { DOIDConnectDialog } from './connectDialog'
 import { State, StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
+import emitter from '@lit-web3/base/emitter'
 
 export { type WalletClient } from '@wagmi/core'
 
@@ -97,28 +98,47 @@ export class DOIDConnector {
     updateOptions(opts)
     if (doidChainId != opts.doidNetwork?.id) controller.updateDoidClient()
   }
+  public updateChainId = (chainId: number) => {
+    updateChainId(chainId)
+    if (options.doidNetwork?.id != chainId) controller.updateDoidClient()
+  }
 
   public updateChains = updateChains
   public disconnect = controller.disconnect.bind(controller)
   public switchChain = controller.switchChain.bind(controller)
 
-  public async connect({
+  public connect = async ({
     chainId,
     noModal
   }: {
     chainId?: Chain['id']
     noModal?: boolean
-  } = {}): Promise<ConnectorData> {
+  } = {}): Promise<ConnectorData> => {
+    // Require signup
+    emitter.on('doid-connect-nosignup', (e: CustomEvent) => {
+      if (!this.#getDialog() && controller.getConnector()) this.showDialog(chainId, 'signup')
+    })
     if (noModal) return controller.connect({ chainId })
 
     return new Promise<ConnectorData>(async (resolve, reject) => {
-      await Promise.all([import('./connectDialog')])
-      const modal = document.createElement('doid-connect-dialog') as DOIDConnectDialog
-      modal.chainId = chainId
-      document.body.insertAdjacentElement('beforeend', modal)
+      const modal = await this.showDialog(chainId)
       modal.on('connect', (event: CustomEvent) => resolve(event.detail))
       modal.on('error', (event: CustomEvent) => reject(event.detail))
       modal.on('close', () => reject(new Error('User rejected the request.')))
     })
+  }
+
+  #tag = 'doid-connect-dialog'
+  #getDialog = (): DOIDConnectDialog | null => document.querySelector(this.#tag)
+  showDialog = async (chainId?: Chain['id'], scene = ''): Promise<DOIDConnectDialog> => {
+    let modal = this.#getDialog()
+    if (!modal) await import('./connectDialog')
+    if (!(modal = this.#getDialog())) {
+      modal = document.createElement(this.#tag) as DOIDConnectDialog
+      document.body.insertAdjacentElement('beforeend', modal)
+    }
+    modal.chainId = chainId
+    modal.scene = scene
+    return modal
   }
 }

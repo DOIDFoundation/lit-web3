@@ -1,0 +1,50 @@
+.footer-cnt {
+  @apply w-full lg_h-60 self-center;
+  /* background: url(~/assets/s7.svg) no-repeat top center; */
+  & .wrapper {
+    @apply max-w-screen-xl mx-4 lg_mx-auto;
+  }
+}
+.sub-ttl {
+  @apply border-b border-white pb-2;
+  font-family: var(--font-bd);
+  font-size: var(--title-font);
+}
+.text {
+  font-family: var(--font-base);
+}
+
+.btn1 {
+  font-family: var(--font-base);
+  @apply w-full h-12 lg_h-16 flex justify-center items-center text-base lg_text-2xl border border-white;
+  &:hover {
+    @apply bg-white;
+    color: var(--bgColor);
+  }
+}
+.sub-cnt {
+  @apply flex flex-row justify-between items-center;
+  height: var(--footer-btnsH);
+}
+.ico {
+  @apply block w-12 h-12 lg_w-16 lg_h-16 bg-no-repeat bg-cover border border-white;
+  &.i1 {
+    background-image: url(~/assets/i1.svg);
+  }
+  &.i2 {
+    background-image: url(~/assets/i2.svg);
+  }
+  &.i3 {
+    background-image: url(~/assets/i3.svg);
+  }
+  &.i4 {
+    background-image: url(~/assets/i4.svg);
+  }
+}
+
+.logo-ico {
+  @apply block bg-no-repeat bg-center;
+  width: 120px;
+  height: 40px;
+  background-image: url(~/assets/logo-icon.svg);
+}

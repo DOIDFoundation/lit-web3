@@ -12,6 +12,7 @@ import { appleSvg } from '../assets/svg/apple'
 import { facebookSvg } from '../assets/svg/facebook'
 import { twitterSvg } from '../assets/svg/twitter'
 import { githubSvg } from '../assets/svg/github'
+import { moreSvg } from '../assets/svg/more'
 import iconMetamask from '../assets/icons/metamask.svg?inline'
 import iconCoinbase from '../assets/icons/coinbase.svg?inline'
 import iconWalletConnect from '../assets/icons/walletconnect.svg?inline'
@@ -45,7 +46,7 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
     }
   }
 
-  getWeb3AuthIcon(provider: LOGIN_PROVIDER_TYPE) {
+  getWeb3AuthIcon(provider: LOGIN_PROVIDER_TYPE | 'more') {
     // @todo import from web3auth
     switch (provider) {
       case 'google':
@@ -58,6 +59,8 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
         return twitterSvg
       case 'github':
         return githubSvg
+      case 'more':
+        return moreSvg
       default:
         throw new Error(`Provider "${provider}" is not supported yet.`)
     }
@@ -83,8 +86,8 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
         this.connecting = false
       })
       .catch((error) => {
-        console.debug(`Connect failed with error: '${error.message}'`)
         this.emit('error', error)
+        console.debug(`Connect failed with error: '${error.message}'`)
         this.connecting = false
       })
   }

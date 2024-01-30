@@ -1,0 +1,239 @@
+:root {
+  --bgColor: #131313;
+  --logoW: 170px;
+  --logoH: 104px;
+  --navH: 90px;
+  --font-base: 'Fira Code', Helvetica, Arial, sans-serif;
+  --font-bd: 'Bruno Ace', Helvetica, Arial, sans-serif;
+  color-scheme: light dark;
+  color: #fff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --title-font: 32px;
+  --footer-btnsH: 140px;
+}
+
+* {
+  @apply p-0 m-0;
+}
+html {
+  background: var(--bgColor);
+}
+body {
+  @apply text-white;
+  font-family: var(--font-base);
+}
+a {
+  @apply text-white no-underline;
+}
+h1,
+h2 {
+  font-family: var(--font-bd);
+}
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  @apply bg-transparent bg-none border-none;
+}
+
+.btn {
+  font-family: var(--font-base);
+  @apply text-2xl;
+  &.outlined {
+    border: 1px solid white;
+    /* @apply border border-white; */
+    &:hover {
+      @apply bg-white;
+      color: var(--bgColor);
+    }
+  }
+}
+.nav-header {
+  @apply w-full box-border fixed flex justify-between px-[5%];
+  border-bottom: 1px solid #fff;
+  height: var(--navH);
+  background: var(--bgColor);
+}
+.logo {
+  @apply inline-block bg-top bg-no-repeat bg-contain;
+  width: var(--logoW);
+  height: var(--logoH);
+  background-color: var(--bgColor);
+  background-image: url('./src/assets/logo.svg');
+}
+.nav-left {
+  @apply flex justify-start items-start;
+}
+.nav-right {
+  @apply flex items-center;
+}
+nav.menu {
+  @apply hidden lg_inline-flex lg_gap-8 items-center;
+  & > * {
+    @apply h-full;
+    &:not(:last-child) {
+      &::after {
+        content: '/';
+        @apply absolute -right-5 top-2.5 lg_text-base opacity-70;
+      }
+    }
+  }
+  /* top link */
+  & > a,
+  & .dropdown > a {
+    @apply relative lg_text-lg p-2;
+    &:hover {
+      @apply opacity-80;
+    }
+  }
+  & .dropdown {
+    @apply py-2 px-0;
+    /* submenu */
+    & > .dropdown-menu {
+      @apply absolute py-2 pt-4 px-2 min-w-32;
+      top: 44px;
+      & > a {
+        @apply block text-base leading-10;
+      }
+    }
+    &.hoverable {
+      @apply relative;
+      & > .dropdown-menu {
+        @apply hidden;
+        background: var(--bgColor);
+        & > a:hover {
+          @apply opacity-80;
+        }
+      }
+      &:hover {
+        & > .dropdown-menu {
+          @apply block;
+        }
+      }
+      & > a {
+        &:hover {
+          & + .dropdown-menu {
+            @apply block;
+          }
+        }
+      }
+    }
+  }
+}
+
+#mobi-btn {
+  @apply md_hidden flex ml-2 p-2 pr-0;
+  & .img_icon {
+    @apply w-8 h-8 bg-no-repeat bg-center bg-auto leading-4;
+    background-image: url(~/assets/i5.svg);
+  }
+  &.opened {
+    @apply z-50;
+    & .img_icon {
+      background-image: url(~/assets/i6.svg);
+    }
+    & + .menu-body {
+      @apply !block;
+    }
+  }
+}
+.menu-body {
+  @apply hidden w-full h-full fixed left-0 top-0 overflow-x-hidden overscroll-y-contain overflow-y-hidden;
+  padding-top: var(--navH);
+  &.show {
+    @apply block fixed z-20;
+  }
+  &::before {
+    content: '';
+    @apply block absolute top-0 left-0 w-full h-full bg-transparent;
+  }
+  &.overlay {
+    &::before {
+      @apply bg-black/30 -z-10;
+    }
+  }
+  & .menu-content {
+    @apply w-full h-full flex flex-col justify-center items-center;
+    background: var(--bgColor);
+    & .nav-links {
+      @apply w-full flex flex-col;
+      & > a {
+        @apply p-4 mb-0.5 bg-white;
+        color: var(--bgColor);
+      }
+    }
+    & .nav-community {
+      @apply mt-6 flex divide-y-2 divide-blue-200 text-xs gap-1;
+      & > a {
+        @apply block px-2;
+        &:not(:last-child) {
+          border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+        }
+      }
+    }
+  }
+}
+.wrapper {
+  @apply w-full mx-4 lg_mx-auto;
+}
+.sliders {
+  @apply w-full overflow-y-scroll;
+
+  & .slider {
+    @apply w-full flex items-center justify-center;
+    & .wrapper {
+      @apply w-full max-w-full lg_max-w-screen-xl lg_mx-auto flex items-center justify-center;
+      padding-top: var(--navH);
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --logoW: 68px;
+    --logoH: 84px;
+    --navH: 65px;
+    --title-font: 20px;
+    --footer-btnsH: 120px;
+  }
+  .logo {
+    @apply z-30;
+    background-image: url('./src/assets/logo-m.svg');
+  }
+  .sliders {
+    & .slider {
+      &:first-child {
+        margin-top: var(--navH);
+      }
+      &:nth-last-child(1) {
+        margin-bottom: var(--navH);
+      }
+      & .wrapper {
+        @apply pt-20 pb-8;
+
+        & img {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .sliders {
+    @apply h-screen;
+    scroll-snap-type: y mandatory;
+    & .slider {
+      @apply !h-screen;
+      & :not(last-child) {
+        scroll-snap-align: start;
+      }
+      & .wrapper {
+        @apply h-screen;
+      }
+    }
+  }
+}
