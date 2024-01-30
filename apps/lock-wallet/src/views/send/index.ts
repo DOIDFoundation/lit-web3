@@ -1,11 +1,15 @@
 import { customElement, ThemeElement, html, state, ref, when, property } from '@lit-web3/dui/shared/theme-element'
-import { bridgeStore, StateController, getNativeBalance, getContract, getBridgeProvider, getWalletAccount } from '~/ethers/useBridge'
+import { bridgeStore, StateController, getNativeBalance, getContract, getBridgeProvider, getWalletAccount, getSigner } from '~/ethers/useBridge'
 
 import { parseEther } from 'ethers'
 import { goto } from '@lit-web3/router'
 import '@lit-web3/dui/input/text'
 import '@lit-web3/dui/button/index'
+import '@lit-web3/dui/tip'
+import '@lit-web3/dui/dialog'
+import '~/components/tx-state'
 import style from './index.css?inline'
+import { getList } from '~/components/tokenlist/tokens'
 
 
 @customElement('view-send')
@@ -16,11 +20,17 @@ export class Send extends ThemeElement(style) {
   @property() default?: string
   @property({ type: Boolean }) entire = false
   @state() toAddress = ''
+  @state() amount = 0
   @state() err = ''
   @state() pending = false
   @state() nativeBalance = '0'
-
+  @state() tokenList: any = []
+  @state() selectToken: any = {}
+  @state() dialog = false
+  @state() txDialog = false
+  @state() tx: any = null
   get account() {
+    this.getTokens()
     return bridgeStore.bridge.account
   }
 
@@ -45,43 +55,75 @@ export class Send extends ThemeElement(style) {
   gotoHome() {
     goto(`/`)
   }
+  async getTokens() {
+    this.tokenList = await getList()
+    this.selectToken = this.tokenList.filter((item: any) => item.symbol === this.tokenName)[0]
+    console.log(this.selectToken, '----');
+  }
   onInput = async (e: CustomEvent) => {
     // const { val, error, msg } = await this.validateDOIDName(e)
     // this.err = msg
     // if (error) return
     this.toAddress = e.detail
   }
+  onInputVal = async (e: CustomEvent) => {
+    this.amount = e.detail
+  }
   async send() {
-    const v = 1.5
-    const val = parseEther(v.toString())
-    console.log('0x' + val.toString(16))
-    if (window.ethereum) {
-      const params = [
-        {
-          from: '0x54D52253E5f7b375DE24aBF66f6553763Ada566b',
-          to: '0x54D52253E5f7b375DE24aBF66f6553763Ada566b',
-          // gas: '0x76c0', // 30400
-          // gasPrice: '0x9184e72a000', // 10000000000000
-          value: val.toString(16),
-          // data:
-          //   '0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675',
-        },
-      ];
-      window.ethereum
-        .request({
-          method: 'eth_sendTransaction',
-          params,
-        })
-        .then((result: any) => {
-          console.log(result, '---');
-        })
-        .catch((error: any) => {
-          console.log(error);
-        });
+    const signer = await getSigner()
+    if (!this.toAddress.trim()) {
+      this.dialog = true
+      this.err = 'Input Recipient address'
+      return
+    }
+    if (this.amount <= 0) {
+      this.dialog = true
+      this.err = 'Input Amount'
+      return
+    }
+    if (this.account) {
+      const val = parseEther(this.amount.toString())
+      const params =
+      {
+        from: this.account,
+        to: this.toAddress,
+        // gas: '0x76c0', // 30400
+        // gasPrice: '0x9184e72a000', // 10000000000000
+        value: val,
+        // data:
+        //   '0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675',
+      }
+      try {
+        this.pending = true
+        this.tx = await signer.sendTransaction(params)
+        this.tx.status = 2
+        this.txDialog = true
+        await this.tx.wait()
+        // console.log(this.tx);
+        this.tx.status = 1
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.txDialog = false
+        this.pending = false
+      }
+
+      // window.ethereum
+      //   .request({
+      //     method: 'eth_sendTransaction',
+      //     params,
+      //   })
+      //   .then((result: any) => {
+      //     console.log(result, '---');
+      //   })
+      //   .catch((error: any) => {
+      //     console.log(error);
+      //   });
     }
   }
   connectedCallback(): void {
     super.connectedCallback()
+    this.getTokens()
   }
   render() {
     return html`
@@ -110,22 +152,22 @@ export class Send extends ThemeElement(style) {
           </div>
           <div class="flex justify-between">
             <div class="pl-2 text-gray-300">Amount</div>
-            <div>Max:0 ETH</div>
+            <div>Max:${this.selectToken.balance} ETH</div>
           </div>
           <div class="flex -mt-4">
             <div class="basis-1/3 py-5 flex pr-4">
               <div class="rounded-md border border-gray-500 flex items-center px-2 w-full">
               <div class="rounded-full border  p-2 w-8 h-8 flex justify-center items-center">
-                <i class="token-icon ETH"></i>
+                <i class="token-icon ${this.selectToken.symbol}"></i>
               </div>
-                <div class="mx-2">ETH</div>
+                <div class="mx-2">${this.selectToken.symbol}</div>
                 <div><i class="mdi mdi-menu-down"></i></div>
               </div>
             </div>
             <div class="basis-2/3">
               <dui-input-text
-                  @input=${this.onInput}
-                  value=${this.toAddress}
+                  @input=${this.onInputVal}
+                  value=${this.amount}
                   placeholder="amount"
                   ?disabled=${this.pending}
                 >
@@ -134,10 +176,28 @@ export class Send extends ThemeElement(style) {
           </div>
 
           <div class="mt-4">
-            <dui-button class="w-full">Send</dui-button>
+            <dui-button class="w-full" @click="${() => this.send()}" ?disabled=${this.pending}>${when(this.pending, () => html`<i class="mdi mdi-loading"></i>`, () => html`Send`)}</dui-button>
+          </div>
+          <div>
+            ${when(
+      this.dialog,
+      () =>
+        html`<dui-prompt @close="${() => this.dialog = false}">
+                  <div class="text-red-900 text-center">${this.err}</div>
+                </dui-prompt>`
+    )}
           </div>
         </div>
+        ${when(
+      this.txDialog,
+      () =>
+        html`<dui-prompt @close="${() => this.dialog = false}">
+        <div class="text-center"><tx-state .tx=${this.tx}></tx-state></div>
+
+            </dui-prompt>`
+    )}
       </div>
+
     `
   }
 }

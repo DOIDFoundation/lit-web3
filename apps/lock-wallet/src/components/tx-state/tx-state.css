@@ -1,0 +1,19 @@
+:host {
+}
+.tx-state {
+  @apply items-center grow;
+}
+.tx-state-icon {
+  &.success {
+    color: green;
+  }
+  &.failed {
+    color: red;
+  }
+  &.warn {
+    color: orange;
+  }
+}
+.tx-state-msg {
+  @apply break-words whitespace-normal;
+}

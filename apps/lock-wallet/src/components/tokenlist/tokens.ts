@@ -1,4 +1,5 @@
 import { getNetwork } from "~/ethers/networks"
+import { getAccount, getNativeBalance } from "~/ethers/useBridge"
 
 const tokenList = [
   {
@@ -107,7 +108,7 @@ const getList = async () => {
   const tokens = tokenList.filter((item: any) => {
     return item.networks[chainId].contract
   }).map((item: any) => {
-    return Object.assign(item, item.networks[chainId])
+    return Object.assign(item, item.networks[chainId], { balance: 0 })
   }).sort((a: any, b: any) => {
     if (a.contract === 'native') {
       return -1
@@ -115,7 +116,16 @@ const getList = async () => {
     return 0
   })
   console.log(tokens, 'tokens');
-
+  const account = await getAccount()
+  if (account) {
+    const nativeBalance = await getNativeBalance(account)
+    tokens.forEach((item: any) => {
+      if (item.contract === 'native') {
+        item.balance = nativeBalance
+      }
+    })
+  }
+  return tokens
 }
 
 export { getList }
