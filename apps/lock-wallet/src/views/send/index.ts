@@ -58,7 +58,7 @@ export class Send extends ThemeElement(style) {
   async getTokens() {
     this.tokenList = await getList()
     this.selectToken = this.tokenList.filter((item: any) => item.symbol === this.tokenName)[0]
-    console.log(this.selectToken, '----');
+    // console.log(this.selectToken, '----');
   }
   onInput = async (e: CustomEvent) => {
     // const { val, error, msg } = await this.validateDOIDName(e)
@@ -68,6 +68,9 @@ export class Send extends ThemeElement(style) {
   }
   onInputVal = async (e: CustomEvent) => {
     this.amount = e.detail
+  }
+  setMaxAmount = () => {
+    this.amount = this.selectToken.balance
   }
   async send() {
     const signer = await getSigner()
@@ -79,6 +82,11 @@ export class Send extends ThemeElement(style) {
     if (this.amount <= 0) {
       this.dialog = true
       this.err = 'Input Amount'
+      return
+    }
+    if (+this.amount > +this.selectToken.balance) {
+      this.dialog = true
+      this.err = 'Not enough balance to send! '
       return
     }
     if (this.account) {
@@ -101,24 +109,16 @@ export class Send extends ThemeElement(style) {
         await this.tx.wait()
         // console.log(this.tx);
         this.tx.status = 1
-      } catch (error) {
-        console.log(error)
+        this.amount = 0
+      } catch (error: any) {
+        this.dialog = true
+        this.err = error.toString()
       } finally {
         this.txDialog = false
         this.pending = false
-      }
+        this.getTokens()
 
-      // window.ethereum
-      //   .request({
-      //     method: 'eth_sendTransaction',
-      //     params,
-      //   })
-      //   .then((result: any) => {
-      //     console.log(result, '---');
-      //   })
-      //   .catch((error: any) => {
-      //     console.log(error);
-      //   });
+      }
     }
   }
   connectedCallback(): void {
@@ -150,9 +150,9 @@ export class Send extends ThemeElement(style) {
               </span> -->
           </dui-input-text>
           </div>
-          <div class="flex justify-between">
+          <div class="flex justify-between z-10 relative">
             <div class="pl-2 text-gray-300">Amount</div>
-            <div>Max:${this.selectToken.balance} ETH</div>
+            <div @click="${() => this.setMaxAmount()}" class="cursor-pointer text-blue">Max:${this.selectToken.balance} ${this.selectToken.symbol}</div>
           </div>
           <div class="flex -mt-4">
             <div class="basis-1/3 py-5 flex pr-4">

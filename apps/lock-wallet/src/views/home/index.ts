@@ -1,8 +1,9 @@
-import { ThemeElement, html, customElement, state } from '@lit-web3/dui/shared/theme-element'
+import { ThemeElement, html, customElement, state, when } from '@lit-web3/dui/shared/theme-element'
 import { bridgeStore, StateController, getNativeBalance, getContract, getBridgeProvider } from '~/ethers/useBridge'
 import { goto } from '@lit-web3/router'
 // Components
 import '~/components/tokenlist/index'
+import '@lit-web3/dui/copy/icon'
 import style from './home.css?inline'
 @customElement('view-home')
 export class ViewHome extends ThemeElement(style) {
@@ -42,16 +43,19 @@ export class ViewHome extends ThemeElement(style) {
   connectedCallback(): void {
     super.connectedCallback()
     this.getNativeBalance()
-    console.log(this.network);
 
   }
   render() {
     return html`<div class="home pt-10  min-h-[600px]">
       <div class="text-center">
+        ${when(this.account, () => html`
         <div class="inline-block rounded-full bg-blue-100 px-4 py-2 cursor-pointer">
           <span>${this.addr}</span>
-          <i class="mdi mdi-content-copy ml-2"></i>
+          <dui-copy-icon .value=${this.account}></dui-copy-icon>
+          <!-- <i class="mdi mdi-content-copy ml-2"></i> -->
         </div>
+        `)}
+
       </div>
       <div class="text-center text-gray-500 mt-3">Balance</div>
       <div class="mt-1 font-bold text-lg text-center">

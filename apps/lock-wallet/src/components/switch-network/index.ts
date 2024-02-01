@@ -2,6 +2,7 @@ import { customElement, ThemeElement, html, state, repeat, when, classMap } from
 // import { bridgeStore, StateController } from '../../ethers/useBridge'
 // import emitter from '@lit-web3/base/emitter'
 import { Networks } from '~/ethers/networks'
+import { SupportNetworks } from '~/ethers/constants/networks'
 import { bridgeStore, StateController } from '~/ethers/useBridge'
 // Components
 import '@lit-web3/dui/menu/drop'
@@ -30,6 +31,7 @@ export class switchNetwork extends ThemeElement(style) {
     return this.current?.native
   }
   async switch(network: NetworkInfo) {
+    if (!SupportNetworks.includes(network.chainId)) return
     this.menu = false
     this.pending = true
     try {
@@ -55,7 +57,7 @@ export class switchNetwork extends ThemeElement(style) {
         btnClass="text"
       >
         <div slot="button" class="inline-flex justify-center items-center">
-        <i class="network-icon ${classMap(this.$c([this.native?.symbol]))}"></i>
+        <i class="token-icon ${classMap(this.$c([this.native?.symbol]))}"></i>
         </div>
         <ul class="dui-option">
 
@@ -63,7 +65,7 @@ export class switchNetwork extends ThemeElement(style) {
       this.networks,
       (network) =>
         html`
-            <li @click="${() => this.switch(network)}" class="text-base ${classMap({ active: network.chainId === this.current.chainId })}"><i class="network-icon ${classMap(this.$c([network.native?.symbol]))}"></i>
+            <li @click="${() => this.switch(network)}" class="text-base  ${classMap({ active: network.chainId === this.current.chainId, 'bg-gray-50 !cursor-not-allowed': !SupportNetworks.includes(network.chainId) })}"><i class="token-icon ${classMap(this.$c([network.native?.symbol]))}"></i>
                 ${network.title}</li>
             `
     )}

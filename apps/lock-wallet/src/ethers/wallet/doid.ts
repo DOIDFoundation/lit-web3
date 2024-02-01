@@ -32,7 +32,6 @@ export class DoidWallet extends State implements Wallet {
   private async init() {
     let { doid, doidTestnet, DOIDConnectorEthers } = await import('@doid/connect-ethers')
     this.connector = new DOIDConnectorEthers()
-    console.log(this.connector, 'this.connector')
     this.connector.updateChains([doid, doidTestnet, ETH, BSC])
     this.connector.updateOptions({
       themeMode: 'dark',

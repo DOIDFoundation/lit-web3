@@ -68,7 +68,7 @@ export class switchNetwork extends ThemeElement(style) {
       <div>
         ${this.tokenList.map((item: any) => {
       return html`
-          <div class="flex justify-between cursor-pointer" @click="${() => this.toSend(item)}">
+          <div class="flex justify-between cursor-pointer mb-2" @click="${() => this.toSend(item)}">
             <div class="flex items-center">
               <div class="rounded-full border p-2 w-12 h-12 flex justify-center items-center">
                 <i class="token-icon ${item.symbol}"></i>

@@ -27,14 +27,23 @@
   width: 1.3em;
   height: 1.3em;
   transform: scale(1.2);
-  background: url('../../assets/i/symbol/unknown.svg') no-repeat center;
+  background: url('../i/symbol/unknown.svg') no-repeat center;
   &.ETH {
-    background-image: url('../../assets/i/symbol/ETH.svg');
+    background-image: url('../i/symbol/ETH.svg');
   }
-  &.FTM {
-    background-image: url('../../assets/i/symbol/FTM.svg');
-  }
+  /*&.FTM {
+    background-image: url('../i/symbol/FTM.svg');
+  }*/
   &.DOID {
-    background-image: url('../../assets/i/symbol/DOID.svg');
+    background-image: url('../i/symbol/doidlogo.svg');
+  }
+  &.BNB {
+    background-image: url('../i/symbol/bnb.svg');
+  }
+  &.USDT {
+    background-image: url('../i/symbol/usdt.svg');
+  }
+  &.USDC {
+    background-image: url('../i/symbol/usdc.svg');
   }
 }

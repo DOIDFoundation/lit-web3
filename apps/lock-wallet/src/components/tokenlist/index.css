@@ -1,16 +1,1 @@
-.token-icon {
-  @apply inline-flex justify-center items-center;
-  width: 1.3em;
-  height: 1.3em;
-  transform: scale(1.2);
-  background: url('../../assets/i/symbol/unknown.svg') no-repeat center;
-  &.ETH {
-    background-image: url('../../assets/i/symbol/ETH.svg');
-  }
-  &.FTM {
-    background-image: url('../../assets/i/symbol/FTM.svg');
-  }
-  &.DOID {
-    background-image: url('../../assets/i/symbol/DOID.svg');
-  }
-}
+@import '~/assets/c/icon.css';

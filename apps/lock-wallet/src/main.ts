@@ -22,7 +22,7 @@ export class AppMain extends ThemeElement('') {
 
   render() {
     return html`
-    <div class="max-w-xl min-h-96 bg-white rounded-2xl mx-auto mt-10 p-6">
+    <div class="max-w-xl min-h-96 bg-white rounded-2xl mx-auto lg:mt-10 mt-0 p-6">
       <w-header></w-header>
       <main>
         <slot></slot>
