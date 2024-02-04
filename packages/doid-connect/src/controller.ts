@@ -73,21 +73,11 @@ export class Controller extends State {
   public newWagmiConfig() {
     this.unWatchFns.forEach((unWatch) => unWatch())
     this.unWatchFns = []
-    this.resetStates()
-    if (options.chains.find((x) => x.id == doid.id)) options.chains.push(doid)
+    if (!options.chains.find((x) => x.id == options.doidNetwork.id)) options.chains.push(options.doidNetwork)
     this._wagmiConfig = createConfig({
-      chains: [...(options.chains ?? []), doid, doidTestnet] as any,
+      chains: options.chains as any,
       connectors: [
-        ...(options.walletConnectEnabled
-          ? [
-              walletConnect({
-                projectId: options.walletConnectId!
-                // metadata: {
-                //   name: options.appName ?? 'DOID'
-                // }
-              })
-            ]
-          : []),
+        ...(options.walletConnectEnabled ? [walletConnect({ projectId: options.walletConnectId! })] : []),
         coinbaseWallet({ appName: options.appName ?? 'DOID' }),
         ...(this.web3AuthEnabled ? this.web3AuthProviders.map((provider) => this.web3AuthConnector(provider)) : [])
       ],

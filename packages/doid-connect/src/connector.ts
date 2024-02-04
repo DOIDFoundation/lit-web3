@@ -15,9 +15,8 @@ export class DOIDConnector {
    */
   constructor(host?: ReactiveControllerHost) {
     if (host) this.bindState(host)
-    // Require signup
+    // Require signup for auto reconnect, this is redundant, not good but works
     emitter.on('doid-connect-nosignup', (e: CustomEvent) => {
-      console.log(1)
       if (!this.#getDialog() && controller.getConnector()) this.showDialog(undefined, 'signup')
     })
   }
@@ -123,9 +122,7 @@ export class DOIDConnector {
     noModal?: boolean
   } = {}): Promise<ConnectorState> => {
     // Require signup
-    emitter.off('doid-connect-nosignup')
     emitter.on('doid-connect-nosignup', (e: CustomEvent) => {
-      console.log(2)
       if (!this.#getDialog() && controller.getConnector()) this.showDialog(chainId, 'signup')
     })
     if (noModal) return controller.reconnect()
