@@ -7,6 +7,7 @@
       --sl-input-border-width: 2px;
       sl-icon,
       doid-spinner,
+      img,
       svg {
         @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl;
       }
@@ -14,8 +15,11 @@
         @apply text-3xl;
         --track-width: 3px;
       }
+      img {
+        @apply w-6 h-6;
+      }
       svg {
-        @apply w-8 h-8;
+        @apply w-7 h-7;
       }
     }
   }

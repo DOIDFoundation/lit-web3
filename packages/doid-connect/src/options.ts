@@ -1,5 +1,4 @@
-import { Chain } from '@wagmi/core'
-import { doid, doidTestnet } from './chains'
+import { Chain, doid, doidTestnet } from './chains'
 
 export interface ConfigOptions {
   /** Name shown in connect dialog. */
@@ -14,7 +13,10 @@ export interface ConfigOptions {
   walletConnectId?: string
 }
 
-export let options: ConfigOptions = {
+export let options: {
+  chains: Chain[]
+  doidNetwork: Chain
+} & ConfigOptions = {
   chains: [doid, doidTestnet],
   doidNetwork: doid
 }

@@ -15,13 +15,12 @@ import '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/badge/badge'
 import '@shoelace-style/shoelace/dist/components/popup/popup.js'
-import { Chain } from '@wagmi/core'
 import style from './connectDialog.css?inline'
 import { doidSvg } from './assets/svg/doid'
 import { ErrNotRegistered, controller, StateController } from './controller'
 import SlDialog from '@shoelace-style/shoelace/dist/components/dialog/dialog.js'
 import { options } from './options'
-import { doid } from './chains'
+import { Chain, doid } from './chains'
 import commonCSS from './assets/css'
 
 const shortAddress = (address?: string, { leftLen = 6, rightLen = 4 } = {}) => {
@@ -105,7 +104,7 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
   }
   onSuccess = async () => {
     try {
-      const data = await controller.connect({ chainId: this.chainId })
+      const data = await controller.reconnect()
       this.emit('connect', data)
       this.close()
     } catch (err: any) {

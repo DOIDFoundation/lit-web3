@@ -1,41 +1,46 @@
 import {
+  Config,
+  connect,
   Connector,
-  ConnectorData as WagmiConnectorData,
-  InjectedConnector,
-  WalletClient,
-  SwitchChainNotSupportedError,
-  ConnectorNotFoundError
+  ConnectorAlreadyConnectedError,
+  createConfig,
+  CreateConnectorFn,
+  disconnect,
+  getConnections,
+  getConnectors,
+  getPublicClient,
+  getTransaction,
+  getWalletClient,
+  readContract,
+  reconnect,
+  switchChain,
+  waitForTransactionReceipt,
+  watchAccount,
+  watchChainId,
+  writeContract
 } from '@wagmi/core'
 import { options } from './options'
-import { State, property, storage } from '@lit-web3/base/state'
+import { State, property } from '@lit-web3/base/state'
 import emitter from '@lit-web3/base/emitter'
 export { StateController } from '@lit-web3/base/state'
-import {
-  Address,
-  CallParameters,
-  Chain,
-  EIP1193Provider,
-  PublicClient,
-  createPublicClient,
-  getContract,
-  hexToString,
-  http,
-  namehash,
-  parseAbi
-} from 'viem'
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect'
-import { MetaMaskConnector } from '@wagmi/core/connectors/metaMask'
-import { CoinbaseWalletConnector } from '@wagmi/core/connectors/coinbaseWallet'
-import { Web3AuthConnector } from '@web3auth/web3auth-wagmi-connector'
+import { Address, CallParameters, Chain, WalletClient, createClient, hexToString, http, namehash, parseAbi } from 'viem'
+import { coinbaseWallet, walletConnect } from '@wagmi/connectors'
 import { CHAIN_NAMESPACES } from '@web3auth/base'
 import { Web3AuthNoModal } from '@web3auth/no-modal'
 import { EthereumPrivateKeyProvider } from '@web3auth/ethereum-provider'
 import { LOGIN_PROVIDER_TYPE, OpenloginAdapter } from '@web3auth/openlogin-adapter'
-import { doid } from './chains'
+import { doid, doidTestnet } from './chains'
+import { web3auth } from './connector/web3auth'
 
-export type ConnectorState = WagmiConnectorData & {
+type WEB3_PROVIDER = LOGIN_PROVIDER_TYPE | 'more'
+
+export type ConnectorState = {
+  account: Address
+  chainId: number
   doid?: string
 }
+
+export { type Connector } from '@wagmi/core'
 
 export class ErrNotRegistered extends Error {
   public readonly account: Address
@@ -45,12 +50,8 @@ export class ErrNotRegistered extends Error {
   }
 }
 
-const metamask = 'metaMask'
-const coinbase = 'coinbaseWallet'
-const walletConnect = 'walletConnect'
-
 export class Controller extends State {
-  @property() private connector?: Connector
+  // @property() private connector?: Connector
   /** a list of addresses accessible */
   @property() public addresses?: Address[]
   /** connected account. */
@@ -59,9 +60,53 @@ export class Controller extends State {
   @property() public chainId?: Chain['id']
   /** DOID name of connected account. */
   @property() public doid?: string
-  @storage({ key: 'doid_last_connector' })
-  @property()
-  lastConnector?: string
+  // @storage({ key: 'doid_last_connector' })
+  // @property()
+  // lastConnector?: string
+
+  private _wagmiConfig?: Config
+  get wagmiConfig() {
+    return this._wagmiConfig ?? this.newWagmiConfig()
+  }
+
+  private unWatchFns: (() => void)[] = []
+  public newWagmiConfig() {
+    this.unWatchFns.forEach((unWatch) => unWatch())
+    this.unWatchFns = []
+    this.resetStates()
+    if (options.chains.find((x) => x.id == doid.id)) options.chains.push(doid)
+    this._wagmiConfig = createConfig({
+      chains: [...(options.chains ?? []), doid, doidTestnet] as any,
+      connectors: [
+        ...(options.walletConnectEnabled
+          ? [
+              walletConnect({
+                projectId: options.walletConnectId!
+                // metadata: {
+                //   name: options.appName ?? 'DOID'
+                // }
+              })
+            ]
+          : []),
+        coinbaseWallet({ appName: options.appName ?? 'DOID' }),
+        ...(this.web3AuthEnabled ? this.web3AuthProviders.map((provider) => this.web3AuthConnector(provider)) : [])
+      ],
+      client({ chain }) {
+        return createClient({ chain, transport: http() })
+      }
+    })
+    this.unWatchFns.push(
+      watchAccount(this._wagmiConfig, {
+        onChange: (data) => this.handleChange(data.address, data.addresses)
+      })
+    )
+    this.unWatchFns.push(
+      watchChainId(this._wagmiConfig, {
+        onChange: (data) => (this.chainId = data)
+      })
+    )
+    return this._wagmiConfig
+  }
 
   public readonly web3AuthEnabled = true
   private get web3AuthClientId() {
@@ -72,75 +117,16 @@ export class Controller extends State {
   private get web3AuthNetwork() {
     return options.doidNetwork?.id == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
   }
-  public get web3AuthProviders(): (LOGIN_PROVIDER_TYPE | 'more')[] {
+  public get web3AuthProviders(): WEB3_PROVIDER[] {
     return options.doidNetwork?.id == doid.id ? ['twitter', 'github', 'more'] : ['twitter', 'github', 'more']
   }
 
-  private static doidClient: PublicClient
-
-  constructor() {
-    super()
-    this.updateDoidClient()
-  }
-
-  public updateDoidClient() {
-    Controller.doidClient = createPublicClient({
-      chain: options.doidNetwork,
-      transport: http()
-    })
-  }
-
-  protected buildConnector(type?: string): Connector {
-    switch (type) {
-      case metamask:
-        return new MetaMaskConnector({ chains: options.chains })
-      case coinbase:
-        return new CoinbaseWalletConnector({ chains: options.chains, options: { appName: options.appName ?? 'DOID' } })
-      case walletConnect:
-        return new WalletConnectConnector({
-          chains: options.chains,
-          options: {
-            projectId: options.walletConnectId!,
-            metadata: {
-              name: options.appName ?? 'DOID'
-            }
-          }
-        })
-      default:
-        if (type && type != 'injected') {
-          if (this.web3AuthEnabled && this.web3AuthProviders.includes(type)) {
-            return this.web3AuthConnector(type as LOGIN_PROVIDER_TYPE)
-          }
-          console.warn(`Unsupported connector type: ${type}`)
-        }
-        const connector = new InjectedConnector({ chains: options.chains })
-        if (!connector.ready) {
-          return new CoinbaseWalletConnector({
-            chains: options.chains,
-            options: { appName: options.appName ?? 'DOID' }
-          })
-        }
-        return connector
-    }
-  }
-
-  public availableConnectors() {
-    let connectors: Connector[] = [this.buildConnector(metamask), this.buildConnector(coinbase)].filter(
-      (wallet) => wallet.ready
-    )
-    let injected = this.buildConnector()
-    if (injected.ready && connectors.findIndex((wallet) => wallet.name == injected.name) < 0) {
-      connectors.push(injected)
-    }
-    if (options.walletConnectEnabled) {
-      let wc = this.buildConnector(walletConnect)
-      if (wc.ready) connectors.push(wc)
-    }
-    return connectors
+  public availableConnectors(): readonly Connector[] {
+    return this.wagmiConfig.connectors
   }
 
   private static web3authInstance: Web3AuthNoModal
-  public web3AuthConnector(provider: LOGIN_PROVIDER_TYPE) {
+  private web3AuthConnector(provider: WEB3_PROVIDER): CreateConnectorFn {
     // force recreate web3authInstance to set sessionNamespace to provider.
     // to avoid wrong account from cache when connect with different provider.
     // because web3auth caches last account per sessionNamespace rather than per provider.
@@ -222,21 +208,17 @@ export class Controller extends State {
         })
       )
     }
-
-    return new Web3AuthConnector({
-      chains: options.chains,
-      options: {
-        web3AuthInstance: Controller.web3authInstance,
-        loginParams: {
-          loginProvider: provider
-        }
+    return web3auth({
+      web3AuthInstance: Controller.web3authInstance,
+      loginParams: {
+        loginProvider: provider
       }
     })
   }
 
   /** @returns is connector usable. */
   get ready(): boolean {
-    return (this.connector && this.connector?.ready) ?? false
+    return getConnections(this.wagmiConfig).length > 0
   }
 
   /** @returns connected with a valid DOID. */
@@ -245,78 +227,53 @@ export class Controller extends State {
   }
 
   protected get doidContractAddress(): Address {
-    return Controller.doidClient.chain?.contracts?.ensRegistry?.address!
+    return options.doidNetwork.contracts?.ensRegistry?.address!
   }
 
   public getAddresses(): Promise<Address[]> {
     if (this.addresses) return Promise.resolve(this.addresses)
-    this.getConnector()
-    return this.updateAddressesPromise ?? Promise.resolve([])
+    return this.reconnect().then(() => this.addresses ?? [])
   }
 
   public getChainId(): Promise<Chain['id']> {
     if (this.chainId) return Promise.resolve(this.chainId)
-    this.getConnector()
-    return this.updateChainIdPromise ?? Promise.reject('Failed to get chainId')
+    return this.reconnect().then(() => {
+      if (this.chainId) return this.chainId
+      throw new Error('Failed to get chainId')
+    })
   }
 
   public getDOID(address: Address): Promise<string> {
     const node = namehash(address.substring(2).toLowerCase() + '.addr.reverse')
     const abi = parseAbi(['function name(bytes32) view returns (string)'])
-    const contract = getContract({
+    return readContract(this.wagmiConfig, {
+      chainId: options.doidNetwork.id,
       address: this.doidContractAddress,
       abi,
-      publicClient: Controller.doidClient
+      functionName: 'name',
+      args: [node]
     })
-    return contract.read.name([node])
   }
 
   public getDOIDAddress(name: string): Promise<Address> {
     const node = namehash(name)
     const abi = parseAbi(['function addr(bytes32 node) view returns (address)'])
-    const contract = getContract({
+    return readContract(this.wagmiConfig, {
+      chainId: options.doidNetwork.id,
       address: this.doidContractAddress,
       abi,
-      publicClient: Controller.doidClient
+      functionName: 'addr',
+      args: [node]
     })
-    return contract.read.addr([node])
   }
 
-  private updateAddressesPromise?: Promise<Address[]>
-
-  private async updateAddresses(connector: Connector) {
-    const provider = (await connector.getProvider()) as EIP1193Provider
-    if (this.connector?.id != connector.id) return
-    this.updateAddressesPromise = provider.request({ method: 'eth_accounts' })
-    const accounts = await this.updateAddressesPromise
-    if (this.connector?.id == connector.id) {
-      this.addresses = accounts
-      this.updateAddressesPromise = undefined
-    }
-  }
-
-  private updateChainIdPromise?: Promise<number>
-
-  private async updateChainId(connector: Connector) {
-    this.updateChainIdPromise = connector.getChainId()
-    const chainId = await this.updateChainIdPromise
-    if (this.connector?.id == connector.id) {
-      this.chainId = chainId
-      this.updateChainIdPromise = undefined
-    }
-  }
-
-  private async handleChange(connector: Connector, data: WagmiConnectorData) {
-    if (this.connector?.id != connector!.id) return
-    const { account, chain } = data
-
-    if (chain) this.chainId = chain.id
-
+  private async handleChange(account?: Address, addresses?: readonly Address[]) {
     // update account and doid when changes
     if (account && this.account != account) {
       this.doid = await this.getDOID(account)
       this.account = account
-      this.updateAddresses(connector)
+      this.addresses = [...addresses!]
+      // this.updateAddresses(connector)
       if (!this.doid) {
         emitter.emit('doid-connect-nosignup', { account })
         throw new ErrNotRegistered('Not registered', account)
@@ -324,73 +281,49 @@ export class Controller extends State {
     }
   }
 
-  private async handleConnect(connector: Connector, data: WagmiConnectorData): Promise<ConnectorState> {
-    if (this.connector?.id != connector!.id) throw new Error('Connector has changed, abort.')
-    if (this.providerChainChangedUnsubscribe) this.providerChainChangedUnsubscribe()
-    // update address first
-    connector.on('change', this.handleChange.bind(this, connector))
-    await this.handleChange(connector, data)
-    return { ...data, doid: this.doid }
-  }
-
   public getConnector() {
-    if (!this.connector) {
-      var connector = this.buildConnector(this.lastConnector)
-      if (!connector.ready) {
-        console.log(`DOID: last connector ${this.lastConnector} not found, fallback to injected`)
-        connector = this.buildConnector()
-      }
-      if (!connector.ready) throw new ConnectorNotFoundError()
-      this.resetStates(connector)
-      this.updateChainId(connector)
-    }
-
-    return this.connector!
+    return getConnectors(this.wagmiConfig)[0]
   }
 
   public async getWalletClient(chainId?: number): Promise<WalletClient> {
-    const connector = this.connector ?? this.getConnector()
-    if (!chainId) chainId = this.chainId ?? (await connector.getChainId()) ?? options.chains?.[0].id
-    return await connector.getWalletClient({ chainId })
+    // const connector = this.connector ?? this.getConnector()
+    // if (!chainId) chainId = this.chainId ?? (await connector.getChainId()) ?? options.chains?.[0].id
+    await this.reconnect()
+    return await getWalletClient(this.wagmiConfig, { chainId })
   }
 
   /** Check status of a DOID name. @returns `available`|`registered`|`locked`|`reserved` */
   public checkDOID(name: string): Promise<string> {
     const abi = parseAbi(['function statusOfName(string _name) view returns (string status, address owner, uint id)'])
-    const contract = getContract({
+    return readContract(this.wagmiConfig, {
+      chainId: options.doidNetwork.id,
       address: this.doidContractAddress,
       abi,
-      publicClient: Controller.doidClient
-    })
-    return contract.read.statusOfName([name]).then((ret) => {
-      return ret[0]
-    })
+      functionName: 'statusOfName',
+      args: [name]
+    }).then((ret) => ret[0])
   }
 
   registering = false
   public async registerDOID(name: string): Promise<string> {
-    const doidChainId = Controller.doidClient.chain?.id!
-    const connector = this.connector
-    if (!connector) throw new Error('Not connected')
-    if ((await connector.getChainId()) != doidChainId) await connector.switchChain!(doidChainId)
-    const walletClient = await connector.getWalletClient({ chainId: doidChainId })
-
     const abi = parseAbi(['function register(string name, address owner)'])
-    const contract = getContract({
-      address: this.doidContractAddress,
-      abi,
-      walletClient
-    })
-    const address = walletClient.account.address
+    const address = this.account!
     this.registering = true
     try {
-      const hash = await contract.write.register([name, address])
-      const receipt = await Controller.doidClient.waitForTransactionReceipt({ hash })
+      const hash = await writeContract(this.wagmiConfig, {
+        chainId: options.doidNetwork.id,
+        address: this.doidContractAddress,
+        abi,
+        functionName: 'register',
+        args: [name, address]
+      })
+      const receipt = await waitForTransactionReceipt(this.wagmiConfig, { chainId: options.doidNetwork.id, hash })
       if (receipt.status === 'reverted') {
-        const txn = await Controller.doidClient.getTransaction({
+        const txn = await getTransaction(this.wagmiConfig, {
+          chainId: options.doidNetwork.id,
           hash: receipt.transactionHash
         })
-        const code = (await Controller.doidClient.call({
+        const code = (await getPublicClient(this.wagmiConfig, { chainId: options.doidNetwork.id })?.call({
           ...txn,
           gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
           maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
@@ -409,51 +342,56 @@ export class Controller extends State {
     return expect
   }
 
-  private providerChainChangedUnsubscribe: any
-
-  private resetStates(connector?: Connector) {
+  private resetStates() {
+    this.addresses = []
     this.account = undefined
     this.chainId = undefined
     this.doid = undefined
-    if (!connector) return
-    if (this.connector) this.connector.removeAllListeners()
-
-    this.updateAddresses(connector)
-    // not needed as only WalletConnect emits without any data
-    // connector.on('connect', this.handleConnect.bind(this, connector))
-    connector.on('disconnect', () => this.resetStates())
-    // handle network change before connected as connectors only emit change after connected.
-    if (this.providerChainChangedUnsubscribe) this.providerChainChangedUnsubscribe()
-    let onChainChanged = (chainId: string) => (this.chainId = parseInt(chainId))
-    connector.getProvider().then((provider) => {
-      if (this.connector?.id != connector!.id || !provider?.on) return
-      let p = provider as EIP1193Provider
-      p.on('chainChanged', onChainChanged)
-      this.providerChainChangedUnsubscribe = () => {
-        p.removeListener('chainChanged', onChainChanged)
-        this.providerChainChangedUnsubscribe = undefined
-      }
-    })
-    this.connector = connector
-    this.lastConnector = connector ? connector.options.loginParams?.loginProvider ?? connector.id : ''
   }
 
-  public connect({ chainId, connector }: { chainId?: Chain['id']; connector?: Connector }): Promise<ConnectorState> {
-    if (connector) this.resetStates(connector)
-    else connector = this.getConnector()
-    return connector.connect({ chainId }).then(this.handleConnect.bind(this, connector))
+  private reconnectPromise?: any
+  public reconnect(): Promise<ConnectorState> {
+    if (this.wagmiConfig.state.status == 'connected')
+      return Promise.resolve({
+        account: this.account!,
+        doid: this.doid,
+        chainId: this.chainId!
+      })
+    return (this.reconnectPromise ??= reconnect(this.wagmiConfig)
+      .then((connections) => {
+        if (connections.length == 0) return undefined
+        this.chainId = connections[0].chainId
+        this.handleChange(connections[0].accounts[0], connections[0].accounts)
+        return {
+          account: this.account,
+          doid: this.doid,
+          chainId: this.chainId
+        }
+      })
+      .finally(() => (this.reconnectPromise = undefined)))
+  }
+
+  public connect({ chainId, connector }: { chainId?: Chain['id']; connector: Connector }): Promise<ConnectorState> {
+    return connect(this.wagmiConfig, { chainId, connector })
+      .then((data) => {
+        this.chainId = data.chainId
+        return this.handleChange(data.accounts[0], data.accounts)
+      })
+      .catch((e) => {
+        if (!(e instanceof ConnectorAlreadyConnectedError)) throw e
+      })
+      .then(() => {
+        return { account: this.account!, chainId: this.chainId!, doid: this.doid }
+      })
   }
 
   public async disconnect() {
-    await this.connector?.disconnect()
+    await disconnect(this.wagmiConfig)
     this.resetStates()
   }
 
   public switchChain(chainId: number) {
-    const connector = this.connector
-    if (!connector) throw new Error('Not connected')
-    if (!connector?.switchChain) throw new SwitchChainNotSupportedError({ connector })
-    return connector?.switchChain(chainId)
+    return switchChain(this.wagmiConfig, { chainId })
   }
 }
 

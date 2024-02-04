@@ -6,24 +6,25 @@ import '@shoelace-style/shoelace/dist/components/button/button.js'
 import '@shoelace-style/shoelace/dist/components/icon/icon.js'
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js'
 import './spinner'
-import { controller } from '../controller'
+import { Connector, ConnectorState, controller } from '../controller'
+import { Chain } from '../chains'
 import { googleSvg } from '../assets/svg/google'
 import { appleSvg } from '../assets/svg/apple'
 import { facebookSvg } from '../assets/svg/facebook'
 import { twitterSvg } from '../assets/svg/twitter'
 import { githubSvg } from '../assets/svg/github'
 import { moreSvg } from '../assets/svg/more'
-import iconMetamask from '../assets/icons/metamask.svg?inline'
 import iconCoinbase from '../assets/icons/coinbase.svg?inline'
 import iconWalletConnect from '../assets/icons/walletconnect.svg?inline'
 import iconPuzzle from '../assets/icons/puzzle.svg?inline'
-import { LOGIN_PROVIDER_TYPE } from '@web3auth/openlogin-adapter'
-import { Chain, ConnectorData, Connector } from '@wagmi/core'
 import style from './connectButtons.css?inline'
 import { EventTypes, stopPropagation } from '../utils/events'
+import { TemplateResult } from 'lit'
+import { web3auth } from '../connector/web3auth'
+import { injected } from '@wagmi/core'
 
 export interface Events {
-  connect: EventTypes.DetailedEvent<ConnectorData>
+  connect: EventTypes.DetailedEvent<ConnectorState>
   error: EventTypes.DetailedEvent<Error>
 }
 
@@ -33,22 +34,17 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
   @state() connecting = false
   @state() connectingProvider = ''
 
-  getConnectorIcon(connector: any) {
+  getConnectorIcon(connector: any): TemplateResult {
+    if (connector.icon) return html`<img src="${connector.icon}" />`
+    var svg
     switch (connector.name) {
-      case 'MetaMask':
-        return iconMetamask
       case 'Coinbase Wallet':
-        return iconCoinbase
+        svg = iconCoinbase
+        break
       case 'WalletConnect':
-        return iconWalletConnect
-      default:
-        return iconPuzzle
-    }
-  }
-
-  getWeb3AuthIcon(provider: LOGIN_PROVIDER_TYPE | 'more') {
-    // @todo import from web3auth
-    switch (provider) {
+        svg = iconWalletConnect
+        break
+      // @todo import from web3auth
       case 'google':
         return googleSvg
       case 'apple':
@@ -62,13 +58,12 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
       case 'more':
         return moreSvg
       default:
-        throw new Error(`Provider "${provider}" is not supported yet.`)
+        svg = iconPuzzle
+        break
     }
+    return html`<sl-icon label="${connector.name}" src="${svg}"></sl-icon>`
   }
 
-  connectWeb3Auth = (provider: LOGIN_PROVIDER_TYPE) => {
-    return this.connect(controller.web3AuthConnector(provider))
-  }
   /**
    * Connect wallet wtih connector
    * @param {Connector} connector wagmi connector
@@ -78,7 +73,7 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
    */
   private connect = (connector: Connector) => {
     this.connecting = true
-    this.connectingProvider = connector.options.loginParams?.loginProvider ?? connector.name
+    this.connectingProvider = connector.uid
     return controller
       .connect({ chainId: this.chainId, connector })
       .then((result) => {
@@ -96,41 +91,23 @@ export class DOIDConnectButtons extends TailwindElement([style]) {
     return html`
       <div class="button-container">
         ${map(
-          controller.availableConnectors(),
+          [
+            ...controller.availableConnectors().filter((x) => (x.type == injected.type ? x : undefined)),
+            ...controller
+              .availableConnectors()
+              .filter((x) => (([web3auth.type, injected.type] as string[]).includes(x.type) ? undefined : x)),
+            ...controller.availableConnectors().filter((x) => (x.type == web3auth.type ? x : undefined))
+          ],
           (connector) => html`
             <sl-tooltip placement="bottom" content="${connector.name}" @sl-after-hide=${stopPropagation}>
               <sl-button circle size="medium" ?disabled=${this.connecting} @click=${() => this.connect(connector)}>
-                <sl-icon label="${connector.name}" src="${this.getConnectorIcon(connector)}"></sl-icon>
+                ${this.getConnectorIcon(connector)}
                 ${when(
-                  this.connecting && this.connectingProvider == connector.name,
+                  this.connecting && this.connectingProvider == connector.uid,
                   () => html`<doid-spinner></doid-spinner>`
                 )}
               </sl-button>
             </sl-tooltip>
-          `
-        )}
-        ${when(
-          controller.web3AuthEnabled,
-          () => html`
-            ${map(
-              controller.web3AuthProviders,
-              (provider) => html`
-                <sl-tooltip placement="bottom" content="${provider}" @sl-after-hide=${stopPropagation}>
-                  <sl-button
-                    size="medium"
-                    ?disabled=${this.connecting}
-                    circle
-                    @click=${() => this.connectWeb3Auth(provider)}
-                  >
-                    ${this.getWeb3AuthIcon(provider)}
-                    ${when(
-                      this.connecting && this.connectingProvider == provider,
-                      () => html`<doid-spinner></doid-spinner>`
-                    )}
-                  </sl-button>
-                </sl-tooltip>
-              `
-            )}
           `
         )}
       </div>

@@ -32,6 +32,8 @@ export class ViewHome extends ThemeElement('') {
   private walletClientUpdater: any
   connectedCallback(): void {
     super.connectedCallback()
+    options.doidNetwork = doidTestnet
+    options.appName = 'Connect Demo'
     const updateWalletClient = () => {
       if (!this.walletClientUpdater) {
         this.walletClientUpdater = this.doidConnector
@@ -68,8 +70,10 @@ export class ViewHome extends ThemeElement('') {
   }
 
   async getDOID(address: string) {
+    this.doidResult = this.ensResult = ''
     this.doidResult = (await this.doidConnectorEthers.getDOID(address)) ?? 'not found'
-    this.ensResult = (await this.doidConnectorEthers.getProvider(doidTestnet.id).lookupAddress(address)) ?? 'not found'
+    this.ensResult =
+      (await this.doidConnectorEthers.getProvider(options.doidNetwork.id).lookupAddress(address)) ?? 'not found'
   }
 
   render() {
@@ -127,7 +131,7 @@ export class ViewHome extends ThemeElement('') {
         </div>
         <div class="flex-auto">
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect with DOID connect button</h1>
-          <doid-connect-button ${ref(this.connectButtonRef)} appName="DOID Connect Demo"></doid-connect-button>
+          <doid-connect-button ${ref(this.connectButtonRef)}></doid-connect-button>
           <dui-button
             sm
             class="ml-2"

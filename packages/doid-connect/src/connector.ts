@@ -1,12 +1,12 @@
-import { ConfigOptions, options, updateChains, updateChainId, updateOptions } from './options'
-import { controller } from './controller'
-import { Address, Chain, ConnectorData, WalletClient } from '@wagmi/core'
+import { ConfigOptions, updateChains, updateChainId, updateOptions } from './options'
+import { ConnectorState, controller } from './controller'
+import { Address, Chain, WalletClient } from 'viem'
 import { DOIDConnectDialog } from './connectDialog'
 import { State, StateController } from '@lit-app/state'
 import { ReactiveControllerHost } from 'lit'
 import emitter from '@lit-web3/base/emitter'
 
-export { type WalletClient } from '@wagmi/core'
+export { type WalletClient } from 'viem'
 
 export class DOIDConnector {
   /**
@@ -15,6 +15,11 @@ export class DOIDConnector {
    */
   constructor(host?: ReactiveControllerHost) {
     if (host) this.bindState(host)
+    // Require signup
+    emitter.on('doid-connect-nosignup', (e: CustomEvent) => {
+      console.log(1)
+      if (!this.#getDialog() && controller.getConnector()) this.showDialog(undefined, 'signup')
+    })
   }
 
   /**
@@ -53,7 +58,7 @@ export class DOIDConnector {
   /** Check if connected with user selected connector. */
   get ready(): boolean {
     // try get a connector for the first time
-    if (!controller.ready) controller.getConnector()
+    if (!controller.ready) controller.reconnect()
     return controller.ready
   }
 
@@ -65,7 +70,7 @@ export class DOIDConnector {
   /** Get chain id of connected connector. */
   get chainId() {
     // try get chainId for the first time
-    if (!controller.ready) controller.getChainId()
+    if (!controller.ready) controller.reconnect()
     return controller.chainId
   }
 
@@ -94,16 +99,19 @@ export class DOIDConnector {
   }
 
   public updateOptions(opts: ConfigOptions) {
-    const doidChainId = options.doidNetwork?.id
     updateOptions(opts)
-    if (doidChainId != opts.doidNetwork?.id) controller.updateDoidClient()
+    controller.newWagmiConfig()
   }
   public updateChainId = (chainId: number) => {
     updateChainId(chainId)
-    if (options.doidNetwork?.id != chainId) controller.updateDoidClient()
+    controller.newWagmiConfig()
   }
 
-  public updateChains = updateChains
+  public updateChains = (chains: Chain[]) => {
+    updateChains(chains)
+    controller.newWagmiConfig()
+  }
+
   public disconnect = controller.disconnect.bind(controller)
   public switchChain = controller.switchChain.bind(controller)
 
@@ -113,14 +121,16 @@ export class DOIDConnector {
   }: {
     chainId?: Chain['id']
     noModal?: boolean
-  } = {}): Promise<ConnectorData> => {
+  } = {}): Promise<ConnectorState> => {
     // Require signup
+    emitter.off('doid-connect-nosignup')
     emitter.on('doid-connect-nosignup', (e: CustomEvent) => {
+      console.log(2)
       if (!this.#getDialog() && controller.getConnector()) this.showDialog(chainId, 'signup')
     })
-    if (noModal) return controller.connect({ chainId })
+    if (noModal) return controller.reconnect()
 
-    return new Promise<ConnectorData>(async (resolve, reject) => {
+    return new Promise<ConnectorState>(async (resolve, reject) => {
       const modal = await this.showDialog(chainId)
       modal.on('connect', (event: CustomEvent) => resolve(event.detail))
       modal.on('error', (event: CustomEvent) => reject(event.detail))
