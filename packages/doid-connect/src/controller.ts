@@ -74,6 +74,7 @@ export class Controller extends State {
     this.unWatchFns.forEach((unWatch) => unWatch())
     this.unWatchFns = []
     if (!options.chains.find((x) => x.id == options.doidNetwork.id)) options.chains.push(options.doidNetwork)
+    this.doid = undefined // reset doid because doid network may be changed
     this._wagmiConfig = createConfig({
       chains: options.chains as any,
       connectors: [
@@ -259,10 +260,11 @@ export class Controller extends State {
 
   private async handleChange(account?: Address, addresses?: readonly Address[]) {
     // update account and doid when changes
-    if (account && this.account != account) {
+    if (account && (!this.doid || this.account != account)) {
       this.doid = await this.getDOID(account)
       this.account = account
       this.addresses = [...addresses!]
+      console.debug(`[doid] connected with doid: '${this.doid}' (address: '${account}')`)
       // this.updateAddresses(connector)
       if (!this.doid) {
         emitter.emit('doid-connect-nosignup', { account })
@@ -341,24 +343,23 @@ export class Controller extends State {
 
   private reconnectPromise?: any
   public reconnect(): Promise<ConnectorState> {
-    if (this.wagmiConfig.state.status == 'connected')
-      return Promise.resolve({
-        account: this.account!,
-        doid: this.doid,
-        chainId: this.chainId!
-      })
-    return (this.reconnectPromise ??= reconnect(this.wagmiConfig)
-      .then((connections) => {
-        if (connections.length == 0) return undefined
-        this.chainId = connections[0].chainId
-        this.handleChange(connections[0].accounts[0], connections[0].accounts)
+    return (
+      this.wagmiConfig.state.status == 'connected'
+        ? this.handleChange(this.account!, this.addresses) // check doid again when already connected but doid is not registered
+        : (this.reconnectPromise ??= reconnect(this.wagmiConfig).then((connections) => {
+            if (connections.length == 0) throw new Error('No connection found')
+            this.chainId = connections[0].chainId
+            return this.handleChange(connections[0].accounts[0], connections[0].accounts)
+          }))
+    )
+      .then(() => {
         return {
           account: this.account,
           doid: this.doid,
           chainId: this.chainId
         }
       })
-      .finally(() => (this.reconnectPromise = undefined)))
+      .finally(() => (this.reconnectPromise = undefined))
   }
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector: Connector }): Promise<ConnectorState> {
@@ -369,19 +370,26 @@ export class Controller extends State {
       })
       .catch((e) => {
         if (!(e instanceof ConnectorAlreadyConnectedError)) throw e
+        // already connected
+        return (
+          chainId && chainId != this.chainId
+            ? this.switchChain(chainId).catch(console.warn) // switch chain when needed
+            : Promise.resolve()
+        ).then(() => this.handleChange(this.account, this.addresses)) // check doid again when already connected but doid is not registered
       })
       .then(() => {
         return { account: this.account!, chainId: this.chainId!, doid: this.doid }
       })
   }
 
-  public async disconnect() {
+  public async disconnect(): Promise<void> {
     await disconnect(this.wagmiConfig)
     this.resetStates()
   }
 
-  public switchChain(chainId: number) {
-    return switchChain(this.wagmiConfig, { chainId })
+  public switchChain(chainId: number): Promise<void> {
+    console.debug(`[doid] switch to chain id ${chainId}`)
+    return switchChain(this.wagmiConfig, { chainId }).then(() => {})
   }
 }
 

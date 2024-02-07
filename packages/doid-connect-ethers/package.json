@@ -1,6 +1,6 @@
 {
   "name": "@doid/connect-ethers",
-  "version": "1.3.0-beta.1",
+  "version": "1.3.0-beta.2",
   "type": "module",
   "files": [
     "dist"

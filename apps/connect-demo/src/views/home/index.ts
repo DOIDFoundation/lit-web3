@@ -1,4 +1,4 @@
-import { ThemeElement, createRef, html, ref, until, when } from '@lit-web3/dui/shared/theme-element'
+import { ThemeElement, createRef, html, map, ref, until, when } from '@lit-web3/dui/shared/theme-element'
 import { customElement, state } from 'lit/decorators.js'
 // Components
 import '@doid/connect'
@@ -32,20 +32,18 @@ export class ViewHome extends ThemeElement('') {
   private walletClientUpdater: any
   connectedCallback(): void {
     super.connectedCallback()
-    options.doidNetwork = doidTestnet
     options.appName = 'Connect Demo'
-    const updateWalletClient = () => {
-      if (!this.walletClientUpdater) {
-        this.walletClientUpdater = this.doidConnector
-          .getWalletClient()
-          .then((walletClient) => (this.walletClient = walletClient))
-          .catch((e) => console.warn('Got error:', e))
-          .finally(() => (this.walletClientUpdater = undefined))
-      }
-    }
-    this.doidConnector.subscribe(updateWalletClient, ['account', 'chainId'])
-    updateWalletClient()
     this.doidNetwork = options.doidNetwork
+  }
+
+  updateWalletClient() {
+    if (!this.walletClientUpdater) {
+      this.walletClientUpdater = this.doidConnector
+        .getWalletClient()
+        .then((walletClient) => (this.walletClient = walletClient))
+        .catch((e) => console.warn('Got error:', e))
+        .finally(() => (this.walletClientUpdater = undefined))
+    }
   }
 
   async connectEthers() {
@@ -66,7 +64,7 @@ export class ViewHome extends ThemeElement('') {
         this.doidConnector.updateOptions({ doidNetwork: fantomTestnet })
         break
     }
-    this.doidNetwork = network
+    this.doidNetwork = options.doidNetwork
   }
 
   async getDOID(address: string) {
@@ -80,7 +78,22 @@ export class ViewHome extends ThemeElement('') {
     return html`
       <div class="dui-container my-8 mx-auto flex flex-row-reverse space-x-2 space-x-reverse">
         <div class="flex-auto max-w-lg">
-          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">WalletClient status</h1>
+          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">
+            WalletClient status
+            <dui-button sm class="ml-2" @click=${() => this.updateWalletClient()}>Update</dui-button>
+            <dui-drop icon btnSm>
+              <p slot="button">Switch chain</p>
+              <ul class="dui-option">
+                ${map(
+                  [doid, doidTestnet, fantomTestnet],
+                  (net) =>
+                    html` <li @click="${() => this.doidConnector.switchChain(net.id)}" class="text-base">
+                      ${net.name}
+                    </li>`
+                )}
+              </ul>
+            </dui-drop>
+          </h1>
           <p>Account:</p>
           <div class="whitespace-pre overflow-auto border font-mono text-xs max-h-12">
             ${JSON.stringify(this.walletClient?.account, undefined, 1)}
@@ -111,6 +124,7 @@ export class ViewHome extends ThemeElement('') {
           <p>Signer: <code>${this.accountEthers ?? typeof this.accountEthers}</code></p>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Resolve DOID</h1>
+          DOID network:
           <dui-drop
             icon
             btnSm
@@ -155,11 +169,32 @@ export class ViewHome extends ThemeElement('') {
           <dui-button sm @click=${this.doidConnector.connect}>
             <p>Connect Wallet</p>
           </dui-button>
+          <dui-drop icon btnSm>
+            <p slot="button">Select chain to connect</p>
+            <ul class="dui-option">
+              ${map(
+                [doid, doidTestnet, fantomTestnet],
+                (net) => html` <li @click="${() => this.doidConnector.connect({ chainId: net.id })}">${net.name}</li>`
+              )}
+            </ul>
+          </dui-drop>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect without modal dialog</h1>
           <dui-button sm @click=${() => this.doidConnector.connect({ noModal: true })}>
             <p>Connect Wallet</p>
           </dui-button>
+          <dui-drop icon btnSm>
+            <p slot="button">Select chain to connect</p>
+            <ul class="dui-option">
+              ${map(
+                [doid, doidTestnet, fantomTestnet],
+                (net) =>
+                  html` <li @click="${() => this.doidConnector.connect({ chainId: net.id, noModal: true })}">
+                    ${net.name}
+                  </li>`
+              )}
+            </ul>
+          </dui-drop>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connect using ethers</h1>
           <dui-button sm @click=${() => this.connectEthers()}>

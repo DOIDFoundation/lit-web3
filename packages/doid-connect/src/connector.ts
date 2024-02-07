@@ -29,6 +29,11 @@ export class DOIDConnector {
     return new StateController(host, controller)
   }
 
+  /** use this with wagmi functions */
+  get wagmiConfig() {
+    return controller.wagmiConfig
+  }
+
   /**
    * Subscribe state changes.
    * @param callback `(key: string, value: any, state: State) => void`
@@ -125,7 +130,11 @@ export class DOIDConnector {
     emitter.on('doid-connect-nosignup', (e: CustomEvent) => {
       if (!this.#getDialog() && controller.getConnector()) this.showDialog(chainId, 'signup')
     })
-    if (noModal) return controller.reconnect()
+    if (noModal) {
+      if (chainId)
+        console.warn('[doid] chainId is not used in calling connect with noModal, set chainId in latter function calls')
+      return controller.reconnect()
+    }
 
     return new Promise<ConnectorState>(async (resolve, reject) => {
       const modal = await this.showDialog(chainId)
