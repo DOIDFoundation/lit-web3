@@ -319,7 +319,7 @@ export class Controller extends State {
       this.updateAddresses(connector)
       if (!this.doid) {
         emitter.emit('doid-connect-nosignup', { account })
-        throw new ErrNotRegistered('Not registered', account)
+        console.warn(new ErrNotRegistered('Not registered', account))
       } else emitter.emit('doid-connect-ok', { account, doid: this.doid })
     }
   }
