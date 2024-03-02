@@ -18,7 +18,7 @@ export let options: {
   doidNetwork: Chain
 } & ConfigOptions = {
   chains: [doid, doidTestnet],
-  doidNetwork: localStorage.getItem('doid-network') == doidTestnet.name ? doidTestnet : doid
+  doidNetwork: doid
 }
 
 // remove this as import.meta.env only effects while building
@@ -29,7 +29,6 @@ export let options: {
 
 export function updateOptions(opts: ConfigOptions) {
   Object.assign(options, opts)
-  localStorage.setItem('doid-network', options.doidNetwork.name)
 }
 
 export function updateChains(chains: Chain[]) {

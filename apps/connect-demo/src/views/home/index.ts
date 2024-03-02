@@ -33,7 +33,6 @@ export class ViewHome extends ThemeElement('') {
   connectedCallback(): void {
     super.connectedCallback()
     options.appName = 'Connect Demo'
-    this.doidNetwork = options.doidNetwork
   }
 
   updateWalletClient() {
@@ -64,14 +63,12 @@ export class ViewHome extends ThemeElement('') {
         this.doidConnector.updateOptions({ doidNetwork: fantomTestnet })
         break
     }
-    this.doidNetwork = options.doidNetwork
   }
 
-  async getDOID(address: string) {
+  async getDOID(address: Address) {
     this.doidResult = this.ensResult = ''
     this.doidResult = (await this.doidConnectorEthers.getDOID(address)) ?? 'not found'
-    this.ensResult =
-      (await this.doidConnectorEthers.getProvider(options.doidNetwork.id).lookupAddress(address)) ?? 'not found'
+    this.ensResult = (await this.doidConnectorEthers.getProvider().lookupAddress(address)) ?? 'not found'
   }
 
   render() {
@@ -124,20 +121,7 @@ export class ViewHome extends ThemeElement('') {
           <p>Signer: <code>${this.accountEthers ?? typeof this.accountEthers}</code></p>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Resolve DOID</h1>
-          DOID network:
-          <dui-drop
-            icon
-            btnSm
-            .show=${this.doidNetworkMenu}
-            @change=${(e: CustomEvent) => (this.doidNetworkMenu = e.detail)}
-          >
-            <p slot="button">${this.doidNetwork?.name ?? 'select doid network'}</p>
-            <ul class="dui-option">
-              <li @click="${this.switchNetwork.bind(this, doid)}" class="text-base">${doid.name}</li>
-              <li @click="${this.switchNetwork.bind(this, doidTestnet)}" class="text-base">${doidTestnet.name}</li>
-              <li @click="${this.switchNetwork.bind(this, fantomTestnet)}" class="text-base">${fantomTestnet.name}</li>
-            </ul>
-          </dui-drop>
+          DOID network: ${this.doidConnectorEthers.chainId}
           <dui-input-text id="address" placeholder="address" class="max-w-sm flex my-1">
             <p slot="msg">doid result: ${this.doidResult}<br />ens result: ${this.ensResult}</p>
           </dui-input-text>

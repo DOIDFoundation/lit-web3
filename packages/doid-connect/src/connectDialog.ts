@@ -124,7 +124,7 @@ export class DOIDConnectDialog extends TailwindElement([...commonCSS, style]) {
       <div class="icon w-16 h-16 mx-auto mt-5 relative">
         ${doidSvg}
         ${when(
-          options.doidNetwork?.id == doid.id,
+          controller.DOIDChainId == doid.id,
           () => html`<sl-badge class="neutral absolute text-xs -top-2 -right-10">beta</sl-badge>`,
           () => html`<sl-badge class="danger absolute text-xs -top-2 -right-12">testnet</sl-badge>`
         )}

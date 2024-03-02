@@ -7,7 +7,7 @@ import '@shoelace-style/shoelace/dist/components/input/input.js'
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js'
 import './spinner'
 import { TransactionExecutionError } from 'viem'
-import { ErrNotRegistered, controller } from '../controller'
+import { ErrNotRegistered, controller, StateController } from '../controller'
 import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js'
 
 import './connectButtons'
@@ -17,6 +17,8 @@ import { toUnicode } from '@doid/name-validator'
 
 @customElement('doid-signup')
 export class DOIDSignup extends TailwindElement([style]) {
+  bindController: any = new StateController(this, controller)
+
   @state() readyToRegister = false
   @state() checking = false
   @state() inputHelpText = ''
@@ -68,7 +70,7 @@ export class DOIDSignup extends TailwindElement([style]) {
 
   private connectButtonsRef = createRef<DOIDConnectButtons>()
 
-  private register() {
+  private register = async () => {
     if (!controller.account) {
       this.showConnect = true
       this.updateComplete.then(() => {
