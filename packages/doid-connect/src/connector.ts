@@ -59,10 +59,17 @@ export class DOIDConnector {
     return controller.getAddresses()
   }
 
+  alreadyTried = false
+  // try get a connector for the first time
+  private tryConnect = () => {
+    if (this.alreadyTried || controller.ready) return
+    this.alreadyTried = true
+    controller.reconnect()
+  }
+
   /** Check if connected with user selected connector. */
   get ready(): boolean {
-    // try get a connector for the first time
-    if (!controller.ready) controller.reconnect()
+    this.tryConnect()
     return controller.ready
   }
 
@@ -73,8 +80,7 @@ export class DOIDConnector {
 
   /** Get chain id of connected connector. */
   get chainId() {
-    // try get chainId for the first time
-    if (!controller.ready) controller.reconnect()
+    this.tryConnect()
     return controller.chainId
   }
 

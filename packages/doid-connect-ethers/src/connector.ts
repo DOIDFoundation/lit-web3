@@ -1,10 +1,10 @@
-import { DOIDConnector, options } from '@doid/connect'
-import { PublicClient, WalletClient } from '@wagmi/core'
+import { DOIDConnector, options, type WalletClient } from '@doid/connect'
 import { BrowserProvider, JsonRpcSigner, Signer } from 'ethers'
 import { controller } from '@doid/connect/controller'
-import { createPublicClient, http, webSocket } from 'viem'
+import { createPublicClient, type PublicClient, http, webSocket } from 'viem'
 
 function walletClientToProvider(walletClient: WalletClient | PublicClient) {
+  console.log({ walletClient })
   const { chain, transport } = walletClient
   const network = chain
     ? {
@@ -19,11 +19,12 @@ function walletClientToProvider(walletClient: WalletClient | PublicClient) {
 export class DOIDConnectorEthers extends DOIDConnector {
   /** Get a readonly provider */
   public getProvider(chainId?: number): BrowserProvider {
-    if (!chainId) chainId = controller.chainId
-    let chain = chainId ? options.chains?.find((chain) => chain.id == chainId) : options?.chains?.[0]
+    chainId ||= controller.chainId
+    const chain = chainId ? options.chains?.find((chain) => chain.id == chainId) : options?.chains?.[0]
     if (!chain)
       throw new Error(chainId ? `chain ${chainId} is not found in options.chains` : 'options.chains is empty.')
     let client = createPublicClient({ chain, transport: chain.rpcUrls.default.webSocket?.[0] ? webSocket() : http() })
+    console.log(client, 'client')
     return walletClientToProvider(client)
   }
 
@@ -35,7 +36,7 @@ export class DOIDConnectorEthers extends DOIDConnector {
   }
 
   /** Turn a walletClient to a signer */
-  public walletClientToSigner(walletClient: WalletClient, account?: Address) {
-    return new JsonRpcSigner(walletClientToProvider(walletClient), account ?? walletClient.account.address)
+  public walletClientToSigner(walletClient: WalletClient, account: Address = walletClient.account?.address ?? '') {
+    return new JsonRpcSigner(walletClientToProvider(walletClient), account)
   }
 }

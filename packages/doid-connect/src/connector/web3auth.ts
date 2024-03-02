@@ -153,10 +153,10 @@ export function web3auth(options: Options) {
     },
 
     async disconnect(): Promise<void> {
-      await this.web3AuthInstance.logout()
       const provider = await this.getProvider()
       provider.removeListener('accountsChanged', this.onAccountsChanged)
       provider.removeListener('chainChanged', this.onChainChanged)
+      await this.web3AuthInstance.logout()
     },
 
     onAccountsChanged: (accounts: string[]): void => {

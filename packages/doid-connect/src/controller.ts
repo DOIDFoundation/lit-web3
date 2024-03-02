@@ -20,7 +20,7 @@ import {
   writeContract
 } from '@wagmi/core'
 import { options } from './options'
-import { State, property } from '@lit-web3/base/state'
+import { State, property, storage } from '@lit-web3/base/state'
 import emitter from '@lit-web3/base/emitter'
 export { StateController } from '@lit-web3/base/state'
 import { Address, CallParameters, Chain, WalletClient, createClient, hexToString, http, namehash, parseAbi } from 'viem'
@@ -50,6 +50,9 @@ export class ErrNotRegistered extends Error {
   }
 }
 
+const checkNetwork = (chainId: any) => {
+  return chainId && options.chains.some((chain) => +chain.id == +chainId)
+}
 export class Controller extends State {
   // @property() private connector?: Connector
   /** a list of addresses accessible */
@@ -57,12 +60,30 @@ export class Controller extends State {
   /** connected account. */
   @property() public account?: Address
   /** chain id of connected connector */
-  @property() public chainId?: Chain['id']
+  @property()
+  public chainId?: Chain['id']
+  /** chain id of user subjective select */
+  @storage({ key: 'doid-connect.selectedChainId' })
+  @property()
+  public selectedChainId?: Chain['id'] | string
   /** DOID name of connected account. */
   @property() public doid?: string
   // @storage({ key: 'doid_last_connector' })
   // @property()
   // lastConnector?: string
+
+  constructor() {
+    super()
+    // Only delete on initialization
+    if (!checkNetwork(this.selectedChainId)) this.selectedChainId = ''
+  }
+
+  get DOIDChainId() {
+    return +(this.selectedChainId || options?.doidNetwork?.id || this.chainId || options?.chains?.[0]?.id || doid.id)
+  }
+  get DOIDChain() {
+    return options.chains.find((chain) => +chain.id == +this.DOIDChainId)!
+  }
 
   private _wagmiConfig?: Config
   get wagmiConfig() {
@@ -73,7 +94,8 @@ export class Controller extends State {
   public newWagmiConfig() {
     this.unWatchFns.forEach((unWatch) => unWatch())
     this.unWatchFns = []
-    if (!options.chains.find((x) => x.id == options.doidNetwork.id)) options.chains.push(options.doidNetwork)
+    const { doidNetwork, chains } = options
+    if (!chains.find((x) => x.id == doidNetwork.id)) chains.push(doidNetwork)
     this.doid = undefined // reset doid because doid network may be changed
     this._wagmiConfig = createConfig({
       chains: options.chains as any,
@@ -93,7 +115,7 @@ export class Controller extends State {
     )
     this.unWatchFns.push(
       watchChainId(this._wagmiConfig, {
-        onChange: (data) => (this.chainId = data)
+        onChange: (chainId) => this.handleChainId(chainId)
       })
     )
     return this._wagmiConfig
@@ -101,15 +123,15 @@ export class Controller extends State {
 
   public readonly web3AuthEnabled = true
   private get web3AuthClientId() {
-    return options.doidNetwork?.id == doid.id
+    return this.DOIDChainId == doid.id
       ? 'BIitWGD0AJRTfYzndkTlIiv1Nvpaac4kGNAQjRcBuR0OOjxpkhxqCVjxJ9FO1bf-yrVJs5NRzIRqLbmrVn5JCXg'
       : 'BFLXJsHIHv_CgxalXixrZlytDYyf47hk64XDMXOj4vNVIGGJ9HMOyhvIbYmw3dWcwxaqadObQQSwFjR51FJvgVg'
   }
   private get web3AuthNetwork() {
-    return options.doidNetwork?.id == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
+    return this.DOIDChainId == doid.id ? 'sapphire_mainnet' : 'sapphire_devnet'
   }
   public get web3AuthProviders(): WEB3_PROVIDER[] {
-    return options.doidNetwork?.id == doid.id ? ['twitter', 'github', 'more'] : ['twitter', 'github', 'more']
+    return this.DOIDChainId == doid.id ? ['twitter', 'github', 'more'] : ['twitter', 'github', 'more']
   }
 
   public availableConnectors(): readonly Connector[] {
@@ -117,31 +139,29 @@ export class Controller extends State {
   }
 
   private static web3authInstance: Web3AuthNoModal
-  private web3AuthConnector(provider: WEB3_PROVIDER): CreateConnectorFn {
+  private web3AuthConnector(providerName: WEB3_PROVIDER): CreateConnectorFn {
     // force recreate web3authInstance to set sessionNamespace to provider.
     // to avoid wrong account from cache when connect with different provider.
     // because web3auth caches last account per sessionNamespace rather than per provider.
-    // if (!Controller.web3authInstance) {
-    {
+    // Q1: Maybe it works fine now?
+    if (!Controller.web3authInstance) {
       if (this.web3AuthEnabled && !this.web3AuthClientId) {
         throw new Error('Web3Auth Client ID is not configured.')
       }
 
-      let chains = options.chains!
-      let chain = this.chainId ? chains.find((c) => c.id == this.chainId) : chains[0]
+      const chainId = this.DOIDChainId
+      const chain = options.chains.find((c) => c.id == chainId)
       if (!chain)
-        throw new Error(
-          this.chainId ? `chain ${this.chainId} not found in options.chains` : 'options.chains is not configured.'
-        )
+        throw new Error(chainId ? `chain ${chainId} not found in options.chains` : 'options.chains is not configured.')
       const chainConfig = {
-        chainId: '0x' + chain.id.toString(16),
+        chainId: '0x' + chainId.toString(16),
         rpcTarget: chain.rpcUrls.default.http[0],
         displayName: chain.name,
         tickerName: chain.nativeCurrency?.name,
         ticker: chain.nativeCurrency?.symbol,
         blockExplorer: chain.blockExplorers?.default?.url ?? ''
       }
-      let web3auth = new Web3AuthNoModal({
+      const web3auth = new Web3AuthNoModal({
         clientId: this.web3AuthClientId!,
         web3AuthNetwork: this.web3AuthNetwork,
         chainConfig: { ...chainConfig, chainNamespace: CHAIN_NAMESPACES.EIP155 }
@@ -162,7 +182,7 @@ export class Controller extends State {
           adapterSettings: {
             // safari blocks popup
             uxMode: /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ? 'redirect' : 'popup',
-            sessionNamespace: options.doidNetwork?.name + provider,
+            sessionNamespace: providerName,
             whiteLabel: {
               appName: options.appName,
               logoDark: 'https://doid.tech/logo.svg',
@@ -218,7 +238,7 @@ export class Controller extends State {
   }
 
   protected get doidContractAddress(): Address {
-    return options.doidNetwork.contracts?.ensRegistry?.address!
+    return this.DOIDChain.contracts?.ensRegistry?.address!
   }
 
   public getAddresses(): Promise<Address[]> {
@@ -238,7 +258,7 @@ export class Controller extends State {
     const node = namehash(address.substring(2).toLowerCase() + '.addr.reverse')
     const abi = parseAbi(['function name(bytes32) view returns (string)'])
     return readContract(this.wagmiConfig, {
-      chainId: options.doidNetwork.id,
+      chainId: this.DOIDChainId,
       address: this.doidContractAddress,
       abi,
       functionName: 'name',
@@ -250,7 +270,7 @@ export class Controller extends State {
     const node = namehash(name)
     const abi = parseAbi(['function addr(bytes32 node) view returns (address)'])
     return readContract(this.wagmiConfig, {
-      chainId: options.doidNetwork.id,
+      chainId: this.DOIDChainId,
       address: this.doidContractAddress,
       abi,
       functionName: 'addr',
@@ -258,9 +278,19 @@ export class Controller extends State {
     })
   }
 
-  private async handleChange(account?: Address, addresses?: readonly Address[]) {
+  get invalidNetwork() {
+    return !checkNetwork(this.chainId)
+  }
+
+  private handleChainId = (chainId: number, userSelectFirst = true) => {
+    this.chainId = chainId
+    if (userSelectFirst && checkNetwork(chainId)) this.selectedChainId = chainId
+    this.handleChange(this.account, this.addresses, chainId)
+  }
+
+  private async handleChange(account?: Address, addresses?: readonly Address[], chainId?: number) {
     // update account and doid when changes
-    if (account && (!this.doid || this.account != account)) {
+    if (account && (chainId || !this.doid || this.account != account)) {
       this.doid = await this.getDOID(account)
       this.account = account
       this.addresses = [...addresses!]
@@ -274,7 +304,8 @@ export class Controller extends State {
   }
 
   public getConnector() {
-    return getConnectors(this.wagmiConfig)[0]
+    // return getConnectors(this.wagmiConfig)[0]
+    return getConnections(this.wagmiConfig)[0].connector
   }
 
   public async getWalletClient(chainId?: number): Promise<WalletClient> {
@@ -288,7 +319,7 @@ export class Controller extends State {
   public checkDOID(name: string): Promise<string> {
     const abi = parseAbi(['function statusOfName(string _name) view returns (string status, address owner, uint id)'])
     return readContract(this.wagmiConfig, {
-      chainId: options.doidNetwork.id,
+      chainId: this.DOIDChainId,
       address: this.doidContractAddress,
       abi,
       functionName: 'statusOfName',
@@ -296,26 +327,33 @@ export class Controller extends State {
     }).then((ret) => ret[0])
   }
 
+  amendChainId = async (chainId?: number) => {
+    if (this.invalidNetwork) return await this.slientSwitchChain(chainId || this.DOIDChainId)
+    if (chainId && chainId != this.chainId) await this.slientSwitchChain(chainId)
+  }
+
   registering = false
   public async registerDOID(name: string): Promise<string> {
+    await this.amendChainId()
+    const chainId = this.DOIDChainId
     const abi = parseAbi(['function register(string name, address owner)'])
     const address = this.account!
     this.registering = true
     try {
       const hash = await writeContract(this.wagmiConfig, {
-        chainId: options.doidNetwork.id,
+        chainId,
         address: this.doidContractAddress,
         abi,
         functionName: 'register',
         args: [name, address]
       })
-      const receipt = await waitForTransactionReceipt(this.wagmiConfig, { chainId: options.doidNetwork.id, hash })
+      const receipt = await waitForTransactionReceipt(this.wagmiConfig, { chainId, hash })
       if (receipt.status === 'reverted') {
         const txn = await getTransaction(this.wagmiConfig, {
-          chainId: options.doidNetwork.id,
+          chainId,
           hash: receipt.transactionHash
         })
-        const code = (await getPublicClient(this.wagmiConfig, { chainId: options.doidNetwork.id })?.call({
+        const code = (await getPublicClient(this.wagmiConfig, { chainId })?.call({
           ...txn,
           gasPrice: txn.type !== 'eip1559' ? txn.gasPrice : undefined,
           maxFeePerGas: txn.type === 'eip1559' ? txn.maxFeePerGas : undefined,
@@ -339,6 +377,7 @@ export class Controller extends State {
     this.account = undefined
     this.chainId = undefined
     this.doid = undefined
+    this.selectedChainId = undefined
   }
 
   private reconnectPromise?: any
@@ -364,18 +403,22 @@ export class Controller extends State {
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector: Connector }): Promise<ConnectorState> {
     return connect(this.wagmiConfig, { chainId, connector })
-      .then((data) => {
+      .then(async (data) => {
         this.chainId = data.chainId
+        try {
+          await this.amendChainId()
+        } catch {}
         return this.handleChange(data.accounts[0], data.accounts)
       })
-      .catch((e) => {
+      .catch(async (e) => {
         if (!(e instanceof ConnectorAlreadyConnectedError)) throw e
         // already connected
-        return (
-          chainId && chainId != this.chainId
-            ? this.switchChain(chainId).catch(console.warn) // switch chain when needed
-            : Promise.resolve()
-        ).then(() => this.handleChange(this.account, this.addresses)) // check doid again when already connected but doid is not registered
+        try {
+          // switch chain when needed
+          if (chainId) await this.amendChainId(chainId)
+        } catch {}
+        // check doid again when already connected but doid is not registered
+        return this.handleChange(this.account, this.addresses)
       })
       .then(() => {
         return { account: this.account!, chainId: this.chainId!, doid: this.doid }
@@ -387,9 +430,14 @@ export class Controller extends State {
     this.resetStates()
   }
 
-  public switchChain(chainId: number): Promise<void> {
+  public switchChain(chainId: number, { userSelectFirst = true } = {}): Promise<void> {
     console.debug(`[doid] switch to chain id ${chainId}`)
-    return switchChain(this.wagmiConfig, { chainId }).then(() => {})
+    return switchChain(this.wagmiConfig, { chainId }).then(() => {
+      this.handleChainId(chainId, userSelectFirst)
+    })
+  }
+  public slientSwitchChain(chainId: number): Promise<void> {
+    return this.switchChain(chainId, { userSelectFirst: false })
   }
 }
 
