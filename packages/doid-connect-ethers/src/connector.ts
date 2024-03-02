@@ -4,7 +4,6 @@ import { controller } from '@doid/connect/controller'
 import { createPublicClient, type PublicClient, http, webSocket } from 'viem'
 
 function walletClientToProvider(walletClient: WalletClient | PublicClient) {
-  console.log({ walletClient })
   const { chain, transport } = walletClient
   const network = chain
     ? {
@@ -24,7 +23,6 @@ export class DOIDConnectorEthers extends DOIDConnector {
     if (!chain)
       throw new Error(chainId ? `chain ${chainId} is not found in options.chains` : 'options.chains is empty.')
     let client = createPublicClient({ chain, transport: chain.rpcUrls.default.webSocket?.[0] ? webSocket() : http() })
-    console.log(client, 'client')
     return walletClientToProvider(client)
   }
 
