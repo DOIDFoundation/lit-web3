@@ -36,6 +36,9 @@ export class DOIDConnector {
   get DOIDChainId() {
     return controller.DOIDChainId
   }
+  get connectorName() {
+    return controller.getConnector()?.name
+  }
 
   /**
    * Subscribe state changes.

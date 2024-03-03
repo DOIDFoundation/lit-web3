@@ -17,7 +17,8 @@ import {
   waitForTransactionReceipt,
   watchAccount,
   watchChainId,
-  writeContract
+  writeContract,
+  watchConnections
 } from '@wagmi/core'
 import { options } from './options'
 import { State, property, storage } from '@lit-web3/base/state'
@@ -115,7 +116,16 @@ export class Controller extends State {
     )
     this.unWatchFns.push(
       watchChainId(this._wagmiConfig, {
-        onChange: (chainId) => this.handleChainId(chainId)
+        onChange: (chainId) => {
+          this.handleChainId(chainId)
+        }
+      })
+    )
+    this.unWatchFns.push(
+      watchConnections(this._wagmiConfig, {
+        onChange: ([conn] = []) => {
+          if (conn) this.handleChainId(conn.chainId)
+        }
       })
     )
     return this._wagmiConfig
@@ -309,7 +319,7 @@ export class Controller extends State {
 
   public getConnector() {
     // return getConnectors(this.wagmiConfig)[0]
-    return getConnections(this.wagmiConfig)[0].connector
+    return getConnections(this.wagmiConfig)[0]?.connector
   }
 
   public async getWalletClient(chainId?: number): Promise<WalletClient> {
@@ -332,7 +342,8 @@ export class Controller extends State {
   }
 
   amendChainId = async (chainId?: number) => {
-    if (this.invalidNetwork) return await this.slientSwitchChain(chainId || this.DOIDChainId)
+    if (this.invalidNetwork || this.chainId != this.DOIDChainId)
+      return await this.slientSwitchChain(chainId || this.DOIDChainId)
     if (chainId && chainId != this.chainId) await this.slientSwitchChain(chainId)
   }
 
@@ -390,10 +401,10 @@ export class Controller extends State {
       this.reconnectPromise = (
         this.wagmiConfig.state.status == 'connected'
           ? this.handleChange(this.account!, this.addresses) // check doid again when already connected but doid is not registered
-          : reconnect(this.wagmiConfig).then((connections) => {
-              if (connections.length == 0) throw new Error('No connection found')
-              this.chainId = connections[0].chainId
-              return this.handleChange(connections[0].accounts[0], connections[0].accounts)
+          : reconnect(this.wagmiConfig).then(([conn] = []) => {
+              if (!conn) throw new Error('No connection found')
+              this.chainId = conn.chainId
+              return this.handleChange(conn.accounts[0], conn.accounts)
             })
       )
         .then(() => {

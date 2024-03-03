@@ -58,7 +58,7 @@ export class ViewHome extends ThemeElement('') {
       connector.getChainId(),
       connector.getAddresses()
     ])
-    this.readonlyStatus = JSON.stringify({ blockNumber, chainId, addresses }, null, ' ')
+    this.readonlyStatus = JSON.stringify({ blockNumber, chainId, addresses, connected: connector.connected }, null, ' ')
   }
 
   switchNetwork(network: Chain) {
@@ -115,13 +115,18 @@ export class ViewHome extends ThemeElement('') {
             ${JSON.stringify(this.doidConnector.addresses, undefined, 1)}
           </div>
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
-          <p>Wallet connected: <code>${this.doidConnector.ready}</code></p>
-          <p>DOID connected: <code>${this.doidConnector.connected}</code></p>
+          <p>
+            Wallet connected: <b>${this.doidConnector.ready}</b>, DOID connected:
+            <b>${this.doidConnector.connected}</b>
+          </p>
+          <p>
+            ${this.doidConnector.connectorName} ChainId: <b>${this.doidConnector.chainId}</b>, DOID ChainId:
+            <b>${this.doidConnector.DOIDChainId}</b>
+          </p>
           ${when(
             this.doidConnector.connected,
             () => html`
               <p>Address: <code>${this.doidConnector.account}</code></p>
-              <p>ChainId: <code>${this.doidConnector.chainId}</code></p>
               <p>DOID: <code>${this.doidConnector.doid}</code></p>
               <dui-button sm @click=${() => this.doidConnector.disconnect()}>Disconnect</dui-button>
             `
@@ -129,8 +134,6 @@ export class ViewHome extends ThemeElement('') {
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status(ethers)</h1>
           <p>Signer: <code>${this.accountEthers ?? typeof this.accountEthers}</code></p>
-          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Readonly Connection status(ethers)</h1>
-          <p>${this.readonlyStatus}</p>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Resolve DOID</h1>
           DOID network: ${this.doidConnectorEthers.chainId}
