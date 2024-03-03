@@ -60,7 +60,7 @@ export class Controller extends State {
   @property() public addresses?: Address[]
   /** connected account. */
   @property() public account?: Address
-  /** chain id of connected connector */
+  /** current chain id of connected connector */
   @property()
   public chainId?: Chain['id']
   /** chain id of user subjective selected DOIDChains */
@@ -114,16 +114,16 @@ export class Controller extends State {
         onChange: (data) => this.handleChange(data.address, data.addresses)
       })
     )
-    this.unWatchFns.push(
-      watchChainId(this._wagmiConfig, {
-        onChange: (chainId) => {
-          this.handleChainId(chainId)
-        }
-      })
-    )
+    // Watch last selected chainId in options.chains list
+    // this.unWatchFns.push(
+    //   watchChainId(this._wagmiConfig, {
+    //     onChange: (chainId) => this.handleChainId(chainId)
+    //   })
+    // )
+    // Watch last selected chainId
     this.unWatchFns.push(
       watchConnections(this._wagmiConfig, {
-        onChange: ([conn] = []) => {
+        onChange: ([conn, conn2] = []) => {
           if (conn) this.handleChainId(conn.chainId)
         }
       })
