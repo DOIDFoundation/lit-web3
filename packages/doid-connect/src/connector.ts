@@ -33,6 +33,9 @@ export class DOIDConnector {
   get wagmiConfig() {
     return controller.wagmiConfig
   }
+  get DOIDChainId() {
+    return controller.DOIDChainId
+  }
 
   /**
    * Subscribe state changes.

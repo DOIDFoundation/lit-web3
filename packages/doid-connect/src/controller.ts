@@ -62,7 +62,7 @@ export class Controller extends State {
   /** chain id of connected connector */
   @property()
   public chainId?: Chain['id']
-  /** chain id of user subjective select */
+  /** chain id of user subjective selected DOIDChains */
   @storage({ key: 'doid-connect.selectedChainId' })
   @property()
   public selectedChainId?: Chain['id'] | string
@@ -241,9 +241,13 @@ export class Controller extends State {
     return this.DOIDChain.contracts?.ensRegistry?.address!
   }
 
-  public getAddresses(): Promise<Address[]> {
+  public getAddresses = async (): Promise<Address[]> => {
     if (this.addresses) return Promise.resolve(this.addresses)
-    return this.reconnect().then(() => this.addresses ?? [])
+    // return this.reconnect().then(() => this.addresses ?? [])
+    try {
+      await this.reconnect()
+    } catch {}
+    return this.addresses ?? []
   }
 
   public getChainId(): Promise<Chain['id']> {
@@ -382,23 +386,25 @@ export class Controller extends State {
 
   private reconnectPromise?: any
   public reconnect(): Promise<ConnectorState> {
-    return (
-      this.wagmiConfig.state.status == 'connected'
-        ? this.handleChange(this.account!, this.addresses) // check doid again when already connected but doid is not registered
-        : (this.reconnectPromise ??= reconnect(this.wagmiConfig).then((connections) => {
-            if (connections.length == 0) throw new Error('No connection found')
-            this.chainId = connections[0].chainId
-            return this.handleChange(connections[0].accounts[0], connections[0].accounts)
-          }))
-    )
-      .then(() => {
-        return {
-          account: this.account,
-          doid: this.doid,
-          chainId: this.chainId
-        }
-      })
-      .finally(() => (this.reconnectPromise = undefined))
+    if (!this.reconnectPromise)
+      this.reconnectPromise = (
+        this.wagmiConfig.state.status == 'connected'
+          ? this.handleChange(this.account!, this.addresses) // check doid again when already connected but doid is not registered
+          : reconnect(this.wagmiConfig).then((connections) => {
+              if (connections.length == 0) throw new Error('No connection found')
+              this.chainId = connections[0].chainId
+              return this.handleChange(connections[0].accounts[0], connections[0].accounts)
+            })
+      )
+        .then(() => {
+          return {
+            account: this.account,
+            doid: this.doid,
+            chainId: this.chainId
+          }
+        })
+        .finally(() => (this.reconnectPromise = undefined))
+    return this.reconnectPromise
   }
 
   public connect({ chainId, connector }: { chainId?: Chain['id']; connector: Connector }): Promise<ConnectorState> {

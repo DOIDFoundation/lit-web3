@@ -24,15 +24,15 @@ export class ViewHome extends ThemeElement('') {
   private doidConnectorEthers = new DOIDConnectorEthers(this)
   @state() private walletClient?: WalletClient
   @state() private accountEthers?: string
-  @state() private doidNetwork?: Chain
-  @state() private doidNetworkMenu?: boolean
   @state() private doidResult?: string
   @state() private ensResult?: string
+  @state() private readonlyStatus = ''
 
   private walletClientUpdater: any
-  connectedCallback(): void {
+  connectedCallback() {
     super.connectedCallback()
     options.appName = 'Connect Demo'
+    this.fetchReadonlyStatus()
   }
 
   updateWalletClient() {
@@ -50,8 +50,18 @@ export class ViewHome extends ThemeElement('') {
     this.accountEthers = signer.address
   }
 
+  fetchReadonlyStatus = async () => {
+    const connector = this.doidConnectorEthers
+    const { provider } = await connector.getProvider()
+    const [blockNumber, chainId, addresses] = await Promise.all([
+      provider.getBlockNumber(),
+      connector.getChainId(),
+      connector.getAddresses()
+    ])
+    this.readonlyStatus = JSON.stringify({ blockNumber, chainId, addresses }, null, ' ')
+  }
+
   switchNetwork(network: Chain) {
-    this.doidNetworkMenu = false
     switch (network.id) {
       case doid.id:
         this.doidConnector.updateOptions({ doidNetwork: doid })
@@ -119,6 +129,8 @@ export class ViewHome extends ThemeElement('') {
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status(ethers)</h1>
           <p>Signer: <code>${this.accountEthers ?? typeof this.accountEthers}</code></p>
+          <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Readonly Connection status(ethers)</h1>
+          <p>${this.readonlyStatus}</p>
 
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Resolve DOID</h1>
           DOID network: ${this.doidConnectorEthers.chainId}
