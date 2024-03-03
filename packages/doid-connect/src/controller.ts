@@ -123,8 +123,11 @@ export class Controller extends State {
     // Watch last selected chainId
     this.unWatchFns.push(
       watchConnections(this._wagmiConfig, {
-        onChange: ([conn, conn2] = []) => {
-          if (conn) this.handleChainId(conn.chainId)
+        onChange: ([conn] = []) => {
+          const { ready, switchChain: fn } = conn?.connector as any
+          if (!ready && !fn) return // ignore uninitialised state
+          if (conn.chainId == this.chainId) return // ignore conn2, conn3...
+          this.handleChainId(conn.chainId)
         }
       })
     )
