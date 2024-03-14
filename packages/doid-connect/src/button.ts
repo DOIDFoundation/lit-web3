@@ -5,9 +5,12 @@ import '@shoelace-style/shoelace/dist/components/button/button'
 import './connectDialog'
 import { options } from './options'
 import { DOIDConnectDialog } from './connectDialog'
+import { controller, StateController } from './controller'
 
 @customElement('doid-connect-button')
 export class DOIDConnectButton extends LitElement {
+  bindState: any = new StateController(this, controller)
+
   @property({ type: String }) appName = ''
   @state() dialog = false
 
@@ -28,7 +31,7 @@ export class DOIDConnectButton extends LitElement {
   override render() {
     return html`
       <sl-button @click=${this.open} class="${options.themeMode == 'dark' ? 'sl-theme-dark' : 'sl-theme-light'}"
-        >Connect</sl-button
+        >Connect ${controller.DOIDChainId}</sl-button
       >
       <!-- Dialog -->
       ${when(this.dialog, () => html`<doid-connect-dialog @close=${this.close}></doid-connect-dialog>`)}

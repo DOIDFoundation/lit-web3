@@ -87,6 +87,7 @@ export class Controller extends State {
   }
 
   private _wagmiConfig?: Config
+  private noConnect = true
   get wagmiConfig() {
     return this._wagmiConfig ?? this.newWagmiConfig()
   }
@@ -124,10 +125,11 @@ export class Controller extends State {
     this.unWatchFns.push(
       watchConnections(this._wagmiConfig, {
         onChange: ([conn] = []) => {
-          const { ready, switchChain: fn } = conn?.connector as any
+          const { ready, switchChain: fn } = (conn?.connector ?? {}) as any
           if (!ready && !fn) return // ignore uninitialised state
           if (conn.chainId == this.chainId) return // ignore conn2, conn3...
-          this.handleChainId(conn.chainId)
+          this.handleChainId(conn.chainId, !this.noConnect)
+          this.noConnect = false
         }
       })
     )
@@ -396,6 +398,7 @@ export class Controller extends State {
     this.chainId = undefined
     this.doid = undefined
     this.selectedChainId = ''
+    this.noConnect = true
   }
 
   private reconnectPromise?: any

@@ -116,12 +116,14 @@ export class ViewHome extends ThemeElement('') {
           </div>
           <h1 class="font-bold text-xl pb-1 mt-8 mb-4 border-b">Connection status</h1>
           <p>
-            Wallet connected: <b>${this.doidConnector.ready}</b>, DOID connected:
-            <b>${this.doidConnector.connected}</b>
+            DOID connected:
+            <b>${this.doidConnector.connected}</b>, ChainId: <b>${this.doidConnector.DOIDChainId}</b> (readonly)
           </p>
           <p>
-            ${this.doidConnector.connectorName} ChainId: <b>${this.doidConnector.chainId}</b>, DOID ChainId:
-            <b>${this.doidConnector.DOIDChainId}</b>
+            Wallet connected: <b>${this.doidConnector.ready}</b>${when(
+              this.doidConnector.ready,
+              () => html`, ChainId: <b>${this.doidConnector.chainId}</b> (${this.doidConnector.connectorName})`
+            )}
           </p>
           ${when(
             this.doidConnector.connected,
