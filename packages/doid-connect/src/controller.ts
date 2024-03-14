@@ -395,7 +395,7 @@ export class Controller extends State {
     this.account = undefined
     this.chainId = undefined
     this.doid = undefined
-    this.selectedChainId = undefined
+    this.selectedChainId = ''
   }
 
   private reconnectPromise?: any
