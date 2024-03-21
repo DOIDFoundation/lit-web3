@@ -259,6 +259,30 @@ importers:
         specifier: workspace:latest
         version: link:../../packages/router
 
+  apps/validator:
+    dependencies:
+      '@doid/connect':
+        specifier: workspace:latest
+        version: link:../../packages/doid-connect
+      '@doid/connect-ethers':
+        specifier: workspace:latest
+        version: link:../../packages/doid-connect-ethers
+      '@lit-web3/base':
+        specifier: workspace:latest
+        version: link:../../packages/base
+      '@lit-web3/dui':
+        specifier: workspace:latest
+        version: link:../../packages/dui
+      '@lit-web3/ethers':
+        specifier: workspace:latest
+        version: link:../../packages/ethers
+      '@wagmi/core':
+        specifier: ^2.6.5
+        version: 2.6.5(@types/react@18.2.46)(react@18.2.0)(typescript@5.3.3)(viem@2.7.16)
+      viem:
+        specifier: ^2.7.16
+        version: 2.7.16(typescript@5.3.3)
+
   apps/website:
     dependencies:
       '@doid/connect':

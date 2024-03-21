@@ -1,0 +1,32 @@
+.btn {
+  @apply inline-flex justify-center items-center;
+  color: var(--bgColor);
+  font-family: var(--font-base);
+  &.hoverable {
+    @apply cursor-pointer;
+    &:hover {
+      @apply bg-white/95;
+    }
+  }
+}
+.connect-btn {
+  @apply w-44 h-12 lg_w-80 lg_h-16 text-base lg_text-xl bg-white;
+}
+.stake-btn {
+  @apply p-2 text-base bg-white;
+}
+.disabled {
+  @apply bg-gray-500;
+}
+
+.ico {
+  @apply block w-12 h-12 lg_w-16 lg_h-16 bg-no-repeat bg-cover;
+  &.i3 {
+    background-image: url(~/assets/i3.svg);
+  }
+  &.i7 {
+    background-size: 32px;
+    background-position: center;
+    background-image: url(~/assets/i7.svg);
+  }
+}
