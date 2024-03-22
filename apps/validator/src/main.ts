@@ -2,13 +2,24 @@ import { ThemeElement, html, customElement, when, state, classMap } from '@lit-w
 import '@lit-web3/dui/address'
 import '@lit-web3/dui/button'
 import '@lit-web3/dui/link'
-import { DOIDConnector, updateChains } from '@doid/connect'
+// import { DOIDConnector, updateChains } from '@doid/connect'
 import { parseEther, formatEther, Address } from 'viem'
-import { getChainId, readContract, switchChain, waitForTransactionReceipt, writeContract } from '@wagmi/core'
+import {
+  getChainId,
+  readContract,
+  reconnect,
+  switchChain,
+  waitForTransactionReceipt,
+  watchAccount,
+  writeContract
+} from '@wagmi/core'
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi'
 import { mainnet, sepolia } from '@wagmi/core/chains'
 import { abi } from './abi'
 
-updateChains([mainnet, sepolia])
+const chains = [mainnet, sepolia] as const
+
+// updateChains(chains)
 
 import style from './style.css?inline'
 @customElement('app-main')
@@ -21,7 +32,7 @@ export class AppMain extends ThemeElement(style) {
   private scanDomain = import.meta.env.MODE === 'production' ? 'etherscan.io' : 'sepolia.etherscan.io'
   private stakeTime = import.meta.env.MODE === 'production' ? 100 * 24 * 3600 : 120
   private stakeTimeString = import.meta.env.MODE === 'production' ? '100 days' : '2 mins'
-  private doidConnector = new DOIDConnector(this)
+  // private doidConnector = new DOIDConnector(this)
   @state() error: string = ''
   @state() queued: boolean = false
   @state() queuedAmount: bigint = BigInt(0)
@@ -34,16 +45,48 @@ export class AppMain extends ThemeElement(style) {
     return new Date(Number(this.queuedTimestamp) * 1000).toUTCString()
   }
 
+  private config = defaultWagmiConfig({
+    chains,
+    projectId: 'f58e1488ccb9f5b7ef6f11ffa1cd8ba1',
+    metadata: {
+      name: 'DOID Validator Staking',
+      description: 'DOID Validator Staking',
+      url: 'https://vals.doid.tech', // origin must match your domain & subdomain.
+      icons: ['https://doid.tech/logo.svg']
+    }
+  })
   get wagmiConfig() {
-    return this.doidConnector.wagmiConfig
+    // return this.doidConnector.wagmiConfig
+    return this.config
+  }
+
+  private unwatch: any
+  connectedCallback(): void {
+    super.connectedCallback()
+    this.unwatch = watchAccount(this.wagmiConfig, {
+      onChange: (data) => {
+        console.log('Account changed!', data)
+        this.account = data.address
+        if (this.account) this.reload()
+      }
+    })
+    reconnect(this.wagmiConfig)
+  }
+  disconnectedCallback(): void {
+    super.disconnectedCallback()
+    this.unwatch()
   }
 
   async connect() {
-    let result = await this.doidConnector.connect({ chainId: this.chainId })
-    if (!result.account) return
-    this.account = result.account
-    this.doid = result.doid
-    this.reload()
+    // let result = await this.doidConnector.connect({ chainId: this.chainId })
+    // if (!result.account) return
+    // this.account = result.account
+    // this.doid = result.doid
+    const modal = createWeb3Modal({
+      wagmiConfig: this.wagmiConfig,
+      projectId: 'f58e1488ccb9f5b7ef6f11ffa1cd8ba1'
+    })
+    modal.open()
   }
 
   async reload() {
@@ -73,7 +116,7 @@ export class AppMain extends ThemeElement(style) {
       if (getChainId(this.wagmiConfig) != chainId) await switchChain(this.wagmiConfig, { chainId })
       let hash = await writeContract(this.wagmiConfig, {
         chainId,
-        account: this.doidConnector.account!,
+        account: this.account!,
         address: this.contractAddress,
         abi,
         functionName: 'queue',
@@ -101,7 +144,7 @@ export class AppMain extends ThemeElement(style) {
     try {
       let hash = await writeContract(this.wagmiConfig, {
         chainId,
-        account: this.doidConnector.account!,
+        account: this.account!,
         address: this.contractAddress,
         abi,
         functionName: 'execute'
@@ -172,9 +215,9 @@ export class AppMain extends ThemeElement(style) {
               html`<div>
                 Amount of staking: ${formatEther(this.queuedAmount)} ETH<span class="ml-8"
                   >Until: ${this.queuedTime}</span
-                ><button class="btn stake-btn hoverable ml-8" @click=${() => this.reload()}>
+                ><dui-button icon @click=${() => this.reload()}>
                   <i class="mdi mdi-reload"></i>
-                </button>
+                </dui-button>
               </div>`,
             () => html`<div>Amount of staking: 0.1ETH<span class="ml-8">Duration: ${this.stakeTimeString}</span></div>`
           )}

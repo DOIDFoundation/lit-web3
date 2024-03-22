@@ -6,16 +6,15 @@
   "scripts": {
     "dev": "vite --host",
     "build": "NODE_ENV='production' vite build",
-    "build-staging": "NODE_ENV='staging' vite build",
+    "build-staging": "NODE_ENV='production' vite build --mode staging",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
-    "@doid/connect": "workspace:latest",
-    "@doid/connect-ethers": "workspace:latest",
     "@lit-web3/base": "workspace:latest",
     "@lit-web3/dui": "workspace:latest",
-    "@lit-web3/ethers": "workspace:latest",
+    "@wagmi/connectors": "^4.1.14",
     "@wagmi/core": "^2.6.5",
+    "@web3modal/wagmi": "^4.1.1",
     "viem": "^2.7.16"
   }
 }
